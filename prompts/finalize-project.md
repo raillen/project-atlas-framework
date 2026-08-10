@@ -1,0 +1,3 @@
+# ProjectAtlas: finalize
+
+Apply the current Project Atlas Framework to all approved decisions in this conversation. Preserve decisions rather than redesigning them. Produce canonical product, architecture, implementation, UI/UX where applicable, quality, security, governance, operations and user documentation; create ADRs/RFCs for meaningful decisions; generate ATLAS/project state/manifest, Phase Goals and AI workforce manifests. If the preferred LLM roster for this project has not been explicitly provided, obtain it before creating model-routing configuration. Validate the result before completion.

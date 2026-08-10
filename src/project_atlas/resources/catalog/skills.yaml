@@ -1,0 +1,206 @@
+skills:
+  - id: atlas-navigation
+    name: Atlas Navigation
+    core: true
+    purpose: Navigate canonical docs, graph relations, Goals and project state.
+    instructions: Start at docs/ATLAS.md, then read only the documents connected to the active Goal and impacted modules.
+  - id: goal-management
+    name: Goal Management
+    core: true
+    purpose: Create, lock, execute and verify outcome-based Goals.
+    instructions: Acceptance criteria are immutable after LOCKED unless an explicit Goal amendment is approved.
+  - id: git-workflow
+    name: Git Workflow
+    core: true
+    purpose: Keep changes isolated, reviewable and traceable.
+    instructions: Use focused branches/worktrees, small commits, no unrelated changes, and evidence-backed PRs.
+  - id: code-review
+    name: Code Review
+    core: true
+    purpose: Review scope, correctness, contracts, tests and maintainability.
+    instructions: Review against the active Goal and approved architecture, not personal style preferences.
+  - id: documentation
+    name: Documentation Maintenance
+    core: true
+    purpose: Keep canonical and user-facing docs synchronized.
+    instructions: Update code, tests, docs and ATLAS references in the same workflow when behavior changes.
+
+  - id: frontend-web
+    name: Web Frontend Engineering
+    select: {project_types: [web-saas, ecommerce, web-app], stack_any: [react, vue, svelte, typescript, javascript]}
+    instructions: Preserve component boundaries, state ownership, loading/error states and testable user flows.
+  - id: ui-implementation
+    name: UI Implementation
+    select: {features_any: [ui, dashboard, editor]}
+    instructions: Implement from explicit design tokens and interaction contracts; avoid one-off visual rules.
+  - id: ui-ux-review
+    name: UI/UX Review
+    select: {features_any: [ui, dashboard, editor]}
+    instructions: Review hierarchy, discoverability, interaction cost, responsive behavior, empty/error states and consistency.
+  - id: accessibility
+    name: Accessibility Testing
+    select: {features_any: [accessibility, ui], risk_any: [accessibility]}
+    instructions: Verify keyboard navigation, focus, semantics, contrast, zoom/reflow and assistive technology basics.
+  - id: visual-regression
+    name: Visual Regression
+    select: {features_any: [ui, editor, rendering]}
+    instructions: Capture stable visual fixtures and compare representative states, not only the happy path.
+  - id: playwright-ui
+    name: Playwright UI Testing
+    select: {stack_any: [playwright], project_types: [web-saas, ecommerce, web-app]}
+    requires: [frontend-web]
+    instructions: Test user-visible workflows with resilient semantic selectors and controlled fixtures.
+
+  - id: backend-api
+    name: Backend API Engineering
+    select: {project_types: [web-saas, ecommerce, api], stack_any: [django, fastapi, rails, laravel, fastify, express]}
+    instructions: Keep domain logic independent from transport; validate inputs, auth and error contracts at boundaries.
+  - id: database-review
+    name: Database Review
+    select: {stack_any: [postgresql, postgres, mysql, sqlite, redis], features_any: [database, persistence]}
+    instructions: Review constraints, indexes, migrations, concurrency, transaction boundaries and query plans.
+  - id: api-contract-testing
+    name: API Contract Testing
+    select: {project_types: [api, web-saas, ecommerce]}
+    requires: [backend-api]
+    instructions: Verify status codes, schemas, authorization, idempotency and backward compatibility.
+
+  - id: security-web
+    name: Web Security Testing
+    select: {project_types: [web-saas, ecommerce, web-app], risk_any: [public-web, security]}
+    instructions: Cover auth, access control, session handling, injection, XSS, CSRF, SSRF, file upload and abuse controls.
+  - id: security-api
+    name: API Security Testing
+    select: {project_types: [api, web-saas, ecommerce], risk_any: [security]}
+    instructions: Test object-level authorization, rate limits, mass assignment, input validation, secrets and replay/idempotency.
+  - id: security-supply-chain
+    name: Supply Chain Security
+    select: {risk_any: [security, supply-chain], features_any: [plugins, dependencies]}
+    instructions: Audit dependency provenance, lockfiles, build scripts, generated artifacts and update policy.
+  - id: security-desktop
+    name: Desktop Security
+    select: {project_types: [desktop, game-engine], risk_any: [security]}
+    instructions: Review local file access, IPC, plugins, updater boundaries, unsafe native code and untrusted project content.
+  - id: security-network
+    name: Network Security
+    select: {features_any: [networking, multiplayer, realtime]}
+    instructions: Validate trust boundaries, malformed packets, authentication, replay, authority and denial-of-service surfaces.
+
+  - id: performance-web
+    name: Web Performance
+    select: {project_types: [web-saas, ecommerce, web-app], risk_any: [performance, performance-critical]}
+    instructions: Measure Core Web Vitals, bundle cost, network waterfalls, backend latency and representative device behavior.
+  - id: performance-native
+    name: Native Performance
+    select: {project_types: [desktop, game-engine, compiler], risk_any: [performance, performance-critical]}
+    instructions: Profile CPU, allocations, memory, I/O and hot paths under representative workloads before optimizing.
+  - id: benchmarking
+    name: Benchmarking
+    select: {risk_any: [performance, performance-critical], project_types: [game-engine, compiler]}
+    instructions: Define stable workloads, warmup, environment metadata, variance thresholds and regression budgets.
+
+  - id: ci-cd
+    name: CI/CD
+    select: {features_any: [ci-cd, deployment], stack_any: [github-actions, gitlab-ci]}
+    instructions: Make validation reproducible from a clean checkout; cache safely and fail fast on contract violations.
+  - id: containers
+    name: Containers
+    select: {stack_any: [docker, podman], features_any: [deployment]}
+    instructions: Use small reproducible images, non-root execution, explicit health checks and pinned dependencies.
+  - id: release-engineering
+    name: Release Engineering
+    select: {features_any: [release, distribution], project_types: [desktop, game-engine, cli, library]}
+    instructions: Produce versioned artifacts, checksums, release notes, migration notes and rollback/recovery evidence.
+
+  - id: game-engine-architecture
+    name: Game Engine Architecture
+    select: {project_types: [game-engine]}
+    instructions: Separate authoring/runtime state, preserve deterministic formats and keep low-level systems behind simple public concepts.
+  - id: game-runtime
+    name: Game Runtime
+    select: {project_types: [game, game-engine]}
+    instructions: Keep frame lifecycle, resource ownership, input, simulation and rendering order explicit and measurable.
+  - id: rendering-2d
+    name: 2D Rendering
+    select: {project_types: [game-engine], features_any: [rendering, sprites, tilemaps, lighting, postfx]}
+    instructions: Cover sprite batching, cameras, render targets, text, clipping, pixel-perfect paths and deterministic visual fixtures.
+  - id: rendering-3d
+    name: 3D Rendering
+    select: {project_types: [game-engine], features_any: [3d, rendering-3d]}
+    instructions: Keep mesh/material/lighting pipelines explicit and instrument draw/dispatch costs.
+  - id: shaders
+    name: Shader Engineering
+    select: {features_any: [postfx, lighting, shaders, rendering]}
+    instructions: Keep shader interfaces versioned, cross-platform and tested with golden visual fixtures.
+  - id: physics-testing
+    name: Physics Testing
+    select: {features_any: [physics, collision]}
+    instructions: Test collision layers, triggers, one-way platforms, joints, determinism assumptions and debug visualization.
+  - id: multiplayer-networking
+    name: Multiplayer Networking
+    select: {features_any: [multiplayer, networking, realtime]}
+    instructions: Define authority, replication, RPC, interpolation and reconnect semantics before optimization.
+  - id: network-testing
+    name: Network Testing
+    select: {features_any: [multiplayer, networking, realtime]}
+    requires: [multiplayer-networking]
+    instructions: Simulate latency, jitter, loss, duplication, disconnects and invalid/malicious peers.
+  - id: game-ui-testing
+    name: Game UI Testing
+    select: {project_types: [game, game-engine], features_any: [ui]}
+    instructions: Verify controller/keyboard navigation, scaling, safe areas, localization and state transitions.
+  - id: playtest-automation
+    name: Playtest Automation
+    select: {project_types: [game, game-engine]}
+    instructions: Drive deterministic input sequences, inspect runtime state and capture screenshots/logs as evidence.
+
+  - id: compiler-development
+    name: Compiler Development
+    select: {project_types: [compiler, language], features_any: [compiler, scripting]}
+    instructions: Separate parsing, semantic analysis, IR/codegen and runtime contracts with focused conformance tests.
+  - id: language-tooling
+    name: Language Tooling
+    select: {project_types: [compiler, language, game-engine], features_any: [lsp, code-editor, scripting]}
+    instructions: Treat diagnostics, completion, go-to-definition and formatting as versioned user-facing APIs.
+
+  - id: mcp-integration
+    name: MCP Integration
+    select: {features_any: [mcp]}
+    instructions: Expose semantic, bounded tools/resources; never provide arbitrary shell or unrestricted filesystem access by default.
+  - id: plugin-architecture
+    name: Plugin Architecture
+    select: {features_any: [plugins, extensions]}
+    instructions: Prefer declarative/sandboxed extension points first; version contracts and require explicit permissions.
+  - id: orchestration-multi-agent
+    name: Multi-Agent Orchestration
+    select: {features_any: [multi-agent, orchestration]}
+    instructions: Plan as a dependency DAG, isolate work, cap retries, diversify review and let CI/evidence decide completion.
+  - id: traycer-orchestration
+    name: Traycer Orchestration
+    select: {stack_any: [traycer], features_any: [orchestration]}
+    requires: [orchestration-multi-agent]
+    instructions: Treat Traycer as a replaceable execution adapter; repository Goals and acceptance criteria remain canonical.
+  - id: documentation-for-llms
+    name: LLM-Readable Documentation
+    select: {features_any: [documentation, ai-assisted-development]}
+    instructions: Keep short entrypoints, stable headings, explicit relationships, query packs and machine-readable manifests.
+  - id: code-quality
+    name: Code Quality Analysis
+    select: {risk_any: [quality], features_any: [code-quality]}
+    instructions: Review complexity, duplication, error handling, dependency direction, dead code and maintainability with project-specific thresholds.
+  - id: website-forensics
+    name: Website Implementation Forensics
+    select: {features_any: [design-research, website-analysis]}
+    instructions: Inspect public site behavior, layout, typography, motion, assets and interaction patterns; record evidence and avoid copying protected assets.
+  - id: wireframe-styleguide
+    name: Wireframe and Style Guide Planning
+    select: {features_any: [wireframes, design-system]}
+    instructions: Produce task-oriented wireframes, tokens, component states, responsive rules and accessible interaction guidance before high-fidelity implementation.
+  - id: asset-reference-research
+    name: Asset Reference Research
+    select: {features_any: [asset-research, design-research, game-assets]}
+    instructions: Gather legally usable references/placeholders with source/license metadata and map them to project asset needs.
+  - id: editor-tooling
+    name: Editor and Tooling Engineering
+    select: {project_types: [game-engine, desktop], features_any: [editor, tooling]}
+    instructions: Build editor tools around shared commands/queries, deterministic state, undo/redo and task-oriented interaction patterns; keep tool-only dependencies out of runtime artifacts.

@@ -1,0 +1,61 @@
+recipes:
+  - id: feature-standard
+    name: Standard Feature
+    core: true
+    purpose: Default implementation flow for ordinary product work.
+    instructions: Explorer -> Architect if needed -> Implementer -> Tester -> cross-model Reviewer -> Documentation -> Goal evidence.
+  - id: bug-fix
+    name: Evidence-Driven Bug Fix
+    core: true
+    purpose: Reproduce and repair defects without masking regressions.
+    instructions: Reproduce -> regression test -> isolate root cause -> minimal fix -> test suite -> independent review.
+  - id: architecture-change
+    name: Architecture Change
+    core: true
+    purpose: Safely modify system boundaries or public contracts.
+    instructions: Explorer -> Architect -> ADR -> impact analysis -> implementation plan -> staged implementation -> tests -> cross-provider review.
+  - id: release
+    name: Release
+    core: true
+    purpose: Produce a verified release candidate.
+    instructions: Freeze Goal scope -> clean build -> test matrix -> security/performance gates -> docs -> artifacts -> release verifier.
+  - id: web-feature
+    name: Web Feature
+    select: {project_types: [web-saas, ecommerce, web-app]}
+    requires_skills_any: [frontend-web, backend-api]
+    instructions: Contract/design -> implementation -> unit tests -> E2E -> accessibility/security checks -> docs.
+  - id: security-review
+    name: Security Review
+    select: {risk_any: [security, public-web, financial]}
+    requires_skills_any: [security-web, security-api, security-desktop]
+    instructions: Threat model -> automated checks -> manual abuse cases -> findings by severity -> remediation -> re-test.
+  - id: ui-review
+    name: UI/UX Review
+    select: {features_any: [ui, editor, dashboard]}
+    requires_skills_any: [ui-ux-review]
+    instructions: Capture representative states -> heuristic/accessibility review -> visual regression -> prioritized findings -> re-check.
+  - id: engine-renderer
+    name: Engine Renderer Change
+    select: {project_types: [game-engine], features_any: [rendering, lighting, postfx]}
+    requires_skills_any: [rendering-2d, rendering-3d]
+    instructions: Architecture impact -> visual fixture -> implementation -> GPU/CPU benchmark -> visual tests -> different-provider review.
+  - id: multiplayer-feature
+    name: Multiplayer Feature
+    select: {features_any: [multiplayer, networking]}
+    requires_skills_any: [multiplayer-networking]
+    instructions: Authority contract -> protocol change -> implementation -> latency/loss simulation -> security review -> docs.
+  - id: compiler-change
+    name: Compiler/Language Change
+    select: {project_types: [compiler, language], features_any: [compiler, scripting]}
+    requires_skills_any: [compiler-development]
+    instructions: Spec change -> conformance tests -> frontend/IR/runtime implementation -> diagnostics -> compatibility review -> docs.
+  - id: documentation-refactor
+    name: Documentation Refactor
+    select: {features_any: [documentation, ai-assisted-development]}
+    requires_skills_any: [documentation-for-llms]
+    instructions: Inventory implementation truth -> identify drift -> restructure canonical docs -> regenerate indexes -> validate links/query packs.
+  - id: project-bootstrap
+    name: Project Bootstrap
+    core: true
+    purpose: Create a new Project Atlas project from explicit project and AI preferences.
+    instructions: Gather project type/stack/features/risks -> ask preferred LLM roster -> resolve workforce -> generate Goals/ATLAS/adapters -> validate.

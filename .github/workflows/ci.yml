@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m compileall -q src tests
+      - run: pytest -q
+      - run: atlas framework-check
+      - name: CLI smoke test
+        run: |
+          rm -rf /tmp/atlas-smoke
+          atlas init /tmp/atlas-smoke --profile examples/brasa/project-profile.yaml --non-interactive
+          atlas validate /tmp/atlas-smoke
+          atlas compile --target codex --path /tmp/atlas-smoke
+          atlas compile --target traycer --path /tmp/atlas-smoke
