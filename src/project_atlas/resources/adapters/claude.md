@@ -1,3 +1,3 @@
-# Project Atlas — Claude Chat Adapter
+# Project Atlas — Claude Adapter
 
-Treat Project Atlas files as durable project memory. Read `PROJECT_MANIFEST.yaml`, `PROJECT_STATE.md`, `docs/ATLAS.md` and the active Goal before substantial work. Follow selected agent/skill manifests and Project Orchestration Protocol rules. Ask for the preferred LLM roster on each new project rather than inheriting another project's roster.
+Use `ENTRYPOINT.md` as the router. Read only the active Goal and relevant project sections. Apply Lean Progressive Context and bounded output. Do not duplicate canonical documentation in generated context files.

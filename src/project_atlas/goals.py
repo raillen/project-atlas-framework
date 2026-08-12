@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .io import dump_yaml, load_yaml
+from .io import dump_json, load_data
 
 STATES = ["DRAFT", "PLANNED", "LOCKED", "EXECUTING", "VERIFYING", "REVIEWING", "DONE"]
 TRANSITIONS = {
@@ -33,7 +33,12 @@ def new_goal(goal_id: str, title: str, phase: str, objective: str = "") -> dict[
             "build": "required",
             "tests": "required",
             "review": "required",
-            "documentation": "required",
+            "documentation_impact": "required",
+            "project_intelligence": "required",
+        },
+        "context": {
+            "budget_profile": "medium",
+            "max_delegation_depth": 1,
         },
         "dependencies": [],
         "evidence": [],
@@ -48,7 +53,7 @@ def new_goal(goal_id: str, title: str, phase: str, objective: str = "") -> dict[
 
 
 def transition_goal(path: Path, target: str, reason: str = "") -> dict[str, Any]:
-    goal = load_yaml(path)
+    goal = load_data(path)
     current = str(goal.get("state", "DRAFT")).upper()
     target = target.upper()
     allowed = TRANSITIONS.get(current, set())
@@ -66,5 +71,8 @@ def transition_goal(path: Path, target: str, reason: str = "") -> dict[str, Any]
             "reason": reason,
         }
     )
-    dump_yaml(goal, path)
+    if path.suffix.lower() == ".json":
+        dump_json(goal, path)
+    else:
+        raise ValueError("Legacy YAML Goal is read-only in v0.2; migrate it to .goal.json before changing state.")
     return goal

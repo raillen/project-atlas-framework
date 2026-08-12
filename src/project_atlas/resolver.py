@@ -76,7 +76,6 @@ def resolve(profile: ProjectProfile) -> Resolution:
             selected_skills.add(skill_id)
             reasons.setdefault(skill_id, []).extend(why)
 
-    # Risk rules can force skills regardless of ordinary selectors.
     risk_rules = load_catalog("bundles").get("risk_rules", [])
     for rule in risk_rules:
         trigger = set(map(str.lower, rule.get("when_any", [])))
@@ -100,7 +99,6 @@ def resolve(profile: ProjectProfile) -> Resolution:
             selected_recipes.add(recipe_id)
             reasons.setdefault(recipe_id, []).extend(why or ["skill-match"])
 
-    # Recursively include skill dependencies.
     changed = True
     while changed:
         changed = False

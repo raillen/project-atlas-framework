@@ -1,3 +1,5 @@
 # ProjectAtlas: update
 
-Incorporate newly approved project decisions into canonical documentation, ADR/RFC records, Goals, ATLAS relationships and AI workforce/profile configuration where affected. Preserve unrelated decisions. Re-run validation and identify any generated adapters/manifests that must be rebuilt.
+Incorporate the newly approved project decision.
+
+Start from active Goal + minimum relevant context. Patch only impacted canonical Markdown/JSON, update evidence/intelligence as applicable, validate, and discard temporary task context.

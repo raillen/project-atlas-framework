@@ -1,3 +1,13 @@
 # ProjectAtlas: recover
 
-Recover the project from repository truth rather than prior chat memory. Read ENTRYPOINT/AGENTS adapter, PROJECT_MANIFEST, PROJECT_STATE, docs/ATLAS, active Goal, dependencies and linked ADRs/canonical docs. Summarize current objective, approved decisions, active work, blockers, technical debt and next action before changing anything.
+Recover from Git state, not previous chat history.
+
+Read in order:
+1. `ENTRYPOINT.md`;
+2. `atlas.json`;
+3. `PROJECT_STATE.md`;
+4. `docs/ATLAS.md`;
+5. active Goal;
+6. only relevant linked docs/symbols/tests.
+
+Use a compact recovery context and expand progressively. Do not recreate old chat transcripts.

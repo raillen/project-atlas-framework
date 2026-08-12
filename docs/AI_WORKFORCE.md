@@ -2,25 +2,47 @@
 
 ## Taxonomy
 
-- **Agent** — who performs work: role, responsibilities, permissions.
+- **Agent** — who performs work: role, responsibilities and permissions.
 - **Skill** — what capability is available.
-- **Recipe** — how a category of work should proceed.
+- **Recipe** — how a work category proceeds.
 - **Goal** — which measurable outcome must be achieved.
-- **Model Policy** — which configured LLMs may perform roles and fallback order.
+- **Context Strategy** — what minimum project knowledge is supplied and how it may expand.
+- **Model Policy** — which configured models may perform roles and fallback order.
 - **Orchestrator** — what coordinates execution.
 
 ## Selection rule
 
-Do not load every skill/agent into every project. The resolver composes the smallest useful workforce from core + project-type bundles + stack + features + risk requirements + project overrides.
+Do not load every skill/agent into every project. Resolve the smallest useful workforce from core + project-type bundles + stack + features + risk requirements + dependencies + project overrides.
 
-## Why roles are model-independent
+The same rule applies inside a task: a selected role receives only the relevant Context Pack/structural slices, not the whole registry/documentation set.
 
-`renderer-engineer` remains `renderer-engineer` whether a project routes it to GPT, DeepSeek, Kimi, GLM, Claude or another model. This makes model replacement and scorecard-driven routing possible without rewriting project methodology.
+## Roles are model-independent
+
+Roles remain stable even when models/providers change. Model routing can therefore improve from project-local cost/quality data without rewriting methodology.
+
+## Core documentation/context capabilities
+
+v0.2 treats these as general engineering capabilities:
+
+- user/developer/operations documentation;
+- documentation site/publishing;
+- documentation impact/coverage;
+- Lean Progressive Context;
+- token/output economy;
+- Project Intelligence.
+
+They should be selected or mandated based on project needs rather than copied as model prompts everywhere.
+
+## Delegation
+
+Prefer a clean isolated child context only for a bounded question with a compact expected result. Default maximum delegation depth is one.
+
+Delegated output should be a finding + evidence + confidence or an artifact pointer, not a long narrative.
 
 ## Risk-mandated capabilities
 
-Some domains force skills. Public web projects require security checks; performance-critical systems require benchmarks; multiplayer requires network testing/security; explicit accessibility requirements activate accessibility/visual checks.
+Security, performance, accessibility, networking, migrations and other high-risk domains may force capabilities regardless of normal selectors.
 
 ## Registry evolution
 
-Add generic capabilities to the framework only when they are reusable. One-off project instructions belong in the project profile/overrides.
+Generic reusable capabilities belong in the framework registry. One-off project instructions belong in project docs/config. Any new context mechanism must justify token/cost impact and define a stopping condition.

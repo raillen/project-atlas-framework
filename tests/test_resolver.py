@@ -5,7 +5,7 @@ from project_atlas.resolver import resolve
 
 
 def test_brasa_resolves_domain_workforce():
-    profile = load_profile(Path("examples/brasa/project-profile.yaml"))
+    profile = load_profile(Path("examples/brasa/project-profile.json"))
     result = resolve(profile)
     assert "architect" in result.agents
     assert "engine-engineer" in result.agents
@@ -14,6 +14,9 @@ def test_brasa_resolves_domain_workforce():
     assert "rendering-2d" in result.skills
     assert "multiplayer-networking" in result.skills
     assert "security-network" in result.skills
+    assert "lean-progressive-context" in result.skills
+    assert "project-intelligence" in result.skills
+    assert "roslyn-context-indexing" in result.skills
     assert "engine-renderer" in result.recipes
 
 

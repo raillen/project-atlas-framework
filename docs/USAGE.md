@@ -1,36 +1,95 @@
 # Usage
 
-## 1. Discuss the project normally
+## 1. Discuss and stabilize decisions
 
-Use any chat/model to explore product, architecture and constraints. When decisions stabilize, invoke `ProjectAtlas: finalize` with the framework repository available.
+Use any model/tool to explore product, architecture and constraints. Promote only stable reusable knowledge to the repository.
 
-## 2. Create a project profile
+## 2. Create a JSON project profile
 
-Record project type, stack, features, risks, orchestrator/autonomy and an explicit preferred model roster. See the Brasa example.
+Record project type, stack, features, risks, orchestration/autonomy and explicit model roster.
+
+See:
+
+```text
+examples/brasa/project-profile.json
+```
 
 ## 3. Initialize
 
 ```bash
-atlas init ./project --profile ./project-profile.yaml --non-interactive
+atlas init ./project --profile ./project-profile.json --non-interactive
 ```
 
-## 4. Compile adapters
+New projects receive:
+
+- `atlas.json`;
+- `PROJECT_STATE.md`;
+- `docs/ATLAS.md`;
+- JSON workforce/model manifests;
+- `.ai/goals/`;
+- durable Project Intelligence seed;
+- gitignore rules for runtime/cache state.
+
+## 4. Validate
+
+```bash
+atlas validate ./project --schemas ./schemas
+```
+
+## 5. Define and lock Goals
+
+Replace placeholder acceptance criteria before LOCKED. Agents execute against locked scope and recorded project decisions.
+
+## 6. Use progressive context
+
+Before broad work:
+
+1. start from ATLAS + active Goal;
+2. use direct/symbol/structural context first;
+3. load a known Context Pack when available;
+4. expand only if evidence is insufficient;
+5. use isolated depth-1 delegation only when beneficial;
+6. stop when the task is sufficiently grounded.
+
+Do not generate permanent task context files.
+
+## 7. Compile adapters only when needed
 
 ```bash
 atlas compile --target codex --path ./project
 atlas compile --target traycer --path ./project
 ```
 
-## 5. Define Goals
+Generic/chat compiled context is runtime state.
 
-Create phase Goals, replace placeholder acceptance criteria, move to PLANNED, review, then LOCK. Agents execute only against locked scope.
+## 8. Finish a task
 
-## 6. Validate continuously
-
-```bash
-atlas validate ./project --schemas ./schemas
+```text
+implementation
+→ tests
+→ review
+→ documentation delta
+→ evidence
+→ task/project intelligence
+→ context cleanup
 ```
 
-## 7. Recover anywhere
+Keep reports compact and distinguish observed costs from estimates.
 
-Give a new model the project repository and ask it to read `ENTRYPOINT.md`. A snapshot can be produced with `atlas snapshot` when repository browsing is inconvenient.
+## 9. Publish docs
+
+Canonical Markdown remains source of truth. Projects may continuously build a documentation site/dashboard from the same sources; do not maintain a second documentation copy.
+
+## 10. Recover anywhere
+
+A fresh model/tool reads `ENTRYPOINT.md`, `atlas.json`, `PROJECT_STATE.md`, `docs/ATLAS.md`, the active Goal and then expands context on demand.
+
+```bash
+atlas snapshot ./project
+```
+
+Snapshots exclude runtime/cache state.
+
+## Legacy v0.1
+
+YAML profiles/projects remain readable for migration where supported. Run a documented migration before editing them as v0.2 canonical state.

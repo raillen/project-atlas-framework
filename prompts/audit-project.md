@@ -1,3 +1,15 @@
 # ProjectAtlas: audit
 
-Audit the project for drift between implementation, tests, canonical docs, active Goals and generated AI manifests/adapters. Check that acceptance criteria have evidence, project-specific decisions are not contradicted by generic framework defaults, and installed agents/skills remain appropriate for current stack/features/risks. Propose repairs; do not silently rewrite locked Goals.
+Audit the project for implementation/documentation/protocol drift.
+
+Check:
+- active Goals/evidence;
+- user/developer/operations documentation gaps;
+- broken ATLAS routing;
+- Markdown/JSON canonical-format policy;
+- generated/runtime context accidentally committed;
+- context/output budget policy;
+- stale/duplicated documentation;
+- Project Intelligence completeness/provenance.
+
+Return prioritized findings with evidence pointers, not a repository-wide narrative dump.

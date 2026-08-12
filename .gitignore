@@ -7,3 +7,7 @@ dist/
 build/
 .coverage
 htmlcov/
+
+# Project Atlas derived/runtime state
+.atlas/runtime/
+.atlas/cache/

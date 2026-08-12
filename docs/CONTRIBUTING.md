@@ -1,14 +1,27 @@
 # Contributing and Framework Evolution
 
-Project Atlas is intended to learn from real projects without becoming a dumping ground for project-specific instructions.
+Project Atlas should learn from real projects without becoming a dumping ground for project-specific instructions.
 
-A reusable change should identify the observed problem, evidence from one or more projects, proposed generic rule, affected schemas/catalogs/adapters and compatibility impact. Breaking protocol changes require a major version and migration guidance.
+A reusable change should identify:
+
+- recurring problem;
+- evidence;
+- generic rule;
+- affected protocol/schemas/catalog/adapters;
+- compatibility/migration impact;
+- token/cost/maintenance impact when context behavior changes.
 
 ## Checklist
 
 - Keep core provider-neutral.
 - Keep `ENTRYPOINT.md` and root `AGENTS.md` short.
+- Maintain Markdown + JSON as the v0.2 human-maintained format budget.
+- A new persistent format requires ADR-level justification.
+- Keep runtime/cache/derived data out of canonical Git state.
 - Update schemas when contracts change.
-- Add tests for behavior changes.
-- Do not bake a current model ranking into canonical agent definitions.
-- Prefer capabilities/risk selectors over technology-specific duplication.
+- Add tests for behavior/migration changes.
+- Do not bake current model rankings into role definitions.
+- Prefer capabilities/risk selectors over technology duplication.
+- Prefer semantic virtual chunks over documentation microfiles.
+- Context changes need a token/quality benchmark and stopping rule.
+- Deep recursion stays experimental unless evidence justifies promotion.
