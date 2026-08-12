@@ -1,12 +1,14 @@
-# AGENTS.md — Project Atlas operational router
+# AGENTS.md
 
-1. Read `PROJECT_MANIFEST.yaml` and `PROJECT_STATE.md`.
-2. Read `docs/ATLAS.md` and the active Goal.
-3. Load only the generated agents/skills needed for the Goal.
-4. Explore impact before editing.
-5. Keep implementation, tests and documentation in one coherent change.
-6. Use focused branches/worktrees for parallel work.
-7. CI and explicit evidence decide completion; self-reported success does not.
-8. Do not change locked Goal acceptance criteria without an approved amendment.
-9. Create/update ADRs for architectural decisions.
-10. Keep this file short; canonical policy lives in Project Atlas docs/config.
+This project uses Project Atlas v0.2.
+
+- Read `ENTRYPOINT.md`, `atlas.json`, the active Goal and `docs/ATLAS.md`.
+- Use Lean Progressive Context: minimum sufficient context, progressive expansion, pointer over payload.
+- Do not scan/read the entire repository by default.
+- Respect context/output budgets and stop when evidence is sufficient.
+- Keep delegation bounded; deep recursion is disabled unless the project explicitly says otherwise.
+- Implement only locked Goal scope; tests/evidence determine completion.
+- Compute Documentation Delta; patch only impacted canonical docs.
+- Do not create task-specific `CONTEXT.md`/`SUMMARY.md` files.
+- Record compact Project Intelligence where the project workflow supports it.
+- Generated/runtime context is not canonical and should be garbage-collected.

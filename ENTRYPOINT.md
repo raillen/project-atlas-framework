@@ -3,14 +3,17 @@
 If you are an AI system using this framework:
 
 1. Read `FRAMEWORK.md` for invariants.
-2. Read `docs/ARCHITECTURE.md` for the protocol model.
-3. For an actual project, read its `PROJECT_MANIFEST.yaml`, `PROJECT_STATE.md` and `docs/ATLAS.md`.
-4. Read the active Goal and dependencies before making changes.
-5. Use project manifests to load selected Agents, Skills and Recipes; do not activate the full registry indiscriminately.
-6. Project-specific explicit decisions and ADRs outrank generic framework defaults.
-7. Never silently weaken locked acceptance criteria.
-8. Do not inherit the LLM roster from another project. Every project explicitly defines its preferred models/providers.
-9. Treat orchestrators (Traycer, Codex, Claude Code, etc.) as replaceable execution adapters.
-10. CI, tests and recorded evidence—not agent confidence—determine completion.
+2. Read `docs/ATLAS.md` as the intent router; do not read the whole repository by default.
+3. Read `docs/LEAN_PROGRESSIVE_CONTEXT.md` before planning broad context ingestion.
+4. For an actual v0.2+ project, read `atlas.json`, `PROJECT_STATE.md` and `docs/ATLAS.md`.
+5. Read the active Goal, applicable invariants and only the linked canonical sections needed for the task.
+6. Use the selected Agents, Skills and Recipes from `.ai/`; never activate the entire registry indiscriminately.
+7. Prefer pointers and structural slices over full documents/files. Expand context only when evidence is insufficient.
+8. Keep intermediate output compact. Do not narrate exploration unless the user needs it.
+9. Never silently weaken locked acceptance criteria.
+10. Treat orchestrators and model providers as replaceable execution adapters.
+11. Update only documentation actually impacted by stable behavior changes.
+12. Before completion, record evidence, task/project intelligence where available, then garbage-collect temporary context.
+13. CI, tests and recorded evidence—not model confidence—determine completion.
 
-Portable conversation commands are documented in `docs/USAGE.md` and `prompts/`.
+Legacy v0.1 projects may still contain YAML. Read it only for compatibility/migration; new canonical output must use Markdown + JSON.

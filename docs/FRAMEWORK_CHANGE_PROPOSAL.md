@@ -1,22 +1,35 @@
 # Framework Change Proposal Template
 
-Use this when a real project discovers a reusable improvement.
-
 ## Problem
 
 What recurring engineering problem was observed?
 
 ## Evidence
 
-Which project(s), Goals or incidents demonstrate it?
+Which projects, Goals, incidents or benchmarks demonstrate it?
 
-## Existing framework behavior
+## Existing behavior
 
 What does Project Atlas currently do?
 
 ## Proposed generic rule
 
-State the reusable rule without project-specific names or model/provider lock-in.
+State the reusable rule without project-specific names or provider lock-in.
+
+## Context/token impact
+
+If this changes agent context or prompting:
+
+- expected input effect;
+- expected output effect;
+- cache/retrieval effect;
+- stopping condition;
+- quality regression risk;
+- benchmark plan.
+
+## Persistence/format impact
+
+Does it add a maintained file/format? If yes, why is Markdown/JSON/derived SQLite insufficient?
 
 ## Compatibility
 

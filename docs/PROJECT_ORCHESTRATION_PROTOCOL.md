@@ -1,42 +1,73 @@
 # Project Orchestration Protocol (POP)
 
-POP defines how Project Atlas turns Goals into agentic work while remaining independent of a specific orchestrator.
+POP defines how Project Atlas turns Goals into bounded agentic work while remaining independent of a specific orchestrator.
 
 ## Bootstrap rule AI-001
 
-**Never infer a new project's preferred LLM/model roster from another project.** Explicitly obtain or define the roster for every project before generating routing configuration.
+Never infer a new project's preferred model roster from another project. Every project defines its own roster.
 
 ## Flow
 
 ```text
-Vision → Phase → Goal → Task DAG → isolated execution → verification → review → evidence → gate
+Vision
+→ Phase
+→ Goal
+→ Task DAG
+→ context plan/budget
+→ isolated execution
+→ verification
+→ independent review
+→ documentation delta
+→ project intelligence
+→ evidence/gate
+→ context GC
 ```
 
 ## Roles and models
 
-Roles such as Architect, Implementer, Tester and Security Reviewer are stable abstractions. `model-policy.yaml` maps the project's explicitly selected roster onto roles. Model/provider names must not be embedded into canonical Agent definitions.
+Roles such as Architect, Implementer, Tester and Security Reviewer are stable abstractions. `model-policy.json` maps the explicit project roster onto roles.
+
+Routing should consider:
+
+- capability;
+- risk;
+- context size;
+- expected cost;
+- historical project scorecard;
+- provider availability.
+
+The cheapest model is not automatically best; the preferred policy is the cheapest reliable model that passes required gates.
+
+## Context before execution
+
+Each task should begin with a context strategy/budget. The orchestrator should prefer deterministic task maps, structural/symbol retrieval and known Context Packs before broad exploration.
+
+Do not feed the entire project to every role.
 
 ## Fallbacks
 
-1. **Availability fallback** — provider/model unavailable.
-2. **Quality fallback** — two failed repair attempts cause cross-model escalation.
-3. **Confidence fallback** — high-risk design may require independent plans/review.
-4. **Human escalation** — fallback exhaustion or policy conflict stops autonomous execution.
+1. Availability fallback.
+2. Quality fallback after bounded repair attempts.
+3. Context fallback: targeted expansion when evidence is insufficient.
+4. Review diversity for high-risk work when possible.
+5. Human escalation after fallback/budget exhaustion or policy conflict.
 
-Retries are bounded; the orchestrator must not loop indefinitely.
-
-## Review diversity
-
-For high-risk changes, prefer a reviewer from a different provider than the implementer when the configured roster makes this possible. This reduces correlated failure modes; it does not replace tests.
+Retries and context expansion are bounded. No infinite loops or unbounded recursion.
 
 ## Work isolation
 
-Independent Goals/tasks should use branches/worktrees or equivalent isolated checkouts. Parallelization is allowed only where dependency analysis indicates safe independence.
+Independent tasks use branches/worktrees or equivalent isolation. Parallelization is permitted only when dependency analysis indicates safe independence.
+
+Context isolation is separate from code isolation: a delegated role should receive a fresh, minimal context for its question.
 
 ## Source of truth
 
-Orchestrator artifacts may mirror Goals but repository Goal files remain canonical. Traycer Smart/YOLO behavior, for example, may propose an amendment but must not silently modify locked acceptance criteria.
+Orchestrator artifacts may mirror Goals/config but repository canonical files remain authoritative. Generated summaries/context/site content cannot silently modify locked acceptance criteria.
+
+## Output discipline
+
+Intermediate agent output should be compact and operational. Long reasoning narratives are not durable project history. Persist stable findings in canonical docs/ADR/evidence and discard the rest.
 
 ## Completion
 
-An agent's declaration of success has no authority. The required gates and evidence recorded in the Goal determine completion.
+An agent declaration has no authority. Required gates/evidence, documentation impact evaluation, intelligence update and cleanup determine completion.

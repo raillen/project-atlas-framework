@@ -2,13 +2,45 @@
 
 Framework quality gates:
 
-- schemas parse and validate fixtures;
-- catalogs load and IDs are unique;
+- JSON schemas validate generated contracts;
+- canonical catalog loads and IDs are unique;
 - resolver produces deterministic manifests;
 - Goal transitions reject illegal state changes;
 - `DONE` requires evidence;
-- platform compilation only uses selected workforce entries;
-- generated project validates from a clean temporary directory;
-- documentation entrypoints and examples stay synchronized.
+- project bootstrap generates Markdown/JSON canonical state;
+- YAML is not generated in v0.2;
+- legacy YAML input remains readable during migration support;
+- platform compilation uses only selected workforce entries;
+- runtime/generated context is not treated as canonical;
+- documentation entrypoints remain synchronized;
+- context/output policies have explicit budgets/stopping rules.
 
-GitHub Actions runs the Python test suite and a CLI smoke test. Projects using Atlas should add their own domain gates rather than treating framework validation as product verification.
+## LPC regression quality
+
+Context optimization is only a success if task quality remains acceptable.
+
+Benchmarks should compare legacy vs LPC/PCA by:
+
+- task success/correctness;
+- tests/evidence;
+- input tokens;
+- output/intermediate tokens;
+- cost;
+- latency;
+- number of permanent files/docs created.
+
+Do not optimize token count in isolation.
+
+## Documentation quality
+
+Validate:
+
+- links/entrypoints;
+- required audience coverage where applicable;
+- documentation impact in behavior changes;
+- no unnecessary task-context/summary proliferation;
+- generated site is rebuildable from canonical sources.
+
+## CI
+
+GitHub Actions runs Python compile/tests, framework validation and CLI smoke tests. Projects using Atlas must add domain-specific gates.

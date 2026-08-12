@@ -6,7 +6,7 @@ from typing import Any, Iterable
 
 from jsonschema import Draft202012Validator
 
-from .io import load_yaml
+from .io import load_data
 
 
 def _flatten(value: Any) -> list[str]:
@@ -56,7 +56,7 @@ class ProjectProfile:
 
     @property
     def orchestrator(self) -> str:
-        return str(self.raw.get("ai", {}).get("orchestrator", "traycer"))
+        return str(self.raw.get("ai", {}).get("orchestrator", "native"))
 
     @property
     def autonomy(self) -> str:
@@ -64,7 +64,7 @@ class ProjectProfile:
 
 
 def load_profile(path: Path) -> ProjectProfile:
-    return ProjectProfile(load_yaml(path))
+    return ProjectProfile(load_data(path))
 
 
 def validate_profile(raw: dict[str, Any], schema: dict[str, Any]) -> list[str]:

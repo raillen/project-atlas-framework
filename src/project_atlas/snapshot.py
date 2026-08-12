@@ -5,12 +5,14 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 INCLUDE = [
     "ENTRYPOINT.md",
-    "PROJECT_MANIFEST.yaml",
+    "atlas.json",
     "PROJECT_STATE.md",
     "docs",
-    ".atlas",
     ".ai",
+    ".atlas/history",
 ]
+
+EXCLUDED_PARTS = {"runtime", "cache", "__pycache__"}
 
 
 def create_snapshot(root: Path, output: Path) -> Path:
@@ -24,6 +26,6 @@ def create_snapshot(root: Path, output: Path) -> Path:
                 archive.write(path, path.relative_to(root))
             else:
                 for child in path.rglob("*"):
-                    if child.is_file():
+                    if child.is_file() and not (set(child.relative_to(root).parts) & EXCLUDED_PARTS):
                         archive.write(child, child.relative_to(root))
     return output

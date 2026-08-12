@@ -12,15 +12,44 @@ Supported initial targets:
 - `claude-code`
 - `traycer`
 
-Run `atlas compile --target <target>` in an initialized project. Codex and Claude Code receive generated role/skill files; chat platforms receive a compact context pack; Traycer receives an orchestration bridge document.
+## Generated adapter rule
+
+Platform output is generated and replaceable.
+
+Codex/Claude Code may require platform-native role/skill files. Generic/chat targets should use temporary compiled entrypoints/context under `.atlas/runtime/compiled/`, not committed duplicate context packs.
+
+Adapters should point agents back to:
+
+1. `ENTRYPOINT.md`;
+2. `atlas.json`;
+3. `docs/ATLAS.md`;
+4. active Goal;
+5. the Progressive Context rules.
+
+## Context rendering
+
+A platform/model adapter may render Context IR as compact KV, minimal Markdown or lightweight tags when benchmarked. This does not change canonical storage.
+
+## Persistent format portability
+
+v0.2 canonical project formats:
+
+- Markdown;
+- JSON.
+
+SQLite is runtime only.
+
+YAML is legacy import/read compatibility.
 
 ## Conversation commands
 
-These are portable conventions, not required platform syntax:
+Portable conventions:
 
-- `ProjectAtlas: bootstrap` — structure a new project and gather explicit AI preferences.
-- `ProjectAtlas: finalize` — turn approved discussion into canonical project docs/config.
-- `ProjectAtlas: update` — incorporate new approved decisions.
-- `ProjectAtlas: audit` — check implementation/documentation/protocol drift.
-- `ProjectAtlas: recover` — reconstruct project context from Git state.
-- `ProjectAtlas: migrate` — apply documented framework version migrations.
+- `ProjectAtlas: bootstrap`
+- `ProjectAtlas: finalize`
+- `ProjectAtlas: update`
+- `ProjectAtlas: audit`
+- `ProjectAtlas: recover`
+- `ProjectAtlas: migrate`
+
+They describe intent and are not required platform syntax.

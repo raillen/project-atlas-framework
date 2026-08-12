@@ -4,28 +4,47 @@ from pathlib import Path
 from typing import Any
 
 from .catalog import by_id
-from .io import load_yaml, write_text
+from .io import existing_data_path, load_data, write_text
 from .resources import resource_path
 
 SUPPORTED_TARGETS = {"generic", "chatgpt", "claude", "kimi", "codex", "claude-code", "traycer"}
 
 
 def _selected(root: Path, kind: str) -> list[str]:
-    manifest = load_yaml(root / f".ai/{kind}/manifest.yaml")
+    path = existing_data_path(
+        root / f".ai/{kind}/manifest.json",
+        root / f".ai/{kind}/manifest.yaml",
+    )
+    manifest = load_data(path)
     return list(manifest.get(kind, []))
 
 
 def _render_item(kind: str, item: dict[str, Any]) -> str:
-    lines = [f"# {item.get('name', item['id'])}", "", f"ID: `{item['id']}`", ""]
+    """Compact platform representation; canonical catalog remains JSON."""
+    lines = [f"# {item.get('name', item['id'])}", f"ID: `{item['id']}`"]
     if item.get("purpose"):
-        lines.extend([item["purpose"], ""])
+        lines.append(str(item["purpose"]).strip())
     if item.get("instructions"):
-        lines.extend(["## Instructions", "", str(item["instructions"]).strip(), ""])
+        lines.extend(["", "## Instructions", str(item["instructions"]).strip()])
     if item.get("permissions"):
-        lines.extend(["## Permissions", ""])
-        for key, value in item["permissions"].items():
-            lines.append(f"- `{key}`: `{value}`")
+        allowed = ", ".join(f"{key}={value}" for key, value in item["permissions"].items())
+        lines.extend(["", f"Permissions: {allowed}"])
     return "\n".join(lines).rstrip() + "\n"
+
+
+def _runtime_entrypoint(root: Path, target: str, adapter_text: str, agents: list[str], skills: list[str]) -> Path:
+    path = root / ".atlas/runtime/compiled" / target / "ENTRYPOINT.md"
+    content = (
+        adapter_text.rstrip()
+        + "\n\n## Lean Progressive Context\n"
+        + "Start at `ENTRYPOINT.md`, `atlas.json`, the active Goal and `docs/ATLAS.md`. "
+        + "Do not preload the repository. Expand only relevant document sections/symbols/tests.\n\n"
+        + "Selected agents: " + ", ".join(agents)
+        + "\nSelected skills: " + ", ".join(skills)
+        + "\n"
+    )
+    write_text(path, content)
+    return path
 
 
 def compile_target(root: Path, target: str) -> list[Path]:
@@ -63,16 +82,15 @@ def compile_target(root: Path, target: str) -> list[Path]:
             created.append(path)
     elif target == "traycer":
         path = root / ".traycer/PROJECT_ATLAS.md"
-        content = adapter_text + "\n\n## Selected agents\n" + "\n".join(f"- {x}" for x in selected_agents)
-        content += "\n\n## Selected skills\n" + "\n".join(f"- {x}" for x in selected_skills)
+        content = (
+            adapter_text.rstrip()
+            + "\n\n## LPC/PCA\n"
+            + "Use `ENTRYPOINT.md` + active Goal + progressive context. Generated context is not canonical.\n"
+            + "\n## Selected agents\n" + "\n".join(f"- {x}" for x in selected_agents)
+            + "\n\n## Selected skills\n" + "\n".join(f"- {x}" for x in selected_skills)
+        )
         write_text(path, content)
         created.append(path)
     else:
-        path = root / ".atlas/compiled" / target / "CONTEXT.md"
-        sections = [adapter_text, "\n# Active agents\n"]
-        sections.extend(_render_item("agent", agents[x]) for x in selected_agents)
-        sections.append("\n# Active skills\n")
-        sections.extend(_render_item("skill", skills[x]) for x in selected_skills)
-        write_text(path, "\n".join(sections))
-        created.append(path)
+        created.append(_runtime_entrypoint(root, target, adapter_text, selected_agents, selected_skills))
     return created

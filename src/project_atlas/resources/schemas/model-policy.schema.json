@@ -1,14 +1,1 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/model-policy.schema.json",
-  "type": "object",
-  "required": ["version", "selection_rule", "cross_provider_review", "roster", "roles"],
-  "properties": {
-    "version": {"type": "integer"},
-    "selection_rule": {"type": "string"},
-    "cross_provider_review": {"type": "boolean"},
-    "roster": {"type": "array", "minItems": 1},
-    "roles": {"type": "object"}
-  },
-  "additionalProperties": true
-}
+{"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://project-atlas.dev/schemas/model-policy.schema.json","type":"object","required":["version","selection_rule","cross_provider_review","roster","roles"],"properties":{"version":{"type":"integer","minimum":1},"selection_rule":{"type":"string"},"cross_provider_review":{"type":"boolean"},"context_aware_routing":{"type":"boolean"},"roster":{"type":"array","minItems":1},"roles":{"type":"object"}},"additionalProperties":true}

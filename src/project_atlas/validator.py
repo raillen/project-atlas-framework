@@ -6,12 +6,22 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
-from .io import load_yaml
+from .catalog import by_id, load_registry
+from .io import load_data, load_json
 from .resources import resource_path
-from .catalog import by_id, load_catalog
 
+REQUIRED_V2_FILES = [
+    "docs/ATLAS.md",
+    "PROJECT_STATE.md",
+    "atlas.json",
+    ".ai/orchestration/model-policy.json",
+    ".ai/agents/manifest.json",
+    ".ai/skills/manifest.json",
+    ".ai/recipes/manifest.json",
+    ".atlas/history/project-intelligence.json",
+]
 
-REQUIRED_PROJECT_FILES = [
+REQUIRED_V1_FILES = [
     "docs/ATLAS.md",
     "PROJECT_STATE.md",
     "PROJECT_MANIFEST.yaml",
@@ -23,26 +33,65 @@ REQUIRED_PROJECT_FILES = [
 ]
 
 
-def load_schema(repo_root: Path, name: str) -> dict[str, Any]:
-    bundled = Path(__file__).resolve().parents[2] / "schemas" / name
-    if bundled.exists():
-        return json.loads(bundled.read_text(encoding="utf-8"))
-    # Installed wheel fallback: schema copies are embedded next to generated projects only.
-    raise FileNotFoundError(f"Schema not found: {name}")
-
-
 def validate_against_schema(data: dict[str, Any], schema: dict[str, Any]) -> list[str]:
     errors = Draft202012Validator(schema).iter_errors(data)
     return [f"{'.'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}" for e in errors]
 
 
-def validate_project(root: Path, schema_dir: Path | None = None) -> list[str]:
+def _schema_dir(schema_dir: Path | None) -> Path:
+    return schema_dir or resource_path("schemas")
+
+
+def _validate_v2(root: Path, schema_dir: Path) -> list[str]:
     errors: list[str] = []
-    for rel in REQUIRED_PROJECT_FILES:
+    for rel in REQUIRED_V2_FILES:
         if not (root / rel).exists():
             errors.append(f"missing required file: {rel}")
 
-    schema_dir = schema_dir or resource_path("schemas")
+    checks = [
+        (root / "atlas.json", schema_dir / "atlas.schema.json"),
+        (root / ".ai/orchestration/model-policy.json", schema_dir / "model-policy.schema.json"),
+    ]
+    for data_path, schema_path in checks:
+        if data_path.exists() and schema_path.exists():
+            data = load_json(data_path)
+            schema = json.loads(schema_path.read_text(encoding="utf-8"))
+            for error in validate_against_schema(data, schema):
+                errors.append(f"{data_path.relative_to(root)}: {error}")
+
+    goal_schema = schema_dir / "goal.schema.json"
+    if goal_schema.exists() and (root / ".ai/goals").exists():
+        schema = json.loads(goal_schema.read_text(encoding="utf-8"))
+        for path in sorted((root / ".ai/goals").glob("**/*.goal.json")):
+            for error in validate_against_schema(load_json(path), schema):
+                errors.append(f"{path.relative_to(root)}: {error}")
+
+    atlas_yaml_candidates = [
+        root / "PROJECT_MANIFEST.yaml",
+        root / ".atlas/project-profile.yaml",
+        root / ".ai/agents/manifest.yaml",
+        root / ".ai/skills/manifest.yaml",
+        root / ".ai/recipes/manifest.yaml",
+        root / ".ai/orchestration/model-policy.yaml",
+        root / ".ai/orchestration/orchestrator.yaml",
+        root / ".ai/orchestration/fallbacks.yaml",
+        root / ".ai/orchestration/model-scorecard.yaml",
+    ]
+    atlas_yaml_candidates.extend((root / ".ai/goals").glob("**/*.goal.yaml") if (root / ".ai/goals").exists() else [])
+    generated_yaml = [p for p in atlas_yaml_candidates if p.exists()]
+    if generated_yaml:
+        errors.append(
+            "v0.2 Atlas canonical state contains legacy YAML; migrate/remove: "
+            + ", ".join(str(p.relative_to(root)) for p in generated_yaml[:10])
+        )
+    return errors
+
+
+def _validate_v1(root: Path, schema_dir: Path) -> list[str]:
+    errors: list[str] = []
+    for rel in REQUIRED_V1_FILES:
+        if not (root / rel).exists():
+            errors.append(f"missing required legacy file: {rel}")
     checks = [
         (root / ".atlas/project-profile.yaml", schema_dir / "project-profile.schema.json"),
         (root / "PROJECT_MANIFEST.yaml", schema_dir / "project-manifest.schema.json"),
@@ -50,18 +99,19 @@ def validate_project(root: Path, schema_dir: Path | None = None) -> list[str]:
     ]
     for data_path, schema_path in checks:
         if data_path.exists() and schema_path.exists():
-            data = load_yaml(data_path)
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
-            for error in validate_against_schema(data, schema):
+            for error in validate_against_schema(load_data(data_path), schema):
                 errors.append(f"{data_path.relative_to(root)}: {error}")
-
-    goal_schema = schema_dir / "goal.schema.json"
-    if goal_schema.exists():
-        schema = json.loads(goal_schema.read_text(encoding="utf-8"))
-        for path in sorted((root / ".ai/goals").glob("**/*.goal.yaml")) if (root / ".ai/goals").exists() else []:
-            for error in validate_against_schema(load_yaml(path), schema):
-                errors.append(f"{path.relative_to(root)}: {error}")
     return errors
+
+
+def validate_project(root: Path, schema_dir: Path | None = None) -> list[str]:
+    schemas = _schema_dir(schema_dir)
+    if (root / "atlas.json").exists():
+        return _validate_v2(root, schemas)
+    if (root / "PROJECT_MANIFEST.yaml").exists() or (root / ".atlas/project-profile.yaml").exists():
+        return _validate_v1(root, schemas)
+    return ["not a recognized Project Atlas project: missing atlas.json"]
 
 
 def validate_framework() -> list[str]:
@@ -69,6 +119,12 @@ def validate_framework() -> list[str]:
     skills = by_id("skills")
     agents = by_id("agents")
     recipes = by_id("recipes")
+    registry = load_registry()
+
+    for key in ("agents", "skills", "recipes", "bundles"):
+        ids = [item.get("id") for item in registry.get(key, [])]
+        if len(ids) != len(set(ids)):
+            errors.append(f"duplicate IDs in catalog section: {key}")
 
     for agent_id, agent in agents.items():
         for skill in agent.get("requires_skills_any", []):
@@ -83,7 +139,7 @@ def validate_framework() -> list[str]:
             if dep not in skills:
                 errors.append(f"skill {skill_id} references unknown dependency {dep}")
 
-    for bundle in load_catalog("bundles").get("bundles", []):
+    for bundle in registry.get("bundles", []):
         for agent in bundle.get("agents", []):
             if agent not in agents:
                 errors.append(f"bundle {bundle['id']} references unknown agent {agent}")
@@ -97,4 +153,8 @@ def validate_framework() -> list[str]:
     for adapter in ["generic", "chatgpt", "claude", "kimi", "codex", "claude-code", "traycer"]:
         if not resource_path("adapters", f"{adapter}.md").exists():
             errors.append(f"missing adapter: {adapter}")
+
+    for schema in ["atlas.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json"]:
+        if not resource_path("schemas", schema).exists():
+            errors.append(f"missing schema: {schema}")
     return errors

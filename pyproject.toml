@@ -4,15 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "project-atlas-framework"
-version = "0.1.0"
-description = "A Git-native, provider-agnostic framework for AI-assisted software projects."
+version = "0.2.0"
+description = "A Git-native, provider-agnostic framework for durable and token-efficient AI-assisted software projects."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "PyYAML>=6.0",
   "jsonschema>=4.22",
 ]
-keywords = ["ai", "agents", "orchestration", "documentation", "software-engineering", "goals"]
+keywords = ["ai", "agents", "orchestration", "documentation", "context-engineering", "token-economy", "software-engineering", "goals"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
@@ -34,9 +34,8 @@ include-package-data = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-project_atlas = ["resources/**/*.yaml", "resources/**/*.md", "resources/**/*.json"]
+project_atlas = ["resources/**/*.md", "resources/**/*.json"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
-

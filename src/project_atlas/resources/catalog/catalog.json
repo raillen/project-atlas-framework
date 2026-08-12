@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "sections": {
+    "agents": "agents.json",
+    "skills": "skills.json",
+    "recipes": "recipes.json",
+    "bundles": "bundles.json",
+    "risk_rules": "risk_rules.json"
+  }
+}

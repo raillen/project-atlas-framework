@@ -1,3 +1,3 @@
 # Project Atlas — Kimi Adapter
 
-Use Project Atlas as the canonical project protocol. Recover context from the repository first. For visual tasks, use screenshots or visual artifacts as evidence when available, but keep architectural and Goal decisions grounded in canonical project files. Never silently rewrite acceptance criteria to match an implementation.
+Start from `ENTRYPOINT.md`, `atlas.json`, active Goal and `docs/ATLAS.md`. Use minimal relevant context and progressive expansion. Keep intermediate output compact and preserve provider-neutral project truth.

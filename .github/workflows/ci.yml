@@ -19,7 +19,12 @@ jobs:
       - name: CLI smoke test
         run: |
           rm -rf /tmp/atlas-smoke
-          atlas init /tmp/atlas-smoke --profile examples/brasa/project-profile.yaml --non-interactive
+          atlas init /tmp/atlas-smoke --profile examples/brasa/project-profile.json --non-interactive
           atlas validate /tmp/atlas-smoke
+          atlas context plan "add a transition template" --path /tmp/atlas-smoke --json
+          atlas goal new P00-G01 "Foundation" --phase P00 --path /tmp/atlas-smoke
+          atlas goal list --path /tmp/atlas-smoke
           atlas compile --target codex --path /tmp/atlas-smoke
           atlas compile --target traycer --path /tmp/atlas-smoke
+          test ! -e /tmp/atlas-smoke/PROJECT_MANIFEST.yaml
+          test ! -e /tmp/atlas-smoke/.atlas/project-profile.yaml

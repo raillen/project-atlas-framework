@@ -5,11 +5,11 @@ from typing import Any
 from .profile import ProjectProfile
 
 ROLE_GROUPS = {
-    "architecture": ["architect", "goal-planner", "final-arbiter"],
+    "architecture": ["architect"],
     "implementation": ["implementer", "debugger"],
     "quality": ["tester", "reviewer", "security-reviewer", "release-verifier"],
     "documentation": ["documentation-maintainer"],
-    "visual": ["ux-reviewer", "visual-reviewer"],
+    "visual": ["ux-reviewer"],
 }
 
 
@@ -44,9 +44,10 @@ def build_model_policy(profile: ProjectProfile) -> dict[str, Any]:
         }
 
     return {
-        "version": 1,
+        "version": 2,
         "selection_rule": "cheapest-reliable-model-that-passes-gates",
         "cross_provider_review": True,
+        "context_aware_routing": True,
         "roster": [
             {"id": model_id, "provider": providers[model_id], "enabled": True}
             for model_id in ids
