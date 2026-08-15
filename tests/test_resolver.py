@@ -13,11 +13,17 @@ def test_brasa_resolves_domain_workforce():
     assert "networking-engineer" in result.agents
     assert "rendering-2d" in result.skills
     assert "multiplayer-networking" in result.skills
-    assert "security-network" in result.skills
+    assert "network-security" in result.skills
     assert "lean-progressive-context" in result.skills
     assert "project-intelligence" in result.skills
     assert "roslyn-context-indexing" in result.skills
     assert "engine-renderer" in result.recipes
+    # Check Gate C & explainability trace
+    assert "security-reviewer" in result.agents
+    assert "threat-modeling" in result.skills
+    assert "secure-coding" in result.skills
+    assert result.traces
+    assert "threat-modeling" in result.traces
 
 
 def test_framework_catalog_references_are_valid():

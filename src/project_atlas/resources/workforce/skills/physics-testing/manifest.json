@@ -1,0 +1,25 @@
+{
+  "id": "physics-testing",
+  "name": "Physics Testing",
+  "version": 1,
+  "schema_version": 2,
+  "select": {
+    "features_any": [
+      "physics",
+      "collision"
+    ]
+  },
+  "purpose": "Test collision layers, triggers, joints, and physics determinism.",
+  "risk_level": "low",
+  "modes": [
+    "testing"
+  ],
+  "requires_any": [],
+  "tools": [],
+  "provenance": {
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "GATE-001",
+  "status": "failed",
+  "failure_policy": "halt",
+  "reason": "Security check failed"
+}

@@ -17,11 +17,11 @@ def test_context_plan_is_bounded(tmp_path: Path):
     small = plan_context(root, "rename a label")
     assert small.profile == "small"
     assert small.strategy == "direct"
-    assert small.budget["max_delegation_depth"] == 0
+    assert small.budget.max_delegation_depth == 0
 
     large = plan_context(root, "architecture migration")
     assert large.profile == "large"
-    assert large.budget["max_delegation_depth"] == 1
+    assert large.budget.max_delegation_depth == 1
 
 
 def test_intelligence_aggregates_input_and_output_separately(tmp_path: Path):

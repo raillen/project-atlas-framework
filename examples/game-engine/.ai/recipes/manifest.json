@@ -1,0 +1,27 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "recipes": [
+    "documentation-refactor",
+    "engine-renderer",
+    "feature-standard",
+    "ui-review"
+  ],
+  "reasons": {
+    "documentation-refactor": [
+      "skill-match"
+    ],
+    "engine-renderer": [
+      "bundle:game-engine",
+      "feature",
+      "project-type"
+    ],
+    "feature-standard": [
+      "bundle:game-engine"
+    ],
+    "ui-review": [
+      "skill-match"
+    ]
+  }
+}

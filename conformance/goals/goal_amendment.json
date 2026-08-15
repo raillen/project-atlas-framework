@@ -1,0 +1,14 @@
+{
+  "id": "AMD-001",
+  "goal_id": "P01-G01",
+  "revision": 2,
+  "reason": "Add performance acceptance threshold",
+  "approved_by": "lead-architect",
+  "approved_at": "2026-08-14T17:10:00Z",
+  "changes": {
+    "acceptance": [
+      "All tests pass deterministically.",
+      "Throughput >= 10k ops/sec."
+    ]
+  }
+}

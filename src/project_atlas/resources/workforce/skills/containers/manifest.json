@@ -1,0 +1,29 @@
+{
+  "id": "containers",
+  "name": "Containers",
+  "version": 1,
+  "schema_version": 2,
+  "select": {
+    "stack_any": [
+      "docker",
+      "podman"
+    ],
+    "features_any": [
+      "deployment",
+      "containers"
+    ]
+  },
+  "purpose": "Build small reproducible container images with non-root execution and health checks.",
+  "risk_level": "low",
+  "modes": [
+    "implementation"
+  ],
+  "requires_any": [],
+  "tools": [],
+  "provenance": {
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  }
+}

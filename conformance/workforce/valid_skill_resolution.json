@@ -1,0 +1,14 @@
+{
+  "project_context": {
+    "stack": [
+      "rust"
+    ],
+    "risk": [
+      "security"
+    ]
+  },
+  "resolved_skills": [
+    "rust",
+    "secure-coding"
+  ]
+}

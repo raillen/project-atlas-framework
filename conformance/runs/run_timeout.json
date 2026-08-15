@@ -1,0 +1,15 @@
+{
+  "id": "R01-003",
+  "task_id": "T01-003",
+  "goal_id": "G01-EXAMPLE",
+  "plan_id": "P01-PLAN-001",
+  "status": "FAILED",
+  "reason": "timeout",
+  "attempts": [
+    {
+      "id": "A1",
+      "status": "TIMEOUT"
+    }
+  ],
+  "evidence": []
+}

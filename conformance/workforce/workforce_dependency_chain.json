@@ -1,0 +1,11 @@
+{
+  "task_chain": [
+    "T01",
+    "T02"
+  ],
+  "transitive_skills": [
+    "rust",
+    "testing",
+    "ci"
+  ]
+}

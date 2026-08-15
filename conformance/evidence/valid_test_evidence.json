@@ -1,0 +1,11 @@
+{
+  "id": "EV-001",
+  "type": "test",
+  "producer": "cargo-test",
+  "timestamp": "2026-08-14T17:00:00Z",
+  "status": "passed",
+  "goal_id": "P01-G01",
+  "task_id": "T-01",
+  "command": "cargo test --test cli",
+  "confidence": "high"
+}

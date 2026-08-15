@@ -1,0 +1,53 @@
+{
+  "id": "P01-G01",
+  "title": "CLI Argument Parser",
+  "phase": "P01",
+  "revision": 1,
+  "state": "LOCKED",
+  "objective": "Build high performance CLI with subcommands.",
+  "constraints": [],
+  "non_goals": [],
+  "acceptance": [
+    "Supports help flag",
+    "Parses subcommands with exit code 0"
+  ],
+  "gates": {
+    "build": "required",
+    "tests": "required",
+    "review": "required",
+    "documentation_impact": "required",
+    "project_intelligence": "required"
+  },
+  "context": {
+    "budget_profile": "medium",
+    "max_delegation_depth": 1
+  },
+  "dependencies": [],
+  "evidence": [],
+  "history": [
+    {
+      "at": "2026-08-14T20:16:09.519742+00:00",
+      "event": "created",
+      "state": "DRAFT"
+    },
+    {
+      "at": "2026-08-14T20:16:09.520032+00:00",
+      "event": "state-transition",
+      "from": "DRAFT",
+      "to": "PLANNED",
+      "reason": ""
+    },
+    {
+      "at": "2026-08-14T20:16:09.520509+00:00",
+      "event": "state-transition",
+      "from": "PLANNED",
+      "to": "LOCKED",
+      "reason": ""
+    }
+  ],
+  "lock": {
+    "revision": 1,
+    "digest": "874203427eb571f4e05a46c4708512debcaf69b5cdae7b92a0d950bd0df38624",
+    "locked_at": "2026-08-14T20:16:09.520494+00:00"
+  }
+}

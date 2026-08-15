@@ -1,0 +1,63 @@
+{
+  "id": "filesystem-security",
+  "name": "Filesystem Security",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Enforce path traversal prevention, symlink resolution checks, file permission masks, and safe temporary file handling.",
+  "risk_level": "high",
+  "modes": [
+    "implementation",
+    "review"
+  ],
+  "inputs": [
+    "Security policy",
+    "Target codebase",
+    "Threat model"
+  ],
+  "outputs": [
+    "Security audit report",
+    "Vulnerability remediation patches",
+    "Security gate evidence"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [
+    "templates/filesystem-security-report.md"
+  ],
+  "checks": [
+    "checks/filesystem-security-checklist.md"
+  ],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "security-scan",
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "features_any": [
+      "filesystem",
+      "storage"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

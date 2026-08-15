@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+from referencing.jsonschema import DRAFT202012
 
 from .catalog import by_id, load_registry
 from .io import load_data, load_json
@@ -33,8 +35,27 @@ REQUIRED_V1_FILES = [
 ]
 
 
-def validate_against_schema(data: dict[str, Any], schema: dict[str, Any]) -> list[str]:
-    errors = Draft202012Validator(schema).iter_errors(data)
+def build_schema_registry(schema_dir: Path) -> Registry:
+    registry = Registry()
+    if schema_dir.exists():
+        for file_path in schema_dir.glob("*.json"):
+            try:
+                content = json.loads(file_path.read_text(encoding="utf-8"))
+                resource = Resource.from_contents(content, default_specification=DRAFT202012)
+                registry = registry.with_resource(uri=file_path.name, resource=resource)
+                if "$id" in content:
+                    registry = registry.with_resource(uri=content["$id"], resource=resource)
+            except Exception:
+                pass
+    return registry
+
+
+def validate_against_schema(
+    data: dict[str, Any],
+    schema: dict[str, Any],
+    registry: Registry | None = None,
+) -> list[str]:
+    errors = Draft202012Validator(schema, registry=registry).iter_errors(data)
     return [f"{'.'.join(map(str, e.absolute_path)) or '<root>'}: {e.message}" for e in errors]
 
 
@@ -44,6 +65,7 @@ def _schema_dir(schema_dir: Path | None) -> Path:
 
 def _validate_v2(root: Path, schema_dir: Path) -> list[str]:
     errors: list[str] = []
+    registry = build_schema_registry(schema_dir)
     for rel in REQUIRED_V2_FILES:
         if not (root / rel).exists():
             errors.append(f"missing required file: {rel}")
@@ -56,15 +78,16 @@ def _validate_v2(root: Path, schema_dir: Path) -> list[str]:
         if data_path.exists() and schema_path.exists():
             data = load_json(data_path)
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
-            for error in validate_against_schema(data, schema):
+            for error in validate_against_schema(data, schema, registry=registry):
                 errors.append(f"{data_path.relative_to(root)}: {error}")
 
     goal_schema = schema_dir / "goal.schema.json"
     if goal_schema.exists() and (root / ".ai/goals").exists():
         schema = json.loads(goal_schema.read_text(encoding="utf-8"))
         for path in sorted((root / ".ai/goals").glob("**/*.goal.json")):
-            for error in validate_against_schema(load_json(path), schema):
+            for error in validate_against_schema(load_json(path), schema, registry=registry):
                 errors.append(f"{path.relative_to(root)}: {error}")
+
 
     atlas_yaml_candidates = [
         root / "PROJECT_MANIFEST.yaml",

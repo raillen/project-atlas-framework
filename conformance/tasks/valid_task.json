@@ -1,0 +1,13 @@
+{
+  "id": "T01-001",
+  "goal_id": "G01-EXAMPLE",
+  "plan_id": "P01-PLAN-001",
+  "title": "A valid task",
+  "objective": "Do something valid",
+  "dependencies": [],
+  "role": "SWE",
+  "required_skills": [
+    "python"
+  ],
+  "status": "PLANNED"
+}

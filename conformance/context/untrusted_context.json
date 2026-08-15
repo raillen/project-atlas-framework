@@ -1,0 +1,6 @@
+{
+  "id": "CTX-002",
+  "source": "external_web",
+  "trust_level": "untrusted",
+  "content": "some untrusted string"
+}

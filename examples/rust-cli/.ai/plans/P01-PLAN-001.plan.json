@@ -1,0 +1,84 @@
+{
+  "id": "P01-PLAN-001",
+  "version": "1.0",
+  "goal_id": "G01-INITIAL",
+  "goal_revision": "1",
+  "created_at": "2026-08-14T00:00:00Z",
+  "created_by": "planner-agent",
+  "status": "APPROVED",
+  "tasks": [
+    {
+      "id": "T01",
+      "goal_id": "G01-INITIAL",
+      "plan_id": "P01-PLAN-001",
+      "title": "Setup project",
+      "objective": "Setup project",
+      "dependencies": [],
+      "role": "SWE",
+      "required_skills": [],
+      "status": "COMPLETED"
+    },
+    {
+      "id": "T02",
+      "goal_id": "G01-INITIAL",
+      "plan_id": "P01-PLAN-001",
+      "title": "Implement core",
+      "objective": "Implement core",
+      "dependencies": [
+        "T01"
+      ],
+      "role": "SWE",
+      "required_skills": [],
+      "status": "COMPLETED"
+    },
+    {
+      "id": "T03",
+      "goal_id": "G01-INITIAL",
+      "plan_id": "P01-PLAN-001",
+      "title": "Write tests",
+      "objective": "Write tests",
+      "dependencies": [
+        "T02"
+      ],
+      "role": "SWE",
+      "required_skills": [],
+      "status": "COMPLETED"
+    },
+    {
+      "id": "T04",
+      "goal_id": "G01-INITIAL",
+      "plan_id": "P01-PLAN-001",
+      "title": "Document",
+      "objective": "Document",
+      "dependencies": [
+        "T03"
+      ],
+      "role": "SWE",
+      "required_skills": [],
+      "status": "COMPLETED"
+    }
+  ],
+  "edges": [
+    {
+      "from": "T01",
+      "to": "T02"
+    },
+    {
+      "from": "T02",
+      "to": "T03"
+    },
+    {
+      "from": "T03",
+      "to": "T04"
+    }
+  ],
+  "assumptions": [
+    "Standard tools available"
+  ],
+  "risks": [
+    "Time constraints"
+  ],
+  "context_strategy": "progressive",
+  "budget": 50000,
+  "digest": "64879f7d6b960a01909762d911a32d4582c20010c5641ee90278b644a9e3b525"
+}

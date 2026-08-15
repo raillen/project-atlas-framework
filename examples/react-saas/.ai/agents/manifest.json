@@ -1,0 +1,88 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "agents": [
+    "accessibility-reviewer",
+    "architect",
+    "backend-engineer",
+    "database-engineer",
+    "debugger",
+    "design-researcher",
+    "design-system-engineer",
+    "documentation-maintainer",
+    "explorer",
+    "frontend-engineer",
+    "implementer",
+    "quality-reviewer",
+    "release-verifier",
+    "reviewer",
+    "security-architect",
+    "security-reviewer",
+    "tester",
+    "ux-architect"
+  ],
+  "reasons": {
+    "accessibility-reviewer": [
+      "feature",
+      "risk"
+    ],
+    "architect": [
+      "core"
+    ],
+    "backend-engineer": [
+      "bundle:web-saas",
+      "project-type"
+    ],
+    "database-engineer": [
+      "bundle:web-saas",
+      "feature"
+    ],
+    "debugger": [
+      "core"
+    ],
+    "design-researcher": [
+      "feature"
+    ],
+    "design-system-engineer": [
+      "feature"
+    ],
+    "documentation-maintainer": [
+      "core"
+    ],
+    "explorer": [
+      "core"
+    ],
+    "frontend-engineer": [
+      "bundle:web-saas",
+      "project-type"
+    ],
+    "implementer": [
+      "bundle:web-saas",
+      "core"
+    ],
+    "quality-reviewer": [
+      "skill-match"
+    ],
+    "release-verifier": [
+      "core"
+    ],
+    "reviewer": [
+      "bundle:web-saas",
+      "core"
+    ],
+    "security-architect": [
+      "risk"
+    ],
+    "security-reviewer": [
+      "risk"
+    ],
+    "tester": [
+      "bundle:web-saas",
+      "core"
+    ],
+    "ux-architect": [
+      "feature"
+    ]
+  }
+}

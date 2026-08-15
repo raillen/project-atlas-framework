@@ -1,1 +1,1993 @@
-{"recipes":[{"id":"feature-standard","name":"Standard Feature","core":true,"purpose":"Default implementation flow for ordinary product work.","instructions":"Goal -> minimal context plan -> Implementer -> Tester -> cross-model Reviewer -> Documentation Delta -> Project Intelligence -> context GC."},{"id":"bug-fix","name":"Evidence-Driven Bug Fix","core":true,"purpose":"Reproduce and repair defects without masking regressions.","instructions":"Reproduce -> minimal regression context -> regression test -> isolate root cause -> fix -> suite -> review -> docs/intelligence -> GC."},{"id":"architecture-change","name":"Architecture Change","core":true,"purpose":"Safely modify system boundaries or public contracts.","instructions":"Explorer -> Architect -> ADR -> impact/context plan -> staged implementation -> tests -> cross-provider review -> docs/intelligence."},{"id":"release","name":"Release","core":true,"purpose":"Produce a verified release candidate.","instructions":"Freeze Goal -> clean build -> test matrix -> security/performance -> migration/docs -> artifacts -> release verifier -> release intelligence."},{"id":"web-feature","name":"Web Feature","select":{"project_types":["web-saas","ecommerce","web-app"]},"requires_skills_any":["frontend-web","backend-api"],"instructions":"Contract/design -> minimal context -> implementation -> unit/E2E -> accessibility/security -> docs delta."},{"id":"security-review","name":"Security Review","select":{"risk_any":["security","public-web","financial"]},"requires_skills_any":["security-web","security-api","security-desktop"],"instructions":"Threat model -> bounded context -> automated/manual abuse checks -> findings -> remediation -> re-test."},{"id":"ui-review","name":"UI/UX Review","select":{"features_any":["ui","editor","dashboard"]},"requires_skills_any":["ui-ux-review"],"instructions":"Capture representative states -> heuristic/accessibility review -> visual regression -> prioritized findings -> re-check."},{"id":"engine-renderer","name":"Engine Renderer Change","select":{"project_types":["game-engine"],"features_any":["rendering","lighting","postfx"]},"requires_skills_any":["rendering-2d","rendering-3d"],"instructions":"Architecture impact -> symbol/context slices -> visual fixture -> implementation -> GPU/CPU benchmark -> visual tests -> independent review."},{"id":"multiplayer-feature","name":"Multiplayer Feature","select":{"features_any":["multiplayer","networking"]},"requires_skills_any":["multiplayer-networking"],"instructions":"Authority contract -> protocol -> implementation -> latency/loss -> security -> docs/intelligence."},{"id":"compiler-change","name":"Compiler/Language Change","select":{"project_types":["compiler","language"],"features_any":["compiler","scripting"]},"requires_skills_any":["compiler-development"],"instructions":"Spec -> conformance tests -> frontend/IR/runtime -> diagnostics -> compatibility -> docs/intelligence."},{"id":"documentation-refactor","name":"Documentation Refactor","select":{"features_any":["documentation","ai-assisted-development"]},"requires_skills_any":["documentation-for-llms"],"instructions":"Inventory truth -> identify drift -> preserve audience/task structure -> virtual chunking -> update ATLAS -> validate site/links; do not create LLM-only duplicate docs."},{"id":"project-bootstrap","name":"Project Bootstrap","core":true,"purpose":"Create a Project Atlas project from explicit project and AI preferences.","instructions":"Gather project/AI preferences -> JSON atlas config -> resolve smallest workforce -> scaffold docs/Goals/intelligence -> set LPC budgets -> validate."}]}
+{
+  "recipes": [
+    {
+      "id": "architecture-change",
+      "name": "Architecture Change",
+      "version": 1,
+      "purpose": "Safely modify system boundaries, public contracts, and ADRs with staged execution.",
+      "preconditions": [
+        "Proposed architectural RFC or Goal"
+      ],
+      "inputs": [
+        "RFC / Goal",
+        "System architecture",
+        "Dependency graph"
+      ],
+      "agents": [
+        "explorer",
+        "architect",
+        "implementer",
+        "tester",
+        "reviewer"
+      ],
+      "skills": [
+        "atlas-navigation",
+        "architecture-quality",
+        "clean-code",
+        "testing-quality",
+        "code-review"
+      ],
+      "gates": [
+        "adr-approval",
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Approved ADR",
+        "Staged migration DAG",
+        "Verified implementation"
+      ],
+      "stop_conditions": [
+        "ADR approved and staged tasks completed"
+      ],
+      "steps": [
+        {
+          "id": "explore",
+          "name": "Map affected consumers and interfaces",
+          "agent_role": "explorer",
+          "skills": [
+            "atlas-navigation"
+          ],
+          "input": "Proposed RFC",
+          "output": "Interface impact map",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "propose-adr",
+          "name": "Author Architectural Decision Record",
+          "depends_on": [
+            "explore"
+          ],
+          "agent_role": "architect",
+          "skills": [
+            "architecture-quality"
+          ],
+          "input": "Interface impact map",
+          "output": "Canonical ADR document",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "adr-approval"
+          ]
+        },
+        {
+          "id": "plan-staged",
+          "name": "Design staged DAG migration plan",
+          "depends_on": [
+            "propose-adr"
+          ],
+          "agent_role": "architect",
+          "skills": [
+            "architecture-quality"
+          ],
+          "input": "Approved ADR",
+          "output": "Staged Plan DAG",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "implement",
+          "name": "Implement contract transformation",
+          "depends_on": [
+            "plan-staged"
+          ],
+          "agent_role": "implementer",
+          "skills": [
+            "clean-code",
+            "refactoring"
+          ],
+          "input": "Staged tasks",
+          "output": "Refactored subsystems",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "test",
+          "name": "Verify backwards compatibility",
+          "depends_on": [
+            "implement"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Compatibility test suite",
+          "output": "Test evidence",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Cross-provider architecture review",
+          "depends_on": [
+            "test"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "architecture-quality",
+            "code-review"
+          ],
+          "input": "Diff and evidence",
+          "output": "Review sign-off",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Architecture Change\n\n## Purpose\nSafely modify system boundaries, public contracts, and ADRs with staged execution.\n\n## Preconditions\n- Proposed architectural RFC or Goal\n\n## Required Inputs\n- RFC / Goal\n- System architecture\n- Dependency graph\n\n## Step DAG & Dependencies\n1. **Map affected consumers and interfaces** (`explore`)\n   - **Role:** `explorer`\n   - **Skills:** `atlas-navigation`\n   - **Input:** Proposed RFC\n   - **Output:** Interface impact map\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Author Architectural Decision Record** (`propose-adr`)\n   - **Role:** `architect`\n   - **Skills:** `architecture-quality`\n   - **Input:** Interface impact map\n   - **Output:** Canonical ADR document\n   - **Evidence Required:** `review`\n   - **Dependencies:** `explore`\n   - **Gates:** `adr-approval`\n3. **Design staged DAG migration plan** (`plan-staged`)\n   - **Role:** `architect`\n   - **Skills:** `architecture-quality`\n   - **Input:** Approved ADR\n   - **Output:** Staged Plan DAG\n   - **Evidence Required:** `review`\n   - **Dependencies:** `propose-adr`\n4. **Implement contract transformation** (`implement`)\n   - **Role:** `implementer`\n   - **Skills:** `clean-code`, `refactoring`\n   - **Input:** Staged tasks\n   - **Output:** Refactored subsystems\n   - **Evidence Required:** `test`\n   - **Dependencies:** `plan-staged`\n5. **Verify backwards compatibility** (`test`)\n   - **Role:** `tester`\n   - **Skills:** `testing-quality`\n   - **Input:** Compatibility test suite\n   - **Output:** Test evidence\n   - **Evidence Required:** `test`\n   - **Dependencies:** `implement`\n   - **Gates:** `tests`\n6. **Cross-provider architecture review** (`review`)\n   - **Role:** `reviewer`\n   - **Skills:** `architecture-quality`, `code-review`\n   - **Input:** Diff and evidence\n   - **Output:** Review sign-off\n   - **Evidence Required:** `review`\n   - **Dependencies:** `test`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `adr-approval`, `tests`, `review`\n- **Artifacts:** `Approved ADR`, `Staged migration DAG`, `Verified implementation`\n\n## Stop Conditions\n- ADR approved and staged tasks completed\n"
+    },
+    {
+      "id": "bug-fix",
+      "name": "Evidence-Driven Bug Fix",
+      "version": 1,
+      "purpose": "Reproduce, isolate, and repair defects without masking regressions.",
+      "preconditions": [
+        "Defect report or reproduction scenario available"
+      ],
+      "inputs": [
+        "Defect report",
+        "Reproduction steps",
+        "Target codebase"
+      ],
+      "agents": [
+        "debugger",
+        "tester",
+        "reviewer"
+      ],
+      "skills": [
+        "testing-quality",
+        "clean-code",
+        "refactoring",
+        "code-review"
+      ],
+      "gates": [
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Regression test",
+        "Root-cause repair patch",
+        "Review sign-off"
+      ],
+      "stop_conditions": [
+        "Failing regression test passes after fix and full suite is green"
+      ],
+      "steps": [
+        {
+          "id": "reproduce",
+          "name": "Author failing regression test",
+          "agent_role": "debugger",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Reproduction steps",
+          "output": "Automated regression test demonstrating bug",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "isolate-and-fix",
+          "name": "Isolate causal boundary and repair",
+          "depends_on": [
+            "reproduce"
+          ],
+          "agent_role": "debugger",
+          "skills": [
+            "clean-code",
+            "refactoring",
+            "error-handling"
+          ],
+          "input": "Regression test and source",
+          "output": "Minimal repair patch",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "verify",
+          "name": "Verify full suite without regression",
+          "depends_on": [
+            "isolate-and-fix"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Full test suite",
+          "output": "Clean test suite pass record",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Independent review of fix",
+          "depends_on": [
+            "verify"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "code-review"
+          ],
+          "input": "Fix diff and regression evidence",
+          "output": "Review approval",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Evidence-Driven Bug Fix\n\n## Purpose\nReproduce, isolate, and repair defects without masking regressions.\n\n## Preconditions\n- Defect report or reproduction scenario available\n\n## Required Inputs\n- Defect report\n- Reproduction steps\n- Target codebase\n\n## Step DAG & Dependencies\n1. **Author failing regression test** (`reproduce`)\n   - **Role:** `debugger`\n   - **Skills:** `testing-quality`\n   - **Input:** Reproduction steps\n   - **Output:** Automated regression test demonstrating bug\n   - **Evidence Required:** `test`\n   - **Dependencies:** None (entry step)\n2. **Isolate causal boundary and repair** (`isolate-and-fix`)\n   - **Role:** `debugger`\n   - **Skills:** `clean-code`, `refactoring`, `error-handling`\n   - **Input:** Regression test and source\n   - **Output:** Minimal repair patch\n   - **Evidence Required:** `test`\n   - **Dependencies:** `reproduce`\n3. **Verify full suite without regression** (`verify`)\n   - **Role:** `tester`\n   - **Skills:** `testing-quality`\n   - **Input:** Full test suite\n   - **Output:** Clean test suite pass record\n   - **Evidence Required:** `test`\n   - **Dependencies:** `isolate-and-fix`\n   - **Gates:** `tests`\n4. **Independent review of fix** (`review`)\n   - **Role:** `reviewer`\n   - **Skills:** `code-review`\n   - **Input:** Fix diff and regression evidence\n   - **Output:** Review approval\n   - **Evidence Required:** `review`\n   - **Dependencies:** `verify`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `tests`, `review`\n- **Artifacts:** `Regression test`, `Root-cause repair patch`, `Review sign-off`\n\n## Stop Conditions\n- Failing regression test passes after fix and full suite is green\n"
+    },
+    {
+      "id": "compiler-change",
+      "name": "Compiler/Language Change",
+      "version": 1,
+      "purpose": "Safely modify parsing, IR, AST, or runtime behavior with conformance test validation.",
+      "select": {
+        "project_types": [
+          "compiler",
+          "language"
+        ],
+        "features_any": [
+          "compiler",
+          "scripting"
+        ]
+      },
+      "requires_skills_any": [
+        "compiler-development"
+      ],
+      "inputs": [
+        "Language specification / RFC",
+        "Grammar"
+      ],
+      "agents": [
+        "architect",
+        "compiler-engineer",
+        "tester",
+        "reviewer"
+      ],
+      "skills": [
+        "architecture-quality",
+        "compiler-development",
+        "clean-code",
+        "testing-quality",
+        "code-review"
+      ],
+      "gates": [
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Language RFC",
+        "AST passes",
+        "Conformance test suite"
+      ],
+      "stop_conditions": [
+        "100% language conformance test suite pass rate"
+      ],
+      "steps": [
+        {
+          "id": "spec",
+          "name": "Specify syntax/semantic changes in RFC",
+          "agent_role": "architect",
+          "skills": [
+            "architecture-quality"
+          ],
+          "input": "Proposed language feature",
+          "output": "Language RFC specification",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "conformance-tests",
+          "name": "Write failing conformance tests",
+          "depends_on": [
+            "spec"
+          ],
+          "agent_role": "compiler-engineer",
+          "skills": [
+            "compiler-development"
+          ],
+          "input": "RFC spec",
+          "output": "Failing test fixtures",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "implement",
+          "name": "Implement AST / IR transformations",
+          "depends_on": [
+            "conformance-tests"
+          ],
+          "agent_role": "compiler-engineer",
+          "skills": [
+            "compiler-development",
+            "clean-code"
+          ],
+          "input": "Conformance tests and grammar",
+          "output": "Compiler pass implementation",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "test",
+          "name": "Execute full conformance test suite",
+          "depends_on": [
+            "implement"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Modified compiler",
+          "output": "Conformance test report",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Independent review of ABI & backwards compatibility",
+          "depends_on": [
+            "test"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "code-review"
+          ],
+          "input": "Compiler diff and test report",
+          "output": "Review sign-off",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "preconditions": [
+        "Language RFC or specification change proposed",
+        "Existing grammar and conformance test suite available"
+      ],
+      "instructions": "# Compiler/Language Change\n\n## Purpose\nSafely modify parsing, IR, AST, or runtime behavior with conformance test validation.\n\n## Preconditions\n- Language RFC or specification change proposed\n- Existing grammar and conformance test suite available\n\n## Required Inputs\n- Language specification / RFC\n- Grammar\n\n## Step DAG & Dependencies\n1. **Specify syntax/semantic changes in RFC** (`spec`)\n   - **Role:** `architect`\n   - **Skills:** `architecture-quality`\n   - **Input:** Proposed language feature\n   - **Output:** Language RFC specification\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Write failing conformance tests** (`conformance-tests`)\n   - **Role:** `compiler-engineer`\n   - **Skills:** `compiler-development`\n   - **Input:** RFC spec\n   - **Output:** Failing test fixtures\n   - **Evidence Required:** `test`\n   - **Dependencies:** `spec`\n3. **Implement AST / IR transformations** (`implement`)\n   - **Role:** `compiler-engineer`\n   - **Skills:** `compiler-development`, `clean-code`\n   - **Input:** Conformance tests and grammar\n   - **Output:** Compiler pass implementation\n   - **Evidence Required:** `test`\n   - **Dependencies:** `conformance-tests`\n4. **Execute full conformance test suite** (`test`)\n   - **Role:** `tester`\n   - **Skills:** `testing-quality`\n   - **Input:** Modified compiler\n   - **Output:** Conformance test report\n   - **Evidence Required:** `test`\n   - **Dependencies:** `implement`\n   - **Gates:** `tests`\n5. **Independent review of ABI & backwards compatibility** (`review`)\n   - **Role:** `reviewer`\n   - **Skills:** `code-review`\n   - **Input:** Compiler diff and test report\n   - **Output:** Review sign-off\n   - **Evidence Required:** `review`\n   - **Dependencies:** `test`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `tests`, `review`\n- **Artifacts:** `Language RFC`, `AST passes`, `Conformance test suite`\n\n## Stop Conditions\n- 100% language conformance test suite pass rate\n"
+    },
+    {
+      "id": "documentation-refactor",
+      "name": "Documentation Refactor",
+      "version": 1,
+      "purpose": "Reorganize canonical docs, docs/ATLAS.md navigation, and audience split without document proliferation.",
+      "select": {
+        "features_any": [
+          "documentation",
+          "ai-assisted-development"
+        ]
+      },
+      "requires_skills_any": [
+        "documentation-for-llms",
+        "documentation"
+      ],
+      "inputs": [
+        "Current documentation set",
+        "Audience definitions"
+      ],
+      "agents": [
+        "explorer",
+        "documentation-maintainer",
+        "reviewer"
+      ],
+      "skills": [
+        "atlas-navigation",
+        "documentation",
+        "documentation-for-llms"
+      ],
+      "gates": [
+        "review"
+      ],
+      "artifacts": [
+        "Synchronized canonical Markdown",
+        "Updated docs/ATLAS.md"
+      ],
+      "stop_conditions": [
+        "All documentation links valid and zero redundant files"
+      ],
+      "steps": [
+        {
+          "id": "inventory",
+          "name": "Inventory current canonical documents",
+          "agent_role": "explorer",
+          "skills": [
+            "atlas-navigation"
+          ],
+          "input": "docs/ directory",
+          "output": "Documentation inventory",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "structure",
+          "name": "Map audience needs (user, dev, ops, agent)",
+          "depends_on": [
+            "inventory"
+          ],
+          "agent_role": "documentation-maintainer",
+          "skills": [
+            "documentation"
+          ],
+          "input": "Documentation inventory",
+          "output": "Audience structure plan",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "patch",
+          "name": "Patch canonical Markdown files",
+          "depends_on": [
+            "structure"
+          ],
+          "agent_role": "documentation-maintainer",
+          "skills": [
+            "documentation",
+            "documentation-for-llms"
+          ],
+          "input": "Structure plan",
+          "output": "Refactored documentation files",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "verify-links",
+          "name": "Validate links and ATLAS routing",
+          "depends_on": [
+            "patch"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "documentation"
+          ],
+          "input": "Refactored docs",
+          "output": "Link validation report",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Documentation Refactor\n\n## Purpose\nReorganize canonical docs, docs/ATLAS.md navigation, and audience split without document proliferation.\n\n## Required Inputs\n- Current documentation set\n- Audience definitions\n\n## Step DAG & Dependencies\n1. **Inventory current canonical documents** (`inventory`)\n   - **Role:** `explorer`\n   - **Skills:** `atlas-navigation`\n   - **Input:** docs/ directory\n   - **Output:** Documentation inventory\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Map audience needs (user, dev, ops, agent)** (`structure`)\n   - **Role:** `documentation-maintainer`\n   - **Skills:** `documentation`\n   - **Input:** Documentation inventory\n   - **Output:** Audience structure plan\n   - **Evidence Required:** `review`\n   - **Dependencies:** `inventory`\n3. **Patch canonical Markdown files** (`patch`)\n   - **Role:** `documentation-maintainer`\n   - **Skills:** `documentation`, `documentation-for-llms`\n   - **Input:** Structure plan\n   - **Output:** Refactored documentation files\n   - **Evidence Required:** `review`\n   - **Dependencies:** `structure`\n4. **Validate links and ATLAS routing** (`verify-links`)\n   - **Role:** `reviewer`\n   - **Skills:** `documentation`\n   - **Input:** Refactored docs\n   - **Output:** Link validation report\n   - **Evidence Required:** `review`\n   - **Dependencies:** `patch`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `review`\n- **Artifacts:** `Synchronized canonical Markdown`, `Updated docs/ATLAS.md`\n\n## Stop Conditions\n- All documentation links valid and zero redundant files\n"
+    },
+    {
+      "id": "engine-renderer",
+      "name": "Engine Renderer Change",
+      "version": 1,
+      "purpose": "Safely modify GPU, 2D/3D pipelines, and shader systems with visual fixture verification.",
+      "select": {
+        "project_types": [
+          "game-engine"
+        ],
+        "features_any": [
+          "rendering",
+          "lighting",
+          "postfx"
+        ]
+      },
+      "requires_skills_any": [
+        "rendering-2d",
+        "rendering-3d",
+        "shaders"
+      ],
+      "inputs": [
+        "Render pipeline spec",
+        "Visual baseline fixtures"
+      ],
+      "agents": [
+        "explorer",
+        "renderer-engineer",
+        "tester",
+        "reviewer"
+      ],
+      "skills": [
+        "atlas-navigation",
+        "shaders",
+        "rendering-2d",
+        "benchmarking",
+        "performance-native",
+        "architecture-quality"
+      ],
+      "gates": [
+        "benchmark",
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Shader pipelines",
+        "Visual regression diffs",
+        "GPU frame time benchmarks"
+      ],
+      "stop_conditions": [
+        "Visual fixtures match and frame timing budget met"
+      ],
+      "steps": [
+        {
+          "id": "explore",
+          "name": "Map GPU pipeline boundaries",
+          "agent_role": "explorer",
+          "skills": [
+            "atlas-navigation"
+          ],
+          "input": "Render subsystem",
+          "output": "Pipeline boundary map",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "visual-fixture",
+          "name": "Establish visual fixtures",
+          "depends_on": [
+            "explore"
+          ],
+          "agent_role": "renderer-engineer",
+          "skills": [
+            "shaders",
+            "rendering-2d"
+          ],
+          "input": "Visual requirements",
+          "output": "Baseline visual fixtures",
+          "required_evidence": [
+            "screenshot"
+          ]
+        },
+        {
+          "id": "implement",
+          "name": "Implement renderer / shader modifications",
+          "depends_on": [
+            "visual-fixture"
+          ],
+          "agent_role": "renderer-engineer",
+          "skills": [
+            "rendering-2d",
+            "shaders"
+          ],
+          "input": "Visual fixture & shader spec",
+          "output": "Shader / pipeline changeset",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "benchmark",
+          "name": "Profile draw calls and GPU timings",
+          "depends_on": [
+            "implement"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "benchmarking",
+            "performance-native"
+          ],
+          "input": "Modified renderer",
+          "output": "GPU frame time benchmark",
+          "required_evidence": [
+            "benchmark"
+          ],
+          "gates": [
+            "benchmark"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Independent review of rendering architecture",
+          "depends_on": [
+            "benchmark"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "architecture-quality"
+          ],
+          "input": "Diff, benchmark, and visual diffs",
+          "output": "Review sign-off",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Engine Renderer Change\n\n## Purpose\nSafely modify GPU, 2D/3D pipelines, and shader systems with visual fixture verification.\n\n## Required Inputs\n- Render pipeline spec\n- Visual baseline fixtures\n\n## Step DAG & Dependencies\n1. **Map GPU pipeline boundaries** (`explore`)\n   - **Role:** `explorer`\n   - **Skills:** `atlas-navigation`\n   - **Input:** Render subsystem\n   - **Output:** Pipeline boundary map\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Establish visual fixtures** (`visual-fixture`)\n   - **Role:** `renderer-engineer`\n   - **Skills:** `shaders`, `rendering-2d`\n   - **Input:** Visual requirements\n   - **Output:** Baseline visual fixtures\n   - **Evidence Required:** `screenshot`\n   - **Dependencies:** `explore`\n3. **Implement renderer / shader modifications** (`implement`)\n   - **Role:** `renderer-engineer`\n   - **Skills:** `rendering-2d`, `shaders`\n   - **Input:** Visual fixture & shader spec\n   - **Output:** Shader / pipeline changeset\n   - **Evidence Required:** `test`\n   - **Dependencies:** `visual-fixture`\n4. **Profile draw calls and GPU timings** (`benchmark`)\n   - **Role:** `tester`\n   - **Skills:** `benchmarking`, `performance-native`\n   - **Input:** Modified renderer\n   - **Output:** GPU frame time benchmark\n   - **Evidence Required:** `benchmark`\n   - **Dependencies:** `implement`\n   - **Gates:** `benchmark`\n5. **Independent review of rendering architecture** (`review`)\n   - **Role:** `reviewer`\n   - **Skills:** `architecture-quality`\n   - **Input:** Diff, benchmark, and visual diffs\n   - **Output:** Review sign-off\n   - **Evidence Required:** `review`\n   - **Dependencies:** `benchmark`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `benchmark`, `tests`, `review`\n- **Artifacts:** `Shader pipelines`, `Visual regression diffs`, `GPU frame time benchmarks`\n\n## Stop Conditions\n- Visual fixtures match and frame timing budget met\n"
+    },
+    {
+      "id": "feature-standard",
+      "name": "Standard Feature Implementation",
+      "version": 1,
+      "purpose": "Default multi-agent implementation flow for ordinary product and feature work with independent cross-model review.",
+      "preconditions": [
+        "Active Goal in LOCKED or PLANNED state",
+        "Initial codebase context index available"
+      ],
+      "inputs": [
+        "Active Goal",
+        "Task specifications",
+        "Acceptance criteria"
+      ],
+      "agents": [
+        "explorer",
+        "architect",
+        "implementer",
+        "tester",
+        "reviewer",
+        "documentation-maintainer"
+      ],
+      "skills": [
+        "atlas-navigation",
+        "lean-progressive-context",
+        "clean-code",
+        "refactoring",
+        "testing-quality",
+        "code-review",
+        "documentation"
+      ],
+      "gates": [
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Implementation changeset",
+        "Test suite evidence",
+        "Review report",
+        "Documentation delta"
+      ],
+      "stop_conditions": [
+        "Goal acceptance criteria met and verified with evidence",
+        "Reviewer approval granted"
+      ],
+      "steps": [
+        {
+          "id": "explore",
+          "name": "Map impact and dependencies",
+          "agent_role": "explorer",
+          "skills": [
+            "atlas-navigation",
+            "lean-progressive-context"
+          ],
+          "input": "Active Goal & docs/ATLAS.md",
+          "output": "Impact map and context plan",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "plan",
+          "name": "Design minimal task plan",
+          "depends_on": [
+            "explore"
+          ],
+          "agent_role": "architect",
+          "skills": [
+            "clean-code",
+            "architecture-quality"
+          ],
+          "input": "Impact map",
+          "output": "Approved Plan DAG",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "implement",
+          "name": "Implement scoped changes",
+          "depends_on": [
+            "plan"
+          ],
+          "agent_role": "implementer",
+          "skills": [
+            "clean-code",
+            "refactoring",
+            "error-handling"
+          ],
+          "input": "Task ContextPack",
+          "output": "Source code and unit tests",
+          "required_evidence": [
+            "lint"
+          ]
+        },
+        {
+          "id": "test",
+          "name": "Execute test verification",
+          "depends_on": [
+            "implement"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Changed implementation",
+          "output": "Test execution report",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Independent review",
+          "depends_on": [
+            "test"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "code-review",
+            "clean-code"
+          ],
+          "input": "Changeset diff and test evidence",
+          "output": "Review report and approval",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        },
+        {
+          "id": "docs",
+          "name": "Synchronize canonical documentation",
+          "depends_on": [
+            "review"
+          ],
+          "agent_role": "documentation-maintainer",
+          "skills": [
+            "documentation",
+            "lean-progressive-context"
+          ],
+          "input": "Verified changeset",
+          "output": "Canonical Markdown delta",
+          "required_evidence": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Standard Feature Implementation\n\n## Purpose\nDefault multi-agent implementation flow for ordinary product and feature work with independent cross-model review.\n\n## Preconditions\n- Active Goal in LOCKED or PLANNED state\n- Initial codebase context index available\n\n## Required Inputs\n- Active Goal\n- Task specifications\n- Acceptance criteria\n\n## Step DAG & Dependencies\n1. **Map impact and dependencies** (`explore`)\n   - **Role:** `explorer`\n   - **Skills:** `atlas-navigation`, `lean-progressive-context`\n   - **Input:** Active Goal & docs/ATLAS.md\n   - **Output:** Impact map and context plan\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Design minimal task plan** (`plan`)\n   - **Role:** `architect`\n   - **Skills:** `clean-code`, `architecture-quality`\n   - **Input:** Impact map\n   - **Output:** Approved Plan DAG\n   - **Evidence Required:** `review`\n   - **Dependencies:** `explore`\n3. **Implement scoped changes** (`implement`)\n   - **Role:** `implementer`\n   - **Skills:** `clean-code`, `refactoring`, `error-handling`\n   - **Input:** Task ContextPack\n   - **Output:** Source code and unit tests\n   - **Evidence Required:** `lint`\n   - **Dependencies:** `plan`\n4. **Execute test verification** (`test`)\n   - **Role:** `tester`\n   - **Skills:** `testing-quality`\n   - **Input:** Changed implementation\n   - **Output:** Test execution report\n   - **Evidence Required:** `test`\n   - **Dependencies:** `implement`\n   - **Gates:** `tests`\n5. **Independent review** (`review`)\n   - **Role:** `reviewer`\n   - **Skills:** `code-review`, `clean-code`\n   - **Input:** Changeset diff and test evidence\n   - **Output:** Review report and approval\n   - **Evidence Required:** `review`\n   - **Dependencies:** `test`\n   - **Gates:** `review`\n6. **Synchronize canonical documentation** (`docs`)\n   - **Role:** `documentation-maintainer`\n   - **Skills:** `documentation`, `lean-progressive-context`\n   - **Input:** Verified changeset\n   - **Output:** Canonical Markdown delta\n   - **Evidence Required:** `review`\n   - **Dependencies:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `tests`, `review`\n- **Artifacts:** `Implementation changeset`, `Test suite evidence`, `Review report`, `Documentation delta`\n\n## Stop Conditions\n- Goal acceptance criteria met and verified with evidence\n- Reviewer approval granted\n"
+    },
+    {
+      "id": "github-issue",
+      "name": "GitHub Issue Workflow",
+      "version": 1,
+      "purpose": "Standardized issue authoring, refinement, and triaging with Goal linkage.",
+      "select": {
+        "features_any": [
+          "github",
+          "issue-tracking"
+        ]
+      },
+      "requires_skills_any": [
+        "github-issue-create",
+        "github-issue-triage"
+      ],
+      "inputs": [
+        "User request / bug report",
+        "Repository context"
+      ],
+      "agents": [
+        "explorer",
+        "issue-triager",
+        "issue-author"
+      ],
+      "skills": [
+        "atlas-navigation",
+        "github-issue-triage",
+        "github-issue-create",
+        "github-issue-refine"
+      ],
+      "gates": [
+        "review"
+      ],
+      "artifacts": [
+        "Canonical GitHub issue record"
+      ],
+      "stop_conditions": [
+        "Issue authored with objective acceptance criteria"
+      ],
+      "steps": [
+        {
+          "id": "context",
+          "name": "Resolve repository and active Goal context",
+          "agent_role": "explorer",
+          "skills": [
+            "atlas-navigation"
+          ],
+          "input": "User request",
+          "output": "Context summary",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "duplicates",
+          "name": "Search for duplicate issues",
+          "depends_on": [
+            "context"
+          ],
+          "agent_role": "issue-triager",
+          "skills": [
+            "github-issue-triage"
+          ],
+          "input": "Issue repository",
+          "output": "Duplicate analysis",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "classify",
+          "name": "Classify issue type, severity, and milestone",
+          "depends_on": [
+            "duplicates"
+          ],
+          "agent_role": "issue-triager",
+          "skills": [
+            "github-issue-triage"
+          ],
+          "input": "Request analysis",
+          "output": "Classification metadata",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "draft",
+          "name": "Draft issue with objective acceptance criteria",
+          "depends_on": [
+            "classify"
+          ],
+          "agent_role": "issue-author",
+          "skills": [
+            "github-issue-create",
+            "github-issue-refine"
+          ],
+          "input": "Classification & scope",
+          "output": "Draft issue markdown",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "publish",
+          "name": "Publish canonical issue record",
+          "depends_on": [
+            "draft"
+          ],
+          "agent_role": "issue-author",
+          "skills": [
+            "github-issue-create"
+          ],
+          "input": "Draft issue",
+          "output": "Canonical issue record",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "preconditions": [
+        "Repository context and active Goals accessible",
+        "Issue tracker permissions available"
+      ],
+      "instructions": "# GitHub Issue Workflow\n\n## Purpose\nStandardized issue authoring, refinement, and triaging with Goal linkage.\n\n## Preconditions\n- Repository context and active Goals accessible\n- Issue tracker permissions available\n\n## Required Inputs\n- User request / bug report\n- Repository context\n\n## Step DAG & Dependencies\n1. **Resolve repository and active Goal context** (`context`)\n   - **Role:** `explorer`\n   - **Skills:** `atlas-navigation`\n   - **Input:** User request\n   - **Output:** Context summary\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Search for duplicate issues** (`duplicates`)\n   - **Role:** `issue-triager`\n   - **Skills:** `github-issue-triage`\n   - **Input:** Issue repository\n   - **Output:** Duplicate analysis\n   - **Evidence Required:** `review`\n   - **Dependencies:** `context`\n3. **Classify issue type, severity, and milestone** (`classify`)\n   - **Role:** `issue-triager`\n   - **Skills:** `github-issue-triage`\n   - **Input:** Request analysis\n   - **Output:** Classification metadata\n   - **Evidence Required:** `review`\n   - **Dependencies:** `duplicates`\n4. **Draft issue with objective acceptance criteria** (`draft`)\n   - **Role:** `issue-author`\n   - **Skills:** `github-issue-create`, `github-issue-refine`\n   - **Input:** Classification & scope\n   - **Output:** Draft issue markdown\n   - **Evidence Required:** `review`\n   - **Dependencies:** `classify`\n5. **Publish canonical issue record** (`publish`)\n   - **Role:** `issue-author`\n   - **Skills:** `github-issue-create`\n   - **Input:** Draft issue\n   - **Output:** Canonical issue record\n   - **Evidence Required:** `review`\n   - **Dependencies:** `draft`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `review`\n- **Artifacts:** `Canonical GitHub issue record`\n\n## Stop Conditions\n- Issue authored with objective acceptance criteria\n"
+    },
+    {
+      "id": "multiplayer-feature",
+      "name": "Multiplayer Feature Development",
+      "version": 1,
+      "purpose": "Implement authoritative replication and network protocols with packet loss simulation.",
+      "select": {
+        "features_any": [
+          "multiplayer",
+          "networking"
+        ]
+      },
+      "requires_skills_any": [
+        "multiplayer-networking",
+        "network-testing"
+      ],
+      "inputs": [
+        "Network protocol spec",
+        "Authority architecture"
+      ],
+      "agents": [
+        "networking-engineer",
+        "tester",
+        "security-reviewer"
+      ],
+      "skills": [
+        "multiplayer-networking",
+        "clean-code",
+        "network-testing",
+        "network-security"
+      ],
+      "gates": [
+        "tests",
+        "security-scan"
+      ],
+      "artifacts": [
+        "Replication protocol",
+        "Network resilience test logs",
+        "Security sign-off"
+      ],
+      "stop_conditions": [
+        "Replication verified under simulated packet loss and jitter"
+      ],
+      "steps": [
+        {
+          "id": "authority-contract",
+          "name": "Define state authority and replication contracts",
+          "agent_role": "networking-engineer",
+          "skills": [
+            "multiplayer-networking"
+          ],
+          "input": "Protocol requirement",
+          "output": "Replication authority contract",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "implement",
+          "name": "Implement protocol packets and serialization",
+          "depends_on": [
+            "authority-contract"
+          ],
+          "agent_role": "networking-engineer",
+          "skills": [
+            "multiplayer-networking",
+            "clean-code"
+          ],
+          "input": "Authority contract",
+          "output": "Networking implementation",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "network-test",
+          "name": "Simulate packet loss, jitter, and disconnects",
+          "depends_on": [
+            "implement"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "network-testing"
+          ],
+          "input": "Network implementation",
+          "output": "Resilience test logs",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "security-review",
+          "name": "Audit against packet tampering and DoS",
+          "depends_on": [
+            "network-test"
+          ],
+          "agent_role": "security-reviewer",
+          "skills": [
+            "network-security"
+          ],
+          "input": "Packet parser diff",
+          "output": "Security audit sign-off",
+          "required_evidence": [
+            "security-scan"
+          ],
+          "gates": [
+            "security-scan"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Multiplayer Feature Development\n\n## Purpose\nImplement authoritative replication and network protocols with packet loss simulation.\n\n## Required Inputs\n- Network protocol spec\n- Authority architecture\n\n## Step DAG & Dependencies\n1. **Define state authority and replication contracts** (`authority-contract`)\n   - **Role:** `networking-engineer`\n   - **Skills:** `multiplayer-networking`\n   - **Input:** Protocol requirement\n   - **Output:** Replication authority contract\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Implement protocol packets and serialization** (`implement`)\n   - **Role:** `networking-engineer`\n   - **Skills:** `multiplayer-networking`, `clean-code`\n   - **Input:** Authority contract\n   - **Output:** Networking implementation\n   - **Evidence Required:** `test`\n   - **Dependencies:** `authority-contract`\n3. **Simulate packet loss, jitter, and disconnects** (`network-test`)\n   - **Role:** `tester`\n   - **Skills:** `network-testing`\n   - **Input:** Network implementation\n   - **Output:** Resilience test logs\n   - **Evidence Required:** `test`\n   - **Dependencies:** `implement`\n   - **Gates:** `tests`\n4. **Audit against packet tampering and DoS** (`security-review`)\n   - **Role:** `security-reviewer`\n   - **Skills:** `network-security`\n   - **Input:** Packet parser diff\n   - **Output:** Security audit sign-off\n   - **Evidence Required:** `security-scan`\n   - **Dependencies:** `network-test`\n   - **Gates:** `security-scan`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `tests`, `security-scan`\n- **Artifacts:** `Replication protocol`, `Network resilience test logs`, `Security sign-off`\n\n## Stop Conditions\n- Replication verified under simulated packet loss and jitter\n"
+    },
+    {
+      "id": "project-bootstrap",
+      "name": "Project Bootstrap",
+      "version": 1,
+      "purpose": "Initialize Project Atlas configuration, schema validation, and minimal workforce for a new repository.",
+      "inputs": [
+        "Project profile JSON",
+        "Target directory"
+      ],
+      "agents": [
+        "explorer",
+        "architect",
+        "implementer",
+        "tester"
+      ],
+      "skills": [
+        "atlas-navigation",
+        "clean-code",
+        "documentation",
+        "goal-management",
+        "testing-quality"
+      ],
+      "gates": [
+        "tests"
+      ],
+      "artifacts": [
+        "atlas.json",
+        "docs/ATLAS.md",
+        ".ai/ manifests",
+        "Initial Goal"
+      ],
+      "stop_conditions": [
+        "Project initialized and validated with atlas doctor"
+      ],
+      "steps": [
+        {
+          "id": "profile",
+          "name": "Capture project preferences and stack",
+          "agent_role": "explorer",
+          "skills": [
+            "atlas-navigation"
+          ],
+          "input": "Project profile",
+          "output": "Validated ProjectProfile object",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "resolve",
+          "name": "Resolve smallest useful workforce",
+          "depends_on": [
+            "profile"
+          ],
+          "agent_role": "architect",
+          "skills": [
+            "clean-code"
+          ],
+          "input": "ProjectProfile",
+          "output": "Resolution plan",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "scaffold",
+          "name": "Scaffold canonical directory layout and atlas.json",
+          "depends_on": [
+            "resolve"
+          ],
+          "agent_role": "implementer",
+          "skills": [
+            "documentation",
+            "goal-management"
+          ],
+          "input": "Resolution plan",
+          "output": "Scaffolded workspace",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "validate",
+          "name": "Validate generated configuration against schemas",
+          "depends_on": [
+            "scaffold"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Scaffolded workspace",
+          "output": "Validation pass report",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Project Bootstrap\n\n## Purpose\nInitialize Project Atlas configuration, schema validation, and minimal workforce for a new repository.\n\n## Required Inputs\n- Project profile JSON\n- Target directory\n\n## Step DAG & Dependencies\n1. **Capture project preferences and stack** (`profile`)\n   - **Role:** `explorer`\n   - **Skills:** `atlas-navigation`\n   - **Input:** Project profile\n   - **Output:** Validated ProjectProfile object\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Resolve smallest useful workforce** (`resolve`)\n   - **Role:** `architect`\n   - **Skills:** `clean-code`\n   - **Input:** ProjectProfile\n   - **Output:** Resolution plan\n   - **Evidence Required:** `review`\n   - **Dependencies:** `profile`\n3. **Scaffold canonical directory layout and atlas.json** (`scaffold`)\n   - **Role:** `implementer`\n   - **Skills:** `documentation`, `goal-management`\n   - **Input:** Resolution plan\n   - **Output:** Scaffolded workspace\n   - **Evidence Required:** `test`\n   - **Dependencies:** `resolve`\n4. **Validate generated configuration against schemas** (`validate`)\n   - **Role:** `tester`\n   - **Skills:** `testing-quality`\n   - **Input:** Scaffolded workspace\n   - **Output:** Validation pass report\n   - **Evidence Required:** `test`\n   - **Dependencies:** `scaffold`\n   - **Gates:** `tests`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `tests`\n- **Artifacts:** `atlas.json`, `docs/ATLAS.md`, `.ai/ manifests`, `Initial Goal`\n\n## Stop Conditions\n- Project initialized and validated with atlas doctor\n"
+    },
+    {
+      "id": "release",
+      "name": "Release Verification",
+      "version": 1,
+      "purpose": "Produce, verify, and audit release artifacts across target matrices.",
+      "preconditions": [
+        "Release Goal locked",
+        "Working tree clean"
+      ],
+      "inputs": [
+        "Release candidate commit",
+        "Changelog delta"
+      ],
+      "agents": [
+        "architect",
+        "release-verifier",
+        "tester",
+        "security-reviewer"
+      ],
+      "skills": [
+        "goal-management",
+        "release-engineering",
+        "testing-quality",
+        "security-review"
+      ],
+      "gates": [
+        "build",
+        "tests",
+        "security-scan"
+      ],
+      "artifacts": [
+        "Release verification scorecard",
+        "Checksums",
+        "Rollback plan"
+      ],
+      "stop_conditions": [
+        "All release gates pass cleanly"
+      ],
+      "steps": [
+        {
+          "id": "freeze",
+          "name": "Lock release Goal and scope",
+          "agent_role": "architect",
+          "skills": [
+            "goal-management"
+          ],
+          "input": "Release scope",
+          "output": "LOCKED Goal record",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "build-matrix",
+          "name": "Clean build across target matrix",
+          "depends_on": [
+            "freeze"
+          ],
+          "agent_role": "release-verifier",
+          "skills": [
+            "release-engineering"
+          ],
+          "input": "Release commit",
+          "output": "Release binaries / packages",
+          "required_evidence": [
+            "build"
+          ],
+          "gates": [
+            "build"
+          ]
+        },
+        {
+          "id": "test-matrix",
+          "name": "Execute full test matrix",
+          "depends_on": [
+            "build-matrix"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "testing-quality"
+          ],
+          "input": "Built artifacts",
+          "output": "Matrix test report",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "security-audit",
+          "name": "Audit release dependencies & CVEs",
+          "depends_on": [
+            "test-matrix"
+          ],
+          "agent_role": "security-reviewer",
+          "skills": [
+            "security-review",
+            "supply-chain-security"
+          ],
+          "input": "Lockfile & packages",
+          "output": "Security scan report",
+          "required_evidence": [
+            "security-scan"
+          ],
+          "gates": [
+            "security-scan"
+          ]
+        },
+        {
+          "id": "verify-release",
+          "name": "Verify checksums and rollback plan",
+          "depends_on": [
+            "security-audit"
+          ],
+          "agent_role": "release-verifier",
+          "skills": [
+            "release-engineering"
+          ],
+          "input": "All gate evidence",
+          "output": "Signed release verification scorecard",
+          "required_evidence": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Release Verification\n\n## Purpose\nProduce, verify, and audit release artifacts across target matrices.\n\n## Preconditions\n- Release Goal locked\n- Working tree clean\n\n## Required Inputs\n- Release candidate commit\n- Changelog delta\n\n## Step DAG & Dependencies\n1. **Lock release Goal and scope** (`freeze`)\n   - **Role:** `architect`\n   - **Skills:** `goal-management`\n   - **Input:** Release scope\n   - **Output:** LOCKED Goal record\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Clean build across target matrix** (`build-matrix`)\n   - **Role:** `release-verifier`\n   - **Skills:** `release-engineering`\n   - **Input:** Release commit\n   - **Output:** Release binaries / packages\n   - **Evidence Required:** `build`\n   - **Dependencies:** `freeze`\n   - **Gates:** `build`\n3. **Execute full test matrix** (`test-matrix`)\n   - **Role:** `tester`\n   - **Skills:** `testing-quality`\n   - **Input:** Built artifacts\n   - **Output:** Matrix test report\n   - **Evidence Required:** `test`\n   - **Dependencies:** `build-matrix`\n   - **Gates:** `tests`\n4. **Audit release dependencies & CVEs** (`security-audit`)\n   - **Role:** `security-reviewer`\n   - **Skills:** `security-review`, `supply-chain-security`\n   - **Input:** Lockfile & packages\n   - **Output:** Security scan report\n   - **Evidence Required:** `security-scan`\n   - **Dependencies:** `test-matrix`\n   - **Gates:** `security-scan`\n5. **Verify checksums and rollback plan** (`verify-release`)\n   - **Role:** `release-verifier`\n   - **Skills:** `release-engineering`\n   - **Input:** All gate evidence\n   - **Output:** Signed release verification scorecard\n   - **Evidence Required:** `review`\n   - **Dependencies:** `security-audit`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `build`, `tests`, `security-scan`\n- **Artifacts:** `Release verification scorecard`, `Checksums`, `Rollback plan`\n\n## Stop Conditions\n- All release gates pass cleanly\n"
+    },
+    {
+      "id": "security-review",
+      "name": "Security Review Workflow",
+      "version": 1,
+      "purpose": "Threat-model, audit, and remediate security-sensitive features.",
+      "select": {
+        "risk_any": [
+          "security",
+          "public-web",
+          "financial",
+          "privacy"
+        ]
+      },
+      "requires_skills_any": [
+        "threat-modeling",
+        "security-review",
+        "secure-coding"
+      ],
+      "preconditions": [
+        "Target feature design or implementation available"
+      ],
+      "inputs": [
+        "Feature design / diff",
+        "Security policy"
+      ],
+      "agents": [
+        "security-architect",
+        "security-reviewer",
+        "implementer"
+      ],
+      "skills": [
+        "threat-modeling",
+        "security-review",
+        "secure-coding",
+        "clean-code"
+      ],
+      "gates": [
+        "security-scan",
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Threat model",
+        "Security audit report",
+        "Remediation verification"
+      ],
+      "stop_conditions": [
+        "Zero unresolved high/critical security findings"
+      ],
+      "steps": [
+        {
+          "id": "threat-model",
+          "name": "Enumerate trust boundaries and threats",
+          "agent_role": "security-architect",
+          "skills": [
+            "threat-modeling"
+          ],
+          "input": "Feature architecture",
+          "output": "Threat model specification",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "audit",
+          "name": "Audit source for abuse paths",
+          "depends_on": [
+            "threat-model"
+          ],
+          "agent_role": "security-reviewer",
+          "skills": [
+            "security-review",
+            "secure-coding"
+          ],
+          "input": "Source diff and threat model",
+          "output": "Security findings report",
+          "required_evidence": [
+            "security-scan"
+          ],
+          "gates": [
+            "security-scan"
+          ]
+        },
+        {
+          "id": "remediate",
+          "name": "Remediate findings at boundary",
+          "depends_on": [
+            "audit"
+          ],
+          "agent_role": "implementer",
+          "skills": [
+            "secure-coding",
+            "clean-code"
+          ],
+          "input": "Security findings",
+          "output": "Remediation patch",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "re-verify",
+          "name": "Re-verify security gates",
+          "depends_on": [
+            "remediate"
+          ],
+          "agent_role": "security-reviewer",
+          "skills": [
+            "security-review"
+          ],
+          "input": "Remediated code",
+          "output": "Security audit sign-off",
+          "required_evidence": [
+            "security-scan",
+            "test"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Security Review Workflow\n\n## Purpose\nThreat-model, audit, and remediate security-sensitive features.\n\n## Preconditions\n- Target feature design or implementation available\n\n## Required Inputs\n- Feature design / diff\n- Security policy\n\n## Step DAG & Dependencies\n1. **Enumerate trust boundaries and threats** (`threat-model`)\n   - **Role:** `security-architect`\n   - **Skills:** `threat-modeling`\n   - **Input:** Feature architecture\n   - **Output:** Threat model specification\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **Audit source for abuse paths** (`audit`)\n   - **Role:** `security-reviewer`\n   - **Skills:** `security-review`, `secure-coding`\n   - **Input:** Source diff and threat model\n   - **Output:** Security findings report\n   - **Evidence Required:** `security-scan`\n   - **Dependencies:** `threat-model`\n   - **Gates:** `security-scan`\n3. **Remediate findings at boundary** (`remediate`)\n   - **Role:** `implementer`\n   - **Skills:** `secure-coding`, `clean-code`\n   - **Input:** Security findings\n   - **Output:** Remediation patch\n   - **Evidence Required:** `test`\n   - **Dependencies:** `audit`\n4. **Re-verify security gates** (`re-verify`)\n   - **Role:** `security-reviewer`\n   - **Skills:** `security-review`\n   - **Input:** Remediated code\n   - **Output:** Security audit sign-off\n   - **Evidence Required:** `security-scan`, `test`\n   - **Dependencies:** `remediate`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `security-scan`, `tests`, `review`\n- **Artifacts:** `Threat model`, `Security audit report`, `Remediation verification`\n\n## Stop Conditions\n- Zero unresolved high/critical security findings\n"
+    },
+    {
+      "id": "ui-feature",
+      "name": "UI Feature Engineering",
+      "version": 1,
+      "purpose": "End-to-end design, tokenization, implementation, and accessibility audit of UI features.",
+      "select": {
+        "features_any": [
+          "ui",
+          "dashboard",
+          "editor"
+        ]
+      },
+      "requires_skills_any": [
+        "design-research",
+        "ux-architecture",
+        "wireframing",
+        "design-system",
+        "accessibility"
+      ],
+      "inputs": [
+        "Product requirement",
+        "Design references"
+      ],
+      "agents": [
+        "design-researcher",
+        "ux-architect",
+        "design-system-engineer",
+        "frontend-engineer",
+        "accessibility-reviewer"
+      ],
+      "skills": [
+        "design-research",
+        "user-flows",
+        "wireframing",
+        "design-system",
+        "frontend-web",
+        "accessibility",
+        "visual-regression"
+      ],
+      "gates": [
+        "accessibility",
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "Research report",
+        "Wireframe spec",
+        "Design tokens",
+        "Tested UI components",
+        "a11y scorecard"
+      ],
+      "stop_conditions": [
+        "UI feature implemented, visually tested, and WCAG AA compliant"
+      ],
+      "steps": [
+        {
+          "id": "research",
+          "name": "Design and interaction research",
+          "agent_role": "design-researcher",
+          "skills": [
+            "design-research",
+            "website-forensics"
+          ],
+          "input": "Product requirement",
+          "output": "Design research report",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "ux",
+          "name": "User flow and information architecture",
+          "depends_on": [
+            "research"
+          ],
+          "agent_role": "ux-architect",
+          "skills": [
+            "user-flows",
+            "information-architecture"
+          ],
+          "input": "Research findings",
+          "output": "User flow & layout hierarchy",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "wireframe",
+          "name": "Structured wireframing",
+          "depends_on": [
+            "ux"
+          ],
+          "agent_role": "ux-architect",
+          "skills": [
+            "wireframing",
+            "interaction-design"
+          ],
+          "input": "User flow",
+          "output": "Structured wireframe spec",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "design-tokens",
+          "name": "Design tokens & component spec",
+          "depends_on": [
+            "wireframe"
+          ],
+          "agent_role": "design-system-engineer",
+          "skills": [
+            "design-system",
+            "design-tokens",
+            "component-specification"
+          ],
+          "input": "Wireframe spec",
+          "output": "Design tokens JSON & component spec",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "implement",
+          "name": "Implement UI components",
+          "depends_on": [
+            "design-tokens"
+          ],
+          "agent_role": "frontend-engineer",
+          "skills": [
+            "ui-implementation",
+            "frontend-web"
+          ],
+          "input": "Tokens and wireframe spec",
+          "output": "UI components and component tests",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "accessibility-audit",
+          "name": "Audit keyboard, focus, and screen readers",
+          "depends_on": [
+            "implement"
+          ],
+          "agent_role": "accessibility-reviewer",
+          "skills": [
+            "accessibility",
+            "keyboard-accessibility",
+            "contrast"
+          ],
+          "input": "Rendered UI views",
+          "output": "WCAG 2.2 AA audit scorecard",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "visual-qa",
+          "name": "Visual regression and QA review",
+          "depends_on": [
+            "accessibility-audit"
+          ],
+          "agent_role": "ux-architect",
+          "skills": [
+            "visual-regression",
+            "visual-qa"
+          ],
+          "input": "UI components & snapshots",
+          "output": "Visual QA sign-off",
+          "required_evidence": [
+            "screenshot",
+            "test"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "preconditions": [
+        "Product requirement or design spec available",
+        "Design system tokens accessible"
+      ],
+      "instructions": "# UI Feature Engineering\n\n## Purpose\nEnd-to-end design, tokenization, implementation, and accessibility audit of UI features.\n\n## Preconditions\n- Product requirement or design spec available\n- Design system tokens accessible\n\n## Required Inputs\n- Product requirement\n- Design references\n\n## Step DAG & Dependencies\n1. **Design and interaction research** (`research`)\n   - **Role:** `design-researcher`\n   - **Skills:** `design-research`, `website-forensics`\n   - **Input:** Product requirement\n   - **Output:** Design research report\n   - **Evidence Required:** `review`\n   - **Dependencies:** None (entry step)\n2. **User flow and information architecture** (`ux`)\n   - **Role:** `ux-architect`\n   - **Skills:** `user-flows`, `information-architecture`\n   - **Input:** Research findings\n   - **Output:** User flow & layout hierarchy\n   - **Evidence Required:** `review`\n   - **Dependencies:** `research`\n3. **Structured wireframing** (`wireframe`)\n   - **Role:** `ux-architect`\n   - **Skills:** `wireframing`, `interaction-design`\n   - **Input:** User flow\n   - **Output:** Structured wireframe spec\n   - **Evidence Required:** `review`\n   - **Dependencies:** `ux`\n4. **Design tokens & component spec** (`design-tokens`)\n   - **Role:** `design-system-engineer`\n   - **Skills:** `design-system`, `design-tokens`, `component-specification`\n   - **Input:** Wireframe spec\n   - **Output:** Design tokens JSON & component spec\n   - **Evidence Required:** `test`\n   - **Dependencies:** `wireframe`\n5. **Implement UI components** (`implement`)\n   - **Role:** `frontend-engineer`\n   - **Skills:** `ui-implementation`, `frontend-web`\n   - **Input:** Tokens and wireframe spec\n   - **Output:** UI components and component tests\n   - **Evidence Required:** `test`\n   - **Dependencies:** `design-tokens`\n6. **Audit keyboard, focus, and screen readers** (`accessibility-audit`)\n   - **Role:** `accessibility-reviewer`\n   - **Skills:** `accessibility`, `keyboard-accessibility`, `contrast`\n   - **Input:** Rendered UI views\n   - **Output:** WCAG 2.2 AA audit scorecard\n   - **Evidence Required:** `test`\n   - **Dependencies:** `implement`\n   - **Gates:** `accessibility`\n7. **Visual regression and QA review** (`visual-qa`)\n   - **Role:** `ux-architect`\n   - **Skills:** `visual-regression`, `visual-qa`\n   - **Input:** UI components & snapshots\n   - **Output:** Visual QA sign-off\n   - **Evidence Required:** `screenshot`, `test`\n   - **Dependencies:** `accessibility-audit`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `accessibility`, `tests`, `review`\n- **Artifacts:** `Research report`, `Wireframe spec`, `Design tokens`, `Tested UI components`, `a11y scorecard`\n\n## Stop Conditions\n- UI feature implemented, visually tested, and WCAG AA compliant\n"
+    },
+    {
+      "id": "ui-review",
+      "name": "UI/UX Review",
+      "version": 1,
+      "purpose": "Review user interface ergonomics, visual fidelity, and accessibility standards.",
+      "select": {
+        "features_any": [
+          "ui",
+          "editor",
+          "dashboard"
+        ]
+      },
+      "requires_skills_any": [
+        "ui-ux-review",
+        "accessibility",
+        "visual-regression"
+      ],
+      "inputs": [
+        "Rendered UI views",
+        "Design tokens"
+      ],
+      "agents": [
+        "ux-architect",
+        "accessibility-reviewer",
+        "reviewer"
+      ],
+      "skills": [
+        "visual-regression",
+        "accessibility",
+        "keyboard-accessibility",
+        "code-review"
+      ],
+      "gates": [
+        "accessibility",
+        "review"
+      ],
+      "artifacts": [
+        "UI review findings",
+        "WCAG audit report"
+      ],
+      "stop_conditions": [
+        "UI review completed with prioritized findings"
+      ],
+      "steps": [
+        {
+          "id": "capture",
+          "name": "Capture visual snapshots",
+          "agent_role": "ux-architect",
+          "skills": [
+            "visual-regression"
+          ],
+          "input": "UI views",
+          "output": "Visual snapshots",
+          "required_evidence": [
+            "screenshot"
+          ]
+        },
+        {
+          "id": "heuristic-review",
+          "name": "Review interaction heuristics",
+          "depends_on": [
+            "capture"
+          ],
+          "agent_role": "ux-architect",
+          "skills": [
+            "visual-qa"
+          ],
+          "input": "Snapshots & interaction flows",
+          "output": "Ergonomics findings",
+          "required_evidence": [
+            "review"
+          ]
+        },
+        {
+          "id": "accessibility",
+          "name": "Evaluate WCAG 2.2 AA compliance",
+          "depends_on": [
+            "heuristic-review"
+          ],
+          "agent_role": "accessibility-reviewer",
+          "skills": [
+            "accessibility",
+            "keyboard-accessibility"
+          ],
+          "input": "UI components",
+          "output": "a11y compliance report",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "report",
+          "name": "Emit prioritized findings",
+          "depends_on": [
+            "accessibility"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "code-review"
+          ],
+          "input": "All audit reports",
+          "output": "Prioritized UI review scorecard",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# UI/UX Review\n\n## Purpose\nReview user interface ergonomics, visual fidelity, and accessibility standards.\n\n## Required Inputs\n- Rendered UI views\n- Design tokens\n\n## Step DAG & Dependencies\n1. **Capture visual snapshots** (`capture`)\n   - **Role:** `ux-architect`\n   - **Skills:** `visual-regression`\n   - **Input:** UI views\n   - **Output:** Visual snapshots\n   - **Evidence Required:** `screenshot`\n   - **Dependencies:** None (entry step)\n2. **Review interaction heuristics** (`heuristic-review`)\n   - **Role:** `ux-architect`\n   - **Skills:** `visual-qa`\n   - **Input:** Snapshots & interaction flows\n   - **Output:** Ergonomics findings\n   - **Evidence Required:** `review`\n   - **Dependencies:** `capture`\n3. **Evaluate WCAG 2.2 AA compliance** (`accessibility`)\n   - **Role:** `accessibility-reviewer`\n   - **Skills:** `accessibility`, `keyboard-accessibility`\n   - **Input:** UI components\n   - **Output:** a11y compliance report\n   - **Evidence Required:** `test`\n   - **Dependencies:** `heuristic-review`\n   - **Gates:** `accessibility`\n4. **Emit prioritized findings** (`report`)\n   - **Role:** `reviewer`\n   - **Skills:** `code-review`\n   - **Input:** All audit reports\n   - **Output:** Prioritized UI review scorecard\n   - **Evidence Required:** `review`\n   - **Dependencies:** `accessibility`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `accessibility`, `review`\n- **Artifacts:** `UI review findings`, `WCAG audit report`\n\n## Stop Conditions\n- UI review completed with prioritized findings\n"
+    },
+    {
+      "id": "web-feature",
+      "name": "Web Feature Development",
+      "version": 1,
+      "purpose": "Implement fullstack web features across frontend components and backend API endpoints.",
+      "select": {
+        "project_types": [
+          "web-saas",
+          "ecommerce",
+          "web-app"
+        ]
+      },
+      "requires_skills_any": [
+        "frontend-web",
+        "backend-api"
+      ],
+      "inputs": [
+        "Feature requirements",
+        "API contract"
+      ],
+      "agents": [
+        "backend-engineer",
+        "frontend-engineer",
+        "tester",
+        "reviewer"
+      ],
+      "skills": [
+        "backend-api",
+        "database-review",
+        "frontend-web",
+        "api-contract-testing",
+        "code-review"
+      ],
+      "gates": [
+        "tests",
+        "review"
+      ],
+      "artifacts": [
+        "API endpoints",
+        "UI components",
+        "Integration tests"
+      ],
+      "stop_conditions": [
+        "Fullstack feature verified with integration tests"
+      ],
+      "steps": [
+        {
+          "id": "api-spec",
+          "name": "Define API contracts and database schema",
+          "agent_role": "backend-engineer",
+          "skills": [
+            "backend-api",
+            "database-review"
+          ],
+          "input": "Feature requirement",
+          "output": "API contract & schema migration",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "backend",
+          "name": "Implement backend endpoints",
+          "depends_on": [
+            "api-spec"
+          ],
+          "agent_role": "backend-engineer",
+          "skills": [
+            "backend-api",
+            "clean-code"
+          ],
+          "input": "API contract",
+          "output": "Backend service implementation",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "frontend",
+          "name": "Implement frontend components and state",
+          "depends_on": [
+            "backend"
+          ],
+          "agent_role": "frontend-engineer",
+          "skills": [
+            "frontend-web",
+            "ui-implementation"
+          ],
+          "input": "API endpoints and UI design",
+          "output": "Frontend components",
+          "required_evidence": [
+            "test"
+          ]
+        },
+        {
+          "id": "test",
+          "name": "Run unit, API contract, and UI tests",
+          "depends_on": [
+            "frontend"
+          ],
+          "agent_role": "tester",
+          "skills": [
+            "api-contract-testing",
+            "testing-quality"
+          ],
+          "input": "Fullstack changeset",
+          "output": "Test execution report",
+          "required_evidence": [
+            "test"
+          ],
+          "gates": [
+            "tests"
+          ]
+        },
+        {
+          "id": "review",
+          "name": "Independent security and code review",
+          "depends_on": [
+            "test"
+          ],
+          "agent_role": "reviewer",
+          "skills": [
+            "code-review",
+            "web-security"
+          ],
+          "input": "Diff and test evidence",
+          "output": "Review approval",
+          "required_evidence": [
+            "review"
+          ],
+          "gates": [
+            "review"
+          ]
+        }
+      ],
+      "fallbacks": [
+        {
+          "condition": "step_failed",
+          "action": "retry_with_alternate_model",
+          "max_retries": 2
+        },
+        {
+          "condition": "gate_failed",
+          "action": "escalate_to_human"
+        }
+      ],
+      "instructions": "# Web Feature Development\n\n## Purpose\nImplement fullstack web features across frontend components and backend API endpoints.\n\n## Required Inputs\n- Feature requirements\n- API contract\n\n## Step DAG & Dependencies\n1. **Define API contracts and database schema** (`api-spec`)\n   - **Role:** `backend-engineer`\n   - **Skills:** `backend-api`, `database-review`\n   - **Input:** Feature requirement\n   - **Output:** API contract & schema migration\n   - **Evidence Required:** `test`\n   - **Dependencies:** None (entry step)\n2. **Implement backend endpoints** (`backend`)\n   - **Role:** `backend-engineer`\n   - **Skills:** `backend-api`, `clean-code`\n   - **Input:** API contract\n   - **Output:** Backend service implementation\n   - **Evidence Required:** `test`\n   - **Dependencies:** `api-spec`\n3. **Implement frontend components and state** (`frontend`)\n   - **Role:** `frontend-engineer`\n   - **Skills:** `frontend-web`, `ui-implementation`\n   - **Input:** API endpoints and UI design\n   - **Output:** Frontend components\n   - **Evidence Required:** `test`\n   - **Dependencies:** `backend`\n4. **Run unit, API contract, and UI tests** (`test`)\n   - **Role:** `tester`\n   - **Skills:** `api-contract-testing`, `testing-quality`\n   - **Input:** Fullstack changeset\n   - **Output:** Test execution report\n   - **Evidence Required:** `test`\n   - **Dependencies:** `frontend`\n   - **Gates:** `tests`\n5. **Independent security and code review** (`review`)\n   - **Role:** `reviewer`\n   - **Skills:** `code-review`, `web-security`\n   - **Input:** Diff and test evidence\n   - **Output:** Review approval\n   - **Evidence Required:** `review`\n   - **Dependencies:** `test`\n   - **Gates:** `review`\n\n## Fallback Strategy\n- On `step_failed`: **retry_with_alternate_model** (Max Retries: 2)\n- On `gate_failed`: **escalate_to_human**\n\n## Required Gates & Evidence\n- **Gates:** `tests`, `review`\n- **Artifacts:** `API endpoints`, `UI components`, `Integration tests`\n\n## Stop Conditions\n- Fullstack feature verified with integration tests\n"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "observability",
+  "name": "Observability",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Implement structured logging, distributed tracing, metrics, correlation IDs, and automated secrets redaction.",
+  "risk_level": "low",
+  "modes": [
+    "implementation",
+    "review"
+  ],
+  "inputs": [
+    "System telemetry specifications",
+    "Log format standard",
+    "Tracing framework"
+  ],
+  "outputs": [
+    "Structured telemetry instrumentation",
+    "Log verification tests"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [],
+  "checks": [
+    "checks/observability-checklist.md"
+  ],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "requires_any": [],
+  "tools": []
+}

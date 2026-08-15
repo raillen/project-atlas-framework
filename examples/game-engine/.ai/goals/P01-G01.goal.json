@@ -1,0 +1,53 @@
+{
+  "id": "P01-G01",
+  "title": "Sprite Batch Renderer",
+  "phase": "P01",
+  "revision": 1,
+  "state": "LOCKED",
+  "objective": "Implement GPU sprite batching pipeline.",
+  "constraints": [],
+  "non_goals": [],
+  "acceptance": [
+    "Batches 10k sprites in single draw call",
+    "Passes visual fixture comparison"
+  ],
+  "gates": {
+    "build": "required",
+    "tests": "required",
+    "review": "required",
+    "documentation_impact": "required",
+    "project_intelligence": "required"
+  },
+  "context": {
+    "budget_profile": "medium",
+    "max_delegation_depth": 1
+  },
+  "dependencies": [],
+  "evidence": [],
+  "history": [
+    {
+      "at": "2026-08-14T20:16:09.551528+00:00",
+      "event": "created",
+      "state": "DRAFT"
+    },
+    {
+      "at": "2026-08-14T20:16:09.551826+00:00",
+      "event": "state-transition",
+      "from": "DRAFT",
+      "to": "PLANNED",
+      "reason": ""
+    },
+    {
+      "at": "2026-08-14T20:16:09.552190+00:00",
+      "event": "state-transition",
+      "from": "PLANNED",
+      "to": "LOCKED",
+      "reason": ""
+    }
+  ],
+  "lock": {
+    "revision": 1,
+    "digest": "7ec09b02b9808f14bc7a158a70d634ae0db3492ed33fcc850bee03ae088f0bc8",
+    "locked_at": "2026-08-14T20:16:09.552181+00:00"
+  }
+}

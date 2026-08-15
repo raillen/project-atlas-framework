@@ -1,0 +1,20 @@
+{
+  "id": "R01-002",
+  "task_id": "T01-002",
+  "goal_id": "G01-EXAMPLE",
+  "plan_id": "P01-PLAN-001",
+  "status": "COMPLETED",
+  "attempts": [
+    {
+      "id": "A1",
+      "status": "FAILED",
+      "backend": "primary"
+    },
+    {
+      "id": "A2",
+      "status": "COMPLETED",
+      "backend": "fallback"
+    }
+  ],
+  "evidence": []
+}

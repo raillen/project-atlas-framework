@@ -1,0 +1,35 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "recipes": [
+    "documentation-refactor",
+    "feature-standard",
+    "security-review",
+    "ui-feature",
+    "ui-review",
+    "web-feature"
+  ],
+  "reasons": {
+    "documentation-refactor": [
+      "skill-match"
+    ],
+    "feature-standard": [
+      "bundle:web-saas"
+    ],
+    "security-review": [
+      "risk",
+      "risk-rule:security-risk"
+    ],
+    "ui-feature": [
+      "feature"
+    ],
+    "ui-review": [
+      "feature"
+    ],
+    "web-feature": [
+      "bundle:web-saas",
+      "project-type"
+    ]
+  }
+}

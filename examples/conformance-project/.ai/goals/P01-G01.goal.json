@@ -1,0 +1,54 @@
+{
+  "id": "P01-G01",
+  "title": "Core Conformance Engine",
+  "phase": "P01",
+  "revision": 1,
+  "state": "LOCKED",
+  "objective": "Validate end-to-end Project Atlas v0.3 protocol contracts.",
+  "constraints": [],
+  "non_goals": [],
+  "acceptance": [
+    "Protocol schemas validate deterministically",
+    "DAG dependencies execute acyclically without deadlock",
+    "Evidence backs all completed goals"
+  ],
+  "gates": {
+    "build": "required",
+    "tests": "required",
+    "review": "required",
+    "documentation_impact": "required",
+    "project_intelligence": "required"
+  },
+  "context": {
+    "budget_profile": "medium",
+    "max_delegation_depth": 1
+  },
+  "dependencies": [],
+  "evidence": [],
+  "history": [
+    {
+      "at": "2026-08-14T20:14:06.232203+00:00",
+      "event": "created",
+      "state": "DRAFT"
+    },
+    {
+      "at": "2026-08-14T20:14:06.232478+00:00",
+      "event": "state-transition",
+      "from": "DRAFT",
+      "to": "PLANNED",
+      "reason": ""
+    },
+    {
+      "at": "2026-08-14T20:14:06.232961+00:00",
+      "event": "state-transition",
+      "from": "PLANNED",
+      "to": "LOCKED",
+      "reason": ""
+    }
+  ],
+  "lock": {
+    "revision": 1,
+    "digest": "990ffc25d33d8c59f7c821b0b83852e62eff89de2c8f6ab20fea1146e445cb15",
+    "locked_at": "2026-08-14T20:14:06.232937+00:00"
+  }
+}

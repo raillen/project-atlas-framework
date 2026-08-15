@@ -1,0 +1,16 @@
+{
+  "id": "CPACK-001",
+  "task_id": "T-01",
+  "created_at": "2026-08-14T17:00:00Z",
+  "items": [
+    {
+      "id": "CTX-01",
+      "kind": "file",
+      "source": "src/cli.rs",
+      "locator": "src/cli.rs",
+      "trust": "contextual",
+      "estimated_tokens": 120
+    }
+  ],
+  "estimated_tokens": 120
+}

@@ -1,0 +1,68 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "skills": [
+    "architecture-quality",
+    "atlas-navigation",
+    "clean-code",
+    "code-review",
+    "dependency-management",
+    "documentation",
+    "error-handling",
+    "git-workflow",
+    "goal-management",
+    "lean-progressive-context",
+    "project-intelligence",
+    "refactoring",
+    "release-engineering",
+    "testing-quality"
+  ],
+  "reasons": {
+    "architecture-quality": [
+      "core"
+    ],
+    "atlas-navigation": [
+      "core"
+    ],
+    "clean-code": [
+      "bundle:cli",
+      "core"
+    ],
+    "code-review": [
+      "core"
+    ],
+    "dependency-management": [
+      "risk"
+    ],
+    "documentation": [
+      "core"
+    ],
+    "error-handling": [
+      "bundle:cli",
+      "core"
+    ],
+    "git-workflow": [
+      "core"
+    ],
+    "goal-management": [
+      "core"
+    ],
+    "lean-progressive-context": [
+      "core"
+    ],
+    "project-intelligence": [
+      "core"
+    ],
+    "refactoring": [
+      "core"
+    ],
+    "release-engineering": [
+      "bundle:cli"
+    ],
+    "testing-quality": [
+      "bundle:cli",
+      "core"
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "id": "POL-002",
+  "capability": "file_read",
+  "scope": "/src",
+  "status": "allowed"
+}

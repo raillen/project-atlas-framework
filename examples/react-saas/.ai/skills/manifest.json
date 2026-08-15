@@ -1,0 +1,232 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "skills": [
+    "accessibility",
+    "api-contract-testing",
+    "api-security",
+    "architecture-quality",
+    "atlas-navigation",
+    "auth-security",
+    "backend-api",
+    "clean-code",
+    "code-review",
+    "competitor-analysis",
+    "component-specification",
+    "contrast",
+    "database-review",
+    "dependency-management",
+    "design-research",
+    "design-system",
+    "design-tokens",
+    "documentation",
+    "error-handling",
+    "filesystem-security",
+    "focus-management",
+    "frontend-web",
+    "git-workflow",
+    "goal-management",
+    "information-architecture",
+    "interaction-design",
+    "interaction-research",
+    "keyboard-accessibility",
+    "lean-progressive-context",
+    "motion-accessibility",
+    "project-intelligence",
+    "refactoring",
+    "screen-reader",
+    "secrets-security",
+    "secure-coding",
+    "security-review",
+    "supply-chain-security",
+    "testing-quality",
+    "threat-modeling",
+    "ui-implementation",
+    "ui-ux-review",
+    "untrusted-project-security",
+    "user-flows",
+    "ux-architecture",
+    "visual-qa",
+    "visual-reference-research",
+    "visual-regression",
+    "web-security",
+    "website-forensics",
+    "wireframing",
+    "zoom-reflow"
+  ],
+  "reasons": {
+    "accessibility": [
+      "feature",
+      "risk",
+      "risk-rule:accessibility-risk"
+    ],
+    "api-contract-testing": [
+      "bundle:web-saas",
+      "project-type"
+    ],
+    "api-security": [
+      "project-type",
+      "risk"
+    ],
+    "architecture-quality": [
+      "core"
+    ],
+    "atlas-navigation": [
+      "core"
+    ],
+    "auth-security": [
+      "feature"
+    ],
+    "backend-api": [
+      "bundle:web-saas",
+      "project-type",
+      "stack"
+    ],
+    "clean-code": [
+      "bundle:web-saas",
+      "core"
+    ],
+    "code-review": [
+      "core"
+    ],
+    "competitor-analysis": [
+      "feature"
+    ],
+    "component-specification": [
+      "feature"
+    ],
+    "contrast": [
+      "feature",
+      "risk-rule:accessibility-risk"
+    ],
+    "database-review": [
+      "bundle:web-saas"
+    ],
+    "dependency-management": [
+      "risk"
+    ],
+    "design-research": [
+      "feature"
+    ],
+    "design-system": [
+      "feature"
+    ],
+    "design-tokens": [
+      "feature"
+    ],
+    "documentation": [
+      "core"
+    ],
+    "error-handling": [
+      "core"
+    ],
+    "filesystem-security": [
+      "risk"
+    ],
+    "focus-management": [
+      "feature"
+    ],
+    "frontend-web": [
+      "bundle:web-saas",
+      "project-type",
+      "stack"
+    ],
+    "git-workflow": [
+      "core"
+    ],
+    "goal-management": [
+      "core"
+    ],
+    "information-architecture": [
+      "feature"
+    ],
+    "interaction-design": [
+      "feature"
+    ],
+    "interaction-research": [
+      "feature"
+    ],
+    "keyboard-accessibility": [
+      "feature",
+      "risk-rule:accessibility-risk"
+    ],
+    "lean-progressive-context": [
+      "core"
+    ],
+    "motion-accessibility": [
+      "feature"
+    ],
+    "project-intelligence": [
+      "core"
+    ],
+    "refactoring": [
+      "core"
+    ],
+    "screen-reader": [
+      "feature"
+    ],
+    "secrets-security": [
+      "risk"
+    ],
+    "secure-coding": [
+      "risk",
+      "risk-rule:public-web-risk",
+      "risk-rule:security-risk"
+    ],
+    "security-review": [
+      "risk",
+      "risk-rule:security-risk"
+    ],
+    "supply-chain-security": [
+      "risk"
+    ],
+    "testing-quality": [
+      "core"
+    ],
+    "threat-modeling": [
+      "risk",
+      "risk-rule:security-risk"
+    ],
+    "ui-implementation": [
+      "bundle:web-saas",
+      "feature"
+    ],
+    "ui-ux-review": [
+      "feature"
+    ],
+    "untrusted-project-security": [
+      "risk"
+    ],
+    "user-flows": [
+      "feature"
+    ],
+    "ux-architecture": [
+      "feature"
+    ],
+    "visual-qa": [
+      "feature"
+    ],
+    "visual-reference-research": [
+      "feature"
+    ],
+    "visual-regression": [
+      "feature"
+    ],
+    "web-security": [
+      "bundle:web-saas",
+      "project-type",
+      "risk",
+      "risk-rule:public-web-risk"
+    ],
+    "website-forensics": [
+      "feature"
+    ],
+    "wireframing": [
+      "feature"
+    ],
+    "zoom-reflow": [
+      "feature"
+    ]
+  }
+}

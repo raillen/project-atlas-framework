@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "mode": "controlled",
+  "capabilities": [
+    "filesystem.read",
+    {
+      "capability": "filesystem.write",
+      "scope": "project-worktree"
+    },
+    {
+      "capability": "process.spawn",
+      "scope": "test-runner"
+    }
+  ],
+  "risk_classes": {
+    "READ": "automatic",
+    "SAFE_WRITE": "confirm",
+    "EXECUTE": "confirm"
+  }
+}

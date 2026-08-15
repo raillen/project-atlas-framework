@@ -1,0 +1,22 @@
+{
+  "id": "P01-G01",
+  "title": "Protocol Conformance",
+  "phase": "P01",
+  "revision": 1,
+  "state": "LOCKED",
+  "objective": "Verify protocol contracts.",
+  "acceptance": [
+    "All tests pass deterministically."
+  ],
+  "gates": {
+    "build": "required",
+    "tests": "required"
+  },
+  "dependencies": [],
+  "evidence": [],
+  "lock": {
+    "revision": 1,
+    "digest": "63a8879d128ce41e457133ab47d66a2f54919510ea627c3c60faeb4ae701b609",
+    "locked_at": "2026-08-14T17:00:00Z"
+  }
+}

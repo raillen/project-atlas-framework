@@ -1,0 +1,23 @@
+[
+  {
+    "id": "evt-0001",
+    "type": "project.opened",
+    "timestamp": "2026-08-14T17:00:00Z",
+    "project_id": "conformance-project",
+    "producer": "atlas-flow",
+    "payload": {
+      "framework_version": "0.3.0"
+    }
+  },
+  {
+    "id": "evt-0002",
+    "type": "goal.locked",
+    "timestamp": "2026-08-14T17:00:01Z",
+    "project_id": "conformance-project",
+    "goal_id": "P01-G01",
+    "producer": "atlas-flow",
+    "payload": {
+      "revision": 1
+    }
+  }
+]

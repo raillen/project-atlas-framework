@@ -1,1 +1,92 @@
-{"bundles":[{"id":"web-saas","project_type":"web-saas","agents":["frontend-engineer","backend-engineer","database-engineer","security-reviewer","ux-reviewer"],"skills":["frontend-web","backend-api","database-review","security-web","api-contract-testing","accessibility"],"recipes":["web-feature","security-review","ui-review"]},{"id":"ecommerce","project_type":"ecommerce","agents":["frontend-engineer","backend-engineer","database-engineer","security-reviewer","ux-reviewer","release-verifier"],"skills":["frontend-web","backend-api","database-review","security-web","security-api","accessibility"],"recipes":["web-feature","security-review","release"]},{"id":"api","project_type":"api","agents":["backend-engineer","database-engineer","security-reviewer"],"skills":["backend-api","database-review","api-contract-testing","security-api"],"recipes":["feature-standard","security-review"]},{"id":"desktop","project_type":"desktop","agents":["performance-engineer","security-reviewer","release-verifier"],"skills":["performance-native","security-desktop","release-engineering"],"recipes":["feature-standard","release"]},{"id":"game","project_type":"game","agents":["performance-engineer","ux-reviewer"],"skills":["game-runtime","game-ui-testing","playtest-automation","performance-native"],"recipes":["feature-standard","ui-review"]},{"id":"game-engine","project_type":"game-engine","agents":["engine-engineer","editor-engineer","renderer-engineer","performance-engineer","networking-engineer","ux-reviewer","compiler-engineer"],"skills":["game-engine-architecture","game-runtime","editor-tooling","rendering-2d","physics-testing","performance-native","benchmarking","playtest-automation"],"recipes":["engine-renderer","architecture-change","release"]},{"id":"compiler","project_type":"compiler","agents":["compiler-engineer","performance-engineer"],"skills":["compiler-development","language-tooling","performance-native","benchmarking"],"recipes":["compiler-change","architecture-change"]},{"id":"library","project_type":"library","agents":["release-verifier"],"skills":["release-engineering"],"recipes":["feature-standard","release"]},{"id":"cli","project_type":"cli","agents":["release-verifier"],"skills":["release-engineering"],"recipes":["feature-standard","release"]}]}
+{
+  "bundles": [
+    {
+      "id": "web-saas",
+      "project_type": "web-saas",
+      "skills": [
+        "frontend-web",
+        "ui-implementation",
+        "backend-api",
+        "database-review",
+        "api-contract-testing",
+        "web-security",
+        "clean-code"
+      ],
+      "agents": [
+        "frontend-engineer",
+        "backend-engineer",
+        "database-engineer",
+        "implementer",
+        "tester",
+        "reviewer"
+      ],
+      "recipes": [
+        "web-feature",
+        "feature-standard"
+      ]
+    },
+    {
+      "id": "game-engine",
+      "project_type": "game-engine",
+      "skills": [
+        "game-engine-architecture",
+        "game-runtime",
+        "rendering-2d",
+        "performance-native",
+        "benchmarking",
+        "editor-tooling"
+      ],
+      "agents": [
+        "engine-engineer",
+        "renderer-engineer",
+        "editor-engineer",
+        "implementer",
+        "tester",
+        "reviewer"
+      ],
+      "recipes": [
+        "engine-renderer",
+        "feature-standard"
+      ]
+    },
+    {
+      "id": "cli",
+      "project_type": "cli",
+      "skills": [
+        "clean-code",
+        "error-handling",
+        "testing-quality",
+        "release-engineering"
+      ],
+      "agents": [
+        "implementer",
+        "tester",
+        "reviewer",
+        "release-verifier"
+      ],
+      "recipes": [
+        "feature-standard",
+        "release"
+      ]
+    },
+    {
+      "id": "desktop",
+      "project_type": "desktop",
+      "skills": [
+        "desktop-security",
+        "ui-implementation",
+        "performance-native",
+        "editor-tooling"
+      ],
+      "agents": [
+        "editor-engineer",
+        "tester",
+        "reviewer"
+      ],
+      "recipes": [
+        "ui-feature",
+        "feature-standard"
+      ]
+    }
+  ]
+}

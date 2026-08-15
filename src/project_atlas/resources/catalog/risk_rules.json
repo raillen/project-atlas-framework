@@ -1,1 +1,78 @@
-{"risk_rules":[{"id":"public-web-security","when_any":["public-web","web-saas","ecommerce"],"require_skills":["security-web","security-api","security-supply-chain"]},{"id":"performance-critical","when_any":["performance-critical","game-engine","compiler"],"require_skills":["benchmarking"]},{"id":"multiplayer-security","when_any":["multiplayer","networking"],"require_skills":["security-network","network-testing"]},{"id":"accessibility-ui","when_any":["accessibility"],"require_skills":["accessibility","visual-regression"]}]}
+{
+  "risk_rules": [
+    {
+      "id": "security-risk",
+      "when_any": [
+        "security"
+      ],
+      "require_skills": [
+        "threat-modeling",
+        "secure-coding",
+        "security-review"
+      ]
+    },
+    {
+      "id": "public-web-risk",
+      "when_any": [
+        "public-web"
+      ],
+      "require_skills": [
+        "web-security",
+        "secure-coding"
+      ]
+    },
+    {
+      "id": "financial-risk",
+      "when_any": [
+        "financial"
+      ],
+      "require_skills": [
+        "threat-modeling",
+        "security-review",
+        "secure-coding"
+      ]
+    },
+    {
+      "id": "privacy-risk",
+      "when_any": [
+        "privacy"
+      ],
+      "require_skills": [
+        "threat-modeling",
+        "secrets-security"
+      ]
+    },
+    {
+      "id": "supply-chain-risk",
+      "when_any": [
+        "supply-chain"
+      ],
+      "require_skills": [
+        "supply-chain-security",
+        "dependency-management"
+      ]
+    },
+    {
+      "id": "performance-risk",
+      "when_any": [
+        "performance",
+        "performance-critical"
+      ],
+      "require_skills": [
+        "benchmarking",
+        "performance-native"
+      ]
+    },
+    {
+      "id": "accessibility-risk",
+      "when_any": [
+        "accessibility"
+      ],
+      "require_skills": [
+        "accessibility",
+        "keyboard-accessibility",
+        "contrast"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "policy_version": "0.2",
+  "models": [
+    "gpt-4"
+  ]
+}

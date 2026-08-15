@@ -1,0 +1,13 @@
+{
+  "id": "T01-003",
+  "goal_id": "G01-EXAMPLE",
+  "plan_id": "P01-PLAN-001",
+  "title": "Self dependency",
+  "objective": "Should fail",
+  "dependencies": [
+    "T01-003"
+  ],
+  "role": "SWE",
+  "required_skills": [],
+  "status": "PLANNED"
+}

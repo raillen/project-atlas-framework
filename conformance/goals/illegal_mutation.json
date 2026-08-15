@@ -1,0 +1,7 @@
+{
+  "id": "G01-LOCKED",
+  "status": "ACTIVE",
+  "locked": true,
+  "objective": "Tampered objective",
+  "digest": "old_digest_mismatch"
+}

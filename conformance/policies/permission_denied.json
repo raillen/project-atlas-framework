@@ -1,0 +1,6 @@
+{
+  "id": "POL-001",
+  "capability": "network_access",
+  "status": "denied",
+  "reason": "Not allowed by policy"
+}

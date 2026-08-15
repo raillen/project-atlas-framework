@@ -1,0 +1,26 @@
+{
+  "id": "asset-reference-research",
+  "name": "Asset Reference Research",
+  "version": 1,
+  "schema_version": 2,
+  "select": {
+    "features_any": [
+      "asset-research",
+      "design-research",
+      "game-assets"
+    ]
+  },
+  "purpose": "Gather legally usable references and placeholders with licensing metadata.",
+  "risk_level": "low",
+  "modes": [
+    "research"
+  ],
+  "requires_any": [],
+  "tools": [],
+  "provenance": {
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  }
+}

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import shutil
 import sys
@@ -8,10 +9,20 @@ from pathlib import Path
 
 from .compiler import SUPPORTED_TARGETS, compile_target
 from .context import plan_context
-from .goals import new_goal, transition_goal
+from .doctor import diagnose_project
+from .explain import (
+    explain_agent,
+    explain_context,
+    explain_execution,
+    explain_model,
+    explain_recipe,
+    explain_skill,
+    explain_workforce,
+)
+from .goals import amend_goal, new_goal, transition_goal
 from .intelligence import load_intelligence, record_task_report
-from .migration import migrate_v01_to_v02
 from .io import dump_json, load_data, load_json
+from .migration import migrate_project
 from .profile import ProjectProfile, load_profile
 from .resolver import resolve
 from .scaffolder import initialize_project
@@ -40,7 +51,8 @@ def cmd_init(args: argparse.Namespace) -> int:
             return 2
         profile = ProjectProfile(
             {
-                "version": 2,
+                "version": 3,
+                "protocol": {"version": 3, "compatible": ">=3 <4"},
                 "project": {"name": name, "type": [project_type]},
                 "stack": {},
                 "features": [],
@@ -60,7 +72,7 @@ def cmd_init(args: argparse.Namespace) -> int:
             }
         )
     resolution = initialize_project(root, profile)
-    print(f"Initialized Project Atlas v0.2 in {root}")
+    print(f"Initialized Project Atlas v0.3 in {root}")
     print(
         f"Agents: {len(resolution.agents)} | "
         f"Skills: {len(resolution.skills)} | Recipes: {len(resolution.recipes)}"
@@ -71,6 +83,15 @@ def cmd_init(args: argparse.Namespace) -> int:
 def cmd_resolve(args: argparse.Namespace) -> int:
     profile = load_profile(Path(args.profile).resolve())
     result = resolve(profile)
+    if getattr(args, "json", False):
+        print(json.dumps({
+            "agents": result.agents,
+            "skills": result.skills,
+            "recipes": result.recipes,
+            "reasons": result.reasons,
+            "traces": result.traces
+        }, indent=2))
+        return 0
     print("Agents:")
     for value in result.agents:
         print(f"  - {value}: {', '.join(result.reasons.get(value, []))}")
@@ -98,44 +119,67 @@ def cmd_validate(args: argparse.Namespace) -> int:
 def cmd_goal_new(args: argparse.Namespace) -> int:
     root = _project_root(args.path)
     goal = new_goal(args.id, args.title, args.phase, args.objective or "")
-    path = root / ".ai/goals" / args.phase / f"{args.id}.goal.json"
-    if path.exists() and not args.force:
-        print(f"Goal already exists: {path}", file=sys.stderr)
+    goal_dir = root / ".ai/goals"
+    goal_dir.mkdir(parents=True, exist_ok=True)
+    target = goal_dir / f"{args.id}.goal.json"
+    if target.exists() and not args.force:
+        print(f"Goal already exists: {target} (use --force to overwrite)", file=sys.stderr)
         return 2
-    dump_json(goal, path)
-    print(path)
+    dump_json(goal, target)
+    print(f"Created Goal {args.id} in {target}")
     return 0
-
-
-def _find_goal(root: Path, goal_id: str) -> Path:
-    json_matches = list((root / ".ai/goals").glob(f"**/{goal_id}.goal.json"))
-    if len(json_matches) == 1:
-        return json_matches[0]
-    legacy = list((root / ".ai/goals").glob(f"**/{goal_id}.goal.yaml"))
-    if len(legacy) == 1:
-        return legacy[0]
-    raise ValueError(
-        f"Expected exactly one goal with id {goal_id}, "
-        f"found {len(json_matches) + len(legacy)}"
-    )
 
 
 def cmd_goal_state(args: argparse.Namespace) -> int:
     root = _project_root(args.path)
-    path = _find_goal(root, args.id)
-    goal = transition_goal(path, args.state, args.reason or "")
-    print(f"{args.id}: {goal['state']}")
+    matches = list((root / ".ai/goals").glob(f"**/{args.id}.goal.*"))
+    if not matches:
+        print(f"Goal {args.id} not found in {root / '.ai/goals'}", file=sys.stderr)
+        return 2
+    goal = transition_goal(matches[0], args.state, args.reason or "")
+    print(f"Goal {args.id} transitioned to {goal['state']}")
+    return 0
+
+
+def cmd_goal_amend(args: argparse.Namespace) -> int:
+    root = _project_root(args.path)
+    matches = list((root / ".ai/goals").glob(f"**/{args.id}.goal.*"))
+    if not matches:
+        print(f"Goal {args.id} not found in {root / '.ai/goals'}", file=sys.stderr)
+        return 2
+    amendment_data = load_json(Path(args.file).resolve()) if args.file else {
+        "reason": args.reason or "CLI amendment",
+        "approved_by": args.approved_by or "human",
+        "changes": {}
+    }
+    goal = amend_goal(matches[0], amendment_data)
+    print(f"Goal {args.id} amended to revision {goal.get('revision')}")
     return 0
 
 
 def cmd_goal_list(args: argparse.Namespace) -> int:
     root = _project_root(args.path)
-    paths = sorted((root / ".ai/goals").glob("**/*.goal.json"))
-    paths += sorted((root / ".ai/goals").glob("**/*.goal.yaml"))
-    for path in paths:
-        goal = load_data(path)
-        legacy = " [legacy]" if path.suffix == ".yaml" else ""
-        print(f"{goal.get('id')}\t{goal.get('state')}\t{goal.get('title')}{legacy}")
+    goals_dir = root / ".ai/goals"
+    if not goals_dir.exists():
+        print("No goals directory found.")
+        return 0
+    goals = []
+    for path in sorted(goals_dir.glob("**/*.goal.*")):
+        data = load_data(path)
+        goals.append(
+            {
+                "id": data.get("id", path.stem),
+                "title": data.get("title", ""),
+                "phase": data.get("phase", ""),
+                "state": data.get("state", "DRAFT"),
+                "revision": data.get("revision", 1),
+                "path": str(path.relative_to(root)),
+            }
+        )
+    print(f"{'ID':<12} {'PHASE':<8} {'STATE':<12} {'REV':<5} {'TITLE'}")
+    print("-" * 65)
+    for g in goals:
+        print(f"{g['id']:<12} {g['phase']:<8} {g['state']:<12} {g['revision']:<5} {g['title']}")
     return 0
 
 
@@ -146,9 +190,10 @@ def cmd_context_plan(args: argparse.Namespace) -> int:
         print(
             json.dumps(
                 {
+                    "task": plan.task,
                     "profile": plan.profile,
                     "strategy": plan.strategy,
-                    "budget": plan.budget,
+                    "budget": dataclasses.asdict(plan.budget) if hasattr(plan.budget, "__dataclass_fields__") else (plan.budget.__dict__ if hasattr(plan.budget, "__dict__") else plan.budget),
                     "reasons": plan.reasons,
                 },
                 indent=2,
@@ -157,7 +202,7 @@ def cmd_context_plan(args: argparse.Namespace) -> int:
     else:
         print(f"Profile: {plan.profile}")
         print(f"Strategy: {plan.strategy}")
-        for key, value in plan.budget.items():
+        for key, value in dataclasses.asdict(plan.budget).items():
             print(f"{key}: {value}")
     return 0
 
@@ -179,8 +224,17 @@ def cmd_report_summary(args: argparse.Namespace) -> int:
 
 def cmd_migrate(args: argparse.Namespace) -> int:
     root = _project_root(args.path)
-    created = migrate_v01_to_v02(root)
-    print(f"Migrated Project Atlas v0.1 -> v0.2: {len(created)} canonical files created/converted")
+    dry_run = getattr(args, "dry_run", False)
+    report = migrate_project(root, dry_run=dry_run)
+    if getattr(args, "json", False):
+        print(json.dumps(report, indent=2))
+    else:
+        prefix = "[DRY-RUN] " if dry_run else ""
+        print(f"{prefix}Project migration report (v{report.get('from_version')} -> v{report.get('to_version')}):")
+        for change in report.get("changes", []):
+            print(f"  - {change}")
+        if report.get("snapshot"):
+            print(f"  Snapshot backup created: {report['snapshot']}")
     return 0
 
 
@@ -205,26 +259,95 @@ def cmd_snapshot(args: argparse.Namespace) -> int:
 
 def cmd_doctor(args: argparse.Namespace) -> int:
     root = _project_root(args.path)
-    project_file = root / "atlas.json"
-    legacy = root / "PROJECT_MANIFEST.yaml"
-    checks = {
-        "python": shutil.which("python") or shutil.which("python3"),
-        "git": shutil.which("git"),
-        "atlas-project": project_file.exists() or legacy.exists(),
-        "canonical-v0.2": project_file.exists(),
-        "runtime-gitignored": _gitignore_contains(root, ".atlas/runtime/"),
-    }
-    failed = False
-    for name, value in checks.items():
-        ok = bool(value)
-        failed |= not ok and name in {"python", "git", "atlas-project"}
-        print(f"{'OK' if ok else 'WARN' if name not in {'python','git','atlas-project'} else 'FAIL'}  {name}: {value or 'not found'}")
-    return 1 if failed else 0
+    findings = diagnose_project(root, Path(args.schemas).resolve() if getattr(args, "schemas", None) else None)
+    has_errors = any(f.severity == "ERROR" for f in findings)
+    if getattr(args, "json", False):
+        print(json.dumps([
+            {
+                "category": f.category,
+                "severity": f.severity,
+                "message": f.message,
+                "target": f.target
+            }
+            for f in findings
+        ], indent=2))
+    else:
+        if not findings:
+            print("Project Atlas Doctor: all checks passed cleanly.")
+        else:
+            print(f"Project Atlas Doctor found {len(findings)} issue(s):")
+            for f in findings:
+                print(f"[{f.severity}] ({f.category}) {f.message} {f'[{f.target}]' if f.target else ''}")
+    return 1 if has_errors else 0
 
 
-def _gitignore_contains(root: Path, value: str) -> bool:
-    path = root / ".gitignore"
-    return path.exists() and value in path.read_text(encoding="utf-8").splitlines()
+def cmd_explain(args: argparse.Namespace) -> int:
+    topic = getattr(args, "topic", "")
+    target = getattr(args, "target", None)
+    root = _project_root(getattr(args, "path", "."))
+    is_json = getattr(args, "json", False)
+
+    result: Any = None
+    if topic == "workforce":
+        if target:
+            profile = load_profile(Path(target).resolve())
+        elif (root / "atlas.json").exists():
+            profile = ProjectProfile(load_json(root / "atlas.json"))
+        else:
+            print("Please specify a profile path or run inside a Project Atlas workspace.", file=sys.stderr)
+            return 2
+        result = explain_workforce(profile)
+    elif topic == "agent":
+        if not target:
+            print("Agent ID required.", file=sys.stderr)
+            return 2
+        result = explain_agent(target)
+    elif topic == "skill":
+        if not target:
+            print("Skill ID required.", file=sys.stderr)
+            return 2
+        result = explain_skill(target)
+    elif topic == "recipe":
+        if not target:
+            print("Recipe ID required.", file=sys.stderr)
+            return 2
+        result = explain_recipe(target)
+    elif topic == "context":
+        if not target:
+            print("Task ID required.", file=sys.stderr)
+            return 2
+        result = explain_context(target, root)
+    elif topic == "model":
+        if not target:
+            print("Role name required.", file=sys.stderr)
+            return 2
+        result = explain_model(target, root)
+    elif topic == "execution":
+        if not target:
+            print("Profile ID required.", file=sys.stderr)
+            return 2
+        result = explain_execution(target, root)
+    else:
+        print(f"Unknown explain topic: {topic}", file=sys.stderr)
+        return 2
+
+    if result is None:
+        print(f"Not found: {topic} {target}", file=sys.stderr)
+        return 1
+
+    if is_json:
+        print(json.dumps(result, indent=2))
+    else:
+        if isinstance(result, dict):
+            for k, v in result.items():
+                if isinstance(v, (dict, list)):
+                    print(f"{k}:")
+                    print(json.dumps(v, indent=2))
+                else:
+                    print(f"{k}: {v}")
+        else:
+            print(result)
+    return 0
 
 
 def cmd_framework_check(args: argparse.Namespace) -> int:
@@ -240,7 +363,7 @@ def cmd_framework_check(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="atlas", description="Project Atlas Framework CLI")
-    parser.add_argument("--version", action="version", version="Project Atlas 0.2.0")
+    parser.add_argument("--version", action="version", version="Project Atlas 0.3.0")
     sub = parser.add_subparsers(dest="command", required=True)
 
     init = sub.add_parser("init", help="Initialize Project Atlas in a project")
@@ -251,6 +374,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     resolve_p = sub.add_parser("resolve", help="Resolve agents, skills and recipes for a profile")
     resolve_p.add_argument("profile")
+    resolve_p.add_argument("--json", action="store_true")
     resolve_p.set_defaults(func=cmd_resolve)
 
     validate = sub.add_parser("validate", help="Validate a Project Atlas project")
@@ -276,6 +400,14 @@ def build_parser() -> argparse.ArgumentParser:
     goal_state.add_argument("--path", default=".")
     goal_state.set_defaults(func=cmd_goal_state)
 
+    goal_amend_p = goal_sub.add_parser("amend")
+    goal_amend_p.add_argument("id")
+    goal_amend_p.add_argument("--file")
+    goal_amend_p.add_argument("--reason")
+    goal_amend_p.add_argument("--approved-by")
+    goal_amend_p.add_argument("--path", default=".")
+    goal_amend_p.set_defaults(func=cmd_goal_amend)
+
     goal_list = goal_sub.add_parser("list")
     goal_list.add_argument("--path", default=".")
     goal_list.set_defaults(func=cmd_goal_list)
@@ -300,6 +432,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     migrate = sub.add_parser("migrate", help="Migrate a legacy Project Atlas project")
     migrate.add_argument("path", nargs="?", default=".")
+    migrate.add_argument("--dry-run", action="store_true")
+    migrate.add_argument("--json", action="store_true")
     migrate.set_defaults(func=cmd_migrate)
 
     compile_p = sub.add_parser("compile", help="Compile the active AI workforce for a target")
@@ -312,12 +446,21 @@ def build_parser() -> argparse.ArgumentParser:
     snapshot.add_argument("--output")
     snapshot.set_defaults(func=cmd_snapshot)
 
+    doctor = sub.add_parser("doctor", help="Run comprehensive project health diagnostics")
+    doctor.add_argument("path", nargs="?", default=".")
+    doctor.add_argument("--schemas")
+    doctor.add_argument("--json", action="store_true")
+    doctor.set_defaults(func=cmd_doctor)
+
+    explain = sub.add_parser("explain", help="Explain workforce, reasoning, context or policies")
+    explain.add_argument("topic", choices=["workforce", "agent", "skill", "recipe", "context", "model", "execution"])
+    explain.add_argument("target", nargs="?", default=None)
+    explain.add_argument("--path", default=".")
+    explain.add_argument("--json", action="store_true")
+    explain.set_defaults(func=cmd_explain)
+
     framework_check = sub.add_parser("framework-check", help="Validate built-in catalogs and adapters")
     framework_check.set_defaults(func=cmd_framework_check)
-
-    doctor = sub.add_parser("doctor", help="Check local prerequisites/project format")
-    doctor.add_argument("path", nargs="?", default=".")
-    doctor.set_defaults(func=cmd_doctor)
     return parser
 
 

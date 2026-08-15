@@ -1,0 +1,85 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "agents": [
+    "accessibility-reviewer",
+    "architect",
+    "debugger",
+    "design-researcher",
+    "design-system-engineer",
+    "documentation-maintainer",
+    "editor-engineer",
+    "explorer",
+    "frontend-engineer",
+    "implementer",
+    "quality-reviewer",
+    "release-verifier",
+    "reviewer",
+    "security-architect",
+    "security-reviewer",
+    "tester",
+    "ux-architect"
+  ],
+  "reasons": {
+    "accessibility-reviewer": [
+      "skill-match"
+    ],
+    "architect": [
+      "core"
+    ],
+    "debugger": [
+      "core"
+    ],
+    "design-researcher": [
+      "feature"
+    ],
+    "design-system-engineer": [
+      "feature"
+    ],
+    "documentation-maintainer": [
+      "core"
+    ],
+    "editor-engineer": [
+      "bundle:desktop",
+      "feature",
+      "project-type"
+    ],
+    "explorer": [
+      "core"
+    ],
+    "frontend-engineer": [
+      "skill-match"
+    ],
+    "implementer": [
+      "bundle:cli",
+      "core"
+    ],
+    "quality-reviewer": [
+      "skill-match"
+    ],
+    "release-verifier": [
+      "bundle:cli",
+      "core"
+    ],
+    "reviewer": [
+      "bundle:cli",
+      "bundle:desktop",
+      "core"
+    ],
+    "security-architect": [
+      "risk"
+    ],
+    "security-reviewer": [
+      "risk"
+    ],
+    "tester": [
+      "bundle:cli",
+      "bundle:desktop",
+      "core"
+    ],
+    "ux-architect": [
+      "feature"
+    ]
+  }
+}

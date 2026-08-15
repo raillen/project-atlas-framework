@@ -1,0 +1,17 @@
+{
+  "tasks": [
+    {
+      "id": "T-01",
+      "dependencies": [
+        "T-02"
+      ]
+    },
+    {
+      "id": "T-02",
+      "dependencies": [
+        "T-01"
+      ]
+    }
+  ],
+  "expected_error": "DAG cycle detected"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "ci-cd",
+  "name": "CI/CD",
+  "version": 1,
+  "schema_version": 2,
+  "select": {
+    "features_any": [
+      "ci-cd",
+      "deployment"
+    ],
+    "stack_any": [
+      "github-actions",
+      "gitlab-ci"
+    ]
+  },
+  "purpose": "Make automated validation reproducible from a clean checkout.",
+  "risk_level": "low",
+  "modes": [
+    "implementation"
+  ],
+  "requires_any": [],
+  "tools": [],
+  "provenance": {
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  }
+}

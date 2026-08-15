@@ -86,6 +86,7 @@ def initialize_project(root: Path, profile: ProjectProfile) -> Resolution:
 
     atlas_config = {
         "version": 2,
+        "protocol": {"version": 3, "compatible": ">=3 <4"},
         "framework": {"name": "project-atlas-framework", "version": FRAMEWORK_VERSION},
         "project": project,
         "stack": profile.raw.get("stack", {}),

@@ -1,0 +1,7 @@
+{
+  "required_skills": [
+    "rust",
+    "secure-coding"
+  ],
+  "resolved_agent": "security-expert"
+}

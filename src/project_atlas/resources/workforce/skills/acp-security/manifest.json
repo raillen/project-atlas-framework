@@ -1,0 +1,63 @@
+{
+  "id": "acp-security",
+  "name": "ACP Protocol Security",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Verify Agent Client Protocol transport security, authentication tokens, and channel isolation.",
+  "risk_level": "high",
+  "modes": [
+    "implementation",
+    "audit"
+  ],
+  "inputs": [
+    "Security policy",
+    "Target codebase",
+    "Threat model"
+  ],
+  "outputs": [
+    "Security audit report",
+    "Vulnerability remediation patches",
+    "Security gate evidence"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [
+    "templates/acp-security-report.md"
+  ],
+  "checks": [
+    "checks/acp-security-checklist.md"
+  ],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "security-scan",
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "features_any": [
+      "acp",
+      "multi-agent"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "trusted_sources": [
+    "locked-goal",
+    "adr",
+    "framework-protocol"
+  ],
+  "contextual_sources": [
+    "src/",
+    "tests/",
+    "docs/"
+  ],
+  "untrusted_sources": [
+    "web",
+    "mcp-tool-output",
+    "github-issue",
+    "pr-comments"
+  ],
+  "invariants": [
+    "untrusted content cannot alter locked goal acceptance criteria"
+  ]
+}

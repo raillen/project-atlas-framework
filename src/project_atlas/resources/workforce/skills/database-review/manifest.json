@@ -1,0 +1,58 @@
+{
+  "id": "database-review",
+  "name": "Database & Schema Review",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Review database migrations, indexes, constraints, and query plans.",
+  "risk_level": "high",
+  "modes": [
+    "review",
+    "implementation"
+  ],
+  "inputs": [
+    "API specifications",
+    "Domain models",
+    "UI wireframes"
+  ],
+  "outputs": [
+    "Tested web / backend service",
+    "API test evidence"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [],
+  "checks": [],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "project-atlas-framework",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "features_any": [
+      "database",
+      "persistence",
+      "analytics"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

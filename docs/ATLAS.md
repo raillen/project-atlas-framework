@@ -1,54 +1,62 @@
-# Project Atlas Framework — ATLAS
+# Project Atlas Framework — ATLAS (v0.3)
 
-ATLAS is an intent router, not a requirement to read every document.
+ATLAS is an intent router, not a requirement to read every document. Follow Lean Progressive Context: start with the relevant link for your immediate task.
 
-## I want to understand the framework
+## Getting Started
+- [Installation](getting-started/installation.md)
+- [First Project Walkthrough](getting-started/first-project.md)
+- [Core Concepts](getting-started/concepts.md)
+- [Framework Specification](../FRAMEWORK.md)
 
-- [Framework contract](../FRAMEWORK.md)
-- [Architecture](ARCHITECTURE.md)
-- [Usage](USAGE.md)
+## User Guide
+- [Projects & Configuration](user-guide/projects.md)
+- [Goals & Locking](user-guide/goals.md)
+- [Plans, Tasks & DAGs](user-guide/plans-and-tasks.md)
+- [Agents](user-guide/agents.md)
+- [Skill Packages](user-guide/skills.md)
+- [Recipes](user-guide/recipes.md)
+- [Lean Progressive Context (LPC/PCA)](user-guide/context.md)
+- [Evidence & Gates](user-guide/evidence-and-gates.md)
+- [Model Policy](user-guide/models.md)
+- [Execution Policy](user-guide/execution.md)
+- [Project Intelligence](user-guide/project-intelligence.md)
 
-## I want to document a project for users/developers/operators
+## Authoring
+- [Writing Skills](authoring/writing-skills.md)
+- [Writing Agents](authoring/writing-agents.md)
+- [Writing Recipes](authoring/writing-recipes.md)
+- [Project Bundles](authoring/project-bundles.md)
+- [Risk Rules](authoring/risk-rules.md)
+- [Platform Adapters](authoring/adapters.md)
 
-- [Documentation System](DOCUMENTATION_SYSTEM.md)
-- [Portability and platform adapters](PORTABILITY.md)
-- [Validation and quality](QUALITY.md)
+## Platform Integrations
+- [Codex](integration/codex.md)
+- [Claude Code](integration/claude-code.md)
+- [Gemini](integration/gemini.md)
+- [OpenCode](integration/opencode.md)
+- [Generic Platform](integration/generic.md)
 
-## I want to work with AI agents efficiently
+## Protocols & Policies
+- [Event Protocol](EVENT_PROTOCOL.md)
+- [Trust Model](TRUST_MODEL.md)
+- [Quality Gates](QUALITY.md)
 
-- [Lean Progressive Context](LEAN_PROGRESSIVE_CONTEXT.md)
-- [Agents, Skills and Recipes](AI_WORKFORCE.md)
-- [Project Orchestration Protocol](PROJECT_ORCHESTRATION_PROTOCOL.md)
+## Reference
+- [CLI Reference](reference/cli.md)
+- [Schemas Reference](reference/schemas.md)
+- [Events Vocabulary](reference/events.md)
+- [Project Layout](reference/project-layout.md)
+- [Workforce Resolution](reference/workforce-resolution.md)
 
-## I want to define measurable work
+## Development & Architecture
+- [Framework Architecture](development/architecture.md)
+- [Compiler Internals](development/compiler.md)
+- [Resolver Internals](development/resolver.md)
+- [Migration System](development/migrations.md)
+- [Testing & Conformance](development/testing.md)
+- [Contributing](development/contributing.md)
 
-- [Goal System](GOAL_SYSTEM.md)
-- [Project Intelligence](PROJECT_INTELLIGENCE.md)
-
-## I want to evolve or migrate the framework
-
-- [Contributing and evolution](CONTRIBUTING.md)
-- [Framework change proposal](FRAMEWORK_CHANGE_PROPOSAL.md)
-- [Migration v0.1 → v0.2](MIGRATION_V0_1_TO_V0_2.md)
-
-## Machine contracts
-
-- `schemas/project-profile.schema.json` — init/import profile.
-- `schemas/atlas.schema.json` — canonical `atlas.json`.
-- `schemas/goal.schema.json` — Goal records.
-- `schemas/model-policy.schema.json` — model routing.
-- `schemas/task-report.schema.json` — durable task intelligence.
-
-## Canonical registries
-
-- `src/project_atlas/resources/catalog/catalog.json`
-
-## Persistent format rule
-
-The framework-maintained surface is intentionally small:
-
-- Markdown for human knowledge.
-- JSON for machine contracts.
-- SQLite only for derived/runtime state.
-
-YAML is legacy read compatibility, not a v0.2 canonical format.
+## Machine Contracts
+- Schemas directory: `schemas/`
+- Canonical workforce registry: `src/project_atlas/resources/catalog/catalog.json`
+- Canonical workforce packages: `src/project_atlas/resources/workforce/`
