@@ -5,15 +5,16 @@
     "type": ["game-engine", "desktop"]
   },
   "stack": {
-    "languages": ["csharp", "ori"],
-    "runtime": ["dotnet", "sdl3", "sdl-gpu", "box2d"],
-    "tooling": ["imgui", "traycer"]
+    "languages": ["rust", "ori"],
+    "runtime": ["fyrox"],
+    "scripting": ["ori", "ori-embed"],
+    "tooling": ["fyroxed", "brasa-cli"]
   },
   "features": ["rendering", "sprites", "tilemaps", "ui", "editor", "physics", "collision", "lighting", "postfx", "multiplayer", "networking", "plugins", "mcp", "code-editor", "scripting", "orchestration", "ai-assisted-development", "documentation", "docs-site"],
   "quality": {"performance": "high", "accessibility": true, "security": "high"},
   "risk": ["performance-critical", "security"],
   "ai": {
-    "orchestrator": "traycer",
+    "orchestrator": "native",
     "autonomy": "agentic",
     "preferred_models": [
       {"id": "openai/gpt-5.6-sol", "provider": "openai"},

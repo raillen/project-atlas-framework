@@ -16,7 +16,7 @@ def test_brasa_resolves_domain_workforce():
     assert "network-security" in result.skills
     assert "lean-progressive-context" in result.skills
     assert "project-intelligence" in result.skills
-    assert "roslyn-context-indexing" in result.skills
+    assert "rust-analyzer-context-indexing" in result.skills
     assert "engine-renderer" in result.recipes
     # Check Gate C & explainability trace
     assert "security-reviewer" in result.agents
