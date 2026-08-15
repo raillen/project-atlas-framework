@@ -4,24 +4,33 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "project-atlas-framework"
-version = "0.2.0"
-description = "A Git-native, provider-agnostic framework for durable and token-efficient AI-assisted software projects."
+version = "0.3.0"
+description = "Execution-Ready Protocol: Git-native, provider-agnostic framework for durable and token-efficient AI-assisted software projects."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
   "PyYAML>=6.0",
   "jsonschema>=4.22",
+  "referencing>=0.30",
 ]
-keywords = ["ai", "agents", "orchestration", "documentation", "context-engineering", "token-economy", "software-engineering", "goals"]
+keywords = ["ai", "agents", "orchestration", "documentation", "context-engineering", "token-economy", "software-engineering", "goals", "protocol"]
 classifiers = [
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Operating System :: OS Independent",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=6",
+  "mypy>=1.11",
+  "ruff>=0.5",
+  "pip-audit>=2.6",
+]
 
 [project.scripts]
 atlas = "project_atlas.cli:main"
@@ -39,3 +48,19 @@ project_atlas = ["resources/**/*.md", "resources/**/*.json"]
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+addopts = "--cov=src/project_atlas --cov-report=term-missing"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
