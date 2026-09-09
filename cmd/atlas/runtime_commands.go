@@ -26,13 +26,37 @@ func runRuntime(asJSON bool, args []string) int {
 	}
 	path := filepath.Join(root, ".atlas", "runtime", "continuation.json")
 	switch args[0] {
+	case "budget":
+		data, err := runtime.LoadJSON[map[string]any](filepath.Join(root, ".atlas", "runtime", "budget.json"))
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(data))
+		}
+		fmt.Printf("%v\n", data)
+		return exitOK
 	case "run":
+		if len(args) > 1 && args[1] == "show" {
+			record, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".atlas", "runtime", "runs", id+".json"))
+			if err != nil {
+				return serviceError(asJSON, err)
+			}
+			if asJSON {
+				return printEnvelope(protocol.OkEnvelope(record))
+			}
+			fmt.Printf("Run %s: %s\n", record.ID, record.Status)
+			return exitOK
+		}
 		run := runtime.NewRun(id, "", "")
 		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "runs", id+".json"), run); err != nil {
 			return serviceError(asJSON, err)
 		}
 		record := runtime.ContinuationFromRun(run, runtime.RepositoryState{}, nil, []string{"start work"}, nil, []string{"inspect Goal and repository state"})
 		if err := runtime.SaveJSON(path, record); err != nil {
+			return serviceError(asJSON, err)
+		}
+		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "budget.json"), map[string]any{"version": 1, "scope": "run", "limits": map[string]any{"input_tokens": 8000, "output_tokens": 3000, "tool_calls": 20}, "usage": map[string]any{}, "reservations": []any{}, "mode": "soft"}); err != nil {
 			return serviceError(asJSON, err)
 		}
 		if asJSON {
