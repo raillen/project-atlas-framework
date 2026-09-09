@@ -164,6 +164,13 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "MappingCandidate schema — F-G04 semantic document mapping and candidate bindings contract" }
       ],
       "semantic_role": "schema contract for semantic document mapping candidates and bindings"
+    },
+    {
+      "local_path": "schemas/confidence-ledger.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "ConfidenceLedger schema — F-G05 confidence ledger contract" }
+      ],
+      "semantic_role": "schema contract for adoption engine confidence ledger"
     }
   ]
 }
