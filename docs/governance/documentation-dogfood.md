@@ -11,7 +11,8 @@ Observed result:
 
 - Applicable profiles: `core-software`, `cli`.
 - Applicable contracts: architecture, CLI, installation, product vision, scope, security, testing.
-- Readiness: blocked.
-- Blocking contracts include architecture, installation, product vision, and scope.
+- Readiness: ready.
+- Blocking contracts: none.
+- Blocking questions: none.
 
-This is intentional. The engine reports missing semantic knowledge rather than fabricating completeness. The result is the baseline for the next Documentation Delta iteration.
+The engine still reports missing semantic knowledge when a binding lacks sources or required knowledge is absent; the current repository satisfies the applicable C-G06 contracts. Tracked deltas are stored locally under `.ai/docs/deltas/` and move through repository review before canonical documentation changes.

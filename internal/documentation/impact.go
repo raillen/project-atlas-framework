@@ -16,12 +16,16 @@ type Impact struct {
 	Severity   string   `json:"severity"`
 }
 type Delta struct {
+	ID        string   `json:"id,omitempty"`
+	Version   int      `json:"version,omitempty"`
 	State     string   `json:"state"`
 	Source    string   `json:"source"`
 	Contracts []string `json:"contracts"`
 	Documents []string `json:"documents"`
 	Reason    string   `json:"reason"`
 	Evidence  []string `json:"evidence"`
+	CreatedAt string   `json:"created_at,omitempty"`
+	UpdatedAt string   `json:"updated_at,omitempty"`
 }
 type Finding struct {
 	ID          string   `json:"id"`
@@ -43,6 +47,10 @@ func AnalyzeImpact(root string, changed []string) ([]Impact, error) {
 	if err != nil {
 		return nil, err
 	}
+	return AnalyzeImpacts(registry, bindings, changed), nil
+}
+
+func AnalyzeImpacts(registry Registry, bindings []Binding, changed []string) []Impact {
 	impacts := []Impact{}
 	for _, contract := range registry.Contracts {
 		for _, trigger := range contract.UpdateTriggers {
@@ -60,7 +68,7 @@ func AnalyzeImpact(root string, changed []string) ([]Impact, error) {
 		}
 	}
 	sort.Slice(impacts, func(i, j int) bool { return impacts[i].ContractID < impacts[j].ContractID })
-	return impacts, nil
+	return impacts
 }
 func triggerMatches(trigger string, changed []string) bool {
 	token := strings.ToLower(strings.Split(trigger, ".")[0])
