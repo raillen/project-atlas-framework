@@ -115,4 +115,60 @@ func TestLanguageConformanceFixtures(t *testing.T) {
 			t.Errorf("expected at least 1 unregistered finding, got %d", report.UnregisteredFindings)
 		}
 	})
+
+	t.Run("html_clean", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "html_clean"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !report.Clean {
+			t.Errorf("expected clean=true for html_clean, got %d findings", report.TotalFindings)
+		}
+	})
+
+	t.Run("sql_clean", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "sql_clean"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !report.Clean {
+			t.Errorf("expected clean=true for sql_clean, got %d findings", report.TotalFindings)
+		}
+	})
+
+	t.Run("dockerfile_clean", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "dockerfile_clean"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !report.Clean {
+			t.Errorf("expected clean=true for dockerfile_clean, got %d findings", report.TotalFindings)
+		}
+	})
+
+	t.Run("dockerfile_violating", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "dockerfile_violating"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if report.Clean {
+			t.Errorf("expected clean=false for dockerfile_violating")
+		}
+		if report.UnregisteredFindings < 2 {
+			t.Errorf("expected at least 2 unregistered findings, got %d", report.UnregisteredFindings)
+		}
+	})
+
+	t.Run("html_violating", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "html_violating"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if report.Clean {
+			t.Errorf("expected clean=false for html_violating")
+		}
+		if report.UnregisteredFindings < 2 {
+			t.Errorf("expected at least 2 unregistered findings, got %d", report.UnregisteredFindings)
+		}
+	})
 }

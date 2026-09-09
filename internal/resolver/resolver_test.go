@@ -117,3 +117,49 @@ func TestResolveManagedSkills(t *testing.T) {
 		})
 	}
 }
+
+func TestResolveDomainSkills(t *testing.T) {
+	catalog, err := LoadCatalog("../..")
+	if err != nil {
+		t.Fatalf("failed to load catalog: %v", err)
+	}
+
+	tests := []struct {
+		name          string
+		stack         []string
+		expectedSkill string
+	}{
+		{"HTML stack", []string{"html", "web"}, "lang-html"},
+		{"CSS stack", []string{"css", "styles"}, "lang-css"},
+		{"SQL stack", []string{"sql", "postgresql"}, "lang-sql"},
+		{"GraphQL stack", []string{"graphql"}, "lang-graphql"},
+		{"GLSL stack", []string{"glsl", "shaders"}, "lang-glsl"},
+		{"HLSL stack", []string{"hlsl"}, "lang-hlsl"},
+		{"WGSL stack", []string{"wgsl", "webgpu"}, "lang-wgsl"},
+		{"Dockerfile stack", []string{"dockerfile", "containers"}, "lang-dockerfile"},
+		{"Terraform stack", []string{"terraform", "iac"}, "lang-terraform"},
+		{"YAML stack", []string{"yaml", "config"}, "lang-yaml"},
+		{"JSON stack", []string{"json"}, "lang-json"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			profile := Profile{
+				Raw: map[string]any{
+					"stack": tt.stack,
+				},
+			}
+			resolution := catalog.Resolve(profile)
+			found := false
+			for _, s := range resolution.Skills {
+				if s == tt.expectedSkill {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Fatalf("expected skill %s to resolve for stack %v, got %v", tt.expectedSkill, tt.stack, resolution.Skills)
+			}
+		})
+	}
+}

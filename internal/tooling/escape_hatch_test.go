@@ -212,3 +212,71 @@ eval "$1"
 		t.Errorf("expected at least 4 unregistered findings, got %d", report.UnregisteredFindings)
 	}
 }
+
+func TestScanEscapeHatchesDomain(t *testing.T) {
+	tempDir := t.TempDir()
+
+	// 1. HTML javascript: URI and innerHTML
+	htmlCode := `<!DOCTYPE html>
+<html>
+<body>
+<a href="javascript:alert(1)">Click</a>
+<div id="target"></div>
+<script>
+document.getElementById('target').innerHTML = "<p>danger</p>";
+</script>
+</body>
+</html>`
+	if err := os.WriteFile(filepath.Join(tempDir, "index.html"), []byte(htmlCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 2. CSS !important
+	cssCode := `.btn {
+    background-color: red !important;
+}`
+	if err := os.WriteFile(filepath.Join(tempDir, "style.css"), []byte(cssCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 3. SQL SELECT *
+	sqlCode := `SELECT * FROM users WHERE active = 1;`
+	if err := os.WriteFile(filepath.Join(tempDir, "query.sql"), []byte(sqlCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 4. Dockerfile USER root and :latest
+	dockerfileCode := `FROM alpine:latest
+USER root
+RUN apk update
+`
+	if err := os.WriteFile(filepath.Join(tempDir, "Dockerfile"), []byte(dockerfileCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 5. Terraform open ingress 0.0.0.0/0
+	tfCode := `resource "aws_security_group" "allow_all" {
+  name        = "allow_all"
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}`
+	if err := os.WriteFile(filepath.Join(tempDir, "main.tf"), []byte(tfCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := ScanEscapeHatches(tempDir)
+	if err != nil {
+		t.Fatalf("unexpected scan error: %v", err)
+	}
+
+	if report.Clean {
+		t.Errorf("expected clean=false for domain violations")
+	}
+	if report.UnregisteredFindings < 6 {
+		t.Errorf("expected at least 6 unregistered domain findings, got %d", report.UnregisteredFindings)
+	}
+}
