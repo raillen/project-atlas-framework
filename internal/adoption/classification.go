@@ -299,7 +299,7 @@ func (c *classifier) classifyDep(dep string, factID string) {
 		c.addSignal(DimPersistence, "gorm", ConfidenceFactual, factID)
 	case strings.Contains(dep, "sqlalchemy"):
 		c.addSignal(DimPersistence, "sqlalchemy", ConfidenceFactual, factID)
-	case strings.Contains(dep, "lib/pq") || strings.Contains(dep, "pgx") || strings.Contains(dep, "psycopg"):
+	case dep == "pg" || strings.Contains(dep, "lib/pq") || strings.Contains(dep, "pgx") || strings.Contains(dep, "psycopg") || strings.Contains(dep, "postgres"):
 		c.addSignal(DimPersistence, "postgresql", ConfidenceFactual, factID)
 	case strings.Contains(dep, "sqlite"):
 		c.addSignal(DimPersistence, "sqlite", ConfidenceFactual, factID)
@@ -351,10 +351,13 @@ func (c *classifier) classifyDeployment() {
 		switch {
 		case strings.HasPrefix(lowerSource, ".github/workflows/"):
 			c.addSignal(DimDeployment, "github-actions", ConfidenceFactual, f.ID)
+			c.addSignal(DimCapability, "ci-cd", ConfidenceFactual, f.ID)
 		case strings.HasPrefix(lowerSource, ".circleci/"):
 			c.addSignal(DimDeployment, "circleci", ConfidenceFactual, f.ID)
+			c.addSignal(DimCapability, "ci-cd", ConfidenceFactual, f.ID)
 		case strings.HasPrefix(lowerSource, ".gitlab-ci"):
 			c.addSignal(DimDeployment, "gitlab-ci", ConfidenceFactual, f.ID)
+			c.addSignal(DimCapability, "ci-cd", ConfidenceFactual, f.ID)
 		case base == "dockerfile" || strings.HasPrefix(base, "dockerfile."):
 			c.addSignal(DimDeployment, "docker", ConfidenceFactual, f.ID)
 		case strings.HasPrefix(base, "docker-compose"):
@@ -419,6 +422,8 @@ func (c *classifier) classifySecurity() {
 			c.addSignal(DimSecurity, "security-policy", ConfidenceFactual, f.ID)
 		case base == ".env.example" || base == ".env.sample":
 			c.addSignal(DimSecurity, "env-example", ConfidenceFactual, f.ID)
+		case strings.HasPrefix(f.Key, "env-presence:") || base == ".env" || strings.HasPrefix(base, ".env."):
+			c.addSignal(DimSecurity, "env-file-present", ConfidenceFactual, f.ID)
 		}
 	}
 }

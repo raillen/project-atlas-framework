@@ -124,6 +124,13 @@
       "semantic_role": "M7 Adoption Engine: discovery pipeline, observed facts vs inference, classification, semantic mapping, confidence ledger, adoption report, migration proposals, brownfield boundary, exit gate"
     },
     {
+      "local_path": "docs/governance/m7-exit-gate.md",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "M7 Exit Gate — ADOPTION READY validation, evidence, brownfield corpus results" }
+      ],
+      "semantic_role": "M7 exit gate formal validation: zero forced layout, facts vs inferences, confidence ledger, M5 bindings, Living Plan uncertainty, review governed migration proposals, incremental scanner, security"
+    },
+    {
       "local_path": "docs/security/trust-model.md",
       "notion_pages": [
         { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }
