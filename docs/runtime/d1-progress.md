@@ -18,6 +18,7 @@ Remaining D1 gate work:
 - Persisted Run lifecycle beyond bootstrap creation.
 - `atlas run resume`, cancellation, retry taxonomy, and livelock detection CLI.
 - Full Context Manifest rehydration from Goal/Git/evidence sources.
-- Budget/cost/rate-limit commands and accounting integration.
-- Observability explain/debug bundle CLI.
-- Process-kill and fresh-executor dogfood without connector history: baseline fixture now passes; process-kill integration remains the final D1 gate.
+- Budget/cost/rate-limit commands and accounting integration remain minimal: budget inspection is available, reservation accounting is package-level.
+- Observability explain/debug bundle CLI remains to be completed.
+- Process-kill and fresh-executor dogfood without connector history: generic fresh-executor fixture passes; process-kill integration remains the final D1 gate.
+- `atlas run context` now recompiles a deterministic Context Manifest for a Run.
