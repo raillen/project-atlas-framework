@@ -30,10 +30,10 @@ cat dist/checksums.txt
 gofmt -l cmd internal embedded_assets.go
 go test ./... -race
 go vet ./...
-pytest
 ```
 
-`pytest` remains the Python v0.3 oracle suite during migration. It is not required to execute a release Go binary.
+Python v0.3 has been completely retired (ADR 002). CI executes pure Go checks and CLI smoke tests.
+
 
 ## Project deployment checks
 

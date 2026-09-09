@@ -16,11 +16,10 @@ go vet ./...
 gofmt -l cmd internal embedded_assets.go
 ```
 
-The Go test suite includes differential conformance against Python v0.3. Python remains required only for the oracle and Python test context:
+The Go test suite includes comprehensive unit, integration, and differential conformance tests:
 
 ```bash
-python -m pip install -e '.[dev]'
-pytest
+go test -v -race ./...
 ```
 
 ## Code and package conventions
@@ -43,7 +42,7 @@ pytest
 
 ## Migration discipline
 
-- Do not delete, move, or rewrite the Python v0.3 runtime while it remains the conformance oracle.
+- The Python v0.3 runtime was retired in ADR 002; the repository is 100% pure Go.
 - Do not change the Atlas protocol only to make Go implementation easier.
 - New v0.4 capabilities require closed Goals, documentation, and acceptance criteria.
 - Lock content, ADRs, and schemas must change explicitly, not silently.
@@ -51,6 +50,6 @@ pytest
 ## Pull request process
 
 - Keep changes review-sized and scoped to one Goal or milestone.
-- Report `go test -race ./...`, `go vet ./...`, `gofmt -l`, and `pytest` results.
+- Report `go test -race ./...`, `go vet ./...`, and `gofmt -l` results.
 - Record protocol-affecting decisions in the canonical document and ADR first.
 - Request review from maintainers before merging protocol, security, or release changes.

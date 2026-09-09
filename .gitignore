@@ -21,3 +21,4 @@ htmlcov/
 *.out
 /dist/
 /test-home/
+.opencode/

@@ -7,7 +7,7 @@
 | Usuário final | Binário de uma release publicada |
 | Desenvolvimento do Atlas | `go build` ou `go run` |
 | CI, testes e USB/devbox | `--home` ou `ATLAS_HOME` |
-| Compatibilidade v0.3 | Python + `pip install -e '.[dev]'` |
+| Automação e scripts | Binário Go compilado ou empacotado |
 
 ## Instalação com uma linha
 
@@ -124,18 +124,9 @@ atlas validate ./my-project
 atlas doctor ./my-project
 ```
 
-## Python v0.3: somente oracle e desenvolvimento
+## Depreciação e Aposentadoria do Python (ADR 002)
 
-Para executar a implementação de referência e a suíte Python:
-
-```bash
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -e '.[dev]'
-pytest
-```
-
-O Python continua necessário para a conformance oracle v0.3, não para o runtime Go.
+O runtime e os testes em Python v0.3 foram completamente removidos (consulte [ADR 002](file:///home/raillen/Documentos/Projetos/project-atlas-framework/docs/adr/002-retire-python-runtime.md)). O Project Atlas v0.4 é distribuído exclusivamente em binário único compilado em Go, sem dependência de interpretadores externos, ambientes virtuais ou gerenciadores de pacotes Python.
 
 ## Problemas comuns
 

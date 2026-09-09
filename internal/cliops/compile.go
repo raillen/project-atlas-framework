@@ -43,6 +43,9 @@ func copyWorkforcePackage(source, target string) []string {
 		if err != nil || info.IsDir() {
 			return nil
 		}
+		if strings.Contains(path, "__pycache__") || strings.HasSuffix(path, ".pyc") {
+			return nil
+		}
 		files = append(files, path)
 		return nil
 	})

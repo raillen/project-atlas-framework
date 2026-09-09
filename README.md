@@ -6,12 +6,12 @@ The repository is the durable source of truth. Atlas stores canonical project st
 
 ## Current release line
 
-The repository is migrating from Python v0.3 to Go v0.4.
+Project Atlas v0.4 is a pure Go distribution (ADR 002).
 
-- **Go v0.4** is the active CLI and Core implementation.
-- **Python v0.3** remains in `src/project_atlas/` as the compatibility oracle during migration.
-- New v0.4 work must target Go after the relevant Goal, documentation, and acceptance criteria are closed.
-- Python is not required to run the Go CLI.
+- **Go v0.4** is the official single-binary CLI and Core implementation.
+- Python v0.3 has been completely retired (ADR 002).
+- Zero external runtime dependencies (no Python, pip, or virtualenv required).
+- All canonical assets (schemas, catalog, workforce, adapters) are embedded directly into the Go binary.
 
 ## What Atlas provides
 
@@ -23,7 +23,7 @@ The repository is migrating from Python v0.3 to Go v0.4.
 - Lean Progressive Context planning and project intelligence reports.
 - Compiler adapters for Generic, ChatGPT, Claude, Kimi, Codex, Claude Code, and Traycer.
 - Machine-readable JSON envelopes for automation and harness integrations.
-- Conformance tests comparing Go behavior with the Python v0.3 oracle.
+- Conformance tests comparing Go behavior with golden specification baselines.
 - Portable installation state, connector ownership, setup, and safe uninstall.
 
 ## Quick start from source
@@ -31,8 +31,7 @@ The repository is migrating from Python v0.3 to Go v0.4.
 Requirements:
 
 - Go 1.22+;
-- Git;
-- Python 3.10+ only when running the v0.3 oracle or Python test suite.
+- Git.
 
 ```bash
 git clone git@github.com:raillen/project-atlas-framework.git
@@ -146,10 +145,9 @@ stdout is reserved for JSON when `--json` is used. Diagnostics belong on stderr.
 gofmt -l cmd internal embedded_assets.go
 go test ./... -race
 go vet ./...
-pytest
 ```
 
-The Go suite includes differential tests for initialization, resolver behavior, Goals, Doctor, Explain, migration, snapshots, and all seven compiler targets. The Python suite remains the v0.3 regression oracle.
+The Go suite includes comprehensive tests for initialization, resolver behavior, Goals, Plans, Doctor, Explain, migration, snapshots, all seven compiler targets, connectors, and adoption engine.
 
 ## Documentation map
 
@@ -161,6 +159,8 @@ The Go suite includes differential tests for initialization, resolver behavior, 
 - [Core concepts](docs/getting-started/concepts.md)
 - [v0.4 product scope](docs/product/scope-v0.4.md)
 - [Architecture](docs/architecture/overview.md)
+- [ADR 001: Go Core](docs/adr/001-go-core.md)
+- [ADR 002: Retire Python Runtime](docs/adr/002-retire-python-runtime.md)
 - [Migration status](docs/migration/v0.3-to-v0.4-go.md)
 - [Conformance strategy](docs/migration/conformance-strategy.md)
 - [Development blueprint](docs/development/implementation-blueprint.md)

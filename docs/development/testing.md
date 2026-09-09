@@ -1,30 +1,50 @@
 # Testing
 
-Project Atlas emphasizes rigorous testing to ensure deterministic behavior and backward compatibility.
+Project Atlas emphasizes rigorous testing to ensure deterministic behavior, contract conformance, and backward compatibility.
 
-## Test Suite Organization
+## Test Suite Organization (Go v0.4)
 
-- `test_schemas.py`: Validates schema definitions.
-- `test_goals.py`: Goal evaluation logic.
-- `test_resolver.py`: Resolution algorithm correctness.
-- `test_scaffolder.py`: Project initialization.
-- `test_conformance.py`: Validates skills against contracts.
-- `test_workforce.py`: Agent/Workforce definition logic.
-- `test_cli.py`: CLI command integration tests.
-- `test_migration.py`: Schema migration tools.
+The test suite is written in pure Go and organized by package:
+
+- `cmd/atlas`: CLI end-to-end and entrypoint tests (`main_test.go`).
+- `internal/validation`: Draft 2020-12 JSON Schema validation and `$ref` resolution tests.
+- `internal/goals`: Goal lifecycle, SHA-256 lock integrity, and amendment evaluation logic.
+- `internal/resolver`: Deterministic agent, skill, recipe, risk, and model-policy resolution.
+- `internal/scaffold`: Project initialization and directory bootstrapping.
+- `internal/compiler`: Multi-target compiler adapters (Generic, Codex, Claude Code, Traycer, OpenCode).
+- `internal/cliops`: Full CLI operations, differential conformance, and execution pipeline.
+- `internal/runtime`: Agent runtime control plane, Living Plan, checkpoints, tool gateway, and session harness.
+- `internal/adoption`: Brownfield repository scanning, classification, recipe synthesis, and adoption engine.
+- `internal/install`: Portable installation, connector setup, and safe uninstallation.
 
 ## Running Tests
 
-Run `pytest` from the repository root. Use `pytest -v` for verbose output.
+Run all unit, integration, and race tests:
 
-## Conformance Suite
+```bash
+go test -v -race ./...
+```
 
-Ensures that provided skills adhere strictly to the schema and structural rules (e.g., verifying `SKILL.md` sections).
+Run tests for a specific package:
 
-## FakeRuntime
+```bash
+go test -v ./internal/adoption/...
+```
 
-A deterministic execution environment used to test agent interactions and tool calls without invoking real LLMs or touching the live filesystem unnecessarily.
+## Quality Gates
 
-## Golden Fixtures
+Before submitting changes or merging pull requests:
 
-Tests relying on complex compilation outputs use golden fixtures stored in `tests/fixtures/`. Update these carefully when compiler output intentionally changes.
+```bash
+diff -u <(echo -n) <(gofmt -d .)
+go vet ./...
+go test -v -race ./...
+```
+
+## Conformance Suite & Golden Fixtures
+
+Differential conformance fixtures are stored under `conformance/golden/` (such as `conformance/golden/m3/compiler-parity.json` and `conformance/golden/cli/resolve-brasa-json.json`). Tests verify that Go compiler outputs and CLI behaviors adhere strictly to canonical schemas and frozen contracts.
+
+## Python Runtime Retirement (ADR 002)
+
+The legacy Python v0.3 test suite (`tests/`) and runtime modules have been fully retired (ADR 002). No Python interpreter is required to build, test, or execute Project Atlas.

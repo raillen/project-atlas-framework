@@ -60,12 +60,9 @@ connector fixtures
 govulncheck ./...        # when dependencies exist
 ```
 
-Python baseline remains:
-```text
-python -m pytest --cov=src/project_atlas --cov-report=term-missing --cov-fail-under=80
-python -m ruff check src tests
-python -m mypy src/project_atlas
-```
+Python baseline (retired under ADR 002):
+The legacy Python runtime and pytest suite were retired once all conformance fixtures achieved parity. Go quality gates (`gofmt`, `go vet`, `go test -race ./...`) now serve as the primary enforcement mechanism.
+
 
 ## Conformance Fixtures
 
