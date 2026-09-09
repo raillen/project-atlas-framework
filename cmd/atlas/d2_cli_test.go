@@ -106,7 +106,7 @@ func TestBuiltinToolCLI(t *testing.T) {
 	if err != nil {
 		t.Fatalf("tool list failed: %v (%s)", err, outList)
 	}
-	for _, toolName := range []string{"scan-secrets", "analyze-complexity", "check-permissions"} {
+	for _, toolName := range []string{"scan-secrets", "analyze-complexity", "check-permissions", "check-escape-hatches"} {
 		if !strings.Contains(string(outList), toolName) {
 			t.Fatalf("expected tool list to contain %s: %s", toolName, outList)
 		}
@@ -144,5 +144,16 @@ func TestBuiltinToolCLI(t *testing.T) {
 	}
 	if !strings.Contains(string(outPerm), "Permissions clean") {
 		t.Fatalf("expected permissions clean: %s", outPerm)
+	}
+
+	// Tool check-escape-hatches (on temporary clean dir)
+	cmdHatch := exec.Command("go", "run", "./cmd/atlas", "tool", "check-escape-hatches", tempDir)
+	cmdHatch.Dir = projectRoot
+	outHatch, err := cmdHatch.CombinedOutput()
+	if err != nil {
+		t.Fatalf("tool check-escape-hatches failed: %v (%s)", err, outHatch)
+	}
+	if !strings.Contains(string(outHatch), "Clean:") {
+		t.Fatalf("expected clean escape hatches output: %s", outHatch)
 	}
 }

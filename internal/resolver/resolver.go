@@ -107,6 +107,10 @@ func flattenSet(value any) map[string]bool {
 			for _, child := range x {
 				walk(child)
 			}
+		case []string:
+			for _, child := range x {
+				out[strings.ToLower(child)] = true
+			}
 		case string:
 			out[strings.ToLower(x)] = true
 		case float64, bool:

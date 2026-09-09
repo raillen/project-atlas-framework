@@ -92,6 +92,17 @@ func defaultToolRegistry() *toolgateway.Registry {
 		TimeoutMS:       10000,
 		OutputLimit:     51200,
 	})
+	r.Register(toolgateway.Descriptor{
+		ID:              "check-escape-hatches",
+		Version:         1,
+		Description:     "Scan code for unregistered escape hatches, unsafe operations, and suppressions",
+		Kind:            toolgateway.ReadOnly,
+		Trust:           "core",
+		Capabilities:    []string{"code-safety", "escape-hatches", "audit"},
+		FilesystemScope: []string{"project-root"},
+		TimeoutMS:       20000,
+		OutputLimit:     102400,
+	})
 	return r
 }
 
@@ -331,6 +342,31 @@ func runTool(asJSON bool, root string, args []string) int {
 		fmt.Printf("Found %d subprocess warning(s):\n", len(findings))
 		for _, f := range findings {
 			fmt.Printf("  %s:%d [%s] %s\n", f.File, f.Line, f.Pattern, f.Preview)
+		}
+		return exitValidation
+	case "check-escape-hatches":
+		path := root
+		if len(args) > 1 {
+			path = args[1]
+		}
+		report, err := tooling.ScanEscapeHatches(path)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(report))
+		}
+		if report.Clean {
+			fmt.Printf("Clean: %d file(s) scanned, %d registered escape hatch(es), 0 unregistered violations.\n",
+				report.TotalScannedFiles, report.RegisteredFindings)
+			return exitOK
+		}
+		fmt.Printf("Found %d unregistered escape hatch violation(s) across %d file(s):\n",
+			report.UnregisteredFindings, report.TotalScannedFiles)
+		for _, f := range report.Findings {
+			if !f.Registered {
+				fmt.Printf("  %s:%d [%s] %s -> %s\n", f.File, f.Line, f.HatchType, f.Snippet, f.Message)
+			}
 		}
 		return exitValidation
 	default:

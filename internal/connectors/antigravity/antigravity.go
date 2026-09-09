@@ -187,7 +187,19 @@ This project uses Project Atlas v0.4 with Google Antigravity.
 
 	for _, skillID := range skills {
 		skillDir := filepath.Join(agentsDir, "skills", skillID)
-		skillMD := fmt.Sprintf(`---
+		sourceSkillDir := ""
+		if opts.RepoRoot != "" {
+			cand := filepath.Join(opts.RepoRoot, "src", "project_atlas", "resources", "workforce", "skills", skillID)
+			if info, err := os.Stat(cand); err == nil && info.IsDir() {
+				sourceSkillDir = cand
+			}
+		}
+
+		if sourceSkillDir != "" {
+			copied := copyDirectory(sourceSkillDir, skillDir)
+			created = append(created, copied...)
+		} else {
+			skillMD := fmt.Sprintf(`---
 name: %s
 description: Atlas skill for %s with automated quality checks.
 ---
@@ -198,11 +210,12 @@ description: Atlas skill for %s with automated quality checks.
 Execute skill procedures following Lean Progressive Context.
 Verify outputs against quality checklists before declaring completion.
 `, skillID, skillID, skillID)
-		skillPath := filepath.Join(skillDir, "SKILL.md")
-		if err := writeText(skillPath, skillMD); err != nil {
-			return nil, err
+			skillPath := filepath.Join(skillDir, "SKILL.md")
+			if err := writeText(skillPath, skillMD); err != nil {
+				return nil, err
+			}
+			created = append(created, skillPath)
 		}
-		created = append(created, skillPath)
 	}
 
 	// 7. Ownership marker
@@ -335,4 +348,29 @@ func writeJSON(path string, val any) error {
 		return err
 	}
 	return writeText(path, string(data)+"\n")
+}
+
+func copyDirectory(source, target string) []string {
+	created := []string{}
+	_ = filepath.Walk(source, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() {
+			return nil
+		}
+		rel, err := filepath.Rel(source, path)
+		if err != nil {
+			return nil
+		}
+		dest := filepath.Join(target, rel)
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return nil
+		}
+		if err := writeText(dest, string(data)); err != nil {
+			return nil
+		}
+		created = append(created, dest)
+		return nil
+	})
+	sort.Strings(created)
+	return created
 }

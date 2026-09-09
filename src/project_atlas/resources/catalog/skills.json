@@ -6573,6 +6573,587 @@
       "requires_any": [],
       "tools": [],
       "instructions": "# Zoom & Reflow Testing\n\n## Purpose\nVerify layouts reflow without horizontal scroll at 400% zoom.\n\n## Use when\n- Active Goal or Task explicitly requires zoom & reflow testing operations.\n- Operating in mode(s): `testing`.\n\n## Do not use when\n- Task is out of scope or unrelated to zoom & reflow testing.\n- Bounded token budget or capability policy denies required operations.\n\n## Required context\n- Product requirements\n- Design tokens\n- Wireframe / UI view\n\n## Procedure\n1. Analyze UX requirements and design constraints for zoom & reflow testing.\n2. Check compliance with design tokens and accessibility guidelines.\n3. Specify structured layout, interaction states, and responsive breakpoints.\n4. Verify with automated visual or keyboard navigation checks.\n5. Emit validated specification or review findings.\n\n## Decision rules\n- Always prefer smallest sufficient changeset over broad refactoring.\n- Preserve existing public contracts and architecture invariants.\n- Never weaken locked Goal acceptance criteria.\n\n## Evidence required\n- test\n- review\n\n## Output contract\n- Design specification / findings\n- Accessibility audit scorecard\n- UI tests\n\n## Stop conditions\n- Task acceptance criteria satisfied with evidence\n- Token budget exhausted\n- Blocked on external dependency\n\n## Escalation rules\n- Escalate to lead architect or human if locked Goal criteria cannot be met.\n- Escalate immediately upon discovering unexpected security vulnerabilities or data loss risks.\n"
+    },
+    {
+      "id": "lang-cpp",
+      "name": "Modern C++ Engineering & Extreme Safety",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce modern C++ (C++20/C++23) standards, RAII ownership, zero raw pointer bugs, sanitizers, static analysis, and non-negotiable memory safety.",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "testing",
+        "audit"
+      ],
+      "inputs": [
+        "C++ source and header files",
+        "Build configuration (CMake / Meson)",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened modern C++ implementation",
+        "Sanitizer and static analysis evidence",
+        "Exhaustive test suite evidence",
+        "Escape-hatch audit log"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality",
+        "secure-coding"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/memory-model-lifetime.md",
+        "references/sanitizers-and-tooling.md",
+        "references/ai-coding-contract.md"
+      ],
+      "templates": [
+        "templates/escape-hatch-waiver.md",
+        "templates/cpp-verification-report.md"
+      ],
+      "checks": [
+        "checks/forbidden-patterns.md",
+        "checks/compiler-flags.md",
+        "checks/clang-tidy-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/raii-ownership.cpp"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint",
+        "security-scan"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "Zero compiler warnings with -Werror",
+        "Zero sanitizer findings (ASan, UBSan)",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "cpp",
+          "c++",
+          "cxx",
+          "clang",
+          "gcc",
+          "cmake"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-cpp\ndescription: Modern C++ (C++20/C++23) engineering, RAII ownership, banned raw allocations, sanitizers (ASan/UBSan), static analysis, and zero-defect AI implementation contract.\n---\n\n# Modern C++ Engineering & Extreme Safety Contract\n\n## 1. Core Paradigm & Standards\n- Target **C++20** or **C++23**. Legacy pre-C++20 idioms are prohibited unless backward compatibility is explicitly mandated.\n- Follow **RAII (Resource Acquisition Is Initialization)** unconditionally. All resource lifecycles (memory, locks, file descriptors, sockets) must be tied to object lifetimes.\n- Zero raw pointer manipulation. Naked `new`, `delete`, `malloc`, and `free` are strictly forbidden. Use `std::unique_ptr` for exclusive ownership, `std::shared_ptr` only when ownership is genuinely shared, and `std::span` / `std::string_view` for non-owning views.\n\n## 2. Forbidden Constructs & Immediate Failures\nThe following patterns fail compilation and quality gates immediately:\n- `reinterpret_cast` (unless formally registered in `.atlas/escape-hatches.json` with safety invariants).\n- C-style casts `(type)val`. Use `static_cast`, `std::bit_cast`, or type traits.\n- Raw pointer arithmetic (`ptr++`, `*(ptr + i)`). Use iterators or `std::span`.\n- Uninitialized variables. Always initialize: `int count = 0;` or auto `{}`.\n- C-style macro constants (`#define BUFFER_SIZE 1024`). Use `inline constexpr auto BufferSize = 1024;`.\n- `goto` statements. Use structured control flow.\n- Uncaught exceptions. Use `std::expected<T, E>` (C++23) or `std::optional<T>` for fallible operations.\n\n## 3. Universal AI Implementation Loop for C++\n1. **Red Phase**: Write unit tests (Catch2, GoogleTest, or Boost.UT) specifying exact invariants, boundaries, and failure cases before implementation.\n2. **Green Phase**: Implement minimal idiomatic C++ satisfying tests using value semantics, smart pointers, and standard containers.\n3. **Hardening Phase**:\n   - Compile with `-Wall -Wextra -Wpedantic -Wconversion -Wshadow -Werror`.\n   - Run static analysis: `clang-tidy --warnings-as-errors=*` and `cppcheck`.\n   - Run sanitizers: AddressSanitizer (`-fsanitize=address`), UndefinedBehaviorSanitizer (`-fsanitize=undefined`), and ThreadSanitizer (`-fsanitize=thread`).\n   - Run memory leak detection (LeakSanitizer / Valgrind).\n4. **Evidence Generation**: Output normalized test and sanitizer results conforming to `schemas/evidence.schema.json`.\n\n## 4. Escape-Hatch Quarantine Policy\nWhen low-level hardware or foreign function interfaces (FFI) require escaping safety rules:\n- Isolate the escape hatch within a dedicated translation unit or inline boundary.\n- Formally register the hatch in `.atlas/escape-hatches.json` or annotate with `// ATLAS:ESCAPE_HATCH[id]`.\n- Provide exhaustive sanitizer and differential unit tests covering the boundary.\n"
+    },
+    {
+      "id": "lang-c",
+      "name": "ISO C Bounded Systems & Safe Memory",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce ISO C (C11/C17/C23) bounded buffer discipline, explicit error checking, zero unbounded strings, and memory isolation.",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "testing",
+        "audit"
+      ],
+      "inputs": [
+        "C source and header files",
+        "Build files (Makefile / CMake)",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "Bounded and hardened C implementation",
+        "Sanitizer and Valgrind verification evidence",
+        "Unit test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality",
+        "secure-coding"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/c-memory-safety.md"
+      ],
+      "templates": [
+        "templates/c-verification-report.md"
+      ],
+      "checks": [
+        "checks/bounded-apis.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-buffer.c"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint",
+        "security-scan"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "Zero compiler warnings with -Werror",
+        "Valgrind/ASan clean execution",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "c",
+          "c11",
+          "c17",
+          "c23",
+          "gcc",
+          "clang"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-c\ndescription: ISO C (C11/C17/C23) bounded buffers, explicit error checking, zero unbounded string APIs, cleanup attributes, and ASan/Valgrind memory verification.\n---\n\n# ISO C Bounded Systems & Safe Memory Contract\n\n## 1. Core Principles & Standards\n- Target **ISO C11, C17, or C23**.\n- **Bounded Buffers**: Every buffer passed to a function MUST be accompanied by its explicit capacity/size parameter (`size_t cap`). Unbounded memory writes are non-negotiable failures.\n- **Banned APIs**: `gets`, `strcpy`, `strcat`, `sprintf`, `vsprintf` are strictly prohibited. Use `snprintf`, `strlcpy`, or explicit bounds checking.\n- **Explicit Error Returns**: All fallible functions must return an integer status code (`0` on success, negative on error) or a typed result struct. Never ignore return values.\n\n## 2. Memory Lifecycle Discipline\n- Every allocation via `malloc` / `calloc` must be immediately checked against `NULL`.\n- Free all allocated pointers and set them to `NULL` (`ptr = NULL;`) to prevent Use-After-Free.\n- Utilize `__attribute__((cleanup))` where compiler support allows for deterministic scope-based cleanup.\n\n## 3. Verification Loop\n1. **Compile**: `gcc -std=c17 -Wall -Wextra -Wpedantic -Wconversion -Werror -D_FORTIFY_SOURCE=2`\n2. **Sanitize**: Compile and run tests with `-fsanitize=address,undefined`.\n3. **Valgrind**: Run test binaries under Valgrind (`valgrind --leak-check=full --error-exitcode=1`).\n"
+    },
+    {
+      "id": "lang-asm",
+      "name": "Assembly x86/x86-64 ABI & Calling Conventions",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce x86/x86-64 ABI compliance, 16-byte stack alignment, CFI directives, non-executable stacks, and memory barrier safety.",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "audit"
+      ],
+      "inputs": [
+        "Assembly source files (.s, .asm)",
+        "Target ABI specification",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "ABI-compliant hardened assembly routines",
+        "Stack alignment verification evidence",
+        "CFI unwind compatibility"
+      ],
+      "requires": [
+        "clean-code",
+        "secure-coding"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/x86-64-abi.md"
+      ],
+      "templates": [
+        "templates/asm-verification-report.md"
+      ],
+      "checks": [
+        "checks/abi-checklist.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-leaf.s"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "security-scan"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "ABI calling convention compliance verified",
+        "16-byte stack alignment verified before calls",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "asm",
+          "assembly",
+          "nasm",
+          "gas",
+          "x86",
+          "x86_64",
+          "amd64"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-asm\ndescription: Assembly x86/x86-64 calling conventions (System V AMD64 / Microsoft x64), 16-byte stack alignment, CFI directives, non-executable stack, and register clobber safety.\n---\n\n# Assembly x86/x86-64 Engineering & ABI Safety Contract\n\n## 1. Calling Conventions & Register Discipline\n- **System V AMD64 (Linux, macOS, BSD)**:\n  - Integer Arguments: `RDI`, `RSI`, `RDX`, `RCX`, `R8`, `R9`.\n  - Return Value: `RAX` (and `RDX` for 128-bit).\n  - Callee-Saved Registers: `RBX`, `RBP`, `R12`, `R13`, `R14`, `R15`. MUST be preserved across function calls.\n  - Caller-Saved (Scratch): `RAX`, `RCX`, `RDX`, `RSI`, `RDI`, `R8`, `R9`, `R10`, `R11`.\n- **Microsoft x64 (Windows)**:\n  - Integer Arguments: `RCX`, `RDX`, `R8`, `R9`.\n  - Mandatory 32-byte Shadow Space allocated by caller.\n  - Callee-Saved: `RBX`, `RBP`, `RDI`, `RSI`, `R12`, `R13`, `R14`, `R15`.\n\n## 2. Mandatory Stack Alignment & Security\n- **16-Byte Alignment**: The stack pointer (`RSP`) MUST be 16-byte aligned immediately before any `call` instruction. (Upon function entry after `call`, `RSP` is 8 mod 16 due to the return address pushed).\n- **CFI Directives**: Include `.cfi_startproc`, `.cfi_endproc`, and `.cfi_def_cfa_offset` for stack unwinding and debugging.\n- **Non-Executable Stack**: Every assembly file must declare `.section .note.GNU-stack,\"\",@progbits` to prevent security mitigations from marking stack memory executable.\n- **Spectre / Branch Safety**: Use `lfence` or retpoline for speculative execution mitigation on indirect jumps when processing untrusted inputs.\n"
+    },
+    {
+      "id": "lang-c3",
+      "name": "C3 Semantic Safety & Contract Assertions",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce C3 semantic safety, explicit defer cleanup, slices over raw pointers, contract annotations, and error results.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "C3 source files (.c3, .c3i)",
+        "Project project.json",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "Type-safe C3 implementation",
+        "Contract assertion verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/c3-safety-model.md"
+      ],
+      "templates": [
+        "templates/c3-verification-report.md"
+      ],
+      "checks": [
+        "checks/c3-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-defer.c3"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "C3 compiler checks pass without warnings",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "c3",
+          "c3c"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-c3\ndescription: C3 systems programming, explicit defer resource release, slices, contract annotations (@param/@return), error returns (!Type), and safe conversions.\n---\n\n# C3 Semantic Safety & Contract Assertions Contract\n\n## 1. Core Principles\n- **Explicit Cleanup with `defer`**: All allocated resources, file descriptors, and locks must have an immediate `defer` cleanup block defined upon acquisition.\n- **Slices over Raw Pointers**: Always prefer bounded slices (`int[]`) rather than raw pointers (`int*`). Slices contain length and prevent out-of-bounds access.\n- **Error Results (`!Type`)**: Handle error unions explicitly with `try` or `catch`. Never ignore fallible operation results.\n- **Contract Annotations**: Use `@param` bounds checks and `@pure` annotations to establish clear mathematical constraints on functions.\n"
+    },
+    {
+      "id": "lang-d",
+      "name": "Dlang Safe-by-Default & Scope Pointer Discipline",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Dlang @safe by default, DIP1000 scope pointer checking, @nogc optimization, and pure functional immutability.",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "D source files (.d)",
+        "dub.json / dub.sdl package description",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "@safe hardened D implementation",
+        "DIP1000 lifetime safety verification evidence",
+        "Unit test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality",
+        "secure-coding"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/d-safe-dip1000.md"
+      ],
+      "templates": [
+        "templates/d-verification-report.md"
+      ],
+      "checks": [
+        "checks/d-safety-checks.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-d.d"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "@safe and DIP1000 compile verification passes",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "d",
+          "dlang",
+          "dmd",
+          "ldc",
+          "dub"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-d\ndescription: Dlang systems programming, @safe by default, DIP1000 scope pointer checking, @nogc optimization, pure immutability, and memory safety.\n---\n\n# Dlang Safe-by-Default & Scope Pointer Discipline Contract\n\n## 1. Safety Architecture\n- **`@safe` by Default**: All module functions must be marked `@safe` (or encapsulated in a `safe:` module-level declaration).\n- **DIP1000 Scope Pointers**: Enforce `-preview=dip1000` to prevent pointers or references from escaping their local scope.\n- **Unsafe Code Quarantine (`@trusted`)**: `@trusted` functions MUST be small, isolated, and accompanied by formal escape-hatch registration with safety proofs.\n- **`@nogc` and `pure`**: Mark critical inner loops `@nogc` to avoid garbage collector latency, and `pure` to guarantee referential transparency.\n"
+    },
+    {
+      "id": "lang-zig",
+      "name": "Zig Explicit Allocation & Comptime Verification",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Zig explicit allocator passing, error union handling, defer/errdefer resource safety, and comptime type invariants.",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Zig source files (.zig)",
+        "build.zig configuration",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened Zig implementation",
+        "Memory leak free test evidence via std.testing.allocator",
+        "Unit test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality",
+        "secure-coding"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/zig-allocators.md"
+      ],
+      "templates": [
+        "templates/zig-verification-report.md"
+      ],
+      "checks": [
+        "checks/zig-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-alloc.zig"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "zig test passes with 0 leaks detected by GeneralPurposeAllocator",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "zig",
+          "ziglang",
+          "build.zig"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-zig\ndescription: Zig systems programming, explicit allocator passing (std.mem.Allocator), defer/errdefer cleanup, error union handling, and zero hidden control flow.\n---\n\n# Zig Explicit Allocation & Comptime Verification Contract\n\n## 1. Explicit Memory Allocation\n- **Zero Hidden Allocations**: No library or helper function shall allocate memory without receiving an explicit `std.mem.Allocator` parameter.\n- **Deterministic Cleanup with `defer` & `errdefer`**: Every allocation must be paired with `defer allocator.free(slice)` or `errdefer` for failure rollback.\n- **Leak Detection**: Tests must use `std.testing.allocator`, which fails tests if any memory is leaked.\n\n## 2. Control Flow & Error Discipline\n- **No Hidden Control Flow**: Zig has no hidden operator overloading or implicit function calls.\n- **Error Unions (`!T`)**: Handle errors explicitly using `try`, `catch`, or pattern matching. Do not discard errors with `_ = fallible() catch {}` without documented justification.\n- **Comptime Validation**: Leverage `@compileError` and `comptime` checks to assert type invariants before runtime.\n"
+    },
+    {
+      "id": "lang-odin",
+      "name": "Odin Context Management & Memory Control",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Odin explicit context control, custom allocators, distinct type safety, and cache-friendly memory layouts (SoA/AoS).",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Odin source files (.odin)",
+        "Odin project directory",
+        "Active task acceptance criteria"
+      ],
+      "outputs": [
+        "Type-safe Odin implementation",
+        "Tracking allocator verification evidence",
+        "Unit test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality",
+        "secure-coding"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/odin-context.md"
+      ],
+      "templates": [
+        "templates/odin-verification-report.md"
+      ],
+      "checks": [
+        "checks/odin-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-odin.odin"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "Odin tracking allocator reports 0 leaks",
+        "Token budget exhausted",
+        "Blocked on external dependency"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "odin",
+          "odinlang"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-odin\ndescription: Odin programming language, explicit context management, custom allocators, tracking allocators for leak detection, distinct types, and SoA/AoS data layouts.\n---\n\n# Odin Context Management & Memory Control Contract\n\n## 1. Context & Allocator Discipline\n- **Explicit `context` Allocation**: Leverage the implicit/explicit `context.allocator`. For unit tests and verification, swap `context.allocator` with a `mem.Tracking_Allocator` to assert zero memory leaks upon scope termination.\n- **`defer delete(dynamic_array)`**: Dynamic arrays and maps allocated in local scopes must be freed explicitly using `defer delete(...)`.\n- **Distinct Types**: Create strong domain types using `distinct` to prevent accidental type confusion (e.g., `distinct u64` for entity IDs).\n\n## 2. Data-Oriented Architecture\n- Organize performance-critical data structures using `#soa` (Structure of Arrays) for optimal CPU cache line utilization.\n- Zero hidden control flow: no operator overloading, no implicit conversions.\n"
     }
   ]
 }
