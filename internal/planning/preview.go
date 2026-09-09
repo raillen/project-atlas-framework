@@ -168,7 +168,7 @@ func statementFor(a, b DecisionProposal, id string) string {
 // affected contracts, contradictions/supersessions, resolved blockers and
 // remaining open questions.
 type Preview struct {
-	Extracted        []DecisionProposal    `json:"extracted_decisions"`
+	Extracted        []DecisionProposal    `json:"extracted_decisions,omitempty"`
 	Contradictions   []Contradiction       `json:"contradictions,omitempty"`
 	Supersessions    []AuthorityResolution `json:"supersessions,omitempty"`
 	BlockersResolved int                   `json:"blockers_resolved"`
