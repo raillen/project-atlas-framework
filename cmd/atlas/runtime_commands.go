@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/raillen/project-atlas-framework/internal/contextcompiler"
@@ -28,6 +29,17 @@ func runRuntime(asJSON bool, args []string) int {
 	}
 	path := filepath.Join(root, ".atlas", "runtime", "continuation.json")
 	switch args[0] {
+	case "runtime":
+		entries, _ := os.ReadDir(filepath.Join(root, ".atlas", "runtime"))
+		names := []string{}
+		for _, e := range entries {
+			names = append(names, e.Name())
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(map[string]any{"runtimes": names}))
+		}
+		fmt.Println(names)
+		return exitOK
 	case "tool":
 		return runTool(asJSON, root, args[1:])
 	case "model":
