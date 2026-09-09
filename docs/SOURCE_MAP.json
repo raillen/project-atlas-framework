@@ -108,6 +108,14 @@
       "semantic_role": "Run, Budget, Context, Model, Tool, Environment, Automation, Observability, Package/Runtime, Migration, Review, Secrets/Egress"
     },
     {
+      "local_path": "docs/runtime/living-plan.md",
+      "notion_pages": [
+        { "title": "05 — Living Plan Mode e Interview Engine", "role": "incremental interview, answer types, open questions registry, coverage model, modes" },
+        { "title": "70 — Fase E: Living Plan & Interview Engine (M6)", "role": "pipeline, planning scopes, question priority, decision model, authority, confidence, goal decomposition, exit gate" }
+      ],
+      "semantic_role": "M6 Living Plan: interview pipeline, question priority, answer classification, decision/authority/confidence model, open questions registry, decision preview, readiness feedback, exit gate"
+    },
+    {
       "local_path": "docs/security/trust-model.md",
       "notion_pages": [
         { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }

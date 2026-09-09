@@ -57,7 +57,7 @@ All authoritative engineering specifications live under `docs/` in this reposito
 - **Architecture**: `docs/architecture/overview.md`, `docs/architecture/dependency-rules.md`
 - **Development**: `docs/development/implementation-blueprint.md`, `docs/development/phases.md`, `docs/development/repository-layout.md`, `docs/development/coding-standards.md`, `docs/development/testing-strategy.md`
 - **Migration**: `docs/migration/protocol-inventory.md`, `docs/migration/conformance-strategy.md`
-- **Runtime**: `docs/runtime/control-plane.md`
+- **Runtime**: `docs/runtime/control-plane.md`, `docs/runtime/living-plan.md`
 - **Security**: `docs/security/trust-model.md`
 - **Source Map**: `docs/SOURCE_MAP.json` — maps each local doc to its Notion Living Book page(s)
 
