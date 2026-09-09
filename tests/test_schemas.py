@@ -590,6 +590,7 @@ def test_authority_order():
 # Planning Session (E-G07 Living Plan resume/checkpoint + context compilation)
 def _planning_session_valid() -> dict:
     return {
+        "version": 1,
         "id": "SES-001",
         "run_id": "RUN-9",
         "scope": "goal:G042",

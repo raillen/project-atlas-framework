@@ -75,17 +75,19 @@ func (s PlanningSession) Validate() error {
 }
 
 // SessionCheckpoint is the serializable resume snapshot of a PlanningSession.
-// It is the durable interchange contract used to continue a run; it never
-// contains a raw conversation.
+// Its wire shape conforms to the planning-session JSON Schema: identity is
+// carried as `id`, the last structured planning state as `last_preview`, plus
+// the versioned header for forward/backward compatibility. It never contains a
+// raw conversation.
 type SessionCheckpoint struct {
 	Version   int                `json:"version"`
-	SessionID string             `json:"session_id"`
+	SessionID string             `json:"id"`
 	RunID     string             `json:"run_id"`
 	Scope     string             `json:"scope"`
 	Goal      string             `json:"goal,omitempty"`
 	Decisions []DecisionProposal `json:"decisions,omitempty"`
 	Open      []OpenQuestion     `json:"open_questions,omitempty"`
-	Preview   Preview            `json:"preview,omitempty"`
+	Preview   Preview            `json:"last_preview,omitempty"`
 	UpdatedAt string             `json:"updated_at,omitempty"`
 }
 
