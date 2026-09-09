@@ -35,7 +35,7 @@ func TestRunVersion(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("expected 0, got %d", code)
 	}
-	if !strings.Contains(out, "0.4.0-dev") {
+	if !strings.Contains(out, "0.4.1") {
 		t.Fatalf("expected version output, got %q", out)
 	}
 }
