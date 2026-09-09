@@ -150,6 +150,13 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "RepositoryClassification schema — F-G02 classification output contract" }
       ],
       "semantic_role": "schema contract for repository classification output"
+    },
+    {
+      "local_path": "schemas/capability-proposal.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "CapabilityProposal schema — F-G03 capability and profile proposals contract" }
+      ],
+      "semantic_role": "schema contract for candidate capability and profile proposals"
     }
   ]
 }
