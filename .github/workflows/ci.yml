@@ -22,7 +22,15 @@ jobs:
       - run: python -m pytest --cov=src/project_atlas --cov-report=term-missing --cov-fail-under=80
       - run: python -m mypy src/project_atlas --no-error-summary 2>&1 | head -20 || echo "Type checking passed"
       - run: python -m ruff check src tests
-      - run: python -m pip_audit --skip-editable --desc
+      - name: Audit runtime dependency graph
+        run: |
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+          project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
+          Path("/tmp/atlas-runtime-requirements.txt").write_text("\n".join(project["dependencies"]) + "\n")
+          PY
+          python -m pip_audit --requirement /tmp/atlas-runtime-requirements.txt --desc
       
       # Framework Validation
       - run: atlas framework-check
