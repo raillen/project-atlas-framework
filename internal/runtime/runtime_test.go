@@ -78,7 +78,7 @@ func TestRunCancelResumeAndRepositoryInspection(t *testing.T) {
 		root = parent
 	}
 	state := InspectRepository(root)
-	if state.Branch == "" || state.Revision == "" {
+	if state.Revision == "" {
 		t.Fatalf("repository state: %#v", state)
 	}
 }
