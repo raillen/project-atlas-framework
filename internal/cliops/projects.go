@@ -406,7 +406,7 @@ func (s *Service) FrameworkCheck() []string {
 			out = append(out, "missing adapter: "+name)
 		}
 	}
-	for _, name := range []string{"atlas.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json", "repository-policy.schema.json", "documentation-contract.schema.json", "documentation-profile.schema.json", "documentation-binding.schema.json", "documentation-coverage.schema.json", "documentation-readiness.schema.json", "documentation-delta.schema.json", "documentation-finding.schema.json", "executor-session.schema.json", "checkpoint.schema.json", "continuation-record.schema.json", "budget-envelope.schema.json", "context-manifest.schema.json", "side-effect-journal.schema.json"} {
+	for _, name := range []string{"atlas.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json", "repository-policy.schema.json", "documentation-contract.schema.json", "documentation-profile.schema.json", "documentation-binding.schema.json", "documentation-coverage.schema.json", "documentation-readiness.schema.json", "documentation-delta.schema.json", "documentation-finding.schema.json", "executor-session.schema.json", "checkpoint.schema.json", "continuation-record.schema.json", "budget-envelope.schema.json", "context-manifest.schema.json", "side-effect-journal.schema.json", "tool-descriptor.schema.json", "model-descriptor.schema.json", "execution-environment.schema.json"} {
 		if _, err := os.Stat(filepath.Join(s.repoRoot, "schemas", name)); err != nil {
 			out = append(out, "missing schema: "+name)
 		}
