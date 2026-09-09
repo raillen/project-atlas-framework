@@ -105,7 +105,7 @@ func serviceError(asJSON bool, err error) int {
 func usage() int {
 	fmt.Fprintf(os.Stderr, "usage: atlas [--json] <command> [args]\n")
 	fmt.Fprintf(os.Stderr, "commands:\n")
-	fmt.Fprintf(os.Stderr, "  version, status, setup, install, uninstall, init, resolve, validate, goal, context, report, migrate, compile, snapshot, doctor, explain, framework-check\n")
+	fmt.Fprintf(os.Stderr, "  version, status, setup, install, uninstall, init, resolve, validate, goal, context, report, migrate, compile, snapshot, doctor, explain, framework-check, run, continue, budget, debug, tool, model, env\n")
 	return exitUsage
 }
 
@@ -170,7 +170,7 @@ func run(args []string) int {
 		return runRepositoryPolicy(asJSON, rest)
 	case "docs":
 		return runDocumentation(asJSON, rest)
-	case "run", "continue", "budget", "debug":
+	case "run", "continue", "budget", "debug", "tool", "model", "env":
 		return runRuntime(asJSON, rest)
 	case "setup":
 		return runSetup(asJSON, home)
