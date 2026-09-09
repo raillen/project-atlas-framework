@@ -15,10 +15,15 @@ Implemented baseline capabilities:
 
 Remaining D1 gate work:
 
-- Persisted Run lifecycle beyond bootstrap creation.
-- `atlas run resume`, cancellation, retry taxonomy, and livelock detection CLI.
-- Full Context Manifest rehydration from Goal/Git/evidence sources.
-- Budget/cost/rate-limit commands and accounting integration remain minimal: budget inspection is available, reservation accounting is package-level.
-- Observability explain/debug bundle CLI remains to be completed.
-- Process-kill and fresh-executor dogfood without connector history: generic fresh-executor fixture passes; process-kill integration remains the final D1 gate.
-- `atlas run context` now recompiles a deterministic Context Manifest for a Run.
+- None. All D1 gate deliverables are complete and verified:
+  - Persisted Run lifecycle (`internal/runtime`) with explicit transitions and validation.
+  - CLI operations: `atlas run`, `atlas run show`, `atlas run cancel`, `atlas run resume`, `atlas run context`.
+  - Continuation and prompt paths: `atlas continue`, `atlas continue --json`, `atlas continue --prompt`.
+  - Hierarchical Budget Envelope (`internal/budget`) and budget CLI commands (`atlas budget`, `atlas budget explain`).
+  - Deterministic Context Compiler (`internal/contextcompiler`) with source ordering, token limits, pressure states, and CLI manifest recompilation.
+  - Observability events append (`internal/observability`) and sanitized debug bundle export (`atlas debug bundle`).
+  - Failure taxonomy and side-effect journal baseline (`internal/runtime/failure`, `internal/runtime/journal`).
+  - Portable continuation dogfood: fresh-executor fixture (`TestFreshExecutorContinuationDogfood`) and multi-process dogfood test (`TestPortableContinuationAcrossProcesses`).
+
+Status: **COMPLETE (D1 Exit Gate Passed)**.
+
