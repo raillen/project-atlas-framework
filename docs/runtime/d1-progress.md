@@ -20,4 +20,4 @@ Remaining D1 gate work:
 - Full Context Manifest rehydration from Goal/Git/evidence sources.
 - Budget/cost/rate-limit commands and accounting integration.
 - Observability explain/debug bundle CLI.
-- Process-kill and fresh-executor dogfood without connector history.
+- Process-kill and fresh-executor dogfood without connector history: baseline fixture now passes; process-kill integration remains the final D1 gate.
