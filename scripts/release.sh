@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-VERSION="${VERSION:-0.4.0-dev}"
+VERSION="${VERSION:-0.4.1}"
 OUTPUT="${OUTPUT:-dist}"
 
 mkdir -p "$OUTPUT"

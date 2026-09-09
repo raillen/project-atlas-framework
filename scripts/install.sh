@@ -2,7 +2,7 @@
 set -eu
 
 REPOSITORY="${ATLAS_REPOSITORY:-raillen/project-atlas-framework}"
-VERSION="${ATLAS_VERSION:-v0.4.0-dev}"
+VERSION="${ATLAS_VERSION:-v0.4.1}"
 INSTALL_DIR="${ATLAS_INSTALL_DIR:-${HOME}/.local/bin}"
 ATLAS_HOME_VALUE="${ATLAS_HOME:-${HOME}/.atlas}"
 BASE_URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}"

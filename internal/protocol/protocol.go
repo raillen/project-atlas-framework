@@ -3,7 +3,7 @@ package protocol
 import "errors"
 
 const (
-	CLIVersion      = "0.4.0-dev"
+	CLIVersion      = "0.4.1"
 	ProtocolVersion = "1"
 )
 
