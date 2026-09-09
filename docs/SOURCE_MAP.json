@@ -171,6 +171,13 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "ConfidenceLedger schema — F-G05 confidence ledger contract" }
       ],
       "semantic_role": "schema contract for adoption engine confidence ledger"
+    },
+    {
+      "local_path": "schemas/adoption-report.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "AdoptionReport schema — F-G06 canonical adoption report contract" }
+      ],
+      "semantic_role": "schema contract for canonical adoption report"
     }
   ]
 }
