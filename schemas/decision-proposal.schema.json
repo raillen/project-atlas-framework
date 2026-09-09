@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://project-atlas.dev/schemas/decision-proposal.schema.json",
+  "type":"object","required":["id","statement","classification","authority","confidence","status"],"properties":{"id":{"type":"string"},"statement":{"type":"string"},"classification":{"enum":["explicit-decision","preference","constraint","requirement","non-goal","hypothesis","agent-suggestion"]},"authority":{"type":"string"},"confidence":{"enum":["high","medium","low","unknown"]},"status":{"enum":["proposed","accepted","rejected","superseded"]},"scope":{"type":"string"},"evidence":{"type":"array","items":{"type":"string"}}},"additionalProperties":true
+}
