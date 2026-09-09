@@ -51,6 +51,17 @@ ATLAS is an intent router. Read only the document needed for the current task; d
 - [Writing Recipes](authoring/writing-recipes.md)
 - [Platform adapters](authoring/adapters.md)
 
+## Documentation System v2
+
+- [Documentation Contracts](contracts/builtin.json)
+- [Documentation Profiles](profiles/builtin.json)
+- `atlas docs contracts`
+- `atlas docs profiles`
+- `atlas docs audit`
+- `atlas docs readiness`
+
+M5 documentation analysis is deterministic and read-only. Missing knowledge is reported; Atlas does not create empty documents or silently promote model prose to canonical state.
+
 ## Protocol reference
 
 - [CLI and machine interface](manual/usage.md#command-reference)

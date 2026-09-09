@@ -168,6 +168,8 @@ func run(args []string) int {
 	switch rest[0] {
 	case "repo":
 		return runRepositoryPolicy(asJSON, rest)
+	case "docs":
+		return runDocumentation(asJSON, rest)
 	case "setup":
 		return runSetup(asJSON, home)
 	case "install":
