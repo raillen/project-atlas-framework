@@ -167,6 +167,7 @@ The Go suite includes differential tests for initialization, resolver behavior, 
 - [Testing strategy](docs/development/testing-strategy.md)
 - [Security and trust model](docs/security/trust-model.md)
 - [Runtime Control Plane](docs/runtime/control-plane.md)
+- [Documentation System v2](docs/governance/documentation-system.md)
 - [Documentation source map](docs/SOURCE_MAP.json)
 
 Use `docs/ATLAS.md` as the repository documentation router. Do not load the entire documentation tree for a single task.

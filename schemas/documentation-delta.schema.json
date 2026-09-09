@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://project-atlas.dev/schemas/documentation-delta.schema.json",
+  "type":"object",
+  "required":["state","source","contracts","documents","reason","evidence"],
+  "properties":{"state":{"enum":["proposed","reviewed","accepted","rejected","applied"]},"source":{"type":"string"},"contracts":{"type":"array","items":{"type":"string"}},"documents":{"type":"array","items":{"type":"string"}},"reason":{"type":"string"},"evidence":{"type":"array","items":{"type":"string"}}},
+  "additionalProperties":false
+}
