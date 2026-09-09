@@ -1,6 +1,12 @@
 package runtime
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func fileExists(path string) bool { _, err := os.Stat(path); return err == nil }
 
 func TestRunSessionAndContinuation(t *testing.T) {
 	run := NewRun("R1", "G1", "T1")
@@ -60,7 +66,18 @@ func TestRunCancelResumeAndRepositoryInspection(t *testing.T) {
 	if run.Status != RunCancelled || run.FinishedAt == "" {
 		t.Fatalf("cancelled run: %#v", run)
 	}
-	state := InspectRepository("../..")
+	root, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for !fileExists(filepath.Join(root, "go.mod")) {
+		parent := filepath.Dir(root)
+		if parent == root {
+			t.Fatal("repository root not found")
+		}
+		root = parent
+	}
+	state := InspectRepository(root)
 	if state.Branch == "" || state.Revision == "" {
 		t.Fatalf("repository state: %#v", state)
 	}
