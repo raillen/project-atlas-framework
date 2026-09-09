@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://project-atlas.dev/schemas/open-question.schema.json",
+  "type":"object","required":["id","scope","priority","status"],"properties":{"id":{"type":"string"},"scope":{"type":"string"},"contract":{"type":"string"},"priority":{"enum":["blocker","high","medium","low"]},"status":{"enum":["open","resolved","superseded"]},"question":{"type":"string"},"answer":{"type":"string"},"evidence":{"type":"array","items":{"type":"string"}}},"additionalProperties":true
+}

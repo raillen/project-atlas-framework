@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://project-atlas.dev/schemas/connector-contract.schema.json",
+  "type":"object","required":["id","version","protocol_range","capabilities","enforcement"],"properties":{"id":{"type":"string"},"version":{"type":"string"},"protocol_range":{"type":"string"},"capabilities":{"type":"array","items":{"type":"string"}},"enforcement":{"enum":["generic","partial","native"]},"install":{"type":"object"},"cleanup":{"type":"object"},"hooks":{"type":"array","items":{"type":"string"}}},"additionalProperties":true
+}
