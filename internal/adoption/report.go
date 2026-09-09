@@ -174,20 +174,29 @@ func RunAdoptionAudit(root string, opts ScanOptions) (AdoptionReport, error) {
 			Revision: scanResult.Revision,
 			Dirty:    scanResult.Dirty,
 		},
-		FactsSummary:       factsSum,
-		Classification:     classification,
-		Profiles:           proposals.Profiles,
-		Capabilities:       proposals.Capabilities,
-		AtlasArtifacts:     atlasArtifacts,
-		DocBindings:        mappingResult.Bindings,
-		DocCoverage:        docCoverage,
-		Contradictions:     contradictions,
-		Ledger:             ledger,
-		MigrationProposals: []string{},
-		Risks:              risks,
-		NextSteps:          nextSteps,
-		GeneratedAt:        time.Now().UTC().Format(time.RFC3339),
+		FactsSummary:   factsSum,
+		Classification: classification,
+		Profiles:       proposals.Profiles,
+		Capabilities:   proposals.Capabilities,
+		AtlasArtifacts: atlasArtifacts,
+		DocBindings:    mappingResult.Bindings,
+		DocCoverage:    docCoverage,
+		Contradictions: contradictions,
+		Ledger:         ledger,
+		Risks:          risks,
+		NextSteps:      nextSteps,
+		GeneratedAt:    time.Now().UTC().Format(time.RFC3339),
 	}
+
+	migProps := GenerateMigrationProposals(report)
+	var propSummaries []string
+	for _, mp := range migProps {
+		propSummaries = append(propSummaries, fmt.Sprintf("%s: %s", mp.ID, mp.Title))
+	}
+	if propSummaries == nil {
+		propSummaries = []string{}
+	}
+	report.MigrationProposals = propSummaries
 
 	return report, nil
 }
@@ -286,8 +295,17 @@ func RenderHumanReport(r AdoptionReport) string {
 		b.WriteString("\n")
 	}
 
-	// 7. Recommended Next Steps
-	b.WriteString("--- 6. Recommended Next Steps -------------------------------------------------\n")
+	// 7. Migration Proposals
+	if len(r.MigrationProposals) > 0 {
+		b.WriteString("--- 6. Migration Proposals (Review Governed) ----------------------------------\n")
+		for _, mp := range r.MigrationProposals {
+			fmt.Fprintf(&b, "  → %s\n", mp)
+		}
+		b.WriteString("\n")
+	}
+
+	// 8. Recommended Next Steps
+	b.WriteString("--- 7. Recommended Next Steps -------------------------------------------------\n")
 	for i, step := range r.NextSteps {
 		fmt.Fprintf(&b, "  %d. %s\n", i+1, step)
 	}

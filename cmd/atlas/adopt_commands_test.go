@@ -132,6 +132,71 @@ func TestRunAdoptNonInteractive(t *testing.T) {
 	}
 }
 
+func TestRunAdoptProposeMigration(t *testing.T) {
+	root := t.TempDir()
+	writeTestFileForCLI(t, root, "go.mod", "module example.com/clitest\n\ngo 1.22\n")
+	writeTestFileForCLI(t, root, "cmd/tool/main.go", "package main\n\nfunc main() {}\n")
+
+	code, out := captureOutput(func() int {
+		return run([]string{"adopt", "--path", root, "--propose-migration"})
+	})
+
+	if code != exitOK {
+		t.Fatalf("expected exitOK (%d), got %d; output:\n%s", exitOK, code, out)
+	}
+	if !strings.Contains(out, "ADOPTION MIGRATION PROPOSALS") || !strings.Contains(out, "amp-init-atlas") {
+		t.Errorf("expected migration proposal output, got:\n%s", out)
+	}
+
+	codeJSON, outJSON := captureOutput(func() int {
+		return run([]string{"--json", "adopt", "--path", root, "--propose-migration"})
+	})
+	if codeJSON != exitOK {
+		t.Fatalf("expected exitOK (%d), got %d", exitOK, codeJSON)
+	}
+	var env protocol.Envelope
+	if err := json.Unmarshal([]byte(outJSON), &env); err != nil {
+		t.Fatalf("failed to parse JSON envelope: %v", err)
+	}
+	if !env.Ok {
+		t.Errorf("expected ok=true")
+	}
+}
+
+func TestRunAdoptDryRunAndApply(t *testing.T) {
+	root := t.TempDir()
+	writeTestFileForCLI(t, root, "go.mod", "module example.com/clitest\n\ngo 1.22\n")
+	writeTestFileForCLI(t, root, "cmd/tool/main.go", "package main\n\nfunc main() {}\n")
+
+	// 1. Dry run: should NOT modify disk
+	codeDry, outDry := captureOutput(func() int {
+		return run([]string{"adopt", "--path", root, "--dry-run"})
+	})
+	if codeDry != exitOK {
+		t.Fatalf("dry run failed: %d, out: %s", codeDry, outDry)
+	}
+	if !strings.Contains(outDry, "ADOPTION MIGRATION DRY-RUN") {
+		t.Errorf("expected dry-run header, got: %s", outDry)
+	}
+	if _, err := os.Stat(filepath.Join(root, "atlas.json")); err == nil {
+		t.Errorf("atlas.json should not exist after dry run")
+	}
+
+	// 2. Apply: should create atlas.json safely
+	codeApply, outApply := captureOutput(func() int {
+		return run([]string{"adopt", "--path", root, "--apply"})
+	})
+	if codeApply != exitOK {
+		t.Fatalf("apply failed: %d, out: %s", codeApply, outApply)
+	}
+	if !strings.Contains(outApply, "ADOPTION MIGRATION APPLIED") {
+		t.Errorf("expected applied header, got: %s", outApply)
+	}
+	if _, err := os.Stat(filepath.Join(root, "atlas.json")); err != nil {
+		t.Errorf("atlas.json should exist after apply: %v", err)
+	}
+}
+
 func writeTestFileForCLI(t *testing.T, root, rel, content string) {
 	t.Helper()
 	path := filepath.Join(root, rel)
