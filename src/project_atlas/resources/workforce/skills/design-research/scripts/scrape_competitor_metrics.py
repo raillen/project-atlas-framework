@@ -2,6 +2,7 @@ import json
 import urllib.request
 from html.parser import HTMLParser
 
+
 class SimpleMetricParser(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -31,10 +32,10 @@ def scrape_metrics(url):
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             html = response.read().decode('utf-8')
-            
+
         parser = SimpleMetricParser()
         parser.feed(html)
-        
+
         return {
             "url": url,
             "title": parser.title.strip(),
@@ -49,6 +50,6 @@ if __name__ == "__main__":
         "https://example.com",
         "https://www.w3.org"
     ]
-    
+
     results = [scrape_metrics(url) for url in urls]
     print(json.dumps(results, indent=2))

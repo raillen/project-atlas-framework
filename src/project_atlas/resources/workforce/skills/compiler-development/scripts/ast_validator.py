@@ -1,6 +1,7 @@
 import ast
 import sys
 
+
 def validate_ast(filepath: str):
     """
     Parses a Python file and validates that its AST doesn't use forbidden nodes
@@ -20,14 +21,14 @@ def validate_ast(filepath: str):
         sys.exit(1)
 
     forbidden_nodes = (ast.Exec, ast.Eval) if hasattr(ast, 'Exec') else ()
-    
+
     violations = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Name) and node.func.id in ['eval', 'exec']:
                 violations.append((node.lineno, f"Forbidden built-in used: {node.func.id}"))
         elif forbidden_nodes and isinstance(node, forbidden_nodes):
-            violations.append((node.lineno, f"Forbidden statement type used"))
+            violations.append((node.lineno, "Forbidden statement type used"))
 
     if violations:
         print(f"Validation failed for {filepath}:")

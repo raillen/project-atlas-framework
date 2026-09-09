@@ -1,6 +1,7 @@
+import argparse
 import ast
 import sys
-import argparse
+
 
 class ComplexityVisitor(ast.NodeVisitor):
     def __init__(self):
@@ -39,7 +40,7 @@ def main():
             failed = True
         else:
             print(f"OK: Function '{func}' complexity is {score}")
-            
+
     if failed:
         sys.exit(1)
 

@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import json
-import os
 import sys
 
 CHECKLIST = [
@@ -16,21 +14,21 @@ CHECKLIST = [
 def generate_markdown_checklist(pr_number):
     markdown = f"## Security Review Checklist for PR #{pr_number}\n\n"
     markdown += "Please review the following items and check them off if applicable and secure.\n\n"
-    
+
     current_category = ""
     for item in CHECKLIST:
         if item["category"] != current_category:
             current_category = item["category"]
             markdown += f"### {current_category}\n"
         markdown += f"- [ ] **{item['id']}**: {item['desc']}\n"
-    
+
     return markdown
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: review_checklist_generator.py <PR_NUMBER>")
         sys.exit(1)
-        
+
     pr_num = sys.argv[1]
     content = generate_markdown_checklist(pr_num)
     print(content)

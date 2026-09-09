@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import ast
-import sys
 import os
+import sys
+
 
 class SQLInjectionVisitor(ast.NodeVisitor):
     def __init__(self):

@@ -231,7 +231,6 @@ class TestCompileCommands:
         assert result == 0
 
     def test_compile_invalid_target(self, project: Path) -> None:
-        import sys
         with pytest.raises(SystemExit) as exc_info:
             main(["compile", "--target", "invalid-xyz", "--path", str(project)])
         # Should exit with code 2 (argparse error)
@@ -374,7 +373,7 @@ class TestMigrateCommand:
         # Create a v0.1 project structure (YAML-based)
         project = tmp_path / "project"
         project.mkdir()
-        
+
         # Need to create atlas.json (v0.2+) structure to make migrate work
         (project / "atlas.json").write_text(json.dumps({
             "version": 2,
@@ -382,7 +381,7 @@ class TestMigrateCommand:
             "project": {"name": "test", "type": "web"},
             "ai": {"orchestrator": "native"}
         }))
-        
+
         result = main(["migrate", str(project)])
         # Migration should succeed (0) or warn but not crash
         assert result in [0, 1]

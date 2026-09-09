@@ -2,13 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-import hashlib
-import json
-from pathlib import Path
-from typing import Any, Callable
-
-from .goals import compute_goal_digest, verify_goal_lock
-from .io import dump_json, load_json
+from typing import Any
 
 
 @dataclass

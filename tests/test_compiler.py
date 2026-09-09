@@ -9,13 +9,10 @@ Tests each of 7 adapter targets to ensure:
 """
 
 import json
-import tempfile
-from pathlib import Path
 
 import pytest
 
-from project_atlas.compiler import compile_target, SUPPORTED_TARGETS
-from project_atlas.io import load_data
+from project_atlas.compiler import SUPPORTED_TARGETS, compile_target
 
 
 @pytest.fixture
@@ -179,7 +176,7 @@ class TestCompilerCodexAdapter:
         """Codex should create individual agent files."""
         compile_target(test_project, "codex")
         agents_dir = test_project / ".codex/agents"
-        agent_files = list(agents_dir.glob("*.md"))
+        list(agents_dir.glob("*.md"))
         # May be empty if no agents selected, but directory should exist
         assert agents_dir.exists()
 
@@ -221,7 +218,6 @@ class TestCompilerClaudeCodeAdapter:
         """Claude-Code should create .claude-code/ or .claude/ workspace."""
         compile_target(test_project, "claude-code")
         # Claude-Code may use .claude or .claude-code
-        workspace = test_project / ".claude-code" or test_project / ".claude"
         # At minimum, some output should be created
         created = compile_target(test_project, "claude-code")
         assert len(created) > 0, "Claude-Code should create output files"

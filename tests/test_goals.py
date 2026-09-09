@@ -2,7 +2,13 @@ from pathlib import Path
 
 import pytest
 
-from project_atlas.goals import amend_goal, compute_goal_digest, new_goal, transition_goal, verify_goal_lock
+from project_atlas.goals import (
+    amend_goal,
+    compute_goal_digest,
+    new_goal,
+    transition_goal,
+    verify_goal_lock,
+)
 from project_atlas.io import dump_json, load_json
 
 

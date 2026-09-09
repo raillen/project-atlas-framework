@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-import sys
 import re
+import sys
 from collections import defaultdict
+
 
 def analyze_memory_log(filepath):
     """
@@ -13,7 +14,7 @@ def analyze_memory_log(filepath):
     """
     allocations = {}
     tag_totals = defaultdict(int)
-    
+
     try:
         with open(filepath, 'r') as f:
             lines = f.readlines()
@@ -33,7 +34,7 @@ def analyze_memory_log(filepath):
             allocations[ptr] = {'size': size, 'tag': tag, 'line': line_no}
             tag_totals[tag] += size
             continue
-            
+
         free_match = free_regex.search(line)
         if free_match:
             ptr = free_match.group(1)
@@ -52,7 +53,7 @@ def analyze_memory_log(filepath):
             print(f"  Leak: ptr={ptr}, size={info['size']} bytes, tag={info['tag']} (Allocated on line {info['line']})")
     else:
         print("No leaks detected. All tracked allocations were freed.")
-        
+
     print("\n=== Active Memory by Tag ===")
     for tag, size in tag_totals.items():
         if size > 0:

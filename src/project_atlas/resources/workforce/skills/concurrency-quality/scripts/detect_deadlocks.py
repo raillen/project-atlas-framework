@@ -1,6 +1,7 @@
+import argparse
 import ast
 import sys
-import argparse
+
 
 class LockDetector(ast.NodeVisitor):
     def __init__(self):
@@ -25,7 +26,7 @@ class LockDetector(ast.NodeVisitor):
                             name = sub_item.context_expr.id
                         elif isinstance(sub_item.context_expr, ast.Attribute):
                             name = sub_item.context_expr.attr
-                        
+
                         if 'lock' in name.lower():
                             self.nested_locks.append((node.lineno, child.lineno))
 

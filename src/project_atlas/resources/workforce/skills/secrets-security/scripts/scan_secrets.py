@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import sys
 import os
 import re
+import sys
 
 # Simplified set of regexes for common secrets
 SECRET_PATTERNS = {
@@ -28,7 +28,7 @@ def scan_file_for_secrets(filepath):
         pass # Skip binary files
     except Exception as e:
         print(f"Error reading {filepath}: {e}")
-        
+
     return findings
 
 if __name__ == "__main__":
@@ -38,18 +38,18 @@ if __name__ == "__main__":
 
     target_dir = sys.argv[1]
     total_findings = 0
-    
+
     print(f"Scanning {target_dir} for secrets...")
-    
+
     for root, _, files in os.walk(target_dir):
         for file in files:
             # Skip .git directory and compiled files
             if '.git' in root or file.endswith(('.pyc', '.class', '.o')):
                 continue
-                
+
             path = os.path.join(root, file)
             issues = scan_file_for_secrets(path)
-            
+
             if issues:
                 print(f"\n[!] Secrets found in {path}:")
                 for line_num, secret_type, redacted in issues:

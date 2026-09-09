@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import sys
 import os
 import re
+import sys
 
 WEAK_KEYS = [
     b"secret", b"password", b"123456", b"admin", b"test", b"dev", b"default"
@@ -14,7 +14,7 @@ def scan_for_jwt_secrets(filepath):
         re.compile(r'jwt\.encode\s*\([^,]+,\s*[\'"]([^\'"]+)[\'"]'),
         re.compile(r'JWT_SECRET\s*=\s*[\'"]([^\'"]+)[\'"]')
     ]
-    
+
     findings = []
     try:
         with open(filepath, 'r') as f:
@@ -28,7 +28,7 @@ def scan_for_jwt_secrets(filepath):
                             findings.append((i+1, line.strip(), secret.decode('utf-8')))
     except Exception as e:
         print(f"Error reading {filepath}: {e}")
-        
+
     return findings
 
 if __name__ == "__main__":

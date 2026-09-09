@@ -2,11 +2,17 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
-from project_atlas.workforce import load_agent_package, load_recipe_package, load_skill_package, validate_workforce
+from project_atlas.workforce import (
+    load_agent_package,
+    load_recipe_package,
+    load_skill_package,
+    validate_workforce,
+)
 
 WORKFORCE_ROOT = Path(__file__).parent.parent / "src/project_atlas/resources/workforce"
 SCHEMA_DIR = Path(__file__).parent.parent / "schemas"
