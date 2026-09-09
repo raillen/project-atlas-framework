@@ -263,4 +263,4 @@ Do not duplicate DocumentationDelta / Goal / Plan schemas.
 - E-G06: Goal/Plan output integration.
 - E-G07: resume/checkpoint + context compilation.
 - E-G08: CLI/harness-neutral interaction protocol.
-- E-G09: zero-to-ready Atlas sample/dogfood.
+- E-G09: zero-to-ready Atlas sample/dogfood — see [`examples/living-plan-sample/README.md`](../../examples/living-plan-sample/README.md).

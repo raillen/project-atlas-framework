@@ -1,0 +1,21 @@
+{
+  "id": "DD-287dd8766b44",
+  "version": 4,
+  "state": "applied",
+  "source": "G-SAMPLE",
+  "contracts": [
+    "product.vision",
+    "project.scope"
+  ],
+  "documents": [
+    "docs/product/vision.md",
+    "docs/project/scope.md"
+  ],
+  "reason": "documentation impact analysis",
+  "evidence": [
+    "DP-Q1-dec",
+    "DP-Q2-dec"
+  ],
+  "created_at": "2026-09-09T15:55:18.658008119Z",
+  "updated_at": "2026-09-09T15:55:18.658008119Z"
+}

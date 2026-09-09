@@ -1,0 +1,4 @@
+[
+  {"id":"product.vision","version":1,"role":"product-vision","required_knowledge":["target users","primary outcome"],"blocking_questions":["q:v-users","q:v-outcome"]},
+  {"id":"project.scope","version":1,"role":"project-scope","required_knowledge":["non-goals","in-scope capabilities"],"blocking_questions":["q:s-boundaries"]}
+]
