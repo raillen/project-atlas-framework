@@ -19,6 +19,7 @@ flowchart TD
     APP --> CONTROL[internal/control-plane]
     APP --> INSTALL[internal/install]
     APP --> STORAGE[internal/storage]
+    APP --> CONTEXT[internal/contextcompiler]
 
     PROTO --> SCHEMAS[(schemas/)]
     PROJECT --> SCHEMAS
@@ -56,7 +57,7 @@ internal/app          → MAY import: internal/protocol, internal/project, inter
                        internal/compiler, internal/validator, internal/documentation,
                        internal/planning, internal/adoption, internal/knowledge,
                        internal/experience, internal/evidence-gates, internal/control-plane,
-                       internal/install, internal/storage
+                       internal/install, internal/storage, internal/contextcompiler
 ```
 
 ### 3. CLI Layer
