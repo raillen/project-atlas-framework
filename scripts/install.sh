@@ -68,4 +68,40 @@ mv "$STAGED" "$TARGET"
 
 ATLAS_HOME="$ATLAS_HOME_VALUE" "$TARGET" setup >/dev/null
 printf '%s\n' "Atlas ${VERSION} installed at ${TARGET}."
-printf '%s\n' "Run: ${TARGET} version"
+
+# Configure system PATH idempotently
+case ":${PATH}:" in
+  *":${INSTALL_DIR}:"*)
+    # Already in PATH
+    ;;
+  *)
+    UPDATED_FILES=""
+    if [ -f "${HOME}/.bashrc" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.bashrc"; then
+      printf '\n# Added by Project Atlas\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.bashrc"
+      UPDATED_FILES="${UPDATED_FILES} ~/.bashrc"
+    fi
+
+    if [ -f "${HOME}/.zshrc" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.zshrc"; then
+      printf '\n# Added by Project Atlas\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.zshrc"
+      UPDATED_FILES="${UPDATED_FILES} ~/.zshrc"
+    fi
+
+    if [ -f "${HOME}/.config/fish/config.fish" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.config/fish/config.fish"; then
+      printf '\n# Added by Project Atlas\nfish_add_path "%s"\n' "$INSTALL_DIR" >> "${HOME}/.config/fish/config.fish"
+      UPDATED_FILES="${UPDATED_FILES} ~/.config/fish/config.fish"
+    fi
+
+    if [ -f "${HOME}/.profile" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.profile"; then
+      printf '\n# Added by Project Atlas\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.profile"
+      UPDATED_FILES="${UPDATED_FILES} ~/.profile"
+    fi
+
+    if [ -n "$UPDATED_FILES" ]; then
+      printf '%s\n' "Configured PATH in:${UPDATED_FILES}"
+      printf '%s\n' "To start using atlas in this terminal session, run:"
+      printf '%s\n' "  export PATH=\"${INSTALL_DIR}:\$PATH\""
+    fi
+    ;;
+esac
+
+printf '%s\n' "Run: atlas version"

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "updated_at": "2026-09-09T21:24:52.113691672Z",
+  "summary": {
+    "cached_tokens": 0,
+    "direct_cost": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tasks": 0
+  },
+  "tasks": [],
+  "debt": []
+}

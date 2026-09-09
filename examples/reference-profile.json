@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "project": {
+    "name": "reference-project",
+    "type": ["service", "cli", "library"],
+    "description": "Canonical agnostic reference project demonstrating full Project Atlas v0.4 architecture, exhaustive testing, and complete documentation hierarchy."
+  },
+  "stack": {
+    "languages": ["agnostic"],
+    "frameworks": ["clean-architecture"],
+    "runtimes": ["container", "native"]
+  },
+  "features": [
+    "exhaustive-testing",
+    "security-contract",
+    "clean-architecture",
+    "living-plan",
+    "continuous-documentation"
+  ],
+  "quality": {
+    "coverage_minimum": 85,
+    "static_analysis": "strict",
+    "security_sast": true,
+    "performance_benchmarks": true,
+    "e2e_testing": true
+  },
+  "risk": [
+    "security",
+    "production-grade"
+  ],
+  "ai": {
+    "orchestrator": "atlas",
+    "autonomy": "agentic",
+    "preferred_models": [
+      {
+        "id": "google/gemini-2.5-pro",
+        "provider": "google"
+      },
+      {
+        "id": "anthropic/claude-3-7-sonnet",
+        "provider": "anthropic"
+      },
+      {
+        "id": "openai/gpt-4o",
+        "provider": "openai"
+      }
+    ]
+  }
+}
