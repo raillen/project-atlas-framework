@@ -134,8 +134,8 @@ flowchart TD
 | M3 | `docs/reference/cli.md`, `docs/reference/schemas.md` |
 | M4 | `docs/getting-started/installation.md`, `docs/reference/connector-contract.md` |
 | M5 | `docs/reference/documentation-contracts.md`, `docs/reference/documentation-profiles.md` |
-| M6 | `docs/reference/living-plan.md`, `docs/reference/interview-engine.md` |
-| M7 | `docs/reference/adoption-engine.md` |
+| M6 | `docs/runtime/living-plan.md`, `docs/governance/m6-exit-gate.md` |
+| M7 | `docs/runtime/adoption-engine.md` |
 | M8 | `docs/reference/traceability.md`, `docs/reference/experience.md` |
 | M9 | `docs/reference/handoff-protocol.md` |
 | M10 | `docs/integrations/opencode.md`, `docs/integrations/connector-contract.md` |

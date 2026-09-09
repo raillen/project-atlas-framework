@@ -116,6 +116,14 @@
       "semantic_role": "M6 Living Plan: interview pipeline, question priority, answer classification, decision/authority/confidence model, open questions registry, decision preview, readiness feedback, exit gate"
     },
     {
+      "local_path": "docs/runtime/adoption-engine.md",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "pipeline, discovery sources/output, classification, semantic mapping, confidence ledger, profile proposal, adoption report, modes, migration proposals, security, goal decomposition, exit gate" },
+        { "title": "06 — Adoption Engine para Projetos Existentes", "role": "inference confidence + evidence pointers, adoption report, candidate bindings" }
+      ],
+      "semantic_role": "M7 Adoption Engine: discovery pipeline, observed facts vs inference, classification, semantic mapping, confidence ledger, adoption report, migration proposals, brownfield boundary, exit gate"
+    },
+    {
       "local_path": "docs/security/trust-model.md",
       "notion_pages": [
         { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }

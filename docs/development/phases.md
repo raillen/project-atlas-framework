@@ -293,6 +293,8 @@ Canonical specification: `docs/runtime/living-plan.md`.
 
 **Dependencies**: M5, M6
 
+Canonical specification: `docs/runtime/adoption-engine.md`.
+
 **Scope**:
 - Repository scanner (file types, frameworks, configs, docs)
 - Semantic documentation mapping (non-Atlas layouts → Atlas concepts)
@@ -301,7 +303,20 @@ Canonical specification: `docs/runtime/living-plan.md`.
 - Adoption report
 - Migration proposals (non-destructive, reversible)
 
-**Exit Gate**: Existing non-Atlas repo can be audited and migrated incrementally.
+**Non-Goals**: rewriting the entire layout to "look Atlas", trusting README as authority, mandatory embeddings, auto-deleting legacy docs, inferring user intent without confirmation, installing every detected connector/tool.
+
+**Goal Decomposition**:
+- F-G01: scanner facts + revision-aware sources.
+- F-G02: repository/project/workspace classification.
+- F-G03: capability/profile candidates.
+- F-G04: semantic doc mapping + candidate bindings.
+- F-G05: Confidence Ledger.
+- F-G06: Adoption Report.
+- F-G07: Living Plan uncertainty resolution.
+- F-G08: migration proposal + Review/Migration integration.
+- F-G09: brownfield corpus/evals/dogfood.
+
+**Exit Gate (ADOPTION READY)**: Arbitrary existing repo can be audited without mutation; observed facts and inferences are kept separate; confidence/evidence accompany inferences; M5 evaluates candidate bindings correctly; ambiguity enters the Living Plan/Open Questions; migration proposals are dry-run/review governed; scanner is incremental/branch-aware; malicious content/secrets tests pass.
 
 ---
 
