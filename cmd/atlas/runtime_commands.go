@@ -28,6 +28,19 @@ func runRuntime(asJSON bool, args []string) int {
 	}
 	path := filepath.Join(root, ".atlas", "runtime", "continuation.json")
 	switch args[0] {
+	case "debug":
+		if len(args) < 2 || args[1] != "bundle" {
+			return exitUsage
+		}
+		bundle := map[string]any{"run_id": id, "sanitized": true, "repository": runtime.InspectRepository(root), "note": "prompts, secrets, transcripts, and raw sensitive payloads excluded"}
+		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "debug-"+id+".json"), bundle); err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(bundle))
+		}
+		fmt.Printf("Debug bundle written for %s\n", id)
+		return exitOK
 	case "context":
 		sources := []contextcompiler.Source{{Ref: "ENTRYPOINT.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "docs/ATLAS.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "README.md", Authority: "reference", Freshness: "current", TokenCost: 100}}
 		manifest := contextcompiler.Compile(id, sources, 200)
@@ -61,6 +74,18 @@ func runRuntime(asJSON bool, args []string) int {
 		fmt.Printf("%v\n", data)
 		return exitOK
 	case "run":
+		if len(args) > 1 && args[1] == "context" {
+			sources := []contextcompiler.Source{{Ref: "ENTRYPOINT.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "docs/ATLAS.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "README.md", Authority: "reference", Freshness: "current", TokenCost: 100}}
+			manifest := contextcompiler.Compile(id, sources, 200)
+			if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "context", id+".manifest.json"), manifest); err != nil {
+				return serviceError(asJSON, err)
+			}
+			if asJSON {
+				return printEnvelope(protocol.OkEnvelope(manifest))
+			}
+			fmt.Printf("Context manifest: %d tokens (%s)\n", manifest.EstimatedTokens, manifest.Pressure)
+			return exitOK
+		}
 		if len(args) > 1 && (args[1] == "cancel" || args[1] == "resume") {
 			run, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".atlas", "runtime", "runs", id+".json"))
 			if err != nil {
