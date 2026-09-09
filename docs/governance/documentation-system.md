@@ -27,6 +27,8 @@ These commands are read-only. Documentation Delta application remains governed b
 
 Coverage is not reduced to a percentage. Blocking contracts and missing knowledge remain primary.
 
+M5 status: the deterministic foundation is implemented through contract/profile resolution, applicability, bindings, coverage, readiness, impact, Delta proposal, and deterministic contradiction/staleness findings. Semantic prose contradiction assistance, full evidence verification, and Delta application lifecycle integration remain explicit follow-up work before the M5 exit gate.
+
 ## Contract and profile sources
 
 - Built-in contracts: `docs/contracts/builtin.json`.

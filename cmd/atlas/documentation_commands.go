@@ -61,12 +61,24 @@ func runDocumentation(asJSON bool, args []string) int {
 			result = ids
 		}
 	case "profiles":
-		ids := []string{}
-		for id := range registry.Profiles {
-			ids = append(ids, id)
+		if len(args) > 2 && args[2] == "show" {
+			if len(args) < 4 {
+				fmt.Fprintln(os.Stderr, "error: docs profiles show requires id")
+				return exitUsage
+			}
+			profile, ok := registry.Profiles[args[3]]
+			if !ok {
+				return serviceError(asJSON, fmt.Errorf("unknown documentation profile: %s", args[3]))
+			}
+			result = profile
+		} else {
+			ids := []string{}
+			for id := range registry.Profiles {
+				ids = append(ids, id)
+			}
+			sortStrings(ids)
+			result = ids
 		}
-		sortStrings(ids)
-		result = ids
 	case "audit":
 		report, err := docengine.Audit(root)
 		if err != nil {
