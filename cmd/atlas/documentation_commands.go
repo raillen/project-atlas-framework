@@ -102,11 +102,7 @@ func runDocumentation(asJSON bool, args []string) int {
 		}
 		result = impact
 	case "delta":
-		impact, err := docengine.AnalyzeImpact(root, []string{})
-		if err != nil {
-			return serviceError(asJSON, err)
-		}
-		result = docengine.MakeDelta(goal, impact)
+		return runDocsDelta(asJSON, args, root, goal)
 	case "contradictions":
 		findings, err := docengine.DetectContradictions(root)
 		if err != nil {

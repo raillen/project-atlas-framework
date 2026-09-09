@@ -77,6 +77,17 @@ atlas migrate [path] [--dry-run] [--json]
 atlas snapshot [path] [--output <archive.zip>]
 ```
 
+## Documentation deltas
+
+```bash
+atlas docs delta propose --goal <goal> [--path <project>] [changed ...] [--json]
+atlas docs delta list [--path <project>] [--json]
+atlas docs delta show --id <delta> [--path <project>] [--json]
+atlas docs delta transition --id <delta> --state <state> [--evidence <id>]... [--path <project>] [--json]
+```
+
+Delta states are `proposed`, `reviewed`, `accepted`, `rejected`, and `applied`. Applying a delta requires evidence and does not itself edit canonical documentation.
+
 Migration should be previewed with `--dry-run`. Project data is not removed by uninstall.
 
 ## Resolution and explanation

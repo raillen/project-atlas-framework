@@ -196,6 +196,10 @@ atlas report add <file> [--path <path>]
 atlas report summary [--path <path>]
 atlas migrate [path] [--dry-run] [--json]
 atlas snapshot [path] [--output <path>]
+atlas docs delta propose --goal <goal> [--path <project>] [changed ...] [--json]
+atlas docs delta list [--path <project>] [--json]
+atlas docs delta show --id <delta> [--path <project>] [--json]
+atlas docs delta transition --id <delta> --state <state> [--evidence <id>]... [--path <project>] [--json]
 ```
 
 ### Resolution, explanation, and compiler
