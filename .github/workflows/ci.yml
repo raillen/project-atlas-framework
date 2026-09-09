@@ -25,10 +25,12 @@ jobs:
       - name: Audit runtime dependency graph
         run: |
           python - <<'PY'
-          import tomllib
+          import re
           from pathlib import Path
-          project = tomllib.loads(Path("pyproject.toml").read_text())["project"]
-          Path("/tmp/atlas-runtime-requirements.txt").write_text("\n".join(project["dependencies"]) + "\n")
+          text = Path("pyproject.toml").read_text()
+          block = text.split("dependencies = [", 1)[1].split("]", 1)[0]
+          dependencies = re.findall(r'^\s*"([^"]+)"', block, re.MULTILINE)
+          Path("/tmp/atlas-runtime-requirements.txt").write_text("\n".join(dependencies) + "\n")
           PY
           python -m pip_audit --requirement /tmp/atlas-runtime-requirements.txt --desc
       
