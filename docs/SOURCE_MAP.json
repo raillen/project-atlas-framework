@@ -152,6 +152,20 @@
       "semantic_role": "M10 exit gate formal validation: native compiler, TS plugin, tool guards, session hooks, and cleanup"
     },
     {
+      "local_path": "docs/governance/m11-exit-gate.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M11 Exit Gate — Connector SDK validation and criteria" }
+      ],
+      "semantic_role": "M11 exit gate formal validation: capability negotiation, test kit, Gemini connector, Claude Code/Codex elevation"
+    },
+    {
+      "local_path": "docs/governance/m12-exit-gate.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M12 Governance Assessment — Team/Advanced Runtime deferred status" }
+      ],
+      "semantic_role": "M12 governance assessment: architectural justification for deferred runtime and team daemon status"
+    },
+    {
       "local_path": "docs/integration/connector-contract.md",
       "notion_pages": [
         { "title": "14 — Roadmap de Implementação v0.4", "role": "Connector Contract Specification" }
@@ -262,6 +276,13 @@
         { "title": "14 — Roadmap de Implementação v0.4", "role": "M10 OpenCode Native Harness — connector contract schema" }
       ],
       "semantic_role": "schema contract for connector capabilities and lifecycle"
+    },
+    {
+      "local_path": "schemas/connector-negotiation.schema.json",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M11 Connector SDK — capability negotiation schema" }
+      ],
+      "semantic_role": "schema contract for connector capability negotiation results and degradations"
     }
   ]
 }

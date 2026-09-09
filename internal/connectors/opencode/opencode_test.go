@@ -8,8 +8,14 @@ import (
 
 	"github.com/raillen/project-atlas-framework/internal/connectors"
 	"github.com/raillen/project-atlas-framework/internal/connectors/opencode"
+	"github.com/raillen/project-atlas-framework/internal/connectors/testkit"
 	"github.com/raillen/project-atlas-framework/internal/install"
 )
+
+func TestOpenCodeTestKit(t *testing.T) {
+	c := opencode.NewConnector()
+	testkit.RunAll(t, c)
+}
 
 func TestOpenCodeContract(t *testing.T) {
 	c := opencode.NewConnector()
