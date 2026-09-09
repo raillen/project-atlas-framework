@@ -1,14 +1,5 @@
+// Package adoption implements the Adoption Engine domain: repository discovery,
+// observed facts, classification, confidence ledger, and migration proposals.
+//
+// The canonical specification lives in docs/runtime/adoption-engine.md (phase M7).
 package adoption
-
-type Finding struct {
-	Path       string `json:"path"`
-	Concept    string `json:"concept"`
-	Confidence string `json:"confidence"`
-	Reason     string `json:"reason"`
-}
-type Report struct {
-	Repository   string    `json:"repository"`
-	Capabilities []string  `json:"capabilities"`
-	Findings     []Finding `json:"findings"`
-	Proposals    []string  `json:"proposals"`
-}
