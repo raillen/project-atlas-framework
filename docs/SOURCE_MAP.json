@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-09-08",
+  "source": "Project Atlas Framework — Livro Vivo v0.4",
+  "source_url": "https://app.notion.com/p/raillen/Project-Atlas-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85",
+  "documents": [
+    {
+      "local_path": "docs/product/vision.md",
+      "notion_pages": [
+        { "title": "Project Atlas Framework — Livro Vivo v0.4 (hub)", "role": "vision summary, fundamental decisions, macro-architecture" }
+      ],
+      "semantic_role": "product vision, scope, non-goals, operational target"
+    },
+    {
+      "local_path": "docs/product/scope-v0.4.md",
+      "notion_pages": [
+        { "title": "Project Atlas Framework — Livro Vivo v0.4 (hub)", "role": "macro-architecture, objective" },
+        { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "target stack, migration phases, deprecation criteria" },
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "milestones, dependency ordering, release strategy, amendments" },
+        { "title": "16 — Gap Analysis v0.3 → v0.4", "role": "component classification, corrections, doc updates" }
+      ],
+      "semantic_role": "detailed in-scope/out-of-scope, migration boundary"
+    },
+    {
+      "local_path": "docs/architecture/overview.md",
+      "notion_pages": [
+        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "planes, boundaries, internal interfaces, dependency direction, design rules" }
+      ],
+      "semantic_role": "high-level topology, plane boundaries, dependency rules, design principles"
+    },
+    {
+      "local_path": "docs/architecture/dependency-rules.md",
+      "notion_pages": [
+        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "internal boundaries, rules of dependency, interface placement" },
+        { "title": "17 — Estrutura Canônica de Repositório Alvo", "role": "package layout, internal vs integration, embedding strategy" }
+      ],
+      "semantic_role": "package dependency graph, hard rules, interface placement, import hygiene"
+    },
+    {
+      "local_path": "docs/development/implementation-blueprint.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "milestones, dependency DAG, gates, dogfooding, releases, required docs" },
+        { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "Go rules, migration phases, criteria" },
+        { "title": "16 — Gap Analysis v0.3 → v0.4", "role": "migration boundary" }
+      ],
+      "semantic_role": "objective, non-goals, architecture summary, migration strategy, macro-phases, DAG, gates, dogfooding, releases"
+    },
+    {
+      "local_path": "docs/development/phases.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M0–M12 detail, dependencies, scope, non-goals, deliverables, acceptance criteria, exit gates" }
+      ],
+      "semantic_role": "fully detailed M0+M1; M2–M4 sufficient for planning; M5+ architectural"
+    },
+    {
+      "local_path": "docs/development/repository-layout.md",
+      "notion_pages": [
+        { "title": "17 — Estrutura Canônica de Repositório Alvo", "role": "target tree, package rules, embedding strategy, canonical vs derived" }
+      ],
+      "semantic_role": "canonical tree, directory responsibilities, go:embed strategy, package rules"
+    },
+    {
+      "local_path": "docs/development/coding-standards.md",
+      "notion_pages": [
+        { "title": "00 — Princípios, Governança e Regras de Engenharia", "role": "Clean Code rules, Definition of Done, anti-overengineering guardrail, portability rule" }
+      ],
+      "semantic_role": "naming, functions, packages, errors, interfaces, dependencies, I/O, testing, DoD, guardrails"
+    },
+    {
+      "local_path": "docs/development/testing-strategy.md",
+      "notion_pages": [
+        { "title": "13 — Testes, Conformance, Evals e Quality Gates", "role": "pyramid, quality gates, conformance fixtures, provider contract, failure taxonomy, evals, budgets" },
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "test provider foundation, security foundation, dogfooding" }
+      ],
+      "semantic_role": "unit/integration/conformance/connector/E2E/LLM evals, quality gates, fixtures, provider contract, failure taxonomy, eval corpus, dogfooding"
+    },
+    {
+      "local_path": "docs/migration/protocol-inventory.md",
+      "notion_pages": [
+        { "title": "16 — Gap Analysis v0.3 → v0.4", "role": "component classification, canonical schemas, root scripts, doc updates" },
+        { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "migration phases, criteria" }
+      ],
+      "semantic_role": "Python module map, CLI surface, schemas, resources, scripts, baseline, critical contracts, open questions"
+    },
+    {
+      "local_path": "docs/migration/conformance-strategy.md",
+      "notion_pages": [
+        { "title": "13 — Testes, Conformance, Evals e Quality Gates", "role": "conformance approach, migration gate" },
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "conformance 100% gate" }
+      ],
+      "semantic_role": "comparison contract, fixture layout, golden generation, determinism, gate progression, differential runner"
+    },
+    {
+      "local_path": "docs/runtime/control-plane.md",
+      "notion_pages": [
+        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "control plane boundary, dependency direction, new application boundaries" },
+        { "title": "48 — Agent Runtime Control Plane: Arquitetura e Princípios", "role": "planes, governance rule, success criteria" },
+        { "title": "49 — Budget Manager, Cost Governance e Rate Limits", "role": "budget envelope, scopes, limits, cost manager, rate limits, evidence" },
+        { "title": "50 — Context Compiler, Token Budget, Cache e Compaction", "role": "compiler pipeline, manifest, window distinction, tool-output budgets, pressure, retrieval, evals" },
+        { "title": "51 — Run Engine, Checkpoints, Retry, Resume e Cancellation", "role": "run state machine, checkpoint, retry taxonomy, idempotency, resume, cancellation, livelock" },
+        { "title": "52 — Tool Gateway, MCP Governance e Lazy Tool Discovery", "role": "gateway pipeline, descriptor, lazy discovery, side-effect journal, MCP governance, policy, evals" },
+        { "title": "53 — Model Registry, Router, Drift, Fallback e Provider Health", "role": "registry metadata, router inputs/outputs, eval-driven, drift, fallback, health, verification" },
+        { "title": "55 — Observability Plane, Run Explainability e Incident Bundles", "role": "telemetry, explainability commands, storage, OTLP, incident bundles, privacy" },
+        { "title": "56 — Automation Engine, Event Rules, DLQ e Safety", "role": "automation model, contract, idempotency, retry, DLQ, scheduler deferral" },
+        { "title": "57 — Atlas Package & Runtime Manager, atlas.lock e Provider Isolation", "role": "package types, manifest, lockfile, runtime manager, installation ownership, offline bundles" },
+        { "title": "58 — Migration Engine, Unified Review Queue e State Evolution", "role": "migration contract, safety, journal, review queue, rule" },
+        { "title": "60 — Secrets, Data Classification e Egress Governance", "role": "data classes, egress policy, secret provider, scopes, redaction, injection boundary, audit" }
+      ],
+      "semantic_role": "Run, Budget, Context, Model, Tool, Environment, Automation, Observability, Package/Runtime, Migration, Review, Secrets/Egress"
+    },
+    {
+      "local_path": "docs/security/trust-model.md",
+      "notion_pages": [
+        { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }
+      ],
+      "semantic_role": "trust layers, connector primitives, config safety, artifact markers, supply chain, security contracts, safe mode, classification, egress, secrets, redaction, audit"
+    }
+  ]
+}

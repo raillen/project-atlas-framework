@@ -1,0 +1,128 @@
+# Atlas v0.4 Dependency Rules
+
+## Package Dependency Graph
+
+```mermaid
+flowchart TD
+    CLI[cmd/atlas] --> APP[internal/app]
+    APP --> PROTO[internal/protocol]
+    APP --> PROJECT[internal/project]
+    APP --> RESOLVER[internal/resolver]
+    APP --> COMPILER[internal/compiler]
+    APP --> VALIDATOR[internal/validator]
+    APP --> DOCS[internal/documentation]
+    APP --> PLANNING[internal/planning]
+    APP --> ADOPTION[internal/adoption]
+    APP --> KNOWLEDGE[internal/knowledge]
+    APP --> EXPERIENCE[internal/experience]
+    APP --> GATES[internal/evidence-gates]
+    APP --> CONTROL[internal/control-plane]
+    APP --> INSTALL[internal/install]
+    APP --> STORAGE[internal/storage]
+
+    PROTO --> SCHEMAS[(schemas/)]
+    PROJECT --> SCHEMAS
+    VALIDATOR --> SCHEMAS
+    RESOLVER --> RESOURCES[(resources/)]
+    COMPILER --> RESOURCES
+    DOCS --> RESOURCES
+    PLANNING --> RESOURCES
+    ADOPTION --> RESOURCES
+    KNOWLEDGE --> STORAGE
+    EXPERIENCE --> STORAGE
+    GATES --> STORAGE
+    CONTROL --> STORAGE
+
+    STORAGE --> GIT[(Git FS)]
+    STORAGE --> SQLITE[(SQLite derived)]
+
+    INTEGRATIONS[integrations/*] -.-> APP
+    INTEGRATIONS -.-> PROTO
+```
+
+## Hard Rules
+
+### 1. Domain Isolation
+```
+internal/protocol     → NO imports from: cmd, internal/app, internal/*storage*, integrations
+internal/project      → NO imports from: cmd, internal/app, integrations
+internal/resolver     → NO imports from: cmd, internal/app, integrations
+internal/validator    → NO imports from: cmd, internal/app, integrations
+```
+
+### 2. Application Services Layer
+```
+internal/app          → MAY import: internal/protocol, internal/project, internal/resolver,
+                       internal/compiler, internal/validator, internal/documentation,
+                       internal/planning, internal/adoption, internal/knowledge,
+                       internal/experience, internal/evidence-gates, internal/control-plane,
+                       internal/install, internal/storage
+```
+
+### 3. CLI Layer
+```
+cmd/atlas             → MAY import: internal/app, internal/protocol
+                       → MUST NOT import: any internal/* besides app + protocol
+```
+
+### 4. Integrations
+```
+integrations/*        → MAY import: internal/protocol (types only), internal/app (via CLI JSON)
+                       → MUST NOT import: internal/* implementation packages
+```
+
+### 5. Storage
+```
+internal/storage/git  → Implements: internal/storage.Repository port
+internal/storage/sqlite → Implements: internal/storage.DerivedIndex port
+                       → MUST NOT import: internal/protocol, internal/app, etc.
+```
+
+### 6. Control Plane
+```
+internal/control-plane/* → MAY import: internal/protocol, internal/storage (ports only)
+                         → MUST NOT import: internal/app, cmd, integrations
+```
+
+## Circular Dependency Prevention
+
+**Tooling check** (run in CI):
+```bash
+# Verify no cycles
+go mod graph | grep -E "internal/.*internal/" | sort -u
+```
+
+## Interface Placement
+
+| Interface | Defined In | Implemented By |
+|-----------|------------|----------------|
+| `Repository` | `internal/storage` | `internal/storage/git` |
+| `DerivedIndex` | `internal/storage` | `internal/storage/sqlite` |
+| `EventSink` | `internal/control-plane/events` | `internal/control-plane/events/file`, `otel` |
+| `HarnessTransport` | `integrations/transport` | `integrations/opencode`, `codex`, etc. |
+| `Clock` | `internal/testutil` | `internal/testutil/fake_clock` |
+| `EmbeddingProvider` | `internal/knowledge` | (future) |
+
+## Import Hygiene
+
+- **No `utils`, `common`, `helpers` packages** — every package has domain semantics
+- **No package-per-file** — start consolidated, split when responsibility justifies
+- **`internal` protects premature API** — nothing in `internal` is public SDK
+- **Interfaces defined at consumer boundary** — not in shared package
+
+## Allowed Standard Library Imports Everywhere
+
+`context`, `errors`, `fmt`, `io`, `os`, `path`, `strings`, `time`, `encoding/json`, `sync`, `testing`
+
+## Versioned Imports
+
+External dependencies (when added) must be:
+- Pinned in `go.mod`
+- Vendored or checksum-verified in CI
+- Justified by anti-overengineering guardrail questions
+
+## OPEN QUESTIONS
+
+- [ ] Exact package split for `internal/documentation` (contracts vs profiles vs readiness vs delta)
+- [ ] Whether `internal/evidence-gates` stays separate or merges into `internal/quality`
+- [ ] Whether `internal/control-plane` uses sub-packages per service or flat structure initially

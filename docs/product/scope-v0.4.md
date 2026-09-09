@@ -1,0 +1,104 @@
+# Project Atlas v0.4 Scope
+
+## In Scope
+
+### Core Runtime Migration
+- Go Core & CLI replacing Python runtime
+- Single binary distribution (Linux amd64/arm64, macOS amd64/arm64, Windows amd64/arm64)
+- Clean Code pragmático como regra permanente
+- Zero CGO por padrão
+- `gofmt`, `go test -race`, `go vet`, `staticcheck` como quality gates obrigatórios
+
+### Protocol Parity (v0.3 → Go)
+- CLI surface: `init`, `resolve`, `validate`, `goal`, `context plan`, `report`, `migrate`, `compile`, `snapshot`, `doctor`, `explain`, `framework-check`
+- JSON Schema validation (Draft 2020-12)
+- Goal v2 lifecycle (locks, amendments, state transitions)
+- Plans/Tasks/Events/Evidence/Gates
+- Workforce resolver (agents, skills, recipes, model policy)
+- Compiler targets: Codex, Claude Code, Generic (+ ancillary)
+- Machine JSON envelope: `protocol_version`, `ok`, `data`, `diagnostics`, `warnings`
+
+### Documentation System v2
+- **Documentation Contracts**: obrigatoriedade definida por knowledge requirements, não existência de arquivos
+- **Documentation Profiles**: capability packs proporcionais ao projeto
+- **UI Documentation Pack**: wireframes semânticos, layout, spacing, tokens, cores, tipografia, components, states, accessibility, localization, visual tests
+- **Docs Delta & Contradiction Framework**: rastreamento de mudanças e detecção de conflitos
+
+### Living Plan & Interview Engine
+- Conversational incremental planning
+- Decision extraction with authority model
+- Open questions tracking
+- Confidence scoring
+- Readiness gates before implementation
+
+### Adoption Engine
+- Repository scanner & semantic doc mapping
+- Capability detection
+- Confidence ledger
+- Non-destructive migration proposals
+
+### Control Plane (Foundation)
+- **Run Engine**: state machine, checkpoints, retry taxonomy, resumption, cancellation, livelock detection
+- **Budget Manager**: hierarchical scopes (user→workspace→project→Goal→run→agent→step→tool), hard/soft limits, cost metadata, rate limiting
+- **Context Compiler**: authority/freshness/relevance pipeline, token budgets, compaction, cache awareness
+- **Model Registry/Router**: metadata-driven, eval-based routing, drift detection, fallback, provider health
+- **Tool Gateway**: descriptor, lazy discovery, side-effect journal, MCP governance, output control
+- **Execution Environments**: sandbox contract, isolation requirements
+- **Automation Engine**: event-driven rules, DLQ, idempotency, concurrency keys
+- **Observability**: structured timeline, explainability commands, incident bundles, local-first storage
+- **Package/Runtime Manager**: `atlas.lock`, provider isolation, supply chain verification
+
+### Integration Layer
+- **Connector Contract**: capability declaration, enforcement levels, protocol version negotiation, cleanup manifests
+- **OpenCode Native Harness**: native compiler, Atlas primary agent, subagents/skills/commands, TypeScript plugin, tool guards, session hooks
+- **Generic Fallback**: preserved for harnesses without native primitives
+
+### Security & Trust
+- Trust layers (Core binary → canonical config → generated adapters → 3rd party → user content → model output)
+- Safe mode (`atlas --safe`)
+- Data classification & egress governance
+- SecretProvider contract
+- Generated artifact ownership markers
+- SBOM, govulncheck, license verification in CI
+
+### Testing & Quality
+- Test pyramid: Unit → Integration → Conformance → Connector Contract → E2E → LLM Evals (probabilistic only)
+- Test Provider Contract (Playwright, ZAP, CodeQL, fuzzers, sanitizers, UIA/AT-SPI/AX, KUnit, syzkaller, etc.)
+- Quality Orchestrator: deterministic plan from change impact + risk + capabilities
+- Evidence normalization schema
+- Failure taxonomy (product/test/env/flaky/infra/security/inconclusive)
+- Flakiness policy (distinct `flaky` result, debt tracking)
+- Independent verification for high/critical risk
+- Conformance 100% on critical contracts before Python deprecation
+
+### Skill System v3
+- Package versionado: manifest + `SKILL.md` + knowledge/workflows/templates/checks/scripts/schemas/tests/evals/examples
+- Activation modes: `auto`, `contextual`, `manual`, `required`, `disabled`
+- Permissions declaration (never self-elevate)
+- Progressive disclosure (manifest → SKILL.md → workflows on demand)
+- Lifecycle: `draft → experimental → recommended → verified → deprecated → retired`
+- Config layering: built-in → user → workspace → project → recipe → session
+- Ambient Skill Resolver (metadata-first, minimal composition)
+- Skill Curator (overlap, conflict, staleness, weak evals)
+- Experience → Skill Proposal pipeline
+- KPIs: coverage, activation precision, evals, redundancy, freshness, incidents avoided, context cost, stability
+
+## Out of Scope (v0.4)
+
+- Distributed team runtime / shared server
+- Mandatory embeddings or vector DB
+- Web dashboard UI
+- Public Go SDK
+- Fork of any harness (OpenCode, Codex, etc.)
+- ORM or external graph DB
+- Game Development Suite (built on Provider Contract + Skill v3 + Evidence Schema)
+- Advanced Verification Profiles (compiler, kernel, GUI, network adversarial)
+- Knowledge Publishing / Engineering Blog
+- Team/Advanced Runtime (shared runtime, leases, concurrency coordination)
+
+## Migration Boundary
+
+Python v0.3 remains as **executable oracle** during migration:
+- Zero new v0.4 features in Python
+- All Go development validated against Python conformance
+- Python deprecated only after 100% critical contract parity

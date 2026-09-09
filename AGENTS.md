@@ -17,3 +17,78 @@ This repository develops Project Atlas itself.
 - Do not make any orchestrator/model provider mandatory for the core framework.
 - New context mechanisms must report token/cost impact and have a stopping condition.
 - Deep recursive execution remains experimental and disabled by default.
+
+# Project Atlas Development Authority
+
+## Knowledge authority
+
+1. Canonical repository specs, schemas and ADRs
+2. Accepted local engineering documentation
+3. Project Atlas Living Book in Notion
+4. Agent inference
+5. External sources
+
+The Project Atlas Living Book is available through the Notion MCP.
+
+Living Book:
+https://app.notion.com/p/raillen/Project-Atlas-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85
+
+Use Notion on demand when:
+- a local specification is missing;
+- an architectural decision needs clarification;
+- planning a new implementation phase;
+- checking approved v0.4 design;
+- resolving ambiguity.
+
+Do not load the entire Living Book into context.
+
+Retrieve only pages relevant to the current Goal.
+
+Once a design decision is promoted into a canonical repository specification,
+the repository version has authority over the Notion version for implementation.
+
+# Project Atlas Development Context
+
+## Canonical Local Documentation
+
+All authoritative engineering specifications live under `docs/` in this repository:
+
+- **Product**: `docs/product/vision.md`, `docs/product/scope-v0.4.md`
+- **Architecture**: `docs/architecture/overview.md`, `docs/architecture/dependency-rules.md`
+- **Development**: `docs/development/implementation-blueprint.md`, `docs/development/phases.md`, `docs/development/repository-layout.md`, `docs/development/coding-standards.md`, `docs/development/testing-strategy.md`
+- **Migration**: `docs/migration/protocol-inventory.md`, `docs/migration/conformance-strategy.md`
+- **Runtime**: `docs/runtime/control-plane.md`
+- **Security**: `docs/security/trust-model.md`
+- **Source Map**: `docs/SOURCE_MAP.json` — maps each local doc to its Notion Living Book page(s)
+
+## Notion Living Book (On-Demand Retrieval)
+
+The Living Book is available via Notion MCP:
+https://app.notion.com/p/raillen/Project-Atlas-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85
+
+Agents must:
+1. **Retrieve only pages relevant to the current Goal** — never load the entire book.
+2. **Consult on demand** when: local spec is missing; architectural decision needs clarification; planning a new phase; checking approved v0.4 design; resolving ambiguity.
+3. **Respect authority order**: canonical repository → approved Notion design → agent inference.
+
+## Implementation Discipline
+
+- Implementation begins only when the Goal has sufficient local documentation and acceptance criteria.
+- Clean Code pragmático applies permanently: responsabilidades explícitas, baixo acoplamento, alta coesão, nomes de domínio, funções pequenas, composição, dependências apontando para dentro, testes determinísticos, erros explícitos, sem abstração sem necessidade concreta.
+- No silent changes to locked/canonical decisions (ADRs, schemas, documented policies). If a change is needed, update the canonical document and ADR first.
+
+## Routing Quick Reference
+
+| Need | Start Here |
+|------|------------|
+| What is v0.4 building? | `docs/product/vision.md` |
+| What is in/out of scope? | `docs/product/scope-v0.4.md` |
+| How do packages depend? | `docs/architecture/dependency-rules.md` |
+| What are the macro phases? | `docs/development/phases.md` |
+| How is the repo structured? | `docs/development/repository-layout.md` |
+| What coding style? | `docs/development/coding-standards.md` |
+| How are we testing? | `docs/development/testing-strategy.md` |
+| How does Python migrate to Go? | `docs/migration/protocol-inventory.md`, `docs/migration/conformance-strategy.md` |
+| What is the Control Plane? | `docs/runtime/control-plane.md` |
+| What is the trust model? | `docs/security/trust-model.md` |
+| Where did a doc come from? | `docs/SOURCE_MAP.json` |

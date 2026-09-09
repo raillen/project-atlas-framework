@@ -1,0 +1,12 @@
+{
+  "args": [
+    "atlas",
+    "goal",
+    "list",
+    "--path",
+    "examples/conformance-project"
+  ],
+  "exit": 0,
+  "stdout": "ID           PHASE    STATE        REV   TITLE\n-----------------------------------------------------------------\nP01-G01      P01      LOCKED       1     Core Conformance Engine\n",
+  "stderr": ""
+}

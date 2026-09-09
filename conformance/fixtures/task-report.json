@@ -1,0 +1,7 @@
+{
+  "id": "T-01",
+  "type": "implementation",
+  "status": "success",
+  "tokens": {"input": 1200, "output": 400, "cached": 100, "intermediate_output": 50},
+  "cost": {"direct": {"amount": 0.0123, "currency": "USD", "provenance": "observed", "confidence": "high"}}
+}

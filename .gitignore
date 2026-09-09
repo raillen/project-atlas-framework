@@ -11,3 +11,10 @@ htmlcov/
 # Project Atlas derived/runtime state
 .atlas/runtime/
 .atlas/cache/
+
+# Go migration artifacts
+/atlas
+*.test
+*.out
+/dist/
+/test-home/

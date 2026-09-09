@@ -1,0 +1,14 @@
+{
+  "args": [
+    "atlas",
+    "context",
+    "plan",
+    "add a transition template",
+    "--path",
+    "examples/conformance-project",
+    "--json"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"task\": \"add a transition template\",\n  \"profile\": \"medium\",\n  \"strategy\": \"context-pack-or-structural-retrieval\",\n  \"budget\": {\n    \"max_input_tokens\": null,\n    \"context_target_tokens\": 8000,\n    \"context_hard_tokens\": 16000,\n    \"output_target_tokens\": 1500,\n    \"output_hard_tokens\": 3000,\n    \"max_expansion_rounds\": 2,\n    \"max_retrieved_tokens\": null,\n    \"max_injected_tokens\": null,\n    \"max_intermediate_output_tokens\": null,\n    \"max_expansions\": null,\n    \"max_delegations\": null,\n    \"max_delegation_depth\": 1,\n    \"deadline\": null,\n    \"cost_budget\": null,\n    \"stop_reasons\": null\n  },\n  \"reasons\": [\n    \"default\"\n  ]\n}\n",
+  "stderr": ""
+}

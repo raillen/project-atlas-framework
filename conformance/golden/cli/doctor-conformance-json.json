@@ -1,0 +1,11 @@
+{
+  "args": [
+    "atlas",
+    "doctor",
+    "examples/conformance-project",
+    "--json"
+  ],
+  "exit": 0,
+  "stdout": "[]\n",
+  "stderr": ""
+}

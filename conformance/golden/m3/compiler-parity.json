@@ -1,0 +1,44 @@
+[
+  {
+    "target": "generic",
+    "files": 1,
+    "all_match": true,
+    "mismatches": []
+  },
+  {
+    "target": "chatgpt",
+    "files": 1,
+    "all_match": true,
+    "mismatches": []
+  },
+  {
+    "target": "claude",
+    "files": 1,
+    "all_match": true,
+    "mismatches": []
+  },
+  {
+    "target": "kimi",
+    "files": 1,
+    "all_match": true,
+    "mismatches": []
+  },
+  {
+    "target": "codex",
+    "files": 337,
+    "all_match": true,
+    "mismatches": []
+  },
+  {
+    "target": "claude-code",
+    "files": 337,
+    "all_match": true,
+    "mismatches": []
+  },
+  {
+    "target": "traycer",
+    "files": 1,
+    "all_match": true,
+    "mismatches": []
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "args": [
+    "atlas",
+    "framework-check"
+  ],
+  "exit": 0,
+  "stdout": "Project Atlas framework validation passed.\n",
+  "stderr": ""
+}

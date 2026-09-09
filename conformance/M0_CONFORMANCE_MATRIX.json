@@ -1,0 +1,21 @@
+{
+  "oracle": "python-v0.3",
+  "golden_dir": "conformance/golden/cli",
+  "command_cases": [
+    "compile-help",
+    "context-plan-human",
+    "context-plan-json",
+    "doctor-conformance-json",
+    "doctor-human",
+    "explain-workforce-brasa",
+    "framework-check",
+    "goal-list-conformance",
+    "goal-list-default",
+    "report-summary",
+    "resolve-brasa-json",
+    "validate-brasa",
+    "validate-conformance-project",
+    "version"
+  ],
+  "run": "PYTHONPATH=src python3 -m project_atlas <args>"
+}

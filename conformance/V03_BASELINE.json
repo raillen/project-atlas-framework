@@ -1,0 +1,31 @@
+{
+  "runtime": "python",
+  "version": "0.3.0",
+  "cli_entrypoint": "project_atlas.cli:main",
+  "test_commands": [
+    "python -m pytest --cov=src/project_atlas --cov-report=term-missing --cov-fail-under=80",
+    "python -m ruff check src tests",
+    "python -m mypy src/project_atlas"
+  ],
+  "critical_commands": [
+    "atlas init",
+    "atlas resolve",
+    "atlas validate",
+    "atlas goal",
+    "atlas context plan",
+    "atlas report",
+    "atlas migrate",
+    "atlas compile",
+    "atlas snapshot",
+    "atlas doctor",
+    "atlas explain",
+    "atlas framework-check"
+  ],
+  "schema_count": 27,
+  "canonical_schemas_dir": "schemas",
+  "canonical_resources_dir": "src/project_atlas/resources",
+  "notes": [
+    "Python v0.3 functions as executable reference specification and conformance oracle during v0.4 Go migration.",
+    "Do not delete, move, or modify src/project_atlas or tests until 100% parity is verified."
+  ]
+}

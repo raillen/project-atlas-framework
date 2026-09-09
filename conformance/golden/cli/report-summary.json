@@ -1,0 +1,12 @@
+{
+  "args": [
+    "atlas",
+    "report",
+    "summary",
+    "--path",
+    "examples/conformance-project"
+  ],
+  "exit": 0,
+  "stdout": "{\n  \"tasks\": 0,\n  \"input_tokens\": 0,\n  \"output_tokens\": 0,\n  \"cached_tokens\": 0,\n  \"direct_cost\": 0.0\n}\n",
+  "stderr": ""
+}

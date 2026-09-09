@@ -1,0 +1,10 @@
+{
+  "args": [
+    "atlas",
+    "validate",
+    "examples/conformance-project"
+  ],
+  "exit": 0,
+  "stdout": "Project Atlas validation passed.\n",
+  "stderr": ""
+}

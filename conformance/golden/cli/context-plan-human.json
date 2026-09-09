@@ -1,0 +1,13 @@
+{
+  "args": [
+    "atlas",
+    "context",
+    "plan",
+    "debugging auth flow",
+    "--path",
+    "examples/conformance-project"
+  ],
+  "exit": 0,
+  "stdout": "Profile: medium\nStrategy: context-pack-or-structural-retrieval\nmax_input_tokens: None\ncontext_target_tokens: 8000\ncontext_hard_tokens: 16000\noutput_target_tokens: 1500\noutput_hard_tokens: 3000\nmax_expansion_rounds: 2\nmax_retrieved_tokens: None\nmax_injected_tokens: None\nmax_intermediate_output_tokens: None\nmax_expansions: None\nmax_delegations: None\nmax_delegation_depth: 1\ndeadline: None\ncost_budget: None\nstop_reasons: None\n",
+  "stderr": ""
+}

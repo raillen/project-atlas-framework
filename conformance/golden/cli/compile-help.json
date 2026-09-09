@@ -1,0 +1,10 @@
+{
+  "args": [
+    "atlas",
+    "compile",
+    "--help"
+  ],
+  "exit": 0,
+  "stdout": "usage: atlas compile [-h]\n                     --target {chatgpt,claude,claude-code,codex,generic,kimi,traycer}\n                     [--path PATH]\n\noptions:\n  -h, --help            show this help message and exit\n  --target {chatgpt,claude,claude-code,codex,generic,kimi,traycer}\n  --path PATH\n",
+  "stderr": ""
+}

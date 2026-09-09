@@ -1,21 +1,47 @@
-# Installation
+# Installing Atlas v0.4
 
-## Prerequisites
-- Python 3.10+ (for Python reference CLI) or Rust toolchain (for Atlas Flow runtime)
-- Git 2.30+
+Atlas v0.4 distributes a single static binary. Python is not required to run the Go CLI.
 
-## Installing the Project Atlas CLI
+## Development Build
+
 ```bash
-# Clone the repository
-git clone https://github.com/raillen/project-atlas-framework.git
-cd project-atlas-framework
-
-# Install editable package
-pip install -e .
+go build -o /tmp/atlas ./cmd/atlas
+/tmp/atlas --json version
 ```
 
-Verify installation:
+## Release Build
+
 ```bash
-atlas --version
+VERSION=0.4.0 sh scripts/release.sh
+ls dist/
+cat dist/checksums.txt
 ```
-Expected output: `Project Atlas 0.3.0`
+
+## Setup and Portable Home
+
+```bash
+atlas --home ~/.atlas setup
+atlas --home ./project-home setup
+ATLAS_HOME=./project-home atlas setup
+```
+
+Setup records the installation manifest and detects available harnesses. Running setup twice converges to the same manifest.
+
+## Install Connectors
+
+```bash
+atlas --home ~/.atlas install connector opencode
+```
+
+Connector state lives under `ATLAS_HOME/connectors/<id>/cleanup.json`.
+
+## Uninstall Safely
+
+```bash
+atlas --home ~/.atlas uninstall
+atlas --home ~/.atlas uninstall --connectors
+atlas --home ~/.atlas uninstall --purge-cache
+atlas --home ~/.atlas uninstall --purge-global-config
+```
+
+Uninstall never deletes repository data: `.ai/`, docs, goals, plans, evidence, and all project files remain untouched. Purge flags only remove cache, derived runtime state, or global configuration.

@@ -1,0 +1,41 @@
+# Project Atlas — Product Vision v0.4
+
+## Purpose
+
+Project Atlas evolves from a Git-native execution-ready protocol into a **complete project engineering layer** assisted by humans and agents. It integrates planning, deep living documentation, execution, governance, episodic and experiential memory, traceability, validation, handoff, and adapter portability across harnesses without ceding project authority to any single harness.
+
+## Core Capabilities (v0.4)
+
+| Capability | Description |
+|------------|-------------|
+| **Protocol Domain** | Goals, Plans, Tasks, Events, Evidence, Gates with deterministic lifecycle, schema validation, locks, amendments, and invariants. |
+| **Project Service** | Root discovery, `atlas.json`, capabilities, profiles, repository metadata, state snapshots. |
+| **Resolution Service** | Risk assessment, recipe selection, workforce resolution, model policy, context selection, documentation applicability. |
+| **Documentation Engine** | Contracts, profiles, gap analysis, ownership, delta tracking, contradiction checking, coverage/readiness. |
+| **Planning Engine** | Conversational interview, decision extraction, open questions, confidence scoring, authority model, readiness gates. |
+| **Adoption Engine** | Repository scanner, semantic documentation mapping, capability detection, confidence ledger, migration proposals. |
+| **Knowledge Engine** | Typed traceability graph (requirements ↔ decisions ↔ code ↔ tests ↔ docs ↔ evidence), retrieval, contradiction detection, history. |
+| **Experience Engine** | Session events, summaries, handoffs, cross-session patterns, experience proposals with validation. |
+| **Evidence/Gate Engine** | Deterministic validation, risk-based evidence requirements, release readiness, completion gates. |
+| **Control Plane** | Run Engine, Budget/Cost Governance, Context Compiler, Model Router, Tool Gateway, Automation, Execution Environments, Observability. |
+| **Integration Layer** | OpenCode (first native), Codex, Claude Code, Gemini CLI, Copilot CLI, Kiro, Generic fallback — all as thin adapters. |
+
+## Non-Goals (v0.4)
+
+- Distributed scheduler / central team server (deferred to v1.0+)
+- Mandatory cloud dependencies or SaaS
+- External graph database
+- Public Go SDK (stabilize CLI/machine protocol first)
+- Embeddings as hard requirement
+- Full web dashboard
+- Forking any harness
+
+## Authority Hierarchy
+
+1. **Canonical Repository** — schemas, ADRs, code, tests
+2. **Approved Notion Design** — Living Book v0.4 pages
+3. **Agent Inference** — bounded, evidence-backed
+
+## Operational Target
+
+A human opens any supported harness and asks *"implement custom shader support"*. Atlas resolves intent, context, Goal/Plan/Task, risk, recipe, workforce, applicable docs, implementation, tests, review, documentation delta, journal, evidence, and final state — without megaprompts or conversation memory.
