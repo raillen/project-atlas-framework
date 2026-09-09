@@ -300,6 +300,8 @@ func run(args []string) int {
 		return runGoal(svc, asJSON, rest[1:])
 	case "plan":
 		return runPlan(asJSON, rest[1:])
+	case "adopt":
+		return runAdopt(asJSON, rest[1:])
 	case "context":
 		return runContext(svc, asJSON, rest[1:])
 	case "report":
