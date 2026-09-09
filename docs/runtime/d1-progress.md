@@ -10,6 +10,8 @@ Implemented baseline capabilities:
 - Hierarchical Budget Envelope package with reservations, soft/hard limits, and usage.
 - Deterministic Context Compiler package with source ordering, deduplication, token budget, and pressure states.
 - Structured Observability event append baseline.
+- Failure taxonomy and side-effect journal baseline.
+- Bounded retry classification helper.
 
 Remaining D1 gate work:
 

@@ -118,6 +118,9 @@ func (r Run) Transition(next RunStatus) (Run, error) {
 	}
 	return r, nil
 }
+func (r Run) CanRetry(failureClass string, attempts, maxAttempts int) bool {
+	return attempts < maxAttempts && failureClass != "side_effect_unknown" && failureClass != "budget_exhausted" && failureClass != "internal_invariant"
+}
 func (r Run) AttachSession(session ExecutorSession) Run {
 	r.Sessions = append(r.Sessions, session.ID)
 	return r
