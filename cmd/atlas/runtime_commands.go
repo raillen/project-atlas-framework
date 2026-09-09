@@ -28,6 +28,12 @@ func runRuntime(asJSON bool, args []string) int {
 	}
 	path := filepath.Join(root, ".atlas", "runtime", "continuation.json")
 	switch args[0] {
+	case "tool":
+		return runTool(asJSON, root, args[1:])
+	case "model":
+		return runModel(asJSON, root, args[1:])
+	case "env":
+		return runEnv(asJSON, root, args[1:])
 	case "debug":
 		if len(args) < 2 || args[1] != "bundle" {
 			return exitUsage
