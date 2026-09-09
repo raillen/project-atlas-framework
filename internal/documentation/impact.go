@@ -130,8 +130,12 @@ func DetectStaleness(root string, changed []string) ([]Finding, error) {
 	return out, nil
 }
 func (d Delta) Validate() error {
-	if d.State == "" || d.Source == "" {
-		return fmt.Errorf("documentation delta requires state and source")
+	valid := map[string]bool{"proposed": true, "reviewed": true, "accepted": true, "rejected": true, "applied": true}
+	if !valid[d.State] || d.Source == "" {
+		return fmt.Errorf("documentation delta requires valid state and source")
+	}
+	if d.State == "applied" && len(d.Evidence) == 0 {
+		return fmt.Errorf("applied documentation delta requires evidence")
 	}
 	return nil
 }

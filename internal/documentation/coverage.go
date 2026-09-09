@@ -26,6 +26,7 @@ type Binding struct {
 	Ownership         string   `json:"ownership"`
 	Authority         string   `json:"authority"`
 	AnsweredQuestions []string `json:"answered_questions"`
+	Evidence          []string `json:"evidence"`
 }
 type Coverage struct {
 	ContractID        string        `json:"contract_id"`
@@ -164,6 +165,9 @@ func evaluate(root string, c Contract, b Binding) Coverage {
 	}
 	if len(coverage.MissingKnowledge) == 0 {
 		coverage.State = ImplementationReady
+		if len(c.EvidenceRequirements) > 0 && len(b.Evidence) >= len(c.EvidenceRequirements) {
+			coverage.State = Verified
+		}
 	} else {
 		coverage.State = Partial
 	}
