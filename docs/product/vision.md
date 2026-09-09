@@ -36,6 +36,10 @@ Project Atlas evolves from a Git-native execution-ready protocol into a **comple
 2. **Approved Notion Design** — Living Book v0.4 pages
 3. **Agent Inference** — bounded, evidence-backed
 
+## Success Boundaries
+
+Atlas succeeds when canonical project state is explicit, implementation readiness is explainable, changes are evidenced, and a fresh executor can continue work without private conversation history. Atlas does not own product business decisions, replace the project's source code, or grant harnesses authority over protocol invariants.
+
 ## Operational Target
 
 A human opens any supported harness and asks *"implement custom shader support"*. Atlas resolves intent, context, Goal/Plan/Task, risk, recipe, workforce, applicable docs, implementation, tests, review, documentation delta, journal, evidence, and final state — without megaprompts or conversation memory.

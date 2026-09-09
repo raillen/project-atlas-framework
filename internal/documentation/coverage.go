@@ -21,10 +21,11 @@ const (
 )
 
 type Binding struct {
-	ContractID string   `json:"contract_id"`
-	Sources    []string `json:"sources"`
-	Ownership  string   `json:"ownership"`
-	Authority  string   `json:"authority"`
+	ContractID        string   `json:"contract_id"`
+	Sources           []string `json:"sources"`
+	Ownership         string   `json:"ownership"`
+	Authority         string   `json:"authority"`
+	AnsweredQuestions []string `json:"answered_questions"`
 }
 type Coverage struct {
 	ContractID        string        `json:"contract_id"`
@@ -127,7 +128,17 @@ func Audit(root string) (AuditReport, error) {
 	return report, nil
 }
 func evaluate(root string, c Contract, b Binding) Coverage {
-	coverage := Coverage{ContractID: c.ID, Sources: append([]string{}, b.Sources...), BlockingQuestions: append([]string{}, c.BlockingQuestions...)}
+	answered := map[string]bool{}
+	for _, question := range b.AnsweredQuestions {
+		answered[question] = true
+	}
+	questions := []string{}
+	for _, question := range c.BlockingQuestions {
+		if !answered[question] {
+			questions = append(questions, question)
+		}
+	}
+	coverage := Coverage{ContractID: c.ID, Sources: append([]string{}, b.Sources...), BlockingQuestions: questions}
 	if len(b.Sources) == 0 {
 		coverage.State = Missing
 		return coverage
