@@ -114,10 +114,7 @@ func runInstall(asJSON bool, explicitHome string, args []string) int {
 		manifest.BinaryPath = executable
 	}
 	if len(args) >= 2 && args[0] == "connector" {
-		if manifest.Connectors == nil {
-			manifest.Connectors = map[string]string{}
-		}
-		manifest.Connectors[args[1]] = "installed"
+		return runConnectorInstall(asJSON, args[1], args[2:])
 	}
 	if err := install.SaveManifest(home, manifest); err != nil {
 		return serviceError(asJSON, err)

@@ -1,0 +1,17 @@
+{
+  "id": "OQ-001",
+  "version": 1,
+  "scope": "goal:G042",
+  "contract": "architecture.system",
+  "topic": "canonical state ownership",
+  "priority": "blocker",
+  "blocking": true,
+  "reason": "implementation cannot start until the component owning canonical state is known",
+  "suggested_answers": ["control-plane", "project core", "external service"],
+  "status": "open",
+  "owner": "",
+  "eligible_owners": ["human-maintained"],
+  "question": "What owns canonical state?",
+  "asked_at": "2026-09-09T12:00:00Z",
+  "evidence": ["docs/architecture/overview.md"]
+}

@@ -83,6 +83,10 @@
 - Experience → Skill Proposal pipeline
 - KPIs: coverage, activation precision, evals, redundancy, freshness, incidents avoided, context cost, stability
 
+## Compatibility Constraints
+
+v0.4 must preserve v0.3 canonical schemas, project readability, Goal lock semantics, deterministic conformance, and provider-neutral project state while Python remains the compatibility oracle.
+
 ## Out of Scope (v0.4)
 
 - Distributed team runtime / shared server
@@ -95,6 +99,10 @@
 - Advanced Verification Profiles (compiler, kernel, GUI, network adversarial)
 - Knowledge Publishing / Engineering Blog
 - Team/Advanced Runtime (shared runtime, leases, concurrency coordination)
+
+## Non-goals
+
+The v0.4 non-goals are the deferred features listed above: distributed team runtime, mandatory embeddings, dashboard UI, public SDK, harness forks, ORM, external graph database, and broad specialized domain packs before their dependencies mature.
 
 ## Migration Boundary
 

@@ -84,6 +84,20 @@ func TestInitValidateCompileSnapshot(t *testing.T) {
 	if len(created) != 1 {
 		t.Fatalf("expected one generic artifact, got %v", created)
 	}
+	opencodeCreated, err := svc.Compile(dir, "opencode")
+	if err != nil {
+		t.Fatalf("compile opencode: %v", err)
+	}
+	if len(opencodeCreated) == 0 {
+		t.Fatalf("expected opencode artifacts, got %v", opencodeCreated)
+	}
+	geminiCreated, err := svc.Compile(dir, "gemini")
+	if err != nil {
+		t.Fatalf("compile gemini: %v", err)
+	}
+	if len(geminiCreated) == 0 {
+		t.Fatalf("expected gemini artifacts, got %v", geminiCreated)
+	}
 	snapshot := filepath.Join(dir, "snapshot.zip")
 	if err := svc.Snapshot(dir, snapshot); err != nil {
 		t.Fatalf("snapshot: %v", err)

@@ -473,3 +473,180 @@ def test_recipe_schema_positive():
         ]
     }
     assert validate("recipe.schema.json", valid) == []
+
+
+# Open Question (E-G01 Living Plan)
+def test_open_question_schema_positive():
+    valid = {
+        "id": "OQ-001",
+        "version": 1,
+        "scope": "goal:G042",
+        "contract": "architecture.system",
+        "topic": "canonical state ownership",
+        "priority": "blocker",
+        "blocking": True,
+        "reason": "implementation cannot start until the owner is known",
+        "suggested_answers": ["control-plane", "project core"],
+        "status": "open",
+        "eligible_owners": ["human-maintained"],
+        "question": "What owns canonical state?",
+        "evidence": ["docs/architecture/overview.md"]
+    }
+    assert validate("open-question.schema.json", valid) == []
+
+
+def test_open_question_schema_negative():
+    unknown_priority = {
+        "id": "OQ-002", "scope": "goal:G042", "priority": "curiosity", "status": "open"
+    }
+    errors = validate("open-question.schema.json", unknown_priority)
+    assert errors, "expected unknown priority to be rejected"
+
+    unknown_status = {
+        "id": "OQ-003", "scope": "goal:G042", "priority": "blocker", "status": "draft"
+    }
+    errors = validate("open-question.schema.json", unknown_status)
+    assert errors, "expected unknown status to be rejected"
+
+    missing_scope = {"id": "OQ-004", "priority": "blocker", "status": "open"}
+    errors = validate("open-question.schema.json", missing_scope)
+    assert errors, "expected missing scope to be rejected"
+
+
+# Decision Proposal (E-G02 Living Plan)
+def test_decision_proposal_schema_positive():
+    valid = {
+        "id": "DP-001",
+        "statement": "Control Plane owns canonical state",
+        "classification": "explicit-decision",
+        "scope": "goal:G042",
+        "actor": "user",
+        "source": "project-owner",
+        "authority": "user-decision",
+        "confidence": "unknown",
+        "status": "accepted",
+        "affected": ["docs/architecture/overview.md"],
+        "rationale": "single writer avoids conflicting mutations",
+        "alternatives": ["project core", "external service"],
+        "evidence": ["docs/architecture/overview.md"],
+        "created_at": "2026-09-09T12:00:00Z",
+        "resolved_at": "2026-09-09T12:05:00Z"
+    }
+    assert validate("decision-proposal.schema.json", valid) == []
+
+
+def test_decision_proposal_schema_unresolved_classification():
+    valid = {
+        "id": "DP-101", "statement": "storage engine not yet chosen",
+        "classification": "unresolved",
+        "authority": "agent-suggestion", "confidence": "low", "status": "proposed"
+    }
+    assert validate("decision-proposal.schema.json", valid) == []
+
+
+def test_decision_proposal_schema_negative():
+    unknown_classification = {
+        "id": "DP-002", "statement": "x", "classification": "opinion",
+        "authority": "agent-suggestion", "confidence": "unknown", "status": "proposed"
+    }
+    errors = validate("decision-proposal.schema.json", unknown_classification)
+    assert errors, "expected unknown classification to be rejected"
+
+    unknown_status = {
+        "id": "DP-003", "statement": "x", "classification": "explicit-decision",
+        "authority": "user-decision", "confidence": "unknown", "status": "merged"
+    }
+    errors = validate("decision-proposal.schema.json", unknown_status)
+    assert errors, "expected unknown status to be rejected"
+
+    missing_authority = {
+        "id": "DP-004", "statement": "x", "classification": "explicit-decision",
+        "confidence": "unknown", "status": "accepted"
+    }
+    errors = validate("decision-proposal.schema.json", missing_authority)
+    assert errors, "expected missing authority to be rejected"
+
+    unexpected_field = {
+        "id": "DP-005", "statement": "x", "classification": "explicit-decision",
+        "authority": "user-decision", "confidence": "unknown", "status": "accepted",
+        "llm_temperature": 0.7
+    }
+    errors = validate("decision-proposal.schema.json", unexpected_field)
+    assert errors, "expected unknown attribute to be rejected"
+
+
+# Authority model helper tests (E-G02 Living Plan)
+def test_authority_order():
+    order = ["invariant", "user-decision", "project-decision", "documented-evidence",
+             "inferred-state", "agent-suggestion", "external"]
+    for i, authority in enumerate(order):
+        errors = validate("decision-proposal.schema.json", {
+            "id": "DP-A%d" % i, "statement": "x", "classification": "hypothesis",
+            "authority": authority, "confidence": "low", "status": "proposed"
+        })
+        assert errors == [], "authority %s should be accepted" % authority
+
+
+# Planning Session (E-G07 Living Plan resume/checkpoint + context compilation)
+def _planning_session_valid() -> dict:
+    return {
+        "version": 1,
+        "id": "SES-001",
+        "run_id": "RUN-9",
+        "scope": "goal:G042",
+        "goal": "M6 living plan ready",
+        "decisions": [
+            {
+                "id": "DP-001",
+                "statement": "Control Plane owns canonical state",
+                "classification": "explicit-decision",
+                "authority": "user-decision",
+                "confidence": "unknown",
+                "status": "accepted"
+            }
+        ],
+        "open_questions": [
+            {
+                "id": "OQ-001",
+                "scope": "goal:G042",
+                "priority": "blocker",
+                "status": "open",
+                "question": "What owns audit state?"
+            }
+        ],
+        "last_preview": {
+            "extracted_decisions": [],
+            "blockers_resolved": 1,
+            "open_remaining": 1,
+            "preview_mandatory": True
+        },
+        "updated_at": "2026-09-09T12:00:00Z"
+    }
+
+
+def test_planning_session_schema_positive():
+    assert validate("planning-session.schema.json", _planning_session_valid()) == []
+
+
+def test_planning_session_schema_reuses_linked_models():
+    payload = _planning_session_valid()
+    payload["decisions"][0]["status"] = "merged"
+    assert validate("planning-session.schema.json", payload), \
+        "invalid decision must fail through the referenced model"
+
+
+def test_planning_session_schema_negative():
+    missing_scope = _planning_session_valid()
+    del missing_scope["scope"]
+    errors = validate("planning-session.schema.json", missing_scope)
+    assert errors, "expected missing scope to be rejected"
+
+    unexpected_field = _planning_session_valid()
+    unexpected_field["transcript"] = "full raw conversation"
+    errors = validate("planning-session.schema.json", unexpected_field)
+    assert errors, "expected raw transcript field to be rejected"
+
+    bad_preview_type = _planning_session_valid()
+    bad_preview_type["last_preview"]["blockers_resolved"] = -1
+    errors = validate("planning-session.schema.json", bad_preview_type)
+    assert errors, "expected negative blockers_resolved to be rejected"

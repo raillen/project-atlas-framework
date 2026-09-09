@@ -11,6 +11,9 @@ htmlcov/
 # Project Atlas derived/runtime state
 .atlas/runtime/
 .atlas/cache/
+.atlas/runtime/bootstrap-continuation.md
+.atlas/runtime/continuation.json
+.atlas/runtime/runs/
 
 # Go migration artifacts
 /atlas

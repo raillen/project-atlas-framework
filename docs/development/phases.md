@@ -261,21 +261,39 @@
 
 **Dependencies**: M5
 
-**Scope**:
-- Interview protocol (conversational, incremental)
-- Decision extraction with authority model
-- Open questions tracking
-- Confidence scoring
-- Readiness gates (block implementation until critical decisions confirmed)
-- Incremental documentation updates from decisions
+Canonical specification: `docs/runtime/living-plan.md`.
 
-**Exit Gate**: New project can be planned from zero to implementation-ready via interview.
+**Scope**:
+- Interview protocol (conversational, incremental, least ceremony)
+- Decision extraction with authority model
+- Open questions tracking (blocker vs non-blocker, traceable resolution)
+- Confidence scoring (inference-only, evidence-backed)
+- Decision preview with contradiction handling
+- Readiness gates (block implementation until critical decisions confirmed)
+- Incremental documentation updates from decisions (Documentation Delta)
+
+**Non-Goals**: brownfield discovery (Fase F Adoption), autonomous architecture invention, raw transcript as canonical memory, model-specific conversation format, code generation as part of `atlas plan`.
+
+**Goal Decomposition**:
+- E-G01: Question / OpenQuestion schemas + priority resolver.
+- E-G02: answer classification + Decision proposal model.
+- E-G03: authority/confidence resolver.
+- E-G04: decision preview + contradiction handling.
+- E-G05: Documentation Delta/readiness feedback loop.
+- E-G06: Goal/Plan output integration.
+- E-G07: resume/checkpoint + context compilation.
+- E-G08: CLI/harness-neutral interaction protocol.
+- E-G09: zero-to-ready Atlas sample/dogfood.
+
+**Exit Gate (LIVING PLAN READY)**: New project can go from initial intent to implementation-ready via interview without a manual megaprompt; Goal-specific planning closes only relevant gaps; decisions/open questions carry authority and provenance; resume does not depend on transcript; docs/readiness/governance feedback loop works; question/decision evals reach approved baseline; no agent suggestion silently promoted.
 
 ---
 
 ## M7 — Adoption Engine
 
 **Dependencies**: M5, M6
+
+Canonical specification: `docs/runtime/adoption-engine.md`.
 
 **Scope**:
 - Repository scanner (file types, frameworks, configs, docs)
@@ -285,7 +303,20 @@
 - Adoption report
 - Migration proposals (non-destructive, reversible)
 
-**Exit Gate**: Existing non-Atlas repo can be audited and migrated incrementally.
+**Non-Goals**: rewriting the entire layout to "look Atlas", trusting README as authority, mandatory embeddings, auto-deleting legacy docs, inferring user intent without confirmation, installing every detected connector/tool.
+
+**Goal Decomposition**:
+- F-G01: scanner facts + revision-aware sources.
+- F-G02: repository/project/workspace classification.
+- F-G03: capability/profile candidates.
+- F-G04: semantic doc mapping + candidate bindings.
+- F-G05: Confidence Ledger.
+- F-G06: Adoption Report.
+- F-G07: Living Plan uncertainty resolution.
+- F-G08: migration proposal + Review/Migration integration.
+- F-G09: brownfield corpus/evals/dogfood.
+
+**Exit Gate (ADOPTION READY)**: Arbitrary existing repo can be audited without mutation; observed facts and inferences are kept separate; confidence/evidence accompany inferences; M5 evaluates candidate bindings correctly; ambiguity enters the Living Plan/Open Questions; migration proposals are dry-run/review governed; scanner is incremental/branch-aware; malicious content/secrets tests pass.
 
 ---
 
