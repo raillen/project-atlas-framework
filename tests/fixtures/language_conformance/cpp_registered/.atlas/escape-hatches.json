@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "project": "cpp-registered-fixture",
+  "default_policy": "quarantine",
+  "escape_hatches": [
+    {
+      "id": "EH-FIX-01",
+      "language": "cpp",
+      "file": "main.cpp",
+      "line_range": [3, 7],
+      "hatch_type": "raw_cast",
+      "justification": "MMIO register mapping for test fixture",
+      "safety_invariants": "Address is within peripheral memory space",
+      "reviewer": "test-suite",
+      "status": "active"
+    }
+  ]
+}

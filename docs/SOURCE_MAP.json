@@ -297,6 +297,13 @@
         { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "ADR 002 Python runtime retirement decision" }
       ],
       "semantic_role": "architectural decision record: retirement of Python v0.3 runtime, test suite, and packaging"
+    },
+    {
+      "local_path": "docs/adr/003-language-engineering-safety-subsystem.md",
+      "notion_pages": [
+        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "ADR 003 Language Engineering & Safety Skills Subsystem" }
+      ],
+      "semantic_role": "architectural decision record: executable contracts, escape hatch registry, and systems language skills"
     }
   ]
 }
