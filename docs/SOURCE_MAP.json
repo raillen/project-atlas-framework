@@ -129,6 +129,20 @@
         { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }
       ],
       "semantic_role": "trust layers, connector primitives, config safety, artifact markers, supply chain, security contracts, safe mode, classification, egress, secrets, redaction, audit"
+    },
+    {
+      "local_path": "schemas/observed-fact.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "ObservedFact schema — F-G01 scanner output contract" }
+      ],
+      "semantic_role": "schema contract for adoption scanner observed facts"
+    },
+    {
+      "local_path": "schemas/scan-result.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "ScanResult schema — F-G01 complete scanner output envelope" }
+      ],
+      "semantic_role": "schema contract for adoption scanner complete output"
     }
   ]
 }
