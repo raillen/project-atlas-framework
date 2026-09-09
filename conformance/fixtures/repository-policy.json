@@ -1,0 +1,8 @@
+{
+  "valid_branches": ["main", "feat/g042-repository-governance", "dependabot/go-mod"],
+  "invalid_branches": ["feature/bad", "work", "feat/Bad Name"],
+  "valid_commits": ["feat(repo): add policy", "fix(goal): preserve lock", "docs(governance): explain rules"],
+  "invalid_commits": ["wip", "update", "final2"],
+  "forbidden_operations": ["force_push_main", "delete_main", "rewrite_release_tag", "delete_release_tag"],
+  "release_tags": ["v0.4.0-alpha.1", "v0.4.0", "v1.0.0"]
+}

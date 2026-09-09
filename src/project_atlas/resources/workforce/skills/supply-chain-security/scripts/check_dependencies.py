@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import json
-import sys
 import subprocess
+import sys
+
 
 def check_npm_audit():
     print("Running npm audit...")
@@ -9,23 +10,23 @@ def check_npm_audit():
         # Run npm audit returning json
         result = subprocess.run(['npm', 'audit', '--json'], capture_output=True, text=True)
         # npm audit exits with non-zero if vulnerabilities are found
-        
+
         audit_data = json.loads(result.stdout)
         metadata = audit_data.get('metadata', {})
         vulnerabilities = metadata.get('vulnerabilities', {})
-        
+
         high = vulnerabilities.get('high', 0)
         critical = vulnerabilities.get('critical', 0)
-        
+
         print(f"Found vulnerabilities: {vulnerabilities}")
-        
+
         if high > 0 or critical > 0:
             print("❌ Critical or High vulnerabilities found in dependencies!")
             return False
         else:
             print("✅ No critical/high vulnerabilities found.")
             return True
-            
+
     except FileNotFoundError:
         print("npm not found. Skipping.")
         return True

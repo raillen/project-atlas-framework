@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
-from .catalog import by_id, load_catalog
+from .catalog import by_id
 from .io import load_json
-from .profile import ProjectProfile, load_profile
+from .profile import ProjectProfile
 from .resolver import resolve
 
 
@@ -97,7 +96,6 @@ def explain_recipe(recipe_id: str) -> dict[str, Any] | None:
 
 def explain_context(task_id: str, root: Path | None = None) -> dict[str, Any]:
     # Look for task / context pack in root
-    items = []
     budget = {"max_input_tokens": 8000, "max_retrieved_tokens": 4000}
     if root:
         cpack_path = root / f".atlas/runtime/context/{task_id}.cpack.json"

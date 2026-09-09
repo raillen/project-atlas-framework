@@ -1,0 +1,7 @@
+# Project Atlas repository ownership
+* @raillen
+/.github/ @raillen
+/SECURITY.md @raillen
+/schemas/ @raillen
+/internal/protocol/ @raillen
+/internal/repositorypolicy/ @raillen

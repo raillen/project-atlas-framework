@@ -1,10 +1,10 @@
 import json
-import sys
+
 
 def generate_wireframe(json_path, output_path):
     with open(json_path, 'r') as f:
         data = json.load(f)
-        
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,18 +23,18 @@ def generate_wireframe(json_path, output_path):
 <body>
 <div class="wireframe-container">
 """
-    
+
     if 'header' in data:
         html += f"<header><h1>{data['header']}</h1></header>\n"
-        
+
     html += "<div class=\"content\">\n"
     for section in data.get('sections', []):
         html += f"  <div class=\"box\">{section['name']}</div>\n"
     html += "</div>\n"
-    
+
     if 'footer' in data:
         html += f"<footer>{data['footer']}</footer>\n"
-        
+
     html += """
 </div>
 </body>
@@ -59,5 +59,5 @@ if __name__ == "__main__":
     }
     with open("temp_spec.json", "w") as f:
         json.dump(sample_data, f)
-        
+
     generate_wireframe("temp_spec.json", "wireframe_output.html")

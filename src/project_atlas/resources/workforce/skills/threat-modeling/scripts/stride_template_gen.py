@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import json
-import sys
 import argparse
+import json
+
 
 def generate_template(component_name):
     template = {
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     template = generate_template(args.component)
-    
+
     if args.output:
         with open(args.output, "w") as f:
             json.dump(template, f, indent=4)

@@ -77,6 +77,17 @@ Agents must:
 - Clean Code pragmático applies permanently: responsabilidades explícitas, baixo acoplamento, alta coesão, nomes de domínio, funções pequenas, composição, dependências apontando para dentro, testes determinísticos, erros explícitos, sem abstração sem necessidade concreta.
 - No silent changes to locked/canonical decisions (ADRs, schemas, documented policies). If a change is needed, update the canonical document and ADR first.
 
+## Repository governance
+
+Repository governance is canonical in `docs/governance/repository-governance.md`.
+
+Before remote Git/SCM mutations:
+- read the effective repository policy in `.atlas/repository/policy.json`;
+- do not push directly to `main`;
+- do not force push protected branches;
+- use Pull Requests;
+- respect risk, review, and merge rules.
+
 ## Routing Quick Reference
 
 | Need | Start Here |

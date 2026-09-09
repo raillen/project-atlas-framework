@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a reproducible Atlas defect.
+title: "[bug]: "
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Atlas version
+      description: Output of atlas version.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options: [Linux amd64, Linux arm64, macOS amd64, macOS arm64, Windows amd64, Windows arm64, Other]
+    validations:
+      required: true
+  - type: input
+    id: install
+    attributes:
+      label: Installation method
+      description: Release binary, source build, or development checkout.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and diagnostics
+      description: Include atlas doctor --json when relevant. Never paste secrets, tokens, or credentials.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: [risk:low, risk:medium, risk:high, risk:critical]
+    validations:
+      required: true

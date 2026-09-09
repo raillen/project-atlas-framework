@@ -1,6 +1,7 @@
+import argparse
 import ast
 import sys
-import argparse
+
 
 class BareExceptChecker(ast.NodeVisitor):
     def __init__(self):

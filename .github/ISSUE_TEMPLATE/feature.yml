@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose a focused capability or improvement.
+title: "[feature]: "
+labels: ["type:feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+    validations:
+      required: true
+  - type: textarea
+    id: capability
+    attributes:
+      label: Desired capability
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use case
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and scope considerations

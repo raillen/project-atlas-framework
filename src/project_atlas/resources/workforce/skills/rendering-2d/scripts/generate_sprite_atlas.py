@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import json
 import os
 import sys
+
 from PIL import Image
-import json
+
 
 def pack_images(image_paths, output_image_path, output_json_path, max_width=1024):
     """
@@ -23,26 +25,26 @@ def pack_images(image_paths, output_image_path, output_json_path, max_width=1024
     current_y = 0
     max_h_in_row = 0
     packed_data = {}
-    
+
     # Calculate dimensions
     atlas_width = max_width
     atlas_height = 0
-    
+
     for item in images:
         if current_x + item['w'] > max_width:
             current_y += max_h_in_row
             current_x = 0
             max_h_in_row = 0
-            
+
         item['x'] = current_x
         item['y'] = current_y
-        
+
         current_x += item['w']
         if item['h'] > max_h_in_row:
             max_h_in_row = item['h']
-            
+
     atlas_height = current_y + max_h_in_row
-    
+
     # Create the atlas
     atlas = Image.new('RGBA', (atlas_width, atlas_height), (0, 0, 0, 0))
     for item in images:
@@ -50,11 +52,11 @@ def pack_images(image_paths, output_image_path, output_json_path, max_width=1024
         packed_data[os.path.basename(item['path'])] = {
             'x': item['x'], 'y': item['y'], 'w': item['w'], 'h': item['h']
         }
-        
+
     atlas.save(output_image_path)
     with open(output_json_path, 'w') as f:
         json.dump(packed_data, f, indent=4)
-        
+
     print(f"Atlas generated at {output_image_path} ({atlas_width}x{atlas_height})")
 
 if __name__ == '__main__':

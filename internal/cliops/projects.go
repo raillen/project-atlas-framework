@@ -406,7 +406,7 @@ func (s *Service) FrameworkCheck() []string {
 			out = append(out, "missing adapter: "+name)
 		}
 	}
-	for _, name := range []string{"atlas.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json"} {
+	for _, name := range []string{"atlas.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json", "repository-policy.schema.json"} {
 		if _, err := os.Stat(filepath.Join(s.repoRoot, "schemas", name)); err != nil {
 			out = append(out, "missing schema: "+name)
 		}

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-import pytest
+
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
 from project_atlas.doctor import check_dag_cycles, diagnose_project
 from project_atlas.fake_runtime import FakeRuntime
-from project_atlas.goals import amend_goal, compute_goal_digest, verify_goal_lock
+from project_atlas.goals import verify_goal_lock
 from project_atlas.io import load_json
 
 CONF_ROOT = Path(__file__).parent.parent / "conformance"

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import ast
-import sys
 import os
+import sys
+
 
 class SubprocessVisitor(ast.NodeVisitor):
     def __init__(self):
@@ -16,7 +17,7 @@ class SubprocessVisitor(ast.NodeVisitor):
                     if keyword.arg == 'shell' and isinstance(keyword.value, ast.Constant) and keyword.value.value is True:
                         shell_true = True
                         break
-                
+
                 if shell_true:
                     self.vulnerabilities.append({
                         'line': node.lineno,
