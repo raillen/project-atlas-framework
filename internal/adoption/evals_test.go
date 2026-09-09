@@ -327,19 +327,15 @@ func TestDogfoodProjectAtlasSelfAudit(t *testing.T) {
 		t.Fatalf("self-adoption audit failed: %v", err)
 	}
 
-	// Project Atlas is a Go + Python repository with CLI and Schemas
+	// Project Atlas is now a pure Go repository with CLI and Schemas (Python retired)
 	hasGo := false
-	hasPython := false
 	for _, l := range report.Classification.Languages {
 		if l == "go" {
 			hasGo = true
 		}
-		if l == "python" {
-			hasPython = true
-		}
 	}
-	if !hasGo || !hasPython {
-		t.Errorf("expected go and python in self-audit classification, got %v", report.Classification.Languages)
+	if !hasGo {
+		t.Errorf("expected go in self-audit classification, got %v", report.Classification.Languages)
 	}
 
 	hasCLI := false

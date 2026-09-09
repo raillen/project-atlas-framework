@@ -1,13 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/raillen/project-atlas-framework/internal/environment"
 	"github.com/raillen/project-atlas-framework/internal/modelregistry"
 	"github.com/raillen/project-atlas-framework/internal/protocol"
 	"github.com/raillen/project-atlas-framework/internal/toolgateway"
+	"github.com/raillen/project-atlas-framework/internal/tooling"
 )
 
 func defaultToolRegistry() *toolgateway.Registry {
@@ -54,6 +57,39 @@ func defaultToolRegistry() *toolgateway.Registry {
 		Capabilities:    []string{"scm", "git"},
 		FilesystemScope: []string{"project-root"},
 		TimeoutMS:       30000,
+		OutputLimit:     51200,
+	})
+	r.Register(toolgateway.Descriptor{
+		ID:              "scan-secrets",
+		Version:         1,
+		Description:     "Scan source files for secrets and credentials",
+		Kind:            toolgateway.ReadOnly,
+		Trust:           "core",
+		Capabilities:    []string{"security", "scan"},
+		FilesystemScope: []string{"project-root"},
+		TimeoutMS:       15000,
+		OutputLimit:     102400,
+	})
+	r.Register(toolgateway.Descriptor{
+		ID:              "analyze-complexity",
+		Version:         1,
+		Description:     "Analyze function and file lengths for Clean Code compliance",
+		Kind:            toolgateway.ReadOnly,
+		Trust:           "core",
+		Capabilities:    []string{"code-quality", "complexity"},
+		FilesystemScope: []string{"project-root"},
+		TimeoutMS:       15000,
+		OutputLimit:     102400,
+	})
+	r.Register(toolgateway.Descriptor{
+		ID:              "check-permissions",
+		Version:         1,
+		Description:     "Check for world-writable files and directories",
+		Kind:            toolgateway.ReadOnly,
+		Trust:           "core",
+		Capabilities:    []string{"fs", "permissions"},
+		FilesystemScope: []string{"project-root"},
+		TimeoutMS:       10000,
 		OutputLimit:     51200,
 	})
 	return r
@@ -151,6 +187,151 @@ func runTool(asJSON bool, root string, args []string) int {
 			return exitOK
 		}
 		fmt.Printf("Denied: %s\n", dec.Reason)
+		return exitValidation
+	case "scan-secrets":
+		path := root
+		if len(args) > 1 {
+			path = args[1]
+		}
+		findings, err := tooling.ScanSecrets(path)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(findings))
+		}
+		if len(findings) == 0 {
+			fmt.Println("No secrets detected. Codebase clean.")
+			return exitOK
+		}
+		fmt.Printf("Detected %d potential secret(s):\n", len(findings))
+		for _, f := range findings {
+			fmt.Printf("  %s:%d [%s] %s\n", f.File, f.Line, f.Rule, f.Preview)
+		}
+		return exitValidation
+	case "scan-headers":
+		if len(args) < 2 {
+			fmt.Fprintln(os.Stderr, "error: scan-headers requires target URL")
+			return exitUsage
+		}
+		targetURL := args[1]
+		findings, err := tooling.ScanHeaders(targetURL)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(findings))
+		}
+		for _, f := range findings {
+			fmt.Printf("[%-7s] %-28s : %s\n", f.Status, f.Header, f.Detail)
+		}
+		return exitOK
+	case "stride":
+		component := "SystemComponent"
+		if len(args) > 1 {
+			component = args[1]
+		}
+		data := tooling.GenerateStrideTemplate(component)
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(data))
+		}
+		out, _ := json.MarshalIndent(data, "", "  ")
+		fmt.Println(string(out))
+		return exitOK
+	case "security-checklist":
+		pr := "1"
+		if len(args) > 1 {
+			pr = args[1]
+		}
+		checklist := tooling.GenerateSecurityChecklist(pr)
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(map[string]string{"checklist": checklist}))
+		}
+		fmt.Println(checklist)
+		return exitOK
+	case "check-permissions":
+		path := root
+		if len(args) > 1 {
+			path = args[1]
+		}
+		findings, err := tooling.CheckPermissions(path)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(findings))
+		}
+		if len(findings) == 0 {
+			fmt.Println("Permissions clean: no world-writable files found.")
+			return exitOK
+		}
+		fmt.Printf("Found %d permission warning(s):\n", len(findings))
+		for _, f := range findings {
+			fmt.Printf("  %s (%s): %s\n", f.Path, f.Mode, f.Reason)
+		}
+		return exitValidation
+	case "analyze-complexity":
+		path := root
+		if len(args) > 1 {
+			path = args[1]
+		}
+		findings, err := tooling.AnalyzeComplexity(path, 60, 600)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(findings))
+		}
+		if len(findings) == 0 {
+			fmt.Println("Complexity clean: all functions and files within thresholds.")
+			return exitOK
+		}
+		fmt.Printf("Found %d complexity warning(s):\n", len(findings))
+		for _, f := range findings {
+			fmt.Printf("  %s:%d [%s] %s\n", f.File, f.Line, f.Metric, f.Message)
+		}
+		return exitValidation
+	case "check-bare-errors":
+		path := root
+		if len(args) > 1 {
+			path = args[1]
+		}
+		findings, err := tooling.CheckBareErrors(path)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(findings))
+		}
+		if len(findings) == 0 {
+			fmt.Println("Clean: no bare errors or swallowed exceptions found.")
+			return exitOK
+		}
+		fmt.Printf("Found %d bare error/suppression instance(s):\n", len(findings))
+		for _, f := range findings {
+			fmt.Printf("  %s:%d [%s] %s\n", f.File, f.Line, f.Pattern, f.Preview)
+		}
+		return exitValidation
+	case "check-subprocesses":
+		path := root
+		if len(args) > 1 {
+			path = args[1]
+		}
+		findings, err := tooling.CheckSubprocesses(path)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(findings))
+		}
+		if len(findings) == 0 {
+			fmt.Println("Clean: no hazardous subprocess patterns found.")
+			return exitOK
+		}
+		fmt.Printf("Found %d subprocess warning(s):\n", len(findings))
+		for _, f := range findings {
+			fmt.Printf("  %s:%d [%s] %s\n", f.File, f.Line, f.Pattern, f.Preview)
+		}
 		return exitValidation
 	default:
 		return exitUsage

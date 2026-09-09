@@ -152,6 +152,9 @@ func TestInitValidateCompileSnapshot(t *testing.T) {
 
 func TestFrameworkCheckMatchesPython(t *testing.T) {
 	root := repoRoot(t)
+	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+		t.Skip("python oracle retired: Python implementation removed from src/")
+	}
 	svc := New(root)
 	got := svc.FrameworkCheck()
 	cmd := exec.Command("python3", "-c", "from project_atlas.validator import validate_framework;import json;print(json.dumps(validate_framework()))")
