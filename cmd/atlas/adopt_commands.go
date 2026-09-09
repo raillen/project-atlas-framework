@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -42,8 +43,6 @@ func runAdopt(asJSON bool, args []string) int {
 	}
 
 	_ = auditOnly
-	_ = interactive
-	_ = nonInteractive
 
 	opts := adoption.ScanOptions{
 		Budget:         adoption.DefaultBudget(),
@@ -57,6 +56,46 @@ func runAdopt(asJSON bool, args []string) int {
 		}
 		fmt.Fprintf(os.Stderr, "error running adoption audit: %s\n", err)
 		return exitInternal
+	}
+
+	// F-G07: Handle uncertainty resolution
+	if nonInteractive {
+		session := adoption.ResolveNonInteractive(&report.Ledger)
+		if !asJSON && session.ResolvedCount > 0 {
+			fmt.Printf("Non-interactive pass: resolved %d inference(s) (%d unconfirmed remain)\n\n",
+				session.ResolvedCount, session.UnresolvedCount)
+		}
+	} else if interactive {
+		questions := adoption.GenerateQuestions(report.Ledger)
+		if len(questions) > 0 {
+			scanner := bufio.NewScanner(os.Stdin)
+			for _, q := range questions {
+				if !asJSON {
+					fmt.Printf("\n[Adoption Interview] %s\n", q.Question)
+					if q.Context != "" {
+						fmt.Printf("  Context: %s\n", q.Context)
+					}
+					fmt.Printf("  Options: [%s] (default: %s)\n", strings.Join(q.Options, ", "), q.DefaultChoice)
+					fmt.Print("  Choice > ")
+				}
+
+				var choiceStr string
+				if scanner.Scan() {
+					choiceStr = strings.TrimSpace(scanner.Text())
+				}
+				if choiceStr == "" {
+					choiceStr = q.DefaultChoice
+				}
+
+				choice := adoption.ResolutionChoice{
+					QuestionID:     q.ID,
+					SelectedOption: choiceStr,
+					Actor:          "human-operator",
+					Rationale:      "Confirmed via interactive adoption interview",
+				}
+				_ = adoption.ApplyChoice(&report.Ledger, q, choice)
+			}
+		}
 	}
 
 	if strict {

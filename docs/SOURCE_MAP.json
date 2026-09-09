@@ -178,6 +178,13 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "AdoptionReport schema — F-G06 canonical adoption report contract" }
       ],
       "semantic_role": "schema contract for canonical adoption report"
+    },
+    {
+      "local_path": "schemas/adoption-resolution.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "AdoptionResolution schema — F-G07 uncertainty resolution contract" }
+      ],
+      "semantic_role": "schema contract for adoption uncertainty questions and resolution choices"
     }
   ]
 }

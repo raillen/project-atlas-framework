@@ -115,6 +115,23 @@ func TestRunAdoptStrictFailureOnUnknown(t *testing.T) {
 	}
 }
 
+func TestRunAdoptNonInteractive(t *testing.T) {
+	root := t.TempDir()
+	writeTestFileForCLI(t, root, "go.mod", "module example.com/clitest\n\ngo 1.22\n")
+	writeTestFileForCLI(t, root, "cmd/tool/main.go", "package main\n\nfunc main() {}\n")
+
+	code, out := captureOutput(func() int {
+		return run([]string{"adopt", "--path", root, "--non-interactive"})
+	})
+
+	if code != exitOK {
+		t.Fatalf("expected exitOK (%d), got %d; output:\n%s", exitOK, code, out)
+	}
+	if !strings.Contains(out, "Non-interactive pass") && !strings.Contains(out, "PROJECT ATLAS") {
+		t.Errorf("expected adoption output in non-interactive mode, got:\n%s", out)
+	}
+}
+
 func writeTestFileForCLI(t *testing.T, root, rel, content string) {
 	t.Helper()
 	path := filepath.Join(root, rel)
