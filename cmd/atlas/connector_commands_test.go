@@ -81,8 +81,8 @@ func TestConnectorCommands(t *testing.T) {
 		t.Fatalf("runConnector final uninstall expected %d, got %d", exitOK, code)
 	}
 
-	// 8. Test Gemini, Claude Code, and Codex install/validate/uninstall
-	for _, harness := range []string{"gemini", "claude-code", "codex"} {
+	// 8. Test Gemini, Claude Code, Codex, and Antigravity install/validate/uninstall
+	for _, harness := range []string{"gemini", "claude-code", "codex", "antigravity"} {
 		if code := runConnector(false, []string{"install", harness}); code != exitOK {
 			t.Fatalf("install %s expected %d, got %d", harness, exitOK, code)
 		}

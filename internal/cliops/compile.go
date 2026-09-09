@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/raillen/project-atlas-framework/internal/connectors"
+	"github.com/raillen/project-atlas-framework/internal/connectors/antigravity"
 	"github.com/raillen/project-atlas-framework/internal/connectors/gemini"
 	"github.com/raillen/project-atlas-framework/internal/connectors/opencode"
 	"github.com/raillen/project-atlas-framework/internal/protocol/goals"
@@ -83,7 +84,7 @@ func renderItem(item map[string]any) string {
 }
 
 func (s *Service) Compile(root, target string) ([]string, error) {
-	supported := map[string]bool{"generic": true, "chatgpt": true, "claude": true, "kimi": true, "codex": true, "claude-code": true, "traycer": true, "opencode": true, "gemini": true}
+	supported := map[string]bool{"generic": true, "chatgpt": true, "claude": true, "kimi": true, "codex": true, "claude-code": true, "traycer": true, "opencode": true, "gemini": true, "antigravity": true}
 	if !supported[target] {
 		return nil, fmt.Errorf("Unsupported target: %s", target)
 	}
@@ -97,6 +98,14 @@ func (s *Service) Compile(root, target string) ([]string, error) {
 	}
 	if target == "gemini" {
 		c := gemini.NewConnector()
+		res, err := c.Compile(root, connectors.CompileOptions{RepoRoot: s.repoRoot})
+		if err != nil {
+			return nil, err
+		}
+		return res.CreatedPaths, nil
+	}
+	if target == "antigravity" {
+		c := antigravity.NewConnector()
 		res, err := c.Compile(root, connectors.CompileOptions{RepoRoot: s.repoRoot})
 		if err != nil {
 			return nil, err

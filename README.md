@@ -21,7 +21,7 @@ Project Atlas v0.4 is a pure Go distribution (ADR 002).
 - Plan DAG validation, Events, Evidence, Gates, and Doctor diagnostics.
 - JSON Schema Draft 2020-12 validation with local `$ref` resolution.
 - Lean Progressive Context planning and project intelligence reports.
-- Compiler adapters for Generic, ChatGPT, Claude, Kimi, Codex, Claude Code, and Traycer.
+- Compiler adapters for Generic, ChatGPT, Claude, Kimi, Codex, Claude Code, Traycer, Gemini, OpenCode, and Google Antigravity.
 - Machine-readable JSON envelopes for automation and harness integrations.
 - Conformance tests comparing Go behavior with golden specification baselines.
 - Portable installation state, connector ownership, setup, and safe uninstall.

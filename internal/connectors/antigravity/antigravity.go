@@ -1,0 +1,338 @@
+package antigravity
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+
+	"github.com/raillen/project-atlas-framework/internal/connectors"
+	"github.com/raillen/project-atlas-framework/internal/install"
+	"github.com/raillen/project-atlas-framework/internal/protocol"
+)
+
+func init() {
+	connectors.Register(NewConnector())
+}
+
+// Connector implements connectors.Connector for Google Antigravity IDE and CLI.
+type Connector struct{}
+
+// NewConnector creates a new Antigravity connector instance.
+func NewConnector() *Connector {
+	return &Connector{}
+}
+
+func (c *Connector) ID() string   { return "antigravity" }
+func (c *Connector) Name() string { return "Google Antigravity Connector" }
+
+func (c *Connector) Contract() connectors.Contract {
+	return connectors.Contract{
+		ID:            "antigravity",
+		Version:       "0.4.0",
+		ProtocolRange: ">=0.4.0 <0.5.0",
+		Capabilities: []string{
+			connectors.CapAdvise,
+			connectors.CapCommands,
+			connectors.CapSessionHooks,
+			connectors.CapIsolateSubagents,
+			connectors.CapSubagents,
+			connectors.CapRestrictTools,
+		},
+		Enforcement: connectors.EnforcementStandard,
+		Hooks: []string{
+			connectors.HookSessionStart,
+			connectors.HookSessionEnd,
+			connectors.HookToolBefore,
+			connectors.HookToolAfter,
+		},
+		Install: map[string]any{
+			"directory": ".agents",
+			"config":    "GEMINI.md",
+		},
+		Cleanup: map[string]any{
+			"scope":   "project",
+			"pattern": ".agents/**",
+		},
+	}
+}
+
+func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) (*connectors.CompileResult, error) {
+	if projectRoot == "" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
+		projectRoot = cwd
+	}
+
+	agentsDir := filepath.Join(projectRoot, ".agents")
+	created := []string{}
+
+	// 1. GEMINI.md entrypoint in project root
+	geminiMD := `# GEMINI.md
+This project uses Project Atlas v0.4 with Google Antigravity.
+
+- Follow Lean Progressive Context: smallest sufficient context, progressive expansion, pointer over payload.
+- Read ENTRYPOINT.md, atlas.json, and the active Goal before taking any actions.
+- Test-Driven Development: Every implementation requires exhaustive automated tests (unit, integration, conformance).
+- Security First: Zero hardcoded secrets, follow least privilege, audit dependencies and sanitize inputs.
+- Clean Architecture: High cohesion, low coupling, modularity, explicit domain boundaries.
+- Continuous Documentation: Keep documentation and CHANGELOG.md synchronized with implementation.
+- Directory Documentation: Ensure each folder contains a structured README.md.
+`
+	geminiMDPath := filepath.Join(projectRoot, "GEMINI.md")
+	if err := writeText(geminiMDPath, geminiMD); err != nil {
+		return nil, err
+	}
+	created = append(created, geminiMDPath)
+
+	// 2. Harness Config
+	config := map[string]any{
+		"version":      "0.4.0",
+		"harness":      "antigravity",
+		"instructions": "GEMINI.md",
+		"skills_dir":   ".agents/skills",
+		"rules_dir":    ".agents/rules",
+		"hooks_file":   ".agents/hooks.json",
+	}
+	configPath := filepath.Join(agentsDir, "config.json")
+	if err := writeJSON(configPath, config); err != nil {
+		return nil, err
+	}
+	created = append(created, configPath)
+
+	// 3. Hierarchical Rules in .agents/rules/
+	rules := map[string]string{
+		"coding-standards.md": `# Coding Standards
+- Clean Code pragmático: explicit responsibilities, small functions, domain naming.
+- Zero abstraction without concrete necessity.
+- Return explicit, typed errors; never swallow exceptions or fail silently.
+- Every folder must contain an explanatory README.md.
+`,
+		"testing-quality.md": `# Testing & Quality Gate
+- Test pyramid: unit, integration, conformance, security SAST, performance, UI/e2e.
+- Pre-commit gates: gofmt/format clean, linter clean, race detector passing.
+- Continuous verification before completing any task.
+`,
+		"security.md": `# Security Contract
+- No secrets or credentials in source code or commits.
+- Strict input validation and sanitization.
+- Least-privilege access for subprocesses, file operations, and network.
+`,
+	}
+	for name, content := range rules {
+		rulePath := filepath.Join(agentsDir, "rules", name)
+		if err := writeText(rulePath, content); err != nil {
+			return nil, err
+		}
+		created = append(created, rulePath)
+	}
+
+	// 4. Subagents
+	subagents := map[string]string{
+		"architect.md": "# Architect Subagent\nRole: Architecture, Boundaries & Schema Design\n",
+		"executor.md":  "# Executor Subagent\nRole: Implementation, Refactoring & Clean Code\n",
+		"verifier.md":  "# Verifier Subagent\nRole: Exhaustive Testing, Security & Quality Gates\n",
+	}
+	for name, content := range subagents {
+		subPath := filepath.Join(agentsDir, "subagents", name)
+		if err := writeText(subPath, content); err != nil {
+			return nil, err
+		}
+		created = append(created, subPath)
+	}
+
+	// 5. Hooks configuration (.agents/hooks.json)
+	hooks := map[string]any{
+		"version": "1.0",
+		"hooks": map[string]any{
+			connectors.HookSessionStart: []map[string]string{
+				{"type": "command", "exec": "atlas status --json"},
+			},
+			connectors.HookSessionEnd: []map[string]string{
+				{"type": "command", "exec": "atlas doctor --json"},
+			},
+			connectors.HookToolBefore: []map[string]string{
+				{"type": "audit", "check": "security_boundary"},
+			},
+			connectors.HookToolAfter: []map[string]string{
+				{"type": "audit", "check": "evidence_collection"},
+			},
+		},
+	}
+	hooksPath := filepath.Join(agentsDir, "hooks.json")
+	if err := writeJSON(hooksPath, hooks); err != nil {
+		return nil, err
+	}
+	created = append(created, hooksPath)
+
+	// 6. Skills in .agents/skills/
+	skills := opts.Skills
+	if len(skills) == 0 {
+		skillsManifestPath := filepath.Join(projectRoot, ".ai", "skills", "manifest.json")
+		if data, err := os.ReadFile(skillsManifestPath); err == nil {
+			var parsed struct {
+				Skills []string `json:"skills"`
+			}
+			if json.Unmarshal(data, &parsed) == nil {
+				skills = parsed.Skills
+			}
+		}
+	}
+	if len(skills) == 0 {
+		skills = []string{"clean-code", "testing-quality", "secure-coding"}
+	}
+
+	for _, skillID := range skills {
+		skillDir := filepath.Join(agentsDir, "skills", skillID)
+		skillMD := fmt.Sprintf(`---
+name: %s
+description: Atlas skill for %s with automated quality checks.
+---
+
+# Skill: %s
+
+## Instructions
+Execute skill procedures following Lean Progressive Context.
+Verify outputs against quality checklists before declaring completion.
+`, skillID, skillID, skillID)
+		skillPath := filepath.Join(skillDir, "SKILL.md")
+		if err := writeText(skillPath, skillMD); err != nil {
+			return nil, err
+		}
+		created = append(created, skillPath)
+	}
+
+	// 7. Ownership marker
+	ownership := map[string]any{
+		"atlas_generated": true,
+		"atlas_version":   protocol.CLIVersion,
+		"generator":       "connector-antigravity",
+		"target":          "antigravity",
+		"managed":         true,
+		"created_paths":   created,
+	}
+	markerPath := filepath.Join(agentsDir, ".atlas-generated.json")
+	if err := writeJSON(markerPath, ownership); err != nil {
+		return nil, err
+	}
+	created = append(created, markerPath)
+
+	sort.Strings(created)
+	return &connectors.CompileResult{
+		Target:       "antigravity",
+		CreatedPaths: created,
+		ManifestPath: configPath,
+		Metadata: map[string]any{
+			"rules_count":  len(rules),
+			"skills_count": len(skills),
+		},
+	}, nil
+}
+
+func (c *Connector) Install(home string, projectRoot string, opts connectors.InstallOptions) (*connectors.InstallResult, error) {
+	if home == "" {
+		h, err := install.HomeDir("")
+		if err != nil {
+			return nil, err
+		}
+		home = h
+	}
+	if projectRoot == "" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
+		projectRoot = cwd
+	}
+
+	res, err := c.Compile(projectRoot, connectors.CompileOptions{RepoRoot: opts.RepoRoot})
+	if err != nil {
+		return nil, err
+	}
+
+	cleanup := install.CleanupManifest{
+		Connector:    "antigravity",
+		Scope:        "project",
+		CreatedPaths: res.CreatedPaths,
+	}
+	if err := connectors.SaveCleanup(home, "antigravity", cleanup); err != nil {
+		return nil, err
+	}
+
+	manifest, err := install.LoadManifest(home)
+	if err != nil {
+		return nil, err
+	}
+	if manifest.Connectors == nil {
+		manifest.Connectors = map[string]string{}
+	}
+	manifest.Connectors["antigravity"] = "installed"
+	manifest.CreatedPaths = append(manifest.CreatedPaths, res.CreatedPaths...)
+	if err := install.SaveManifest(home, manifest); err != nil {
+		return nil, err
+	}
+
+	return &connectors.InstallResult{
+		Connector:    "antigravity",
+		Status:       "installed",
+		Scope:        "project",
+		CreatedPaths: res.CreatedPaths,
+		CleanupPath:  install.CleanupPath(home, "antigravity"),
+		Contract:     c.Contract(),
+	}, nil
+}
+
+func (c *Connector) Uninstall(home string, projectRoot string, opts connectors.UninstallOptions) (*connectors.UninstallResult, error) {
+	return connectors.ExecuteCleanup(home, "antigravity", projectRoot, ".agents")
+}
+
+func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, error) {
+	if projectRoot == "" {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return nil, err
+		}
+		projectRoot = cwd
+	}
+
+	res := &connectors.ValidationResult{
+		Connector: "antigravity",
+		Valid:     true,
+		Files:     []string{},
+	}
+
+	required := []string{
+		"GEMINI.md",
+		".agents/config.json",
+		".agents/hooks.json",
+		".agents/.atlas-generated.json",
+	}
+	for _, rel := range required {
+		p := filepath.Join(projectRoot, rel)
+		if _, err := os.Stat(p); err != nil {
+			res.Valid = false
+			res.Errors = append(res.Errors, fmt.Sprintf("missing artifact: %s", rel))
+		} else {
+			res.Files = append(res.Files, p)
+		}
+	}
+	return res, nil
+}
+
+func writeText(path, content string) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+	return os.WriteFile(path, []byte(content), 0644)
+}
+
+func writeJSON(path string, val any) error {
+	data, err := json.MarshalIndent(val, "", "  ")
+	if err != nil {
+		return err
+	}
+	return writeText(path, string(data)+"\n")
+}

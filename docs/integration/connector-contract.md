@@ -4,7 +4,7 @@ This document defines the Connector Contract specification for Project Atlas v0.
 
 ## Overview
 
-Project Atlas remains strictly provider-neutral and harness-agnostic at its core. Harness integrations (such as OpenCode, Codex, Claude Code, and Gemini CLI) interact with the framework via the **Connector Contract**.
+Project Atlas remains strictly provider-neutral and harness-agnostic at its core. Harness integrations (such as Google Antigravity, OpenCode, Codex, Claude Code, and Gemini CLI) interact with the framework via the **Connector Contract**.
 
 ## Connector Contract Specification
 

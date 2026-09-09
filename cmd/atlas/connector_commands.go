@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/raillen/project-atlas-framework/internal/connectors"
+	_ "github.com/raillen/project-atlas-framework/internal/connectors/antigravity"
 	_ "github.com/raillen/project-atlas-framework/internal/connectors/claudecode"
 	_ "github.com/raillen/project-atlas-framework/internal/connectors/codex"
 	_ "github.com/raillen/project-atlas-framework/internal/connectors/gemini"
@@ -102,7 +103,12 @@ func runConnectorInstall(asJSON bool, id string, args []string) int {
 		return serviceError(asJSON, err)
 	}
 
-	res, err := c.Install(home, cwd, connectors.InstallOptions{})
+	targetDir := cwd
+	if p, _, ok := flag(args, "--path"); ok && p != "" {
+		targetDir = p
+	}
+
+	res, err := c.Install(home, targetDir, connectors.InstallOptions{})
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
@@ -133,7 +139,12 @@ func runConnectorUninstall(asJSON bool, id string, args []string) int {
 		return serviceError(asJSON, err)
 	}
 
-	res, err := c.Uninstall(home, cwd, connectors.UninstallOptions{})
+	targetDir := cwd
+	if p, _, ok := flag(args, "--path"); ok && p != "" {
+		targetDir = p
+	}
+
+	res, err := c.Uninstall(home, targetDir, connectors.UninstallOptions{})
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
@@ -161,7 +172,12 @@ func runConnectorValidate(asJSON bool, id string, args []string) int {
 		return serviceError(asJSON, err)
 	}
 
-	res, err := c.Validate(cwd)
+	targetDir := cwd
+	if p, _, ok := flag(args, "--path"); ok && p != "" {
+		targetDir = p
+	}
+
+	res, err := c.Validate(targetDir)
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
