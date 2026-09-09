@@ -1,0 +1,43 @@
+name: Repository Governance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Validate governance policy
+        run: go test ./internal/repositorypolicy ./internal/scm/github
+      - name: Validate repository policy file
+        run: go run ./cmd/atlas repo policy check --json
+      - name: Validate branch naming on pull requests
+        if: github.event_name == 'pull_request'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "$BASE_REF" = "main" ]; then
+            case "$HEAD_REF" in
+              feat/*|fix/*|docs/*|refactor/*|test/*|chore/*|release/*|hotfix/*|dependabot/*) ;;
+              *) echo "Invalid work branch: $HEAD_REF"; exit 1 ;;
+            esac
+          fi
+      - name: Validate pull request title
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf '%s\n' "$PR_TITLE" | grep -Eq '^(feat|fix|refactor|perf|test|docs|build|ci|chore|revert)(\([^)]*\))?: .+'

@@ -55,7 +55,7 @@ Compatibility aliases must remain where the v0.4 CLI introduces a more structure
 
 ## Canonical Schemas
 
-The repository currently has 27 root schemas in `schemas/`: agent, approval-policy, atlas, attempt, context-budget, context-item, context-pack, context-plan, context-request, event, evidence, execution-policy, gate, gate-waiver, goal, goal-amendment, model-policy, permission-policy, plan, project-manifest, project-profile, recipe, run, skill, task, task-report, trust-policy.
+The repository has 28 root schemas in `schemas/`: agent, approval-policy, atlas, attempt, context-budget, context-item, context-pack, context-plan, context-request, event, evidence, execution-policy, gate, gate-waiver, goal, goal-amendment, model-policy, permission-policy, plan, project-manifest, project-profile, recipe, repository-policy, run, skill, task, task-report, trust-policy.
 
 The v0.4 protocol must conform to these schemas unless an explicit versioned schema migration is approved. Cross-schema references and Draft 2020-12 behavior must be preserved.
 

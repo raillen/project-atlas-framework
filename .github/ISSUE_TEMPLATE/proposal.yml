@@ -1,0 +1,31 @@
+name: Proposal
+description: Propose an architectural or protocol decision.
+title: "[proposal]: "
+labels: ["type:proposal", "status:needs-design"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks and compatibility implications

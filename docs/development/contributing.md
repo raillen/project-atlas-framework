@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for contributing to Project Atlas.
+The short contribution guide is maintained at [`CONTRIBUTING.md`](../../CONTRIBUTING.md). This page contains repository-internal engineering rules.
 
 ## Repository entrypoints
 

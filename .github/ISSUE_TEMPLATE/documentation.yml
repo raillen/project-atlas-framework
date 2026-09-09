@@ -1,0 +1,27 @@
+name: Documentation
+description: Request or report a documentation improvement.
+title: "[docs]: "
+labels: ["type:documentation"]
+body:
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected documentation
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected content
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: User impact

@@ -166,6 +166,8 @@ func run(args []string) int {
 	rest = cleaned
 	svc := cliops.New(repoRoot())
 	switch rest[0] {
+	case "repo":
+		return runRepositoryPolicy(asJSON, rest)
 	case "setup":
 		return runSetup(asJSON, home)
 	case "install":
