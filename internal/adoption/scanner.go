@@ -55,6 +55,7 @@ type ScanOptions struct {
 	Budget          ScanBudget
 	PreviousIndex   *indexing.Index // non-nil enables incremental mode
 	ExcludePatterns []string        // additional exclusion globs
+	ParseManifests  bool            // when true, parse manifest contents into fact.Metadata
 }
 
 // DefaultExclusions returns directory names that are always excluded from scanning.
@@ -217,14 +218,36 @@ func (s *Scanner) classifyAndEmit(rel string) {
 
 	// Manifests.
 	if isManifest(lower) {
-		s.emit(ObservedFact{
+		fact := ObservedFact{
 			Kind:       FactManifest,
 			Key:        "manifest:" + lower,
 			Source:     rel,
 			SourceHash: hash,
 			Extraction: ExtractionFilenamePattern,
 			Confidence: ConfidenceFactual,
-		})
+		}
+		if s.options.ParseManifests {
+			if pm, err := ParseManifestFile(lower, filepath.Join(s.root, rel)); err == nil {
+				meta := map[string]any{}
+				if pm.Name != "" {
+					meta["name"] = pm.Name
+				}
+				if pm.Version != "" {
+					meta["version"] = pm.Version
+				}
+				if len(pm.Dependencies) > 0 {
+					meta["dependencies"] = pm.Dependencies
+				}
+				if len(pm.Scripts) > 0 {
+					meta["scripts"] = pm.Scripts
+				}
+				if len(meta) > 0 {
+					fact.Metadata = meta
+					fact.Extraction = ExtractionManifestField
+				}
+			}
+		}
+		s.emit(fact)
 		return
 	}
 
