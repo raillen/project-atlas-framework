@@ -185,6 +185,13 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "AdoptionResolution schema — F-G07 uncertainty resolution contract" }
       ],
       "semantic_role": "schema contract for adoption uncertainty questions and resolution choices"
+    },
+    {
+      "local_path": "schemas/adoption-migration-proposal.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "AdoptionMigrationProposal schema — F-G08 adoption migration proposal contract" }
+      ],
+      "semantic_role": "schema contract for formal adoption migration proposals"
     }
   ]
 }

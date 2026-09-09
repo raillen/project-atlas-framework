@@ -16,6 +16,9 @@ func runAdopt(asJSON bool, args []string) int {
 	auditOnly := false
 	interactive := false
 	nonInteractive := false
+	proposeMigration := false
+	dryRun := false
+	apply := false
 
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
@@ -35,6 +38,12 @@ func runAdopt(asJSON bool, args []string) int {
 			interactive = true
 		case "--non-interactive":
 			nonInteractive = true
+		case "--propose-migration":
+			proposeMigration = true
+		case "--dry-run":
+			dryRun = true
+		case "--apply":
+			apply = true
 		default:
 			if !strings.HasPrefix(args[i], "-") && path == "." {
 				path = args[i]
@@ -111,6 +120,93 @@ func runAdopt(asJSON bool, args []string) int {
 			fmt.Fprintf(os.Stderr, "error: %s\n", msg)
 			return exitValidation
 		}
+	}
+
+	if dryRun {
+		proposals := adoption.GenerateMigrationProposals(report)
+		type DryRunSummary struct {
+			Proposals []adoption.AdoptionMigrationProposal `json:"proposals"`
+			Results   []adoption.DryRunResult              `json:"results"`
+		}
+		var results []adoption.DryRunResult
+		for _, p := range proposals {
+			res, err := adoption.DryRun(path, p)
+			if err != nil {
+				if asJSON {
+					return envelopeError("dry_run_error", err.Error())
+				}
+				fmt.Fprintf(os.Stderr, "dry run error for proposal %s: %s\n", p.ID, err)
+				return exitInternal
+			}
+			results = append(results, res)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(DryRunSummary{
+				Proposals: proposals,
+				Results:   results,
+			}))
+		}
+		fmt.Printf("=== ADOPTION MIGRATION DRY-RUN (%d proposal(s)) ===\n\n", len(proposals))
+		for _, res := range results {
+			fmt.Printf("Proposal %s (preconditions passed: %v)\n", res.ProposalID, res.PreconditionsPassed)
+			for _, chg := range res.Plan {
+				fmt.Printf("  Action: %s %s (exists: %v)\n", chg.Action, chg.TargetPath, chg.Exists)
+				fmt.Printf("  Diff:\n%s\n", chg.DiffPreview)
+			}
+			if len(res.Violations) > 0 {
+				fmt.Printf("  Violations: %s\n", strings.Join(res.Violations, ", "))
+			}
+			fmt.Println()
+		}
+		return exitOK
+	}
+
+	if apply {
+		proposals := adoption.GenerateMigrationProposals(report)
+		type ApplySummary struct {
+			Applied []adoption.ApplyResult `json:"applied"`
+		}
+		var applied []adoption.ApplyResult
+		for _, p := range proposals {
+			p.Status = adoption.ProposalStatusApproved
+			p.ApprovedBy = "operator"
+			p.ApprovedAt = "now"
+			res, err := adoption.Apply(path, p)
+			if err != nil {
+				if asJSON {
+					return envelopeError("apply_error", err.Error())
+				}
+				fmt.Fprintf(os.Stderr, "error applying proposal %s: %s\n", p.ID, err)
+				return exitInternal
+			}
+			applied = append(applied, res)
+		}
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(ApplySummary{Applied: applied}))
+		}
+		fmt.Printf("=== ADOPTION MIGRATION APPLIED (%d proposal(s)) ===\n\n", len(applied))
+		for _, app := range applied {
+			fmt.Printf("✓ Proposal %s applied successfully (Journal hash: %s)\n", app.ProposalID, app.JournalEntry.Hash)
+		}
+		return exitOK
+	}
+
+	if proposeMigration {
+		proposals := adoption.GenerateMigrationProposals(report)
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(proposals))
+		}
+		fmt.Printf("=== ADOPTION MIGRATION PROPOSALS (%d) ===\n\n", len(proposals))
+		for _, p := range proposals {
+			fmt.Printf("• [%s] %s\n", p.ID, p.Title)
+			fmt.Printf("  Description: %s\n", p.Description)
+			fmt.Printf("  Contract ID: %s (Reversible: %v)\n", p.Contract.ID, p.Contract.Reversible)
+			for _, act := range p.Actions {
+				fmt.Printf("    - %s -> %s\n", act.Type, act.TargetPath)
+			}
+			fmt.Println()
+		}
+		return exitOK
 	}
 
 	if asJSON {
