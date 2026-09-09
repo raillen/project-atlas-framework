@@ -157,16 +157,9 @@ atlas --home ./atlas-home uninstall --connectors --purge-cache
 
 Use `--home` em CI, testes, devboxes e cenários que não devem tocar `~/.atlas`.
 
-## 11. Python oracle
+## 11. Aposentadoria do Python (ADR 002)
 
-A implementação Python v0.3 continua disponível somente para conformance e manutenção transitória:
-
-```bash
-python -m pip install -e '.[dev]'
-pytest
-```
-
-Não implemente features novas do v0.4 no runtime Python.
+O runtime e a suíte de testes em Python v0.3 foram aposentados e removidos (ADR 002). O Atlas v0.4 é 100% Go nativo e autocontido. Conformance e validação são executadas diretamente pela suíte de testes em Go.
 
 ## Command reference
 

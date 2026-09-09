@@ -5,52 +5,6 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - run: python -m pip install -e '.[dev]'
-      
-      # Quality Gates
-      - run: python -m compileall -q src tests
-      - run: python -m pytest --cov=src/project_atlas --cov-report=term-missing --cov-fail-under=80
-      - run: python -m mypy src/project_atlas --no-error-summary 2>&1 | head -20 || echo "Type checking passed"
-      - run: python -m ruff check src tests
-      - name: Audit runtime dependency graph
-        run: |
-          python - <<'PY'
-          import re
-          from pathlib import Path
-          text = Path("pyproject.toml").read_text()
-          block = text.split("dependencies = [", 1)[1].split("]", 1)[0]
-          dependencies = re.findall(r'^\s*"([^"]+)"', block, re.MULTILINE)
-          Path("/tmp/atlas-runtime-requirements.txt").write_text("\n".join(dependencies) + "\n")
-          PY
-          python -m pip_audit --requirement /tmp/atlas-runtime-requirements.txt --desc
-      
-      # Framework Validation
-      - run: atlas framework-check
-      
-      # CLI Smoke Tests
-      - name: CLI smoke test
-        run: |
-          rm -rf /tmp/atlas-smoke
-          atlas init /tmp/atlas-smoke --profile examples/brasa/project-profile.json --non-interactive
-          atlas validate /tmp/atlas-smoke
-          atlas context plan "add a transition template" --path /tmp/atlas-smoke --json
-          atlas goal new P00-G01 "Foundation" --phase P00 --path /tmp/atlas-smoke
-          atlas goal list --path /tmp/atlas-smoke
-          atlas compile --target codex --path /tmp/atlas-smoke
-          atlas compile --target traycer --path /tmp/atlas-smoke
-          test ! -e /tmp/atlas-smoke/PROJECT_MANIFEST.yaml
-          test ! -e /tmp/atlas-smoke/.atlas/project-profile.yaml
-
   go-test:
     runs-on: ubuntu-latest
     steps:
@@ -58,11 +12,6 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install Python oracle dependencies
-        run: python -m pip install -e '.[dev]'
       - name: Go format check
         run: |
           diff -u <(echo -n) <(gofmt -d .)
@@ -70,3 +19,20 @@ jobs:
         run: go vet ./...
       - name: Go test
         run: go test -v -race ./...
+      - name: Build Atlas CLI
+        run: go build -o /tmp/atlas ./cmd/atlas
+      - name: CLI smoke test
+        run: |
+          rm -rf /tmp/atlas-smoke
+          /tmp/atlas init /tmp/atlas-smoke --profile examples/brasa/project-profile.json --non-interactive
+          /tmp/atlas validate /tmp/atlas-smoke
+          /tmp/atlas context plan "add a transition template" --path /tmp/atlas-smoke --json
+          /tmp/atlas goal new P00-G01 "Foundation" --phase P00 --path /tmp/atlas-smoke
+          /tmp/atlas goal list --path /tmp/atlas-smoke
+          /tmp/atlas compile --target codex --path /tmp/atlas-smoke
+          /tmp/atlas compile --target traycer --path /tmp/atlas-smoke
+          /tmp/atlas compile --target opencode --path /tmp/atlas-smoke
+          /tmp/atlas connector list
+          /tmp/atlas framework-check
+          test ! -e /tmp/atlas-smoke/PROJECT_MANIFEST.yaml
+          test ! -e /tmp/atlas-smoke/.atlas/project-profile.yaml

@@ -283,6 +283,20 @@
         { "title": "14 — Roadmap de Implementação v0.4", "role": "M11 Connector SDK — capability negotiation schema" }
       ],
       "semantic_role": "schema contract for connector capability negotiation results and degradations"
+    },
+    {
+      "local_path": "docs/adr/001-go-core.md",
+      "notion_pages": [
+        { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "ADR 001 Go Core architecture decision" }
+      ],
+      "semantic_role": "architectural decision record: pure Go core and CLI architecture"
+    },
+    {
+      "local_path": "docs/adr/002-retire-python-runtime.md",
+      "notion_pages": [
+        { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "ADR 002 Python runtime retirement decision" }
+      ],
+      "semantic_role": "architectural decision record: retirement of Python v0.3 runtime, test suite, and packaging"
     }
   ]
 }

@@ -59,13 +59,13 @@ Investigate unexpected generated files, unbounded `.atlas/runtime` growth, or ch
 gofmt -l cmd internal embedded_assets.go
 go test ./... -race
 go vet ./...
-pytest
 ```
 
-The Python suite remains the v0.3 oracle. It is not the runtime health check for Go installations.
+Python v0.3 has been completely retired (ADR 002). CI health gates run pure Go checks.
 
 ## Suggested cadence
 
 - Per change: `go test ./...`, `go vet ./...`, targeted `doctor`.
-- Before merge: race tests, Python oracle, `framework-check`, all compiler targets.
+- Before merge: race tests, `framework-check`, all compiler targets.
 - Before release: release build, checksums, install/setup/uninstall smoke tests, project-data preservation test.
+

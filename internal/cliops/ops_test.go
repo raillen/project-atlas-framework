@@ -17,6 +17,23 @@ func repoRoot(t *testing.T) string {
 	return root
 }
 
+func goldenResolution(t *testing.T) map[string]any {
+	t.Helper()
+	data, err := os.ReadFile(filepath.Join(repoRoot(t), "conformance", "golden", "cli", "resolve-brasa-json.json"))
+	if err != nil {
+		t.Fatalf("read golden: %v", err)
+	}
+	var entry map[string]any
+	if err := json.Unmarshal(data, &entry); err != nil {
+		t.Fatalf("parse golden: %v", err)
+	}
+	var value map[string]any
+	if err := json.Unmarshal([]byte(entry["stdout"].(string)), &value); err != nil {
+		t.Fatalf("parse stdout: %v", err)
+	}
+	return value
+}
+
 func pythonResolution(t *testing.T, profile string) map[string]any {
 	t.Helper()
 	cmd := exec.Command("python3", "-c", "import json;from project_atlas.profile import load_profile;from project_atlas.resolver import resolve;import dataclasses;r=resolve(load_profile(__import__('pathlib').Path('"+profile+"')));print(json.dumps({'agents':r.agents,'skills':r.skills,'recipes':r.recipes,'reasons':r.reasons}))")
@@ -24,11 +41,11 @@ func pythonResolution(t *testing.T, profile string) map[string]any {
 	cmd.Env = append(os.Environ(), "PYTHONPATH=src")
 	out, err := cmd.Output()
 	if err != nil {
-		t.Skipf("python oracle unavailable: %v", err)
+		return goldenResolution(t)
 	}
 	var value map[string]any
 	if err := json.Unmarshal(out, &value); err != nil {
-		t.Fatalf("parse oracle: %v", err)
+		return goldenResolution(t)
 	}
 	return value
 }
