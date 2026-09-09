@@ -1,6 +1,12 @@
 package runtime
 
-import "testing"
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func fileExists(path string) bool { _, err := os.Stat(path); return err == nil }
 
 func TestRunSessionAndContinuation(t *testing.T) {
 	run := NewRun("R1", "G1", "T1")
@@ -38,6 +44,45 @@ func TestRunRejectsInvalidTransition(t *testing.T) {
 		t.Fatal("expected invalid transition")
 	}
 }
+func TestRunCancelResumeAndRepositoryInspection(t *testing.T) {
+	run := NewRun("R1", "G1", "T1")
+	var err error
+	run, err = run.Transition(RunPlanning)
+	if err != nil {
+		t.Fatal(err)
+	}
+	run, err = run.Transition(RunReady)
+	if err != nil {
+		t.Fatal(err)
+	}
+	run, err = run.Transition(RunRunning)
+	if err != nil {
+		t.Fatal(err)
+	}
+	run, err = run.Transition(RunCancelled)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if run.Status != RunCancelled || run.FinishedAt == "" {
+		t.Fatalf("cancelled run: %#v", run)
+	}
+	root, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for !fileExists(filepath.Join(root, "go.mod")) {
+		parent := filepath.Dir(root)
+		if parent == root {
+			t.Fatal("repository root not found")
+		}
+		root = parent
+	}
+	state := InspectRepository(root)
+	if state.Revision == "" {
+		t.Fatalf("repository state: %#v", state)
+	}
+}
+
 func TestPendingSideEffectVisible(t *testing.T) {
 	run := NewRun("R1", "G1", "T1")
 	run.PendingSideEffects = []string{"remote:unknown"}

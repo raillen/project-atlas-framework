@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -137,6 +138,21 @@ func (s ExecutorSession) End(reason string) ExecutorSession {
 func NewCheckpoint(id, runID, phase string, completed, pending []string) Checkpoint {
 	return Checkpoint{ID: id, Version: 1, RunID: runID, Phase: phase, CreatedAt: time.Now().UTC().Format(time.RFC3339Nano), CompletedSteps: completed, PendingSteps: pending, ResumeToken: id}
 }
+func InspectRepository(root string) RepositoryState {
+	state := RepositoryState{}
+	command := func(args ...string) string {
+		out, err := exec.Command("git", args...).Output()
+		if err != nil {
+			return ""
+		}
+		return strings.TrimSpace(string(out))
+	}
+	state.Branch = command("-C", root, "branch", "--show-current")
+	state.Revision = command("-C", root, "rev-parse", "HEAD")
+	state.Dirty = command("-C", root, "status", "--porcelain") != ""
+	return state
+}
+
 func ContinuationFromRun(run Run, repo RepositoryState, completed, current, pending, next []string) ContinuationRecord {
 	return ContinuationRecord{Version: 1, Project: "atlas", Goal: run.GoalID, Task: run.TaskID, Run: run.ID, State: string(run.Status), Repository: repo, Completed: completed, Current: current, Pending: pending, NextSteps: next, PendingSideEffects: run.PendingSideEffects, Evidence: run.Evidence}
 }
