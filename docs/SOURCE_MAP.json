@@ -131,6 +131,13 @@
       "semantic_role": "M7 exit gate formal validation: zero forced layout, facts vs inferences, confidence ledger, M5 bindings, Living Plan uncertainty, review governed migration proposals, incremental scanner, security"
     },
     {
+      "local_path": "docs/governance/m8-exit-gate.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M8 Exit Gate — History and Traceability validation and criteria" }
+      ],
+      "semantic_role": "M8 exit gate formal validation: implementation journal, experiment/rejection/debt registers, typed graph, trace CLI"
+    },
+    {
       "local_path": "docs/security/trust-model.md",
       "notion_pages": [
         { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }
@@ -199,6 +206,20 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "AdoptionMigrationProposal schema — F-G08 adoption migration proposal contract" }
       ],
       "semantic_role": "schema contract for formal adoption migration proposals"
+    },
+    {
+      "local_path": "schemas/trace-graph.schema.json",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M8 History & Traceability — typed traceability graph schema" }
+      ],
+      "semantic_role": "schema contract for typed traceability graph"
+    },
+    {
+      "local_path": "schemas/journal-entry.schema.json",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M8 History & Traceability — implementation journal entry schema" }
+      ],
+      "semantic_role": "schema contract for implementation journal entries"
     }
   ]
 }
