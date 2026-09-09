@@ -155,6 +155,12 @@ func RunAdoptionAudit(root string, opts ScanOptions) (AdoptionReport, error) {
 	if ledger.Summary.RequiresConfirmation > 0 {
 		risks = append(risks, fmt.Sprintf("%d inference(s) require confirmation before promotion to canonical", ledger.Summary.RequiresConfirmation))
 	}
+	for _, sec := range classification.Security {
+		if sec == "env-file-present" {
+			risks = append(risks, "Local .env file detected; secrets were not ingested and require secure vault migration")
+			break
+		}
+	}
 
 	// 11. Next steps
 	var nextSteps []string

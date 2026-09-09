@@ -216,6 +216,23 @@ func (s *Scanner) classifyAndEmit(rel string) {
 	// Compute hash for source_hash.
 	hash := fileHash(filepath.Join(s.root, rel))
 
+	// Secrets / Env presence (detect presence without persisting secrets)
+	if isEnvFile(lower) {
+		s.emit(ObservedFact{
+			Kind:       FactConfig,
+			Key:        "env-presence:" + name,
+			Source:     rel,
+			SourceHash: hash,
+			Extraction: ExtractionFilenamePattern,
+			Confidence: ConfidenceFactual,
+			Metadata: map[string]any{
+				"secret_bearing": true,
+				"content":        "[REDACTED_BY_SECURITY_POLICY]",
+			},
+		})
+		return
+	}
+
 	// Manifests.
 	if isManifest(lower) {
 		fact := ObservedFact{
@@ -508,4 +525,11 @@ func classifyDirectory(name string) FactKind {
 		return kind
 	}
 	return ""
+}
+
+func isEnvFile(name string) bool {
+	if name == ".env.example" || name == ".env.sample" || name == ".env.template" {
+		return false
+	}
+	return name == ".env" || strings.HasPrefix(name, ".env.")
 }
