@@ -152,11 +152,37 @@ var languagePatterns = []patternRule{
 	// Bash
 	{"bash", "banned_api", "eval", regexp.MustCompile(`\beval\s+`), "Dynamic eval execution in shell script is prohibited."},
 	{"bash", "suppression_comment", "shellcheck_disable", regexp.MustCompile(`#\s*shellcheck\s+disable`), "ShellCheck suppression requires registration."},
+
+	// HTML
+	{"html", "banned_api", "javascript_uri", regexp.MustCompile(`(?i)href\s*=\s*["']\s*javascript:`), "javascript: pseudo-protocol in href introduces XSS vulnerability."},
+	{"html", "banned_api", "dangerously_set_inner_html", regexp.MustCompile(`dangerouslySetInnerHTML`), "dangerouslySetInnerHTML bypasses XSS protection: requires registration."},
+	{"html", "banned_api", "inner_html_assignment", regexp.MustCompile(`\binnerHTML\s*=`), "Raw innerHTML assignment bypasses safe DOM: use textContent or trusted sanitizer."},
+
+	// CSS
+	{"css", "suppression_comment", "important", regexp.MustCompile(`!\s*important\b`), "!important breaks CSS cascade architecture: requires registration or @layer."},
+
+	// SQL
+	{"sql", "banned_api", "select_star", regexp.MustCompile(`(?i)\bSELECT\s+\*\s+FROM\b`), "SELECT * in SQL queries prevents deterministic indexing and causes memory bloat."},
+	{"sql", "banned_api", "raw_exec", regexp.MustCompile(`(?i)\bEXEC(UTE)?\s*\(\s*['"]`), "Dynamic EXEC/EXECUTE string execution in SQL is prohibited: use parameterized statements."},
+
+	// Dockerfile
+	{"dockerfile", "banned_api", "user_root", regexp.MustCompile(`(?i)^\s*USER\s+root\b`), "Running as root in container image is prohibited."},
+	{"dockerfile", "banned_api", "unpinned_latest", regexp.MustCompile(`(?i)^\s*FROM\s+([a-zA-Z0-9_./-]+):latest\b`), "Unpinned :latest container base image causes non-reproducible builds."},
+
+	// Terraform
+	{"terraform", "banned_api", "open_ingress", regexp.MustCompile(`(?i)cidr_blocks\s*=\s*\[\s*"0\.0\.0\.0/0"\s*\]`), "Unrestricted ingress (0.0.0.0/0) in Terraform requires registration."},
+
+	// YAML
+	{"yaml", "banned_api", "unsafe_yaml_load", regexp.MustCompile(`\byaml\.(load|unsafe_load)\s*\([^)]*Loader=(yaml\.)?(UnsafeLoader|Loader)\b`), "Insecure yaml.load without SafeLoader allows arbitrary code execution."},
 }
 
 var inlineAnnotationRegex = regexp.MustCompile(`ATLAS:ESCAPE_HATCH\[([A-Za-z0-9._-]+)\]`)
 
 func detectLanguage(path string) string {
+	base := filepath.Base(path)
+	if base == "Dockerfile" || strings.HasPrefix(base, "Dockerfile.") || strings.HasSuffix(base, ".dockerfile") {
+		return "dockerfile"
+	}
 	ext := strings.ToLower(filepath.Ext(path))
 	switch ext {
 	case ".cpp", ".cxx", ".cc", ".hpp", ".hxx":
@@ -206,6 +232,26 @@ func detectLanguage(path string) string {
 		return "lua"
 	case ".sh", ".bash":
 		return "bash"
+	case ".html", ".htm":
+		return "html"
+	case ".css":
+		return "css"
+	case ".sql":
+		return "sql"
+	case ".graphql", ".gql":
+		return "graphql"
+	case ".glsl", ".vert", ".frag":
+		return "glsl"
+	case ".hlsl":
+		return "hlsl"
+	case ".wgsl":
+		return "wgsl"
+	case ".tf", ".tfvars":
+		return "terraform"
+	case ".yaml", ".yml":
+		return "yaml"
+	case ".json":
+		return "json"
 	default:
 		return ""
 	}
