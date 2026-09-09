@@ -180,6 +180,9 @@ func (s *Service) Init(root, profilePath string) (resolver.Resolution, error) {
 	if err := ensureGitignore(root); err != nil {
 		return resolver.Resolution{}, err
 	}
+	if err := scaffoldBaselineDocuments(root, projectName); err != nil {
+		return resolver.Resolution{}, err
+	}
 	return resolution, nil
 }
 
