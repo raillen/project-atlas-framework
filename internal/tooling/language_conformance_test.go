@@ -59,4 +59,60 @@ func TestLanguageConformanceFixtures(t *testing.T) {
 			t.Errorf("expected clean=true for zig_clean, got %d findings", report.TotalFindings)
 		}
 	})
+
+	t.Run("rust_clean", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "rust_clean"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !report.Clean {
+			t.Errorf("expected clean=true for rust_clean, got %d findings", report.TotalFindings)
+		}
+	})
+
+	t.Run("go_clean", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "go_clean"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !report.Clean {
+			t.Errorf("expected clean=true for go_clean, got %d findings", report.TotalFindings)
+		}
+	})
+
+	t.Run("ts_clean", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "ts_clean"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !report.Clean {
+			t.Errorf("expected clean=true for ts_clean, got %d findings", report.TotalFindings)
+		}
+	})
+
+	t.Run("python_violating", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "python_violating"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if report.Clean {
+			t.Errorf("expected clean=false for python_violating")
+		}
+		if report.UnregisteredFindings < 1 {
+			t.Errorf("expected at least 1 unregistered finding, got %d", report.UnregisteredFindings)
+		}
+	})
+
+	t.Run("kotlin_violating", func(t *testing.T) {
+		report, err := ScanEscapeHatches(filepath.Join(fixtureBase, "kotlin_violating"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if report.Clean {
+			t.Errorf("expected clean=false for kotlin_violating")
+		}
+		if report.UnregisteredFindings < 1 {
+			t.Errorf("expected at least 1 unregistered finding, got %d", report.UnregisteredFindings)
+		}
+	})
 }

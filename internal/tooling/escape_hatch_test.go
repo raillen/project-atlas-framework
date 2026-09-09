@@ -163,3 +163,52 @@ pub fn bufferCast(bytes: [*]u8) *u32 {
 		t.Errorf("expected registry id EH-ZIG-01, got %s", report.Findings[0].RegistryID)
 	}
 }
+
+func TestScanEscapeHatchesManagedLanguages(t *testing.T) {
+	tempDir := t.TempDir()
+
+	// 1. Python eval
+	pyCode := `def execute(code):
+    eval(code)
+`
+	if err := os.WriteFile(filepath.Join(tempDir, "script.py"), []byte(pyCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 2. Kotlin !!
+	ktCode := `fun getName(user: User?): String {
+    return user!!.name
+}
+`
+	if err := os.WriteFile(filepath.Join(tempDir, "user.kt"), []byte(ktCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 3. PHP eval
+	phpCode := `<?php
+eval($untrusted_code);
+`
+	if err := os.WriteFile(filepath.Join(tempDir, "index.php"), []byte(phpCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// 4. Bash eval
+	shCode := `#!/bin/bash
+eval "$1"
+`
+	if err := os.WriteFile(filepath.Join(tempDir, "runner.sh"), []byte(shCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := ScanEscapeHatches(tempDir)
+	if err != nil {
+		t.Fatalf("unexpected scan error: %v", err)
+	}
+
+	if report.Clean {
+		t.Errorf("expected clean=false for managed language violations")
+	}
+	if report.UnregisteredFindings < 4 {
+		t.Errorf("expected at least 4 unregistered findings, got %d", report.UnregisteredFindings)
+	}
+}
