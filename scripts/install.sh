@@ -52,7 +52,11 @@ if [ -z "$EXPECTED" ]; then
   exit 1
 fi
 
-ACTUAL="$(eval "$CHECKSUM_TOOL" "${TEMP_DIR}/${ASSET}" | awk '{print $1}')"
+if [ "$CHECKSUM_TOOL" = "sha256sum" ]; then
+  ACTUAL="$(sha256sum "${TEMP_DIR}/${ASSET}" | awk '{print $1}')"
+else
+  ACTUAL="$(shasum -a 256 "${TEMP_DIR}/${ASSET}" | awk '{print $1}')"
+fi
 if [ "$EXPECTED" != "$ACTUAL" ]; then
   printf '%s\n' "Checksum verification failed." >&2
   exit 1

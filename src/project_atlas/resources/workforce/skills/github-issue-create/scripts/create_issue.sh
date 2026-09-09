@@ -19,16 +19,14 @@ if [ ! -f "$BODY_FILE" ]; then
     exit 1
 fi
 
-CMD="gh issue create --title \"$TITLE\" --body-file \"$BODY_FILE\""
-
-if [ -n "$LABELS" ]; then
-    CMD="$CMD --label \"$LABELS\""
-fi
-
-if [ -n "$ASSIGNEE" ]; then
-    CMD="$CMD --assignee \"$ASSIGNEE\""
-fi
-
 echo "Creating issue: $TITLE"
-eval $CMD
+if [ -n "$LABELS" ] && [ -n "$ASSIGNEE" ]; then
+    gh issue create --title "$TITLE" --body-file "$BODY_FILE" --label "$LABELS" --assignee "$ASSIGNEE"
+elif [ -n "$LABELS" ]; then
+    gh issue create --title "$TITLE" --body-file "$BODY_FILE" --label "$LABELS"
+elif [ -n "$ASSIGNEE" ]; then
+    gh issue create --title "$TITLE" --body-file "$BODY_FILE" --assignee "$ASSIGNEE"
+else
+    gh issue create --title "$TITLE" --body-file "$BODY_FILE"
+fi
 echo "Issue created successfully."

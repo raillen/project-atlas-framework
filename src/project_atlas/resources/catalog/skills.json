@@ -7154,6 +7154,1185 @@
         "check-escape-hatches"
       ],
       "instructions": "---\nname: lang-odin\ndescription: Odin programming language, explicit context management, custom allocators, tracking allocators for leak detection, distinct types, and SoA/AoS data layouts.\n---\n\n# Odin Context Management & Memory Control Contract\n\n## 1. Context & Allocator Discipline\n- **Explicit `context` Allocation**: Leverage the implicit/explicit `context.allocator`. For unit tests and verification, swap `context.allocator` with a `mem.Tracking_Allocator` to assert zero memory leaks upon scope termination.\n- **`defer delete(dynamic_array)`**: Dynamic arrays and maps allocated in local scopes must be freed explicitly using `defer delete(...)`.\n- **Distinct Types**: Create strong domain types using `distinct` to prevent accidental type confusion (e.g., `distinct u64` for entity IDs).\n\n## 2. Data-Oriented Architecture\n- Organize performance-critical data structures using `#soa` (Structure of Arrays) for optimal CPU cache line utilization.\n- Zero hidden control flow: no operator overloading, no implicit conversions.\n"
+    },
+    {
+      "id": "lang-csharp",
+      "name": "C# & .NET Engineering and Memory Efficiency",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce modern C# (.NET 8/9), nullable reference types (#nullable enable), Span<T> memory efficiency, async cancellation tokens, and Stryker mutation testing.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/csharp-memory-concurrency.md"
+      ],
+      "templates": [
+        "templates/csharp-verification-report.md"
+      ],
+      "checks": [
+        "checks/csharp-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe-csharp.cs"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "0 compiler warnings with TreatWarningsAsErrors",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "csharp",
+          "c#",
+          "dotnet",
+          "nuget",
+          "roslyn"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-csharp\ndescription: C# (.NET 8/9) engineering, nullable reference types (#nullable enable), Span<T> memory efficiency, cancellation tokens, IDisposable/IAsyncDisposable with using, and Stryker mutation testing.\n---\n\n# C# & .NET Engineering Contract\n\n## 1. Type Safety & State Discipline\n- Enable nullable reference types unconditionally (`#nullable enable` or `<Nullable>enable</Nullable>`).\n- Prohibit unvetted null-forgiving operators (`!`). Use explicit guards or `ArgumentNullException.ThrowIfNull()`.\n- Use `record` or `record struct` for immutable data transfer objects.\n\n## 2. Resource & Allocation Management\n- All `IDisposable` and `IAsyncDisposable` instances must be bound to `using` declarations.\n- Utilize `Span<T>`, `ReadOnlySpan<T>`, and `Memory<T>` for high-throughput slicing without heap allocations.\n- Prohibit `unsafe` code blocks without formal escape-hatch registration in `.atlas/escape-hatches.json`.\n\n## 3. Asynchronous & Concurrency Invariants\n- Every asynchronous method must accept and propagate a `CancellationToken`.\n- Never use `.Result` or `.Wait()` on Tasks (risk of deadlock); always `await` or configure `ConfigureAwait(false)` in library code.\n"
+    },
+    {
+      "id": "lang-java",
+      "name": "Java LTS Modern Engineering & Concurrency Discipline",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Java 21+ LTS standards, records for immutable data, sealed interfaces, Loom virtual thread discipline, NullAway static analysis, and ArchUnit architecture tests.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/java-virtual-threads.md"
+      ],
+      "templates": [
+        "templates/java-verification-report.md"
+      ],
+      "checks": [
+        "checks/java-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/SafeRecord.java"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "NullAway and ErrorProne clean",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "java",
+          "jvm",
+          "maven",
+          "gradle",
+          "openjdk"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-java\ndescription: Java 21+ LTS modern engineering, records, sealed interfaces, pattern matching, Loom virtual threads discipline, NullAway, and ArchUnit architecture testing.\n---\n\n# Java Modern Engineering Contract\n\n## 1. Immutability & Modern Type System\n- Target **Java 21+ LTS**.\n- Use `record` types for data carriers and value objects.\n- Model closed domain hierarchies using `sealed interface` and exhaustive pattern matching with `switch`.\n- Enforce compile-time nullability via NullAway or JSpecify annotations.\n\n## 2. Concurrency & Virtual Threads (Project Loom)\n- Avoid pinning virtual threads: never perform blocking I/O inside `synchronized` blocks; replace with `ReentrantLock`.\n- Use structured concurrency (`StructuredTaskScope`) to coordinate subtasks.\n\n## 3. Resource Safety\n- All auto-closeable resources must use `try-with-resources`.\n"
+    },
+    {
+      "id": "lang-kotlin",
+      "name": "Kotlin Coroutines & Sound Null-Safety",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Kotlin structured concurrency, coroutines cancellation discipline, sound null-safety (prohibit !! operator), immutable data collections, and Arrow functional contracts.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/kotlin-coroutines.md"
+      ],
+      "templates": [
+        "templates/kotlin-verification-report.md"
+      ],
+      "checks": [
+        "checks/kotlin-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/SafeCoroutine.kt"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "0 !! operators without justification",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "kotlin",
+          "kt",
+          "coroutines"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-kotlin\ndescription: Kotlin engineering, structured concurrency, coroutine cancellation, sound null-safety without !!, and immutable data collections.\n---\n\n# Kotlin Coroutines & Sound Null-Safety Contract\n\n## 1. Null-Safety Discipline\n- The not-null assertion operator (`!!`) is strictly prohibited in production code. Use `?:`, `let`, or explicit exception throwing.\n- Leverage smart casts and exhaustive `when` expressions over `sealed class`/`sealed interface`.\n\n## 2. Coroutines & Structured Concurrency\n- Never launch unmanaged coroutines in `GlobalScope`.\n- Ensure cancellation cooperativeness by calling `yield()` or checking `ensureActive()` in compute loops.\n"
+    },
+    {
+      "id": "lang-dart",
+      "name": "Dart Sound Null-Safety & Isolate Discipline",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Dart sound null safety, strict type analyzer options, async streams discipline, and isolate isolation for CPU-intensive tasks.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/dart-isolates.md"
+      ],
+      "templates": [
+        "templates/dart-verification-report.md"
+      ],
+      "checks": [
+        "checks/dart-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_dart.dart"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "dart analyze reports 0 issues",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "dart",
+          "flutter"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-dart\ndescription: Dart sound null safety, strict analyzer options, stream subscription hygiene, and compute/isolate isolation.\n---\n\n# Dart Sound Null-Safety Contract\n\n## 1. Strict Analyzer Options\n- Configure `analysis_options.yaml` with `strict-casts: true`, `strict-inference: true`, and `strict-raw-types: true`.\n- Zero `as dynamic` or untyped dynamic invocation.\n\n## 2. Resource & Stream Discipline\n- All `StreamSubscription` objects must be canceled in `dispose()` lifecycle hooks.\n- Offload heavy computation to `Isolate.run()`.\n"
+    },
+    {
+      "id": "lang-elixir",
+      "name": "Elixir OTP Fault Tolerance & Property Testing",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Elixir OTP behaviors (GenServer, Supervisor), immutable functional architecture, property-based testing via StreamData, and fault-tolerant supervision trees.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/elixir-otp.md"
+      ],
+      "templates": [
+        "templates/elixir-verification-report.md"
+      ],
+      "checks": [
+        "checks/elixir-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_server.ex"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "mix test and dialyzer clean",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "elixir",
+          "beam",
+          "otp",
+          "mix",
+          "phoenix"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-elixir\ndescription: Elixir OTP behaviors, GenServer state isolation, supervisor strategies, and StreamData property testing.\n---\n\n# Elixir OTP Fault Tolerance Contract\n\n## 1. Functional Core & Immutability\n- Keep pure domain functions completely decoupled from process state.\n- Handle pattern matches exhaustively; do not write catch-all `_` clauses that hide upstream protocol mismatches.\n\n## 2. Process & Supervision Hygiene\n- Every worker process must be part of an explicit supervision tree.\n- Avoid bottleneck GenServers: do not execute long synchronous work inside `handle_call`.\n"
+    },
+    {
+      "id": "lang-rust",
+      "name": "Rust Safe-by-Default & Non-Lexical Lifetimes",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce safe Rust by default, non-lexical lifetimes, zero unhandled unwrap/expect in production, miri verification of unsafe boundaries, and clippy -D warnings.",
+      "risk_level": "critical",
+      "modes": [
+        "implementation",
+        "review",
+        "testing",
+        "audit"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/rust-safety-miri.md"
+      ],
+      "templates": [
+        "templates/rust-verification-report.md"
+      ],
+      "checks": [
+        "checks/rust-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_rust.rs"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint",
+        "security-scan"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "cargo clippy -- -D warnings clean",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "rust",
+          "cargo",
+          "clippy",
+          "rustc"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-rust\ndescription: Safe Rust by default, borrow checker compliance, miri validation of unsafe blocks, clippy -D warnings, and explicit error handling via Result/Option.\n---\n\n# Rust Safe-by-Default Contract\n\n## 1. Safe by Default & Unsafe Quarantine\n- Production code must be `#![forbid(unsafe_code)]` unless an explicit waiver is registered in `.atlas/escape-hatches.json`.\n- Any required `unsafe` block must state its safety invariants with `// SAFETY:` and be tested under `cargo miri`.\n\n## 2. Error Handling & Unwraps\n- Prohibit `.unwrap()` and `.expect()` in non-test paths. Propagate errors via `?` operator or return typed errors using `thiserror`.\n- Compile with `cargo clippy --all-targets -- -D warnings`.\n"
+    },
+    {
+      "id": "lang-go",
+      "name": "Go Idiomatic Reliability & Concurrency Hygiene",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Go explicit error handling (zero swallowed errors), context cancellation propagation, goroutine lifecycle ownership, -race detector verification, and fuzzing.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/go-concurrency-leak.md"
+      ],
+      "templates": [
+        "templates/go-verification-report.md"
+      ],
+      "checks": [
+        "checks/go-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_go.go"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "go test -race ./... passes cleanly",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "go",
+          "golang"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-go\ndescription: Go idiomatic engineering, explicit error returns, context cancellation, goroutine lifecycle ownership, -race detector, and table-driven tests.\n---\n\n# Go Idiomatic Reliability Contract\n\n## 1. Explicit Error Returns\n- Every error return must be checked immediately. Never assign to blank identifier `_` for fallible operations.\n- Wrap errors with contextual messages using `fmt.Errorf(\"...: %w\", err)`.\n\n## 2. Concurrency & Goroutine Ownership\n- Every spawned goroutine must have an explicit owner and a guaranteed termination path (via `context.Context` or channel close).\n- All tests must pass with the Go race detector (`go test -race ./...`).\n"
+    },
+    {
+      "id": "lang-swift",
+      "name": "Swift 6 Strict Concurrency & Value Semantics",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Swift 6 strict concurrency, Actor isolation, Sendable boundary checks, value semantics by default, and quarantine of UnsafePointer operations.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/swift-concurrency.md"
+      ],
+      "templates": [
+        "templates/swift-verification-report.md"
+      ],
+      "checks": [
+        "checks/swift-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_actor.swift"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "Swift 6 concurrency checks pass",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "swift",
+          "apple",
+          "spm",
+          "swiftpm"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-swift\ndescription: Swift 6 strict concurrency, Actor isolation, Sendable boundary checks, value semantics, and safe memory management.\n---\n\n# Swift 6 Strict Concurrency Contract\n\n## 1. Concurrency & Actor Isolation\n- Enable Swift 6 language mode with complete concurrency checking (`-Xfrontend -strict-concurrency=complete`).\n- Shared mutable state must be protected by an `actor` or isolated to `@MainActor`.\n- Cross-actor message parameters must conform to `Sendable`.\n\n## 2. Value Semantics\n- Prefer `struct` and `enum` over `class` to guarantee thread-safe value semantics.\n"
+    },
+    {
+      "id": "lang-typescript",
+      "name": "TypeScript Strict Soundness & Boundary Schemas",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce strict TypeScript compiler mode (noImplicitAny, strictNullChecks), branded types, runtime boundary schema validation (Zod/Valibot), and prohibition of 'any'.",
+      "risk_level": "high",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/typescript-soundness.md"
+      ],
+      "templates": [
+        "templates/typescript-verification-report.md"
+      ],
+      "checks": [
+        "checks/typescript-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_schema.ts"
+      ],
+      "required_evidence": [
+        "test",
+        "build",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "tsc --noEmit with 0 errors",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "typescript",
+          "ts",
+          "tsc"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-typescript\ndescription: TypeScript strict mode, zero 'any', branded types for domain modeling, and runtime schema validation at system boundaries.\n---\n\n# TypeScript Strict Soundness Contract\n\n## 1. Strict Compiler Discipline\n- `tsconfig.json` must enforce: `\"strict\": true`, `\"noImplicitAny\": true`, `\"strictNullChecks\": true`, `\"noUncheckedIndexedAccess\": true`.\n- Prohibit `any`. Use `unknown` with runtime type narrowing or validation.\n- `@ts-ignore` and `@ts-nocheck` are prohibited without registered waiver.\n\n## 2. Boundary Schema Validation\n- All data entering the process (HTTP requests, environment variables, database results) must be parsed through runtime schema validators (Zod, Valibot, ArkType).\n"
+    },
+    {
+      "id": "lang-javascript",
+      "name": "Modern JavaScript ES2024+ & Security Discipline",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce modern ECMAScript standard, native ESM modules, immutability patterns, ESLint strict security rules, and prohibition of global state pollution.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/javascript-security.md"
+      ],
+      "templates": [
+        "templates/javascript-verification-report.md"
+      ],
+      "checks": [
+        "checks/javascript-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_module.js"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "ESLint security clean",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "javascript",
+          "js",
+          "node",
+          "nodejs",
+          "npm",
+          "bun"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-javascript\ndescription: Modern JavaScript (ES2024+), ESM modules, immutability patterns, ESLint security rules, and zero global state pollution.\n---\n\n# Modern JavaScript & Security Contract\n\n## 1. Modern Standards & Modules\n- Use ECMAScript Modules (`import`/`export`) natively; prohibit `eval()` and `new Function()`.\n- Avoid prototype pollution: never mutate `Object.prototype`.\n\n## 2. Immutability\n- Prefer `const` over `let`; prohibit `var`. Use `Object.freeze()` or spread syntax for safe state updates.\n"
+    },
+    {
+      "id": "lang-python",
+      "name": "Python Strict Typing & Ruff Quality Architecture",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce modern Python 3.11+, comprehensive type annotations, mypy --strict validation, ruff security linting, pytest suites, and zero bare except statements.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/python-type-system.md"
+      ],
+      "templates": [
+        "templates/python-verification-report.md"
+      ],
+      "checks": [
+        "checks/python-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_python.py"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "mypy --strict and ruff clean",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "python",
+          "py",
+          "pytest",
+          "pip",
+          "uv",
+          "mypy",
+          "ruff"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-python\ndescription: Python 3.11+ strict typing, mypy --strict, ruff formatting and linting, pytest test suites, and zero bare exceptions.\n---\n\n# Python Strict Typing & Quality Contract\n\n## 1. Typing & Tooling\n- Target Python 3.11+. Every function and method must have explicit parameter and return type hints.\n- Pass `mypy --strict` with zero type ignores.\n- Prohibit bare `except:` or `except Exception: pass`. Catch specific exception types.\n\n## 2. Security\n- Prohibit `eval()`, `exec()`, and insecure `pickle` loads on untrusted inputs.\n"
+    },
+    {
+      "id": "lang-ruby",
+      "name": "Ruby Gradual Typing & Defensive Architecture",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce modern Ruby 3.3+, gradual typing via RBS/Sorbet, RuboCop strict profile, mutation testing via Mutant, and memory leak prevention.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/ruby-gradual-typing.md"
+      ],
+      "templates": [
+        "templates/ruby-verification-report.md"
+      ],
+      "checks": [
+        "checks/ruby-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_ruby.rb"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "RuboCop and RBS clean",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "ruby",
+          "rb",
+          "rails",
+          "gem",
+          "bundler"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-ruby\ndescription: Modern Ruby 3.3+, gradual typing with RBS/Sorbet, RuboCop strict, and defensive metaprogramming limits.\n---\n\n# Ruby Gradual Typing Contract\n\n## 1. Typing & Code Quality\n- Enforce `# frozen_string_literal: true` on all Ruby source files.\n- Provide RBS typespecs or Sorbet signatures (`typed: strict`) on core service boundaries.\n- Limit dynamic metaprogramming (`method_missing`, `define_method`) to well-isolated library modules.\n"
+    },
+    {
+      "id": "lang-lua",
+      "name": "Lua Scope Protection & Sandboxing",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Lua 5.4/LuaJIT scope discipline, strict global variable protection, sandboxed environment execution, and type annotations via EmmyLua/Teal.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/lua-sandboxing.md"
+      ],
+      "templates": [
+        "templates/lua-verification-report.md"
+      ],
+      "checks": [
+        "checks/lua-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_lua.lua"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "Zero accidental global leaks",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "lua",
+          "luajit",
+          "luarocks"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-lua\ndescription: Lua 5.4/LuaJIT scope discipline, strict global variable protection, sandboxed execution, and explicit module exports.\n---\n\n# Lua Scope Protection & Sandboxing Contract\n\n## 1. Scope Discipline\n- All variable declarations must be explicitly `local`. Accidental global variable assignments fail quality gates.\n- Metatable manipulation (`setmetatable`) must be strictly encapsulated within module definitions.\n\n## 2. Sandboxing\n- Untrusted user scripts must execute inside a restricted environment with stripped dangerous globals (`os`, `io`, `debug`, `package`).\n"
+    },
+    {
+      "id": "lang-php",
+      "name": "PHP Strict Types & Maximum Static Analysis",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce PHP 8.2+, declare(strict_types=1), PHPStan at maximum level, prepared PDO queries, and strict input validation.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/php-strict-types.md"
+      ],
+      "templates": [
+        "templates/php-verification-report.md"
+      ],
+      "checks": [
+        "checks/php-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_php.php"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "PHPStan level 9/max passes with 0 errors",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "php",
+          "composer"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-php\ndescription: PHP 8.2+ strict types (declare(strict_types=1)), PHPStan at maximum strictness, PDO prepared statements, and secure password hashing.\n---\n\n# PHP Strict Types & Static Analysis Contract\n\n## 1. Strict Typing\n- Every PHP file must begin with `declare(strict_types=1);`.\n- All class properties, method parameters, and returns must have explicit native types.\n- Prohibit error suppression operator `@`.\n\n## 2. Database & SQL Security\n- All database queries must use prepared statements with bound parameters (`PDO::prepare`).\n"
+    },
+    {
+      "id": "lang-bash",
+      "name": "Bash Strict Defensive Engineering",
+      "version": 1,
+      "schema_version": 2,
+      "purpose": "Enforce Bash strict mode (set -euo pipefail), ShellCheck clean execution, explicit quoting of all parameter expansions, trap handlers for resource cleanup, and zero eval.",
+      "risk_level": "medium",
+      "modes": [
+        "implementation",
+        "review",
+        "testing"
+      ],
+      "inputs": [
+        "Source code",
+        "Project configuration",
+        "Task acceptance criteria"
+      ],
+      "outputs": [
+        "Hardened source code",
+        "Verification evidence",
+        "Test evidence"
+      ],
+      "requires": [
+        "clean-code",
+        "testing-quality"
+      ],
+      "conflicts": [],
+      "capabilities": [
+        "filesystem.read",
+        "filesystem.write",
+        "process.spawn"
+      ],
+      "references": [
+        "references/bash-defensive.md"
+      ],
+      "templates": [
+        "templates/bash-verification-report.md"
+      ],
+      "checks": [
+        "checks/bash-rules.md"
+      ],
+      "scripts": [
+        "scripts/verify.sh"
+      ],
+      "examples": [
+        "examples/safe_runner.sh"
+      ],
+      "required_evidence": [
+        "test",
+        "lint"
+      ],
+      "stop_conditions": [
+        "Task acceptance criteria satisfied with evidence",
+        "shellcheck clean with 0 warnings",
+        "Token budget exhausted"
+      ],
+      "provenance": {
+        "origin": "framework",
+        "license": "MIT",
+        "source": "project-atlas-framework",
+        "version": "0.4.0",
+        "checksum": "",
+        "modified": "2026-09-09"
+      },
+      "select": {
+        "stack_any": [
+          "bash",
+          "sh",
+          "shell",
+          "posix"
+        ]
+      },
+      "requires_any": [],
+      "tools": [
+        "check-escape-hatches"
+      ],
+      "instructions": "---\nname: lang-bash\ndescription: Bash strict mode (set -euo pipefail), ShellCheck clean, explicit parameter quoting, trap handlers for temp cleanup, and zero eval.\n---\n\n# Bash Strict Defensive Engineering Contract\n\n## 1. Strict Baseline\n- Every script must begin with `#!/usr/bin/env bash` or `#!/bin/sh` and immediately declare `set -euo pipefail`.\n- Always quote variable expansions: `\"$variable\"`.\n- Prohibit `eval` on dynamic or external input.\n\n## 2. Temporary Resource Cleanup\n- Use `trap` handlers to ensure temporary directories created via `mktemp` are deleted upon exit or termination signals (`EXIT INT TERM`).\n"
     }
   ]
 }

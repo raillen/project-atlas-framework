@@ -52,6 +52,9 @@ func pythonResolution(t *testing.T, profile string) map[string]any {
 
 func TestResolveMatchesPythonBrasa(t *testing.T) {
 	root := repoRoot(t)
+	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+		t.Skip("python oracle retired: Python implementation removed from src/")
+	}
 	svc := New(root)
 	got, err := svc.Resolve(filepath.Join(root, "examples", "brasa", "project-profile.json"))
 	if err != nil {

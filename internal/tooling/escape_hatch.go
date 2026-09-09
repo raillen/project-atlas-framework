@@ -118,6 +118,40 @@ var languagePatterns = []patternRule{
 	// C#
 	{"csharp", "unsafe_block", "unsafe_block", regexp.MustCompile(`\bunsafe\s*\{`), "Unsafe C# block requires registration."},
 	{"csharp", "suppression_comment", "pragma_warning", regexp.MustCompile(`#pragma\s+warning\s+disable`), "Compiler warning suppression requires registration."},
+
+	// Java
+	{"java", "suppression_comment", "suppress_warnings", regexp.MustCompile(`@SuppressWarnings\(`), "Java warning suppression requires registration."},
+	{"java", "unsafe_block", "sun_misc_unsafe", regexp.MustCompile(`sun\.misc\.Unsafe`), "Direct sun.misc.Unsafe usage requires registration."},
+
+	// Kotlin
+	{"kotlin", "raw_cast", "not_null_assertion", regexp.MustCompile(`[a-zA-Z0-9_]\s*!!`), "Unsafe not-null assertion (!!) bypasses type safety."},
+	{"kotlin", "suppression_comment", "suppress_annotation", regexp.MustCompile(`@Suppress\(`), "Kotlin warning suppression requires registration."},
+
+	// Swift
+	{"swift", "unsafe_block", "unsafe_pointer", regexp.MustCompile(`\bUnsafe(Mutable)?(Raw)?Pointer\b`), "Swift UnsafePointer usage requires registration."},
+
+	// Dart
+	{"dart", "raw_cast", "as_dynamic", regexp.MustCompile(`\bas\s+dynamic\b`), "Unsound dynamic cast in Dart requires registration."},
+	{"dart", "suppression_comment", "ignore_comment", regexp.MustCompile(`//\s*ignore(_for_file)?:\s*`), "Dart analyzer suppression requires registration."},
+
+	// Elixir
+	{"elixir", "banned_api", "os_cmd", regexp.MustCompile(`:os\.cmd\s*\(`), "Unsafe shell execution via :os.cmd is prohibited."},
+
+	// Ruby
+	{"ruby", "banned_api", "eval", regexp.MustCompile(`\beval\s*\(`), "Dynamic eval in Ruby is prohibited."},
+	{"ruby", "suppression_comment", "rubocop_disable", regexp.MustCompile(`#\s*rubocop:disable`), "RuboCop suppression requires registration."},
+
+	// PHP
+	{"php", "suppression_comment", "error_suppression", regexp.MustCompile(`@[a-zA-Z_\\$]`), "Error suppression operator (@) is prohibited."},
+	{"php", "banned_api", "eval", regexp.MustCompile(`\beval\s*\(`), "Dynamic eval execution in PHP is prohibited."},
+	{"php", "suppression_comment", "phpstan_ignore", regexp.MustCompile(`//\s*@phpstan-ignore`), "PHPStan suppression requires registration."},
+
+	// Lua
+	{"lua", "banned_api", "loadstring", regexp.MustCompile(`\b(loadstring|loadfile)\s*\(`), "Dynamic code loading in Lua requires registration and sandboxing."},
+
+	// Bash
+	{"bash", "banned_api", "eval", regexp.MustCompile(`\beval\s+`), "Dynamic eval execution in shell script is prohibited."},
+	{"bash", "suppression_comment", "shellcheck_disable", regexp.MustCompile(`#\s*shellcheck\s+disable`), "ShellCheck suppression requires registration."},
 }
 
 var inlineAnnotationRegex = regexp.MustCompile(`ATLAS:ESCAPE_HATCH\[([A-Za-z0-9._-]+)\]`)
@@ -154,6 +188,22 @@ func detectLanguage(path string) string {
 		return "python"
 	case ".cs":
 		return "csharp"
+	case ".java":
+		return "java"
+	case ".kt", ".kts":
+		return "kotlin"
+	case ".swift":
+		return "swift"
+	case ".dart":
+		return "dart"
+	case ".ex", ".exs":
+		return "elixir"
+	case ".rb":
+		return "ruby"
+	case ".php":
+		return "php"
+	case ".lua":
+		return "lua"
 	case ".sh", ".bash":
 		return "bash"
 	default:

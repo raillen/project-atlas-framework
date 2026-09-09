@@ -67,3 +67,53 @@ func TestResolveSystemsSkills(t *testing.T) {
 		})
 	}
 }
+
+func TestResolveManagedSkills(t *testing.T) {
+	catalog, err := LoadCatalog("../..")
+	if err != nil {
+		t.Fatalf("catalog missing: %v", err)
+	}
+
+	tests := []struct {
+		name          string
+		stack         []string
+		expectedSkill string
+	}{
+		{"C# stack", []string{"csharp", "dotnet"}, "lang-csharp"},
+		{"Java stack", []string{"java", "gradle"}, "lang-java"},
+		{"Kotlin stack", []string{"kotlin"}, "lang-kotlin"},
+		{"Dart stack", []string{"dart", "flutter"}, "lang-dart"},
+		{"Elixir stack", []string{"elixir", "mix"}, "lang-elixir"},
+		{"Rust stack", []string{"rust", "cargo"}, "lang-rust"},
+		{"Go stack", []string{"go", "golang"}, "lang-go"},
+		{"Swift stack", []string{"swift", "spm"}, "lang-swift"},
+		{"TypeScript stack", []string{"typescript", "tsc"}, "lang-typescript"},
+		{"JavaScript stack", []string{"javascript", "node"}, "lang-javascript"},
+		{"Python stack", []string{"python", "pytest"}, "lang-python"},
+		{"Ruby stack", []string{"ruby", "rails"}, "lang-ruby"},
+		{"Lua stack", []string{"lua"}, "lang-lua"},
+		{"PHP stack", []string{"php", "composer"}, "lang-php"},
+		{"Bash stack", []string{"bash"}, "lang-bash"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			profile := Profile{
+				Raw: map[string]any{
+					"stack": tt.stack,
+				},
+			}
+			resolution := catalog.Resolve(profile)
+			found := false
+			for _, s := range resolution.Skills {
+				if s == tt.expectedSkill {
+					found = true
+					break
+				}
+			}
+			if !found {
+				t.Fatalf("expected skill %s to resolve for stack %v, got %v", tt.expectedSkill, tt.stack, resolution.Skills)
+			}
+		})
+	}
+}
