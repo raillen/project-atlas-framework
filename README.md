@@ -1,67 +1,162 @@
-# Project Atlas Framework (v0.3)
+# Project Atlas Framework
 
-Project Atlas is an execution-ready, Git-native, provider-agnostic framework and protocol for building and maintaining software with humans and AI agents. The repository—not chat memory, a specific LLM, an orchestrator or a generated documentation site—is the durable source of truth.
+Project Atlas is a Git-native protocol and CLI for software projects built with humans and AI agents.
 
-Version 0.3 establishes the **Execution-Ready Protocol**: formal JSON schema contracts for all state transitions, Goal v2 cryptographic locking and amendments, modular workforce packages (98 skills, 26 agents, 14 recipes), explainable deterministic resolution, platform compilation for Codex & Claude Code, a 3-tier trust hierarchy, and a deterministic conformance suite with fake runtime simulation.
+The repository is the durable source of truth. Atlas stores canonical project state in Markdown, JSON, JSON Schema, and Git; generated adapters, caches, indexes, and runtime state remain derived.
 
-## Key Capabilities
+## Current release line
 
-1. **Strict Machine Contracts** — 24 standard JSON schemas governing Goals, Plans, Tasks, Evidence, Gates, Events, and Policies.
-2. **Goal System v2** — Outcome milestones with SHA256 integrity locks, mutation detection, and auditable amendment workflows.
-3. **Standardized Workforce Packages** — Self-contained directories containing manifests, instructions (`SKILL.md`, `AGENT.md`, `RECIPE.md`), checks, templates, and scripts.
-4. **Lean Progressive Context (LPC/PCA)** — Smallest sufficient context, pointer-over-payload, and bounded token budgets.
-5. **Explainability & Diagnostics** — `atlas doctor` for full-project health checks, DAG cycle detection, and `atlas explain` for complete workforce/reasoning transparency.
-6. **Platform Compilers** — Automatic adapter compilation for Codex (`AGENTS.md`, `.codex/skills/`), Claude Code (`CLAUDE.md`, `.claude/skills/`), Traycer, ChatGPT, and Generic LLMs.
-7. **Conformance Engine** — Deterministic fake runtime and golden test suite in `conformance/`.
+The repository is migrating from Python v0.3 to Go v0.4.
 
-## Install
+- **Go v0.4** is the active CLI and Core implementation.
+- **Python v0.3** remains in `src/project_atlas/` as the compatibility oracle during migration.
+- New v0.4 work must target Go after the relevant Goal, documentation, and acceptance criteria are closed.
+- Python is not required to run the Go CLI.
 
-```bash
-python -m pip install -e .
-atlas --version
-```
-Expected output: `Project Atlas 0.3.0`
+## What Atlas provides
 
-## Start a Project
+- Project initialization from a profile.
+- Deterministic agent, skill, recipe, risk, and model-policy resolution.
+- Goal lifecycle with SHA-256 lock integrity and formal amendments.
+- Plan DAG validation, Events, Evidence, Gates, and Doctor diagnostics.
+- JSON Schema Draft 2020-12 validation with local `$ref` resolution.
+- Lean Progressive Context planning and project intelligence reports.
+- Compiler adapters for Generic, ChatGPT, Claude, Kimi, Codex, Claude Code, and Traycer.
+- Machine-readable JSON envelopes for automation and harness integrations.
+- Conformance tests comparing Go behavior with the Python v0.3 oracle.
+- Portable installation state, connector ownership, setup, and safe uninstall.
 
-```bash
-# Initialize a project from profile
-atlas init ./my-project --profile examples/conformance-project/atlas.json --non-interactive
+## Quick start from source
 
-# Check health diagnostics
-atlas doctor ./my-project
+Requirements:
 
-# Explain workforce selection
-atlas explain workforce --path ./my-project
-```
-
-## Manage Goals
+- Go 1.22+;
+- Git;
+- Python 3.10+ only when running the v0.3 oracle or Python test suite.
 
 ```bash
-# Create a new Goal
-atlas goal new P01-G01 "Core Engine" --phase P01 --objective "Implement core engine features."
+git clone git@github.com:raillen/project-atlas-framework.git
+cd project-atlas-framework
 
-# Transition to PLANNED and LOCK acceptance criteria
-atlas goal state P01-G01 PLANNED
-atlas goal state P01-G01 LOCKED
-
-# Formally amend a locked Goal
-atlas goal amend P01-G01 --file amendment.json
+go run ./cmd/atlas version
+go run ./cmd/atlas --json version
 ```
 
-## Compile Platform Adapters
+Expected version output:
 
-```bash
-atlas compile --target codex
-atlas compile --target claude-code
+```text
+0.4.0-dev
 ```
 
-## Run Diagnostics & Conformance Suite
+The CLI currently uses the subcommand surface directly. `atlas --help` is not yet implemented; use the [CLI reference](docs/manual/usage.md#command-reference).
+
+## Initialize a project
+
+Create a profile with at least one preferred model, then initialize a project:
 
 ```bash
-# Test the entire framework and conformance suite
+go run ./cmd/atlas init ./my-project \
+  --profile examples/brasa/project-profile.json \
+  --non-interactive
+
+go run ./cmd/atlas validate ./my-project
+go run ./cmd/atlas doctor ./my-project
+```
+
+`atlas init` creates canonical project files such as `atlas.json`, `.ai/`, `docs/ATLAS.md`, `PROJECT_STATE.md`, and `.atlas/history/`. It does not install a harness globally.
+
+## Work with Goals
+
+```bash
+go run ./cmd/atlas goal new P00-G01 "Foundation" \
+  --phase P00 \
+  --objective "Establish the project foundation." \
+  --path ./my-project
+
+go run ./cmd/atlas goal state P00-G01 PLANNED --path ./my-project
+go run ./cmd/atlas goal state P00-G01 LOCKED --path ./my-project
+go run ./cmd/atlas goal list --path ./my-project
+```
+
+Locked Goals must be changed through `goal amend`; direct edits are detected by the lock digest.
+
+## Compile a harness adapter
+
+```bash
+go run ./cmd/atlas compile --target generic --path ./my-project
+go run ./cmd/atlas compile --target codex --path ./my-project
+go run ./cmd/atlas compile --target claude-code --path ./my-project
+```
+
+Generated artifacts are derived. The canonical project files and workforce packages remain the source of truth.
+
+## Install, setup, and uninstall
+
+Use a portable installation home when testing or working in CI:
+
+```bash
+go run ./cmd/atlas --home ./atlas-home setup
+go run ./cmd/atlas --home ./atlas-home install connector opencode
+go run ./cmd/atlas --home ./atlas-home uninstall --connectors --purge-cache --purge-global-config
+```
+
+Uninstall never removes project files, `.ai/`, docs, Goals, Plans, Evidence, or other repository data. Read the [installation manual](docs/manual/installation.md) and [uninstall manual](docs/manual/uninstallation.md).
+
+## Machine output
+
+Commands that support automation accept `--json`:
+
+```bash
+go run ./cmd/atlas --json version
+go run ./cmd/atlas --json doctor ./my-project
+go run ./cmd/atlas --json framework-check
+```
+
+The envelope is:
+
+```json
+{
+  "protocol_version": "1",
+  "ok": true,
+  "data": {},
+  "diagnostics": [],
+  "warnings": []
+}
+```
+
+stdout is reserved for JSON when `--json` is used. Diagnostics belong on stderr. JSON output contains no ANSI formatting.
+
+## Development checks
+
+```bash
+gofmt -l cmd internal embedded_assets.go
+go test ./... -race
+go vet ./...
 pytest
 ```
 
-## Documentation
-See [`docs/ATLAS.md`](docs/ATLAS.md) for the complete intent router and guides across Getting Started, User Guide, Authoring, Integrations, Protocols, and Reference.
+The Go suite includes differential tests for initialization, resolver behavior, Goals, Doctor, Explain, migration, snapshots, and all seven compiler targets. The Python suite remains the v0.3 regression oracle.
+
+## Documentation map
+
+- [Install manual](docs/manual/installation.md)
+- [Uninstall manual](docs/manual/uninstallation.md)
+- [Usage manual](docs/manual/usage.md)
+- [CLI reference](docs/manual/usage.md#command-reference)
+- [First project](docs/getting-started/first-project.md)
+- [Core concepts](docs/getting-started/concepts.md)
+- [v0.4 product scope](docs/product/scope-v0.4.md)
+- [Architecture](docs/architecture/overview.md)
+- [Migration status](docs/migration/v0.3-to-v0.4-go.md)
+- [Conformance strategy](docs/migration/conformance-strategy.md)
+- [Development blueprint](docs/development/implementation-blueprint.md)
+- [Testing strategy](docs/development/testing-strategy.md)
+- [Security and trust model](docs/security/trust-model.md)
+- [Runtime Control Plane](docs/runtime/control-plane.md)
+- [Documentation source map](docs/SOURCE_MAP.json)
+
+Use `docs/ATLAS.md` as the repository documentation router. Do not load the entire documentation tree for a single task.
+
+## License and contribution
+
+Before contributing, read `AGENTS.md`, the [coding standards](docs/development/coding-standards.md), the [dependency rules](docs/architecture/dependency-rules.md), and the [testing strategy](docs/development/testing-strategy.md).

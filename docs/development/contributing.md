@@ -1,39 +1,56 @@
 # Contributing
 
-Thank you for contributing to Project Atlas!
+Thank you for contributing to Project Atlas.
 
-## Development Setup
+## Repository entrypoints
 
-1. Clone the repository.
-2. Run `poetry install` (or equivalent) to install dependencies.
-3. Run `pre-commit install` to set up formatting hooks.
+Read `AGENTS.md`, `ENTRYPOINT.md`, `FRAMEWORK.md`, and `docs/ATLAS.md` before changing behavior. New work must preserve the provider-neutral core policy and Lean Progressive Context discipline.
 
-## Code Style
+## Development setup
 
-Follow PEP 8 for Python code. Use `black` for formatting and `isort` for imports.
+```bash
+git clone git@github.com:raillen/project-atlas-framework.git
+cd project-atlas-framework
+go test ./...
+go vet ./...
+gofmt -l cmd internal embedded_assets.go
+```
 
-## Adding a New Schema
+The Go test suite includes differential conformance against Python v0.3. Python remains required only for the oracle and Python test context:
 
-1. Update the schema definition in `src/project_atlas/resources/schemas/`.
-2. Generate models if applicable.
-3. Add tests in `test_schemas.py`.
+```bash
+python -m pip install -e '.[dev]'
+pytest
+```
 
-## Adding a New Skill, Agent, or Recipe
+## Code and package conventions
 
-1. Create the package directory in `src/project_atlas/resources/catalog/`.
-2. Write the manifest and markdown file.
-3. Ensure conformance tests pass.
+- Follow [coding standards](coding-standards.md).
+- Respect [dependency rules](../architecture/dependency-rules.md).
+- Do not introduce `utils`, `common`, `helpers` or other semantic-free packages.
+- Keep the CLI thin: business behavior belongs in application services, not `main.go`.
+- Return explicit, wrapped errors; never use `panic` for user/config failures.
+- Treat JSON key order as an output-serialization detail; compare generated JSON semantically in conformance tests.
+- Keep `embedded_assets.go` at the module root because Go `//go:embed` cannot traverse outside `internal/`.
 
-## Adding a CLI Command
+## Schemas, workforce, and CLI
 
-Add the command to `src/project_atlas/cli/` using the established CLI framework (e.g., Typer or argparse).
+- Update the canonical schema in `schemas/` before changing a machine contract.
+- Keep agents, skills, and recipes under `src/project_atlas/resources/` until the migration explicitly moves canonical content.
+- Add differential tests for resolver, Goals, compiler, validation, scaffolding, migration, doctor, and explain behavior.
+- Validate all compiler targets after changing shared compiler logic.
+- Run `atlas framework-check` behavior coverage after catalog/workforce changes.
 
-## PR Process
+## Migration discipline
 
-- Open a PR with a descriptive title.
-- Ensure all CI checks (pytest, linting) pass.
-- Request review from core maintainers.
+- Do not delete, move, or rewrite the Python v0.3 runtime while it remains the conformance oracle.
+- Do not change the Atlas protocol only to make Go implementation easier.
+- New v0.4 capabilities require closed Goals, documentation, and acceptance criteria.
+- Lock content, ADRs, and schemas must change explicitly, not silently.
 
-## AGENTS.md Rules
+## Pull request process
 
-Adhere strictly to the rules defined in the repository's root `AGENTS.md` (e.g., provider-neutrality, Lean Progressive Context).
+- Keep changes review-sized and scoped to one Goal or milestone.
+- Report `go test -race ./...`, `go vet ./...`, `gofmt -l`, and `pytest` results.
+- Record protocol-affecting decisions in the canonical document and ADR first.
+- Request review from maintainers before merging protocol, security, or release changes.

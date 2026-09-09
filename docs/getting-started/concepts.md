@@ -1,11 +1,14 @@
 # Core Concepts
 
-Project Atlas Framework v0.3 is an execution-ready agentic development protocol.
+Project Atlas v0.4 is a Go-based, Git-native protocol and CLI for engineering software with humans and AI agents.
 
-- **Git as Durable Memory:** Knowledge, decisions, goals, policies, and evidence are stored in version control.
-- **Canonical Before Generated:** Generated adapters (`.codex/`, `.claude/`, runtime context packs) are derived and disposable.
-- **Goals as Outcome Unit:** Work is organized around outcome-based Goals with immutable acceptance criteria once `LOCKED`.
-- **Plans & Tasks:** Plans form acyclic dependency graphs (DAGs) of discrete Tasks.
-- **Workforce Packages:** Abstract workforce organized into modular, versioned Agents, Skills, and Recipes.
-- **Lean Progressive Context (LPC/PCA):** Load minimal sufficient context; expand progressively under strict token budgets.
-- **Evidence Over Assertion:** Task completion requires verifiable evidence (tests, builds, benchmarks, scans).
+- **Repository over conversation memory:** canonical project knowledge lives in Git.
+- **Protocol over harness:** OpenCode, Codex, Claude Code, Gemini and other clients are adapters.
+- **Canonical before generated:** Markdown, JSON, JSON Schema and Goals are canonical; adapters, caches, indexes and runtime context are derived.
+- **Goals as outcome unit:** acceptance criteria become integrity-locked after `LOCKED`.
+- **Plans and Tasks:** Plans form acyclic dependency graphs (DAGs).
+- **Workforce packages:** Agents, Skills and Recipes are versioned, resolvable packages.
+- **Lean Progressive Context:** select the smallest sufficient context and expand only with evidence.
+- **Evidence over assertion:** completion requires tests, builds, reviews, scans or other declared evidence.
+- **Deterministic before probabilistic:** protocol invariants and gates do not depend on LLM behavior.
+- **Python as oracle:** Python v0.3 remains for compatibility testing during the migration, not normal v0.4 runtime use.
