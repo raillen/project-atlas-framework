@@ -473,3 +473,65 @@ def test_recipe_schema_positive():
         ]
     }
     assert validate("recipe.schema.json", valid) == []
+
+
+# Open Question (E-G01 Living Plan)
+def test_open_question_schema_positive():
+    valid = {
+        "id": "OQ-001",
+        "version": 1,
+        "scope": "goal:G042",
+        "contract": "architecture.system",
+        "topic": "canonical state ownership",
+        "priority": "blocker",
+        "blocking": True,
+        "reason": "implementation cannot start until the owner is known",
+        "suggested_answers": ["control-plane", "project core"],
+        "status": "open",
+        "eligible_owners": ["human-maintained"],
+        "question": "What owns canonical state?",
+        "evidence": ["docs/architecture/overview.md"]
+    }
+    assert validate("open-question.schema.json", valid) == []
+
+
+def test_open_question_schema_negative():
+    unknown_priority = {
+        "id": "OQ-002", "scope": "goal:G042", "priority": "curiosity", "status": "open"
+    }
+    errors = validate("open-question.schema.json", unknown_priority)
+    assert errors, "expected unknown priority to be rejected"
+
+    unknown_status = {
+        "id": "OQ-003", "scope": "goal:G042", "priority": "blocker", "status": "draft"
+    }
+    errors = validate("open-question.schema.json", unknown_status)
+    assert errors, "expected unknown status to be rejected"
+
+    missing_scope = {"id": "OQ-004", "priority": "blocker", "status": "open"}
+    errors = validate("open-question.schema.json", missing_scope)
+    assert errors, "expected missing scope to be rejected"
+
+
+# Decision Proposal (E-G02 Living Plan)
+def test_decision_proposal_schema_positive():
+    valid = {
+        "id": "DP-001",
+        "statement": "Control Plane owns canonical state",
+        "classification": "explicit-decision",
+        "authority": "user-decision",
+        "confidence": "high",
+        "status": "accepted",
+        "scope": "goal:G042",
+        "evidence": ["docs/architecture/overview.md"]
+    }
+    assert validate("decision-proposal.schema.json", valid) == []
+
+
+def test_decision_proposal_schema_negative():
+    unknown_classification = {
+        "id": "DP-002", "statement": "x", "classification": "opinion",
+        "authority": "agent-suggestion", "confidence": "unknown", "status": "proposed"
+    }
+    errors = validate("decision-proposal.schema.json", unknown_classification)
+    assert errors, "expected unknown classification to be rejected"

@@ -261,15 +261,31 @@
 
 **Dependencies**: M5
 
-**Scope**:
-- Interview protocol (conversational, incremental)
-- Decision extraction with authority model
-- Open questions tracking
-- Confidence scoring
-- Readiness gates (block implementation until critical decisions confirmed)
-- Incremental documentation updates from decisions
+Canonical specification: `docs/runtime/living-plan.md`.
 
-**Exit Gate**: New project can be planned from zero to implementation-ready via interview.
+**Scope**:
+- Interview protocol (conversational, incremental, least ceremony)
+- Decision extraction with authority model
+- Open questions tracking (blocker vs non-blocker, traceable resolution)
+- Confidence scoring (inference-only, evidence-backed)
+- Decision preview with contradiction handling
+- Readiness gates (block implementation until critical decisions confirmed)
+- Incremental documentation updates from decisions (Documentation Delta)
+
+**Non-Goals**: brownfield discovery (Fase F Adoption), autonomous architecture invention, raw transcript as canonical memory, model-specific conversation format, code generation as part of `atlas plan`.
+
+**Goal Decomposition**:
+- E-G01: Question / OpenQuestion schemas + priority resolver.
+- E-G02: answer classification + Decision proposal model.
+- E-G03: authority/confidence resolver.
+- E-G04: decision preview + contradiction handling.
+- E-G05: Documentation Delta/readiness feedback loop.
+- E-G06: Goal/Plan output integration.
+- E-G07: resume/checkpoint + context compilation.
+- E-G08: CLI/harness-neutral interaction protocol.
+- E-G09: zero-to-ready Atlas sample/dogfood.
+
+**Exit Gate (LIVING PLAN READY)**: New project can go from initial intent to implementation-ready via interview without a manual megaprompt; Goal-specific planning closes only relevant gaps; decisions/open questions carry authority and provenance; resume does not depend on transcript; docs/readiness/governance feedback loop works; question/decision evals reach approved baseline; no agent suggestion silently promoted.
 
 ---
 
