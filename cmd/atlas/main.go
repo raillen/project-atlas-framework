@@ -170,7 +170,7 @@ func run(args []string) int {
 		return runRepositoryPolicy(asJSON, rest)
 	case "docs":
 		return runDocumentation(asJSON, rest)
-	case "run", "continue":
+	case "run", "continue", "budget":
 		return runRuntime(asJSON, rest)
 	case "setup":
 		return runSetup(asJSON, home)
