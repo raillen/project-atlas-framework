@@ -105,7 +105,7 @@ func serviceError(asJSON bool, err error) int {
 func usage() int {
 	fmt.Fprintf(os.Stderr, "usage: atlas [--json] <command> [args]\n")
 	fmt.Fprintf(os.Stderr, "commands:\n")
-	fmt.Fprintf(os.Stderr, "  version, status, setup, install, uninstall, init, resolve, validate, goal, plan, context, report, migrate, compile, snapshot, doctor, explain, framework-check, run, continue, budget, debug, tool, model, env\n")
+	fmt.Fprintf(os.Stderr, "  version, status, setup, install, uninstall, init, resolve, validate, goal, plan, adopt, trace, journal, context, report, migrate, compile, snapshot, doctor, explain, framework-check, run, continue, budget, debug, tool, model, env\n")
 	return exitUsage
 }
 
@@ -302,6 +302,10 @@ func run(args []string) int {
 		return runPlan(asJSON, rest[1:])
 	case "adopt":
 		return runAdopt(asJSON, rest[1:])
+	case "trace":
+		return runTrace(asJSON, rest[1:])
+	case "journal":
+		return runJournal(asJSON, rest[1:])
 	case "context":
 		return runContext(svc, asJSON, rest[1:])
 	case "report":
