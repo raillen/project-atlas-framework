@@ -72,7 +72,7 @@ Emergency bypass is a documented break-glass record, not a CLI shortcut. It requ
 
 The repository uses the Solo profile: Pull Request, CI, conversation resolution, and a human merge decision. High and critical risk changes require independent verification and evidence. Critical changes require explicit human approval.
 
-The GitHub default is squash merge. Merge commits and rebase merges are disabled. Merged branches are deleted automatically.
+The GitHub default is squash merge. Merge commits and rebase merges are disabled. Merged branches are deleted automatically. The active `main` ruleset requires the `governance` status check; the repository's CI matrix also currently passes all Python and Go jobs.
 
 ## M5 dependency
 
