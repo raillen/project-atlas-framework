@@ -143,6 +143,13 @@
         { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "ScanResult schema — F-G01 complete scanner output envelope" }
       ],
       "semantic_role": "schema contract for adoption scanner complete output"
+    },
+    {
+      "local_path": "schemas/repository-classification.schema.json",
+      "notion_pages": [
+        { "title": "71 — Fase F: Adoption Engine para Projetos Existentes (M7)", "role": "RepositoryClassification schema — F-G02 classification output contract" }
+      ],
+      "semantic_role": "schema contract for repository classification output"
     }
   ]
 }
