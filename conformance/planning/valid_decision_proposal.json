@@ -1,0 +1,16 @@
+{
+  "id": "DP-001",
+  "statement": "Control Plane owns canonical state",
+  "classification": "explicit-decision",
+  "scope": "goal:G042",
+  "actor": "user",
+  "authority": "user-decision",
+  "confidence": "unknown",
+  "status": "accepted",
+  "affected": ["docs/architecture/overview.md"],
+  "rationale": "single writer avoids conflicting mutations",
+  "alternatives": ["project core", "external service"],
+  "evidence": ["docs/architecture/overview.md"],
+  "created_at": "2026-09-09T12:00:00Z",
+  "resolved_at": "2026-09-09T12:05:00Z"
+}

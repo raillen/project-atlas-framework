@@ -519,11 +519,27 @@ def test_decision_proposal_schema_positive():
         "id": "DP-001",
         "statement": "Control Plane owns canonical state",
         "classification": "explicit-decision",
-        "authority": "user-decision",
-        "confidence": "high",
-        "status": "accepted",
         "scope": "goal:G042",
-        "evidence": ["docs/architecture/overview.md"]
+        "actor": "user",
+        "source": "project-owner",
+        "authority": "user-decision",
+        "confidence": "unknown",
+        "status": "accepted",
+        "affected": ["docs/architecture/overview.md"],
+        "rationale": "single writer avoids conflicting mutations",
+        "alternatives": ["project core", "external service"],
+        "evidence": ["docs/architecture/overview.md"],
+        "created_at": "2026-09-09T12:00:00Z",
+        "resolved_at": "2026-09-09T12:05:00Z"
+    }
+    assert validate("decision-proposal.schema.json", valid) == []
+
+
+def test_decision_proposal_schema_unresolved_classification():
+    valid = {
+        "id": "DP-101", "statement": "storage engine not yet chosen",
+        "classification": "unresolved",
+        "authority": "agent-suggestion", "confidence": "low", "status": "proposed"
     }
     assert validate("decision-proposal.schema.json", valid) == []
 
@@ -535,3 +551,37 @@ def test_decision_proposal_schema_negative():
     }
     errors = validate("decision-proposal.schema.json", unknown_classification)
     assert errors, "expected unknown classification to be rejected"
+
+    unknown_status = {
+        "id": "DP-003", "statement": "x", "classification": "explicit-decision",
+        "authority": "user-decision", "confidence": "unknown", "status": "merged"
+    }
+    errors = validate("decision-proposal.schema.json", unknown_status)
+    assert errors, "expected unknown status to be rejected"
+
+    missing_authority = {
+        "id": "DP-004", "statement": "x", "classification": "explicit-decision",
+        "confidence": "unknown", "status": "accepted"
+    }
+    errors = validate("decision-proposal.schema.json", missing_authority)
+    assert errors, "expected missing authority to be rejected"
+
+    unexpected_field = {
+        "id": "DP-005", "statement": "x", "classification": "explicit-decision",
+        "authority": "user-decision", "confidence": "unknown", "status": "accepted",
+        "llm_temperature": 0.7
+    }
+    errors = validate("decision-proposal.schema.json", unexpected_field)
+    assert errors, "expected unknown attribute to be rejected"
+
+
+# Authority model helper tests (E-G02 Living Plan)
+def test_authority_order():
+    order = ["invariant", "user-decision", "project-decision", "documented-evidence",
+             "inferred-state", "agent-suggestion", "external"]
+    for i, authority in enumerate(order):
+        errors = validate("decision-proposal.schema.json", {
+            "id": "DP-A%d" % i, "statement": "x", "classification": "hypothesis",
+            "authority": authority, "confidence": "low", "status": "proposed"
+        })
+        assert errors == [], "authority %s should be accepted" % authority
