@@ -20,6 +20,13 @@ type Manifest struct {
 	Pressure        string   `json:"pressure"`
 }
 
+// Pressure levels reported by a compiled Manifest.
+const (
+	PressureHealthy  = "healthy"
+	PressurePressure = "pressure"
+	PressureCritical = "critical"
+)
+
 func Compile(runID string, sources []Source, budget int) Manifest {
 	sort.Slice(sources, func(i, j int) bool {
 		if sources[i].Authority != sources[j].Authority {
@@ -42,12 +49,12 @@ func Compile(runID string, sources []Source, budget int) Manifest {
 		sources[i].Reason = "deterministic priority pack"
 		used += sources[i].TokenCost
 	}
-	pressure := "healthy"
+	pressure := PressureHealthy
 	if used > budget*80/100 {
-		pressure = "pressure"
+		pressure = PressurePressure
 	}
 	if used >= budget {
-		pressure = "critical"
+		pressure = PressureCritical
 	}
 	return Manifest{Version: 1, RunID: runID, Sources: sources, EstimatedTokens: used, Pressure: pressure}
 }

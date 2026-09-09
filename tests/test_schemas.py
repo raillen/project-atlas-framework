@@ -585,3 +585,67 @@ def test_authority_order():
             "authority": authority, "confidence": "low", "status": "proposed"
         })
         assert errors == [], "authority %s should be accepted" % authority
+
+
+# Planning Session (E-G07 Living Plan resume/checkpoint + context compilation)
+def _planning_session_valid() -> dict:
+    return {
+        "id": "SES-001",
+        "run_id": "RUN-9",
+        "scope": "goal:G042",
+        "goal": "M6 living plan ready",
+        "decisions": [
+            {
+                "id": "DP-001",
+                "statement": "Control Plane owns canonical state",
+                "classification": "explicit-decision",
+                "authority": "user-decision",
+                "confidence": "unknown",
+                "status": "accepted"
+            }
+        ],
+        "open_questions": [
+            {
+                "id": "OQ-001",
+                "scope": "goal:G042",
+                "priority": "blocker",
+                "status": "open",
+                "question": "What owns audit state?"
+            }
+        ],
+        "last_preview": {
+            "extracted_decisions": [],
+            "blockers_resolved": 1,
+            "open_remaining": 1,
+            "preview_mandatory": True
+        },
+        "updated_at": "2026-09-09T12:00:00Z"
+    }
+
+
+def test_planning_session_schema_positive():
+    assert validate("planning-session.schema.json", _planning_session_valid()) == []
+
+
+def test_planning_session_schema_reuses_linked_models():
+    payload = _planning_session_valid()
+    payload["decisions"][0]["status"] = "merged"
+    assert validate("planning-session.schema.json", payload), \
+        "invalid decision must fail through the referenced model"
+
+
+def test_planning_session_schema_negative():
+    missing_scope = _planning_session_valid()
+    del missing_scope["scope"]
+    errors = validate("planning-session.schema.json", missing_scope)
+    assert errors, "expected missing scope to be rejected"
+
+    unexpected_field = _planning_session_valid()
+    unexpected_field["transcript"] = "full raw conversation"
+    errors = validate("planning-session.schema.json", unexpected_field)
+    assert errors, "expected raw transcript field to be rejected"
+
+    bad_preview_type = _planning_session_valid()
+    bad_preview_type["last_preview"]["blockers_resolved"] = -1
+    errors = validate("planning-session.schema.json", bad_preview_type)
+    assert errors, "expected negative blockers_resolved to be rejected"
