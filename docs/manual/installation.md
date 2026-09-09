@@ -60,7 +60,7 @@ cat dist/checksums.txt
 cat dist/release.json
 ```
 
-A instalação de release deve verificar o checksum antes de substituir o binário. Assinaturas de release permanecem um gate operacional antes da distribuição pública final.
+A instalação de release deve verificar o checksum antes de substituir o binário. A rollback strategy preserva o binário anterior até o novo passar `version`, `framework-check` e smoke tests; em falha, restaure o binário anterior sem alterar dados do projeto. Assinaturas de release permanecem um gate operacional antes da distribuição pública final.
 
 ## Estado global e modo portátil
 

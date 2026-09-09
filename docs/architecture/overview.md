@@ -29,6 +29,10 @@ flowchart LR
 
 ## Planes & Boundaries
 
+### Major Components
+
+The major components are Protocol Domain, Project Service, Resolution Service, Documentation Engine, Planning Engine, Adoption Engine, Knowledge Engine, Experience Engine, Evidence/Gate Engine, Control Plane, Execution Plane, and Integration Plane.
+
 ### Control Plane (Horizontal Infrastructure)
 | Service | Responsibility |
 |---------|----------------|

@@ -22,3 +22,15 @@ func TestAtlasAuditAndReadiness(t *testing.T) {
 		t.Fatal("expected coverage")
 	}
 }
+
+func TestVerifiedCoverageRequiresEvidence(t *testing.T) {
+	contract := Contract{ID: "verified", RequiredKnowledge: []string{"architecture"}, EvidenceRequirements: []string{"review"}}
+	withoutEvidence := evaluate("../..", contract, Binding{Sources: []string{"docs/architecture/overview.md"}})
+	if withoutEvidence.State != ImplementationReady {
+		t.Fatalf("unexpected state: %s", withoutEvidence.State)
+	}
+	withEvidence := evaluate("../..", contract, Binding{Sources: []string{"docs/architecture/overview.md"}, Evidence: []string{"review-result"}})
+	if withEvidence.State != Verified {
+		t.Fatalf("expected verified, got %s", withEvidence.State)
+	}
+}
