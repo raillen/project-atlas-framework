@@ -6,6 +6,9 @@ import (
 	"strings"
 
 	"github.com/raillen/project-atlas-framework/internal/connectors"
+	_ "github.com/raillen/project-atlas-framework/internal/connectors/claudecode"
+	_ "github.com/raillen/project-atlas-framework/internal/connectors/codex"
+	_ "github.com/raillen/project-atlas-framework/internal/connectors/gemini"
 	_ "github.com/raillen/project-atlas-framework/internal/connectors/opencode"
 	"github.com/raillen/project-atlas-framework/internal/protocol"
 )
@@ -37,6 +40,12 @@ func runConnector(asJSON bool, args []string) int {
 			return serviceError(asJSON, err)
 		}
 		return runConnectorValidate(asJSON, args[1], args[2:])
+	case "negotiate":
+		if len(args) < 2 {
+			err := fmt.Errorf("usage: atlas connector negotiate <name> [--strict] [--caps <list>]")
+			return serviceError(asJSON, err)
+		}
+		return runConnectorNegotiate(asJSON, args[1], args[2:])
 	default:
 		err := fmt.Errorf("unknown connector subcommand: %s", sub)
 		return serviceError(asJSON, err)
@@ -173,5 +182,54 @@ func runConnectorValidate(asJSON bool, id string, args []string) int {
 	}
 
 	fmt.Printf("Connector %s validated successfully (%d files verified).\n", id, len(res.Files))
+	return exitOK
+}
+
+func runConnectorNegotiate(asJSON bool, id string, args []string) int {
+	c, err := connectors.Get(id)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	strict := hasFlag(args, "--strict")
+	caps := []string{}
+	if val, _, found := flag(args, "--caps"); found && val != "" {
+		for _, part := range strings.Split(val, ",") {
+			trimmed := strings.TrimSpace(part)
+			if trimmed != "" {
+				caps = append(caps, trimmed)
+			}
+		}
+	} else {
+		// Default to standard capabilities
+		caps = []string{connectors.CapAdvise, connectors.CapPreToolBlock, connectors.CapSessionHooks, connectors.CapIsolateSubagents}
+	}
+
+	res, err := connectors.Negotiate(c.Contract(), connectors.NegotiationRequest{
+		TargetHarness:        id,
+		RequiredCapabilities: caps,
+		Strict:               strict,
+	})
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+
+	fmt.Printf("Capability Negotiation for %s (%s):\n", c.Name(), id)
+	fmt.Printf("  Compatible: %v\n", res.Compatible)
+	if len(res.Supported) > 0 {
+		fmt.Printf("  Supported:  %s\n", strings.Join(res.Supported, ", "))
+	}
+	if len(res.Degraded) > 0 {
+		fmt.Println("  Degraded:")
+		for cap, reason := range res.Degraded {
+			fmt.Printf("    • %s: %s\n", cap, reason)
+		}
+	}
+	if len(res.Unsupported) > 0 {
+		fmt.Printf("  Unsupported: %s\n", strings.Join(res.Unsupported, ", "))
+	}
 	return exitOK
 }

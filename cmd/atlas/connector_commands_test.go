@@ -53,12 +53,24 @@ func TestConnectorCommands(t *testing.T) {
 		t.Fatalf("runConnector --json validate after install expected %d, got %d", exitOK, code)
 	}
 
-	// 5. Uninstall opencode
+	// 5. Capability negotiation
+	if code := runConnector(false, []string{"negotiate", "opencode"}); code != exitOK {
+		t.Fatalf("runConnector negotiate opencode expected %d, got %d", exitOK, code)
+	}
+	if code := runConnector(false, []string{"negotiate", "gemini"}); code != exitOK {
+		t.Fatalf("runConnector negotiate gemini expected %d, got %d", exitOK, code)
+	}
+	// Strict negotiation for unsupported capability on gemini should return error
+	if code := runConnector(false, []string{"negotiate", "gemini", "--strict", "--caps", "pre_tool_block"}); code == exitOK {
+		t.Fatalf("expected strict negotiation failure on gemini for pre_tool_block")
+	}
+
+	// 6. Uninstall opencode
 	if code := runConnector(false, []string{"uninstall", "opencode"}); code != exitOK {
 		t.Fatalf("runConnector uninstall opencode expected %d, got %d", exitOK, code)
 	}
 
-	// 6. Test backward-compatible 'atlas install connector opencode'
+	// 7. Test backward-compatible 'atlas install connector opencode'
 	if code := runInstall(false, tmpHome, []string{"connector", "opencode"}); code != exitOK {
 		t.Fatalf("runInstall connector opencode expected %d, got %d", exitOK, code)
 	}
@@ -67,5 +79,18 @@ func TestConnectorCommands(t *testing.T) {
 	}
 	if code := runConnector(false, []string{"uninstall", "opencode"}); code != exitOK {
 		t.Fatalf("runConnector final uninstall expected %d, got %d", exitOK, code)
+	}
+
+	// 8. Test Gemini, Claude Code, and Codex install/validate/uninstall
+	for _, harness := range []string{"gemini", "claude-code", "codex"} {
+		if code := runConnector(false, []string{"install", harness}); code != exitOK {
+			t.Fatalf("install %s expected %d, got %d", harness, exitOK, code)
+		}
+		if code := runConnector(false, []string{"validate", harness}); code != exitOK {
+			t.Fatalf("validate %s expected %d, got %d", harness, exitOK, code)
+		}
+		if code := runConnector(false, []string{"uninstall", harness}); code != exitOK {
+			t.Fatalf("uninstall %s expected %d, got %d", harness, exitOK, code)
+		}
 	}
 }
