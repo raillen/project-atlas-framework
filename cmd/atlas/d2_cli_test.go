@@ -92,3 +92,57 @@ func TestD2EnvCLI(t *testing.T) {
 		t.Fatalf("expected env list to show local and worktree: %s", outEnv)
 	}
 }
+
+func TestBuiltinToolCLI(t *testing.T) {
+	projectRoot, err := filepath.Abs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Tool list includes scan-secrets and analyze-complexity
+	cmdList := exec.Command("go", "run", "./cmd/atlas", "tool", "list")
+	cmdList.Dir = projectRoot
+	outList, err := cmdList.CombinedOutput()
+	if err != nil {
+		t.Fatalf("tool list failed: %v (%s)", err, outList)
+	}
+	for _, toolName := range []string{"scan-secrets", "analyze-complexity", "check-permissions"} {
+		if !strings.Contains(string(outList), toolName) {
+			t.Fatalf("expected tool list to contain %s: %s", toolName, outList)
+		}
+	}
+
+	// Tool stride
+	cmdStride := exec.Command("go", "run", "./cmd/atlas", "--json", "tool", "stride", "OrderService")
+	cmdStride.Dir = projectRoot
+	outStride, err := cmdStride.CombinedOutput()
+	if err != nil {
+		t.Fatalf("tool stride failed: %v (%s)", err, outStride)
+	}
+	if !strings.Contains(string(outStride), "OrderService") || !strings.Contains(string(outStride), "Spoofing") {
+		t.Fatalf("unexpected stride output: %s", outStride)
+	}
+
+	// Tool security-checklist
+	cmdChecklist := exec.Command("go", "run", "./cmd/atlas", "tool", "security-checklist", "42")
+	cmdChecklist.Dir = projectRoot
+	outChecklist, err := cmdChecklist.CombinedOutput()
+	if err != nil {
+		t.Fatalf("tool security-checklist failed: %v (%s)", err, outChecklist)
+	}
+	if !strings.Contains(string(outChecklist), "Security Review Checklist for PR #42") {
+		t.Fatalf("unexpected security checklist output: %s", outChecklist)
+	}
+
+	// Tool check-permissions (on temporary clean dir)
+	tempDir := t.TempDir()
+	cmdPerm := exec.Command("go", "run", "./cmd/atlas", "tool", "check-permissions", tempDir)
+	cmdPerm.Dir = projectRoot
+	outPerm, err := cmdPerm.CombinedOutput()
+	if err != nil {
+		t.Fatalf("tool check-permissions failed: %v (%s)", err, outPerm)
+	}
+	if !strings.Contains(string(outPerm), "Permissions clean") {
+		t.Fatalf("expected permissions clean: %s", outPerm)
+	}
+}

@@ -47,6 +47,9 @@ func normalizeTimestamps(value any) any {
 
 func TestConformanceInitMatchesPython(t *testing.T) {
 	root := repoRoot(t)
+	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+		t.Skip("python oracle retired: Python implementation removed from src/")
+	}
 	pyDir := t.TempDir()
 	goDir := t.TempDir()
 	profile := filepath.Join(root, "examples", "brasa", "project-profile.json")
@@ -72,6 +75,9 @@ func TestConformanceInitMatchesPython(t *testing.T) {
 
 func TestConformanceCompileMatchesPython(t *testing.T) {
 	root := repoRoot(t)
+	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+		t.Skip("python oracle retired: Python implementation removed from src/")
+	}
 	pyDir := t.TempDir()
 	goDir := t.TempDir()
 	profile := filepath.Join(root, "examples", "brasa", "project-profile.json")
