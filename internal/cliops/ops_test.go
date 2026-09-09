@@ -169,3 +169,62 @@ func TestFrameworkCheckMatchesPython(t *testing.T) {
 		t.Fatalf("framework mismatch: python=%v go=%v", want, got)
 	}
 }
+
+func TestInitScaffoldingCompleteness(t *testing.T) {
+	root := repoRoot(t)
+	svc := New(root)
+	dir := t.TempDir()
+	_, err := svc.Init(dir, filepath.Join(root, "examples", "brasa", "project-profile.json"))
+	if err != nil {
+		t.Fatalf("init: %v", err)
+	}
+
+	for _, rel := range []string{
+		"README.md",
+		"CHANGELOG.md",
+		"docs/architecture/clean-code-contract.md",
+		"docs/development/testing-strategy.md",
+		"docs/security/security-contract.md",
+	} {
+		info, err := os.Stat(filepath.Join(dir, rel))
+		if err != nil {
+			t.Fatalf("expected file %s to exist: %v", rel, err)
+		}
+		if info.Size() == 0 {
+			t.Fatalf("expected file %s to be non-empty", rel)
+		}
+	}
+
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			return nil
+		}
+		readmePath := filepath.Join(path, "README.md")
+		rinfo, rerr := os.Stat(readmePath)
+		if rerr != nil {
+			t.Errorf("directory %s is missing README.md: %v", path, rerr)
+		} else if rinfo.Size() == 0 {
+			t.Errorf("directory %s has empty README.md", path)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("walk failed: %v", err)
+	}
+
+	if errs := svc.Validate(dir); len(errs) != 0 {
+		t.Fatalf("validate failed: %v", errs)
+	}
+	findings, err := svc.Doctor(dir)
+	if err != nil {
+		t.Fatalf("doctor failed: %v", err)
+	}
+	for _, f := range findings {
+		if f["severity"] == "ERROR" {
+			t.Fatalf("doctor reported error: %v", f)
+		}
+	}
+}
