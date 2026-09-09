@@ -9,6 +9,29 @@
 | CI, testes e USB/devbox | `--home` ou `ATLAS_HOME` |
 | Compatibilidade v0.3 | Python + `pip install -e '.[dev]'` |
 
+## Instalação com uma linha
+
+Use o instalador da release publicada. Ele detecta Linux/macOS e amd64/arm64, baixa o binário correto, verifica `checksums.txt`, instala em `~/.local/bin/atlas` e executa `atlas setup`.
+
+```bash
+curl --fail --silent --show-error --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh | sh
+```
+
+Para revisar o script antes de executar:
+
+```bash
+curl --fail --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh -o install.sh
+less install.sh
+sh install.sh
+```
+
+Variáveis opcionais:
+
+```bash
+ATLAS_VERSION=v0.4.0-dev ATLAS_INSTALL_DIR="$HOME/.local/bin" sh install.sh
+ATLAS_HOME="$HOME/.atlas" sh install.sh
+```
+
 ## Desenvolvimento a partir do repositório
 
 ```bash

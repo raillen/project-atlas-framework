@@ -1,5 +1,23 @@
 # Manual de Desinstalação
 
+## Desinstalação com uma linha
+
+Baixe e revise o removedor. O modo `pure` remove somente estado gerenciado e preserva todos os arquivos de projetos:
+
+```bash
+curl --fail --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/uninstall.sh -o uninstall.sh
+less uninstall.sh
+sh uninstall.sh --mode pure --dry-run
+sh uninstall.sh --mode pure
+```
+
+Para remover também o executável encontrado em `PATH`:
+
+```bash
+sh uninstall.sh --mode full --remove-binary --dry-run
+sh uninstall.sh --mode full --remove-binary
+```
+
 ## Regra de segurança
 
 A desinstalação do Atlas nunca remove dados de projetos.

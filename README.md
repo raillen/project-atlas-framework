@@ -92,6 +92,20 @@ Generated artifacts are derived. The canonical project files and workforce packa
 
 ## Install, setup, and uninstall
 
+Install the latest published development release with checksum verification:
+
+```bash
+curl --fail --silent --show-error --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh | sh
+```
+
+For a reversible uninstall, review the script before running it:
+
+```bash
+curl --fail --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/uninstall.sh -o uninstall.sh
+sh uninstall.sh --mode pure --dry-run
+sh uninstall.sh --mode pure
+```
+
 Use a portable installation home when testing or working in CI:
 
 ```bash
