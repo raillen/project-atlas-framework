@@ -37,6 +37,28 @@ func runRuntime(asJSON bool, args []string) int {
 		fmt.Printf("%v\n", data)
 		return exitOK
 	case "run":
+		if len(args) > 1 && (args[1] == "cancel" || args[1] == "resume") {
+			run, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".atlas", "runtime", "runs", id+".json"))
+			if err != nil {
+				return serviceError(asJSON, err)
+			}
+			if args[1] == "cancel" {
+				run, err = run.Transition(runtime.RunCancelled)
+			} else {
+				run, err = run.Transition(runtime.RunRunning)
+			}
+			if err != nil {
+				return serviceError(asJSON, err)
+			}
+			if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "runs", id+".json"), run); err != nil {
+				return serviceError(asJSON, err)
+			}
+			if asJSON {
+				return printEnvelope(protocol.OkEnvelope(run))
+			}
+			fmt.Printf("Run %s: %s\n", run.ID, run.Status)
+			return exitOK
+		}
 		if len(args) > 1 && args[1] == "show" {
 			record, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".atlas", "runtime", "runs", id+".json"))
 			if err != nil {
@@ -52,7 +74,7 @@ func runRuntime(asJSON bool, args []string) int {
 		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "runs", id+".json"), run); err != nil {
 			return serviceError(asJSON, err)
 		}
-		record := runtime.ContinuationFromRun(run, runtime.RepositoryState{}, nil, []string{"start work"}, nil, []string{"inspect Goal and repository state"})
+		record := runtime.ContinuationFromRun(run, runtime.InspectRepository(root), nil, []string{"start work"}, nil, []string{"inspect Goal and repository state"})
 		if err := runtime.SaveJSON(path, record); err != nil {
 			return serviceError(asJSON, err)
 		}
