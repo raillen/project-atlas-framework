@@ -1,7 +1,8 @@
 # Living Plan & Interview Engine (M6)
 
-Status: **ACTIVE (Phase E — M6)** — canonical local specification derived from approved
+Status: **COMPLETE (M6 Exit Gate Passed)** — canonical local specification derived from approved
 Notion design (Livro Vivo pages 05 and 70). Repository version has authority over Notion.
+Exit gate evidence: [`docs/governance/m6-exit-gate.md`](../../docs/governance/m6-exit-gate.md).
 
 ## Purpose
 
