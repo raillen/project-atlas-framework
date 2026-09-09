@@ -1,0 +1,92 @@
+{
+  "generated_by": {
+    "project_atlas": "0.2.0"
+  },
+  "skills": [
+    "architecture-quality",
+    "atlas-navigation",
+    "clean-code",
+    "code-review",
+    "dependency-management",
+    "documentation",
+    "error-handling",
+    "git-workflow",
+    "goal-management",
+    "lean-progressive-context",
+    "project-intelligence",
+    "refactoring",
+    "release-engineering",
+    "secrets-security",
+    "secure-coding",
+    "security-review",
+    "supply-chain-security",
+    "testing-quality",
+    "threat-modeling"
+  ],
+  "reasons": {
+    "architecture-quality": [
+      "core"
+    ],
+    "atlas-navigation": [
+      "core"
+    ],
+    "clean-code": [
+      "bundle:cli",
+      "core"
+    ],
+    "code-review": [
+      "core"
+    ],
+    "dependency-management": [
+      "core"
+    ],
+    "documentation": [
+      "core"
+    ],
+    "error-handling": [
+      "bundle:cli",
+      "core"
+    ],
+    "git-workflow": [
+      "core"
+    ],
+    "goal-management": [
+      "core"
+    ],
+    "lean-progressive-context": [
+      "core"
+    ],
+    "project-intelligence": [
+      "core"
+    ],
+    "refactoring": [
+      "core"
+    ],
+    "release-engineering": [
+      "bundle:cli",
+      "core"
+    ],
+    "secrets-security": [
+      "risk"
+    ],
+    "secure-coding": [
+      "risk",
+      "risk-rule:security-risk"
+    ],
+    "security-review": [
+      "risk",
+      "risk-rule:security-risk"
+    ],
+    "supply-chain-security": [
+      "risk"
+    ],
+    "testing-quality": [
+      "bundle:cli",
+      "core"
+    ],
+    "threat-modeling": [
+      "risk",
+      "risk-rule:security-risk"
+    ]
+  }
+}

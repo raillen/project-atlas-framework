@@ -89,13 +89,22 @@ go run ./cmd/atlas compile --target claude-code --path ./my-project
 
 Generated artifacts are derived. The canonical project files and workforce packages remain the source of truth.
 
-## Install, setup, and uninstall
+## One-Link Install (Linux, macOS & Windows)
 
-Install the latest published development release with checksum verification:
+### Linux & macOS
+Downloads the release binary, verifies SHA-256 checksums, installs to `~/.local/bin/atlas`, and configures your shell `PATH` automatically:
 
 ```bash
-curl --fail --silent --show-error --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh | sh
 ```
+
+### Windows (PowerShell)
+Downloads the Windows binary, verifies SHA-256 checksums, installs to `%LOCALAPPDATA%\Programs\atlas\atlas.exe`, and permanently configures user `PATH`:
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.ps1 | iex"
+```
+
 
 For a reversible uninstall, review the script before running it:
 
