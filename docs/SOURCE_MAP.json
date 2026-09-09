@@ -145,6 +145,20 @@
       "semantic_role": "M9 exit gate formal validation: session events, summaries, handoff protocol, experience proposals, retention"
     },
     {
+      "local_path": "docs/governance/m10-exit-gate.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M10 Exit Gate — OpenCode Native Harness validation and criteria" }
+      ],
+      "semantic_role": "M10 exit gate formal validation: native compiler, TS plugin, tool guards, session hooks, and cleanup"
+    },
+    {
+      "local_path": "docs/integration/connector-contract.md",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "Connector Contract Specification" }
+      ],
+      "semantic_role": "Connector contract specification: capabilities, enforcement primitives, lifecycle operations"
+    },
+    {
       "local_path": "docs/security/trust-model.md",
       "notion_pages": [
         { "title": "12 — Segurança, Trust, Permissions e Supply Chain", "role": "trust layers, rules, connector trust, config merge, artifact markers, supply chain, docs contract, safe mode, classification, egress, secrets, redaction, injection boundary, audit" }
@@ -241,6 +255,13 @@
         { "title": "14 — Roadmap de Implementação v0.4", "role": "M9 Experience Layer — handoff protocol schema" }
       ],
       "semantic_role": "schema contract for structured agent state handoff"
+    },
+    {
+      "local_path": "schemas/connector-contract.schema.json",
+      "notion_pages": [
+        { "title": "14 — Roadmap de Implementação v0.4", "role": "M10 OpenCode Native Harness — connector contract schema" }
+      ],
+      "semantic_role": "schema contract for connector capabilities and lifecycle"
     }
   ]
 }
