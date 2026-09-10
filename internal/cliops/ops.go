@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/raillen/project-atlas-framework/internal/protocol"
 	"github.com/raillen/project-atlas-framework/internal/protocol/goals"
 	"github.com/raillen/project-atlas-framework/internal/resolver"
 	"github.com/raillen/project-atlas-framework/internal/validation"
@@ -120,7 +121,7 @@ func (s *Service) Init(root, profilePath string) (resolver.Resolution, error) {
 	if err != nil {
 		return resolver.Resolution{}, err
 	}
-	config := map[string]any{"version": 2, "protocol": map[string]any{"version": 3, "compatible": ">=3 <4"}, "framework": map[string]any{"name": "project-atlas-framework", "version": "0.2.0"}, "project": project, "stack": profile.Raw["stack"], "features": profile.Raw["features"], "risk": profile.Raw["risk"], "quality": profile.Raw["quality"], "documentation": map[string]any{"entrypoint": "docs/ATLAS.md", "canonical_format": "markdown", "site": map[string]any{"enabled": true, "source": "docs", "generated": true, "public_internal_views": true}, "audiences": []string{"user", "developer", "operations", "agent"}, "virtual_chunking": true}, "context": contextPolicy(), "intelligence": map[string]any{"enabled": true, "path": ".atlas/history/project-intelligence.json", "task_reports": true, "track_input_tokens": true, "track_output_tokens": true, "track_cost": true, "distinguish_observed_estimated": true}, "orchestration": map[string]any{"protocol": "POP", "orchestrator": orchestrator, "autonomy": autonomy}, "goals": map[string]any{"active_phase": "P00", "active_goal": nil}, "ai": profile.Raw["ai"]}
+	config := map[string]any{"version": 3, "protocol": map[string]any{"version": 3, "compatible": ">=3 <4"}, "framework": map[string]any{"name": "project-atlas-framework", "version": protocol.CLIVersion}, "project": project, "stack": profile.Raw["stack"], "features": profile.Raw["features"], "risk": profile.Raw["risk"], "quality": profile.Raw["quality"], "documentation": map[string]any{"entrypoint": "docs/ATLAS.md", "canonical_format": "markdown", "site": map[string]any{"enabled": true, "source": "docs", "generated": true, "public_internal_views": true}, "audiences": []string{"user", "developer", "operations", "agent"}, "virtual_chunking": true}, "context": contextPolicy(), "intelligence": map[string]any{"enabled": true, "path": ".atlas/history/project-intelligence.json", "task_reports": true, "track_input_tokens": true, "track_output_tokens": true, "track_cost": true, "distinguish_observed_estimated": true}, "orchestration": map[string]any{"protocol": "POP", "orchestrator": orchestrator, "autonomy": autonomy}, "goals": map[string]any{"active_phase": "P00", "active_goal": nil}, "ai": profile.Raw["ai"]}
 	if err := writeJSON(filepath.Join(root, "atlas.json"), config); err != nil {
 		return resolver.Resolution{}, err
 	}

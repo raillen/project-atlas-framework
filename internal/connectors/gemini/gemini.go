@@ -29,7 +29,7 @@ func (c *Connector) Name() string { return "Google Gemini CLI Connector" }
 func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "gemini",
-		Version:       "0.4.0",
+		Version:       protocol.CLIVersion,
 		ProtocolRange: ">=0.4.0 <0.5.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
@@ -67,7 +67,7 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 
 	// 1. Config
 	config := map[string]any{
-		"version":           "0.4.0",
+		"version":           protocol.CLIVersion,
 		"harness":           "gemini-cli",
 		"instructions_file": "prompts/atlas.md",
 		"commands_file":     "commands.json",
