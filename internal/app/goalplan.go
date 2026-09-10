@@ -5,10 +5,10 @@ import (
 	"sort"
 	"strings"
 
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
-	"github.com/raillen/project-atlas-framework/internal/protocol/goals"
-	"github.com/raillen/project-atlas-framework/internal/protocol/plans"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
+	"github.com/raillen/prumo/internal/protocol/goals"
+	"github.com/raillen/prumo/internal/protocol/plans"
 )
 
 // GoalPlanInput describes what the Goal/Plan integration needs from planning

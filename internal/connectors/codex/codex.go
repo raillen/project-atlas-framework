@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/install"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/install"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func init() {
@@ -30,7 +30,7 @@ func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "codex",
 		Version:       protocol.CLIVersion,
-		ProtocolRange: ">=0.4.0 <0.5.0",
+		ProtocolRange: ">=0.5.0 <0.6.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
 			connectors.CapCommands,
@@ -64,10 +64,10 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 
 	// 1. AGENTS.md entrypoint in project root
 	agentsMD := `# AGENTS.md
-This project uses Project Atlas v0.4.
+This project uses Prumo v0.5.
 
 - Follow Lean Progressive Context: smallest sufficient context, progressive expansion, pointer over payload.
-- Read ENTRYPOINT.md, atlas.json, and the active Goal.
+- Read ENTRYPOINT.md, prumo.json, and the active Goal.
 - Do not scan or read the entire repository by default.
 - Stop when verification evidence is sufficient.
 `
@@ -106,14 +106,14 @@ This project uses Project Atlas v0.4.
 
 	// 4. Ownership marker
 	ownership := map[string]any{
-		"atlas_generated": true,
-		"atlas_version":   protocol.CLIVersion,
+		"prumo_generated": true,
+		"prumo_version":   protocol.CLIVersion,
 		"generator":       "codex-connector",
 		"target":          "codex",
 		"managed":         true,
 		"created_paths":   created,
 	}
-	markerPath := filepath.Join(codexDir, ".atlas-generated.json")
+	markerPath := filepath.Join(codexDir, ".prumo-generated.json")
 	if err := writeJSON(markerPath, ownership); err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, 
 	required := []string{
 		"AGENTS.md",
 		".codex/config.json",
-		".codex/.atlas-generated.json",
+		".codex/.prumo-generated.json",
 	}
 	for _, rel := range required {
 		p := filepath.Join(projectRoot, rel)

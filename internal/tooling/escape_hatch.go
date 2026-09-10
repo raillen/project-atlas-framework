@@ -176,7 +176,7 @@ var languagePatterns = []patternRule{
 	{"yaml", "banned_api", "unsafe_yaml_load", regexp.MustCompile(`\byaml\.(load|unsafe_load)\s*\([^)]*Loader=(yaml\.)?(UnsafeLoader|Loader)\b`), "Insecure yaml.load without SafeLoader allows arbitrary code execution."},
 }
 
-var inlineAnnotationRegex = regexp.MustCompile(`ATLAS:ESCAPE_HATCH\[([A-Za-z0-9._-]+)\]`)
+var inlineAnnotationRegex = regexp.MustCompile(`PRUMO:ESCAPE_HATCH\[([A-Za-z0-9._-]+)\]`)
 
 func detectLanguage(path string) string {
 	base := filepath.Base(path)
@@ -257,10 +257,10 @@ func detectLanguage(path string) string {
 	}
 }
 
-// LoadEscapeHatchRegistry loads the registry file from .atlas/escape-hatches.json.
+// LoadEscapeHatchRegistry loads the registry file from .prumo/escape-hatches.json.
 func LoadEscapeHatchRegistry(root string) (*EscapeHatchRegistry, error) {
 	candidates := []string{
-		filepath.Join(root, ".atlas", "escape-hatches.json"),
+		filepath.Join(root, ".prumo", "escape-hatches.json"),
 		filepath.Join(root, "escape-hatches.json"),
 	}
 	for _, p := range candidates {
@@ -292,7 +292,7 @@ func ScanEscapeHatches(root string) (*EscapeHatchReport, error) {
 	skipDirs := map[string]bool{
 		".git":         true,
 		"node_modules": true,
-		".atlas/cache": true,
+		".prumo/cache": true,
 		"vendor":       true,
 		"target":       true,
 		"build":        true,

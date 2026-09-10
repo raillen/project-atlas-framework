@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 // FeedbackReport is the outcome of running the Living Plan feedback loop for a

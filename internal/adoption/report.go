@@ -42,7 +42,7 @@ type AdoptionReport struct {
 	Classification     RepositoryClassification `json:"classification"`
 	Profiles           []ProfileCandidate       `json:"profiles"`
 	Capabilities       []CapabilityProposal     `json:"capabilities"`
-	AtlasArtifacts     []string                 `json:"atlas_artifacts"`
+	PrumoArtifacts     []string                 `json:"prumo_artifacts"`
 	DocBindings        []CandidateBinding       `json:"doc_bindings"`
 	DocCoverage        DocCoverageSummary       `json:"doc_coverage"`
 	Contradictions     []string                 `json:"contradictions"`
@@ -86,18 +86,18 @@ func RunAdoptionAudit(root string, opts ScanOptions) (AdoptionReport, error) {
 		ByKind:          byKind,
 	}
 
-	// 7. Check existing Atlas artifacts
-	var atlasArtifacts []string
-	candidates := []string{"atlas.json", "AGENTS.md", ".cursorrules", ".clinerules", "copilot-instructions.md"}
+	// 7. Check existing Prumo artifacts
+	var prumoArtifacts []string
+	candidates := []string{"prumo.json", "AGENTS.md", ".cursorrules", ".clinerules", "copilot-instructions.md"}
 	for _, cand := range candidates {
 		if _, err := os.Stat(filepath.Join(root, cand)); err == nil {
-			atlasArtifacts = append(atlasArtifacts, cand)
+			prumoArtifacts = append(prumoArtifacts, cand)
 		}
 	}
-	if info, err := os.Stat(filepath.Join(root, ".atlas")); err == nil && info.IsDir() {
-		atlasArtifacts = append(atlasArtifacts, ".atlas/")
+	if info, err := os.Stat(filepath.Join(root, ".prumo")); err == nil && info.IsDir() {
+		prumoArtifacts = append(prumoArtifacts, ".prumo/")
 	}
-	sort.Strings(atlasArtifacts)
+	sort.Strings(prumoArtifacts)
 
 	// 8. Doc coverage
 	requiredContractsMap := make(map[string]bool)
@@ -165,12 +165,12 @@ func RunAdoptionAudit(root string, opts ScanOptions) (AdoptionReport, error) {
 	// 11. Next steps
 	var nextSteps []string
 	if ledger.Summary.RequiresConfirmation > 0 {
-		nextSteps = append(nextSteps, "Run 'atlas adopt --interactive' to review and confirm open questions and proposals")
+		nextSteps = append(nextSteps, "Run 'prumo adopt --interactive' to review and confirm open questions and proposals")
 	}
 	if len(missingContracts) > 0 {
 		nextSteps = append(nextSteps, fmt.Sprintf("Author documentation for missing contract(s): %s", strings.Join(missingContracts, ", ")))
 	}
-	nextSteps = append(nextSteps, "Run 'atlas adopt' without --audit-only to apply accepted configuration")
+	nextSteps = append(nextSteps, "Run 'prumo adopt' without --audit-only to apply accepted configuration")
 
 	report := AdoptionReport{
 		Version: 1,
@@ -184,7 +184,7 @@ func RunAdoptionAudit(root string, opts ScanOptions) (AdoptionReport, error) {
 		Classification: classification,
 		Profiles:       proposals.Profiles,
 		Capabilities:   proposals.Capabilities,
-		AtlasArtifacts: atlasArtifacts,
+		PrumoArtifacts: prumoArtifacts,
 		DocBindings:    mappingResult.Bindings,
 		DocCoverage:    docCoverage,
 		Contradictions: contradictions,
@@ -212,7 +212,7 @@ func RenderHumanReport(r AdoptionReport) string {
 	var b strings.Builder
 
 	b.WriteString("================================================================================\n")
-	b.WriteString("                    PROJECT ATLAS — REPOSITORY ADOPTION REPORT                 \n")
+	b.WriteString("                    PROJECT PRUMO — REPOSITORY ADOPTION REPORT                 \n")
 	b.WriteString("================================================================================\n\n")
 
 	// 1. Repository & Facts

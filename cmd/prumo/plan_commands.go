@@ -7,27 +7,27 @@ import (
 	"strings"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/app"
-	"github.com/raillen/project-atlas-framework/internal/contextcompiler"
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/protocol/goals"
+	"github.com/raillen/prumo/internal/app"
+	"github.com/raillen/prumo/internal/contextcompiler"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol/goals"
 )
 
-// planSessionData is the harness-neutral payload of `atlas plan status`.
+// planSessionData is the harness-neutral payload of `prumo plan status`.
 type planSessionData struct {
 	Sessions []app.SessionStatus `json:"sessions"`
 }
 
-// planQuestionsData is the payload of `atlas plan questions`.
+// planQuestionsData is the payload of `prumo plan questions`.
 type planQuestionsData struct {
 	Session   string                  `json:"session"`
 	Questions []planning.OpenQuestion `json:"questions"`
 }
 
-// planResumeData is the payload of `atlas plan resume` (and `atlas plan
-// --goal <id>` / `atlas plan --resume`). It is the interaction artifact a
+// planResumeData is the payload of `prumo plan resume` (and `prumo plan
+// --goal <id>` / `prumo plan --resume`). It is the interaction artifact a
 // harness reads to drive the next turn: the reconstructed session, its status,
 // the compiled context manifest with pressure, the open questions in impact
 // order, and whether the run can still proceed.
@@ -40,7 +40,7 @@ type planResumeData struct {
 	Resumable bool                     `json:"resumable"`
 }
 
-// runPlan drives the `atlas plan` interaction protocol. The same application
+// runPlan drives the `prumo plan` interaction protocol. The same application
 // service serves both surfaces: `--json` emits the stable machine envelope,
 // plain mode prints deterministic human text.
 func runPlan(asJSON bool, args []string) int {
@@ -286,7 +286,7 @@ func questionText(q planning.OpenQuestion) string {
 	return "see question record"
 }
 
-// planAnswerData is the payload of `atlas plan answer`: the decision proposal
+// planAnswerData is the payload of `prumo plan answer`: the decision proposal
 // derived from a classified answer, the question it closed, and the remaining
 // session state. It is the record a harness uses to advance the interaction.
 type planAnswerData struct {
@@ -301,14 +301,14 @@ type planAnswerData struct {
 	Note             string                    `json:"note,omitempty"`
 }
 
-// planDecisionsData is the payload of `atlas plan decisions`: the canonical
+// planDecisionsData is the payload of `prumo plan decisions`: the canonical
 // decision records recorded so far in a planning session.
 type planDecisionsData struct {
 	Session   string                      `json:"session"`
 	Decisions []planning.DecisionProposal `json:"decisions"`
 }
 
-// planDeltaData is the payload of `atlas plan delta [--apply]`: the
+// planDeltaData is the payload of `prumo plan delta [--apply]`: the
 // documentation impacts implied by the accepted decisions, the Documentation
 // Delta produced (proposed without --apply, applied with it), and the
 // recomputed readiness.
@@ -321,7 +321,7 @@ type planDeltaData struct {
 	Readiness docengine.ReadinessReport `json:"readiness"`
 }
 
-// planBlueprintData is the payload of `atlas plan blueprint [--plan]`: the
+// planBlueprintData is the payload of `prumo plan blueprint [--plan]`: the
 // proposed Goal intent/acceptance criteria for the session scope plus, when
 // required or explicitly requested, the task DAG.
 type planBlueprintData struct {

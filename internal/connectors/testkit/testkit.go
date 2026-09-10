@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/install"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/install"
 )
 
 // RunAll runs the full contract and compliance test suite against any connector.

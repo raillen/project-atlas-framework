@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/raillen/project-atlas-framework/internal/automation"
-	"github.com/raillen/project-atlas-framework/internal/packages"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/runtime"
+	"github.com/raillen/prumo/internal/automation"
+	"github.com/raillen/prumo/internal/packages"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/runtime"
 )
 
 func runPlatform(asJSON bool, args []string) int {
@@ -17,7 +17,7 @@ func runPlatform(asJSON bool, args []string) int {
 	}
 	switch args[0] {
 	case "package":
-		lock, err := runtime.LoadJSON[packages.Lock](filepath.Join(".atlas", "lock.json"))
+		lock, err := runtime.LoadJSON[packages.Lock](filepath.Join(".prumo", "lock.json"))
 		if err != nil {
 			return serviceError(asJSON, err)
 		}
@@ -29,7 +29,7 @@ func runPlatform(asJSON bool, args []string) int {
 		}
 		return exitOK
 	case "runtime":
-		entries, _ := os.ReadDir(filepath.Join(".atlas", "runtime"))
+		entries, _ := os.ReadDir(filepath.Join(".prumo", "runtime"))
 		names := []string{}
 		for _, e := range entries {
 			names = append(names, e.Name())

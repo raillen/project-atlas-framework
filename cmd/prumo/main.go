@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/raillen/project-atlas-framework/internal/cliops"
-	"github.com/raillen/project-atlas-framework/internal/project"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/cliops"
+	"github.com/raillen/prumo/internal/project"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 const (
@@ -21,7 +21,7 @@ const (
 )
 
 func repoRoot() string {
-	if root := os.Getenv("ATLAS_REPO_ROOT"); root != "" {
+	if root := os.Getenv("PRUMO_REPO_ROOT"); root != "" {
 		return root
 	}
 	if executable, err := os.Executable(); err == nil {
@@ -96,15 +96,15 @@ func serviceError(asJSON bool, err error) int {
 		return envelopeError(protocol.CodeValidationFailed, message)
 	}
 	fmt.Fprintf(os.Stderr, "error: %s\n", message)
-	if message == "not a recognized Project Atlas project: missing atlas.json" {
+	if message == "not a recognized Prumo project: missing prumo.json" {
 		return exitProjectError
 	}
 	return exitValidation
 }
 
 func usage() int {
-	fmt.Fprintf(os.Stderr, "Usage: atlas [--json] [--home <path>] <command> [subcommand] [flags]\n\n")
-	fmt.Fprintf(os.Stderr, "Run 'atlas --help' or 'atlas help' to view all available commands and options.\n")
+	fmt.Fprintf(os.Stderr, "Usage: prumo [--json] [--home <path>] <command> [subcommand] [flags]\n\n")
+	fmt.Fprintf(os.Stderr, "Run 'prumo --help' or 'prumo help' to view all available commands and options.\n")
 	return exitUsage
 }
 
@@ -258,7 +258,7 @@ func run(args []string) int {
 		if asJSON {
 			return printEnvelope(protocol.OkEnvelope(map[string]any{"agents": resolution.Agents, "skills": resolution.Skills, "recipes": resolution.Recipes}))
 		}
-		fmt.Printf("Initialized Project Atlas v0.4 in %s\n", path)
+		fmt.Printf("Initialized Prumo v0.5 in %s\n", path)
 		fmt.Printf("Agents: %d | Skills: %d | Recipes: %d\n", len(resolution.Agents), len(resolution.Skills), len(resolution.Recipes))
 		return exitOK
 	case "resolve":
@@ -305,7 +305,7 @@ func run(args []string) int {
 		if asJSON {
 			return printEnvelope(protocol.OkEnvelope(map[string]any{"path": path, "valid": true}))
 		}
-		fmt.Println("Project Atlas validation passed.")
+		fmt.Println("Prumo validation passed.")
 		return exitOK
 	case "goal":
 		return runGoal(svc, asJSON, rest[1:])
@@ -396,12 +396,12 @@ func run(args []string) int {
 		if asJSON {
 			target := output
 			if target == "" {
-				target = path + "/.atlas/" + baseName(path) + "-atlas-snapshot.zip"
+				target = path + "/.prumo/" + baseName(path) + "-prumo-snapshot.zip"
 			}
 			return printEnvelope(protocol.OkEnvelope(map[string]any{"output": target}))
 		}
 		if output == "" {
-			fmt.Println(path + "/.atlas/" + baseName(path) + "-atlas-snapshot.zip")
+			fmt.Println(path + "/.prumo/" + baseName(path) + "-prumo-snapshot.zip")
 		} else {
 			fmt.Println(output)
 		}
@@ -425,10 +425,10 @@ func run(args []string) int {
 			return printEnvelope(protocol.OkEnvelope(findings))
 		}
 		if len(findings) == 0 {
-			fmt.Println("Project Atlas Doctor: all checks passed cleanly.")
+			fmt.Println("Prumo Doctor: all checks passed cleanly.")
 			return exitOK
 		}
-		fmt.Printf("Project Atlas Doctor found %d issue(s):\n", len(findings))
+		fmt.Printf("Prumo Doctor found %d issue(s):\n", len(findings))
 		for _, finding := range findings {
 			fmt.Printf("[%s] (%s) %s\n", finding["severity"], finding["category"], finding["message"])
 		}
@@ -453,11 +453,11 @@ func run(args []string) int {
 		if asJSON {
 			return printEnvelope(protocol.OkEnvelope(map[string]any{"valid": true}))
 		}
-		fmt.Println("Project Atlas framework validation passed.")
+		fmt.Println("Prumo framework validation passed.")
 		return exitOK
 	default:
 		fmt.Fprintf(os.Stderr, "error: unknown command '%s'\n\n", rest[0])
-		fmt.Fprintf(os.Stderr, "Run 'atlas --help' or 'atlas help' to view all available commands.\n")
+		fmt.Fprintf(os.Stderr, "Run 'prumo --help' or 'prumo help' to view all available commands.\n")
 		return exitUsage
 	}
 }

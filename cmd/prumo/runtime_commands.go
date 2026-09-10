@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/raillen/project-atlas-framework/internal/contextcompiler"
-	"github.com/raillen/project-atlas-framework/internal/observability"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/runtime"
+	"github.com/raillen/prumo/internal/contextcompiler"
+	"github.com/raillen/prumo/internal/observability"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/runtime"
 )
 
 func runRuntime(asJSON bool, args []string) int {
@@ -27,10 +27,10 @@ func runRuntime(asJSON bool, args []string) int {
 			i++
 		}
 	}
-	path := filepath.Join(root, ".atlas", "runtime", "continuation.json")
+	path := filepath.Join(root, ".prumo", "runtime", "continuation.json")
 	switch args[0] {
 	case "runtime":
-		entries, _ := os.ReadDir(filepath.Join(root, ".atlas", "runtime"))
+		entries, _ := os.ReadDir(filepath.Join(root, ".prumo", "runtime"))
 		names := []string{}
 		for _, e := range entries {
 			names = append(names, e.Name())
@@ -51,7 +51,7 @@ func runRuntime(asJSON bool, args []string) int {
 			return exitUsage
 		}
 		bundle := map[string]any{"run_id": id, "sanitized": true, "repository": runtime.InspectRepository(root), "note": "prompts, secrets, transcripts, and raw sensitive payloads excluded"}
-		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "debug-"+id+".json"), bundle); err != nil {
+		if err := runtime.SaveJSON(filepath.Join(root, ".prumo", "runtime", "debug-"+id+".json"), bundle); err != nil {
 			return serviceError(asJSON, err)
 		}
 		if asJSON {
@@ -60,9 +60,9 @@ func runRuntime(asJSON bool, args []string) int {
 		fmt.Printf("Debug bundle written for %s\n", id)
 		return exitOK
 	case "context":
-		sources := []contextcompiler.Source{{Ref: "ENTRYPOINT.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "docs/ATLAS.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "README.md", Authority: "reference", Freshness: "current", TokenCost: 100}}
+		sources := []contextcompiler.Source{{Ref: "ENTRYPOINT.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "docs/PRUMO.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "README.md", Authority: "reference", Freshness: "current", TokenCost: 100}}
 		manifest := contextcompiler.Compile(id, sources, 200)
-		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "context", id+".manifest.json"), manifest); err != nil {
+		if err := runtime.SaveJSON(filepath.Join(root, ".prumo", "runtime", "context", id+".manifest.json"), manifest); err != nil {
 			return serviceError(asJSON, err)
 		}
 		if asJSON {
@@ -72,7 +72,7 @@ func runRuntime(asJSON bool, args []string) int {
 		return exitOK
 	case "budget":
 		if len(args) > 1 && args[1] == "explain" {
-			data, err := runtime.LoadJSON[map[string]any](filepath.Join(root, ".atlas", "runtime", "budget.json"))
+			data, err := runtime.LoadJSON[map[string]any](filepath.Join(root, ".prumo", "runtime", "budget.json"))
 			if err != nil {
 				return serviceError(asJSON, err)
 			}
@@ -82,7 +82,7 @@ func runRuntime(asJSON bool, args []string) int {
 			fmt.Printf("Budget: %v\n", data)
 			return exitOK
 		}
-		data, err := runtime.LoadJSON[map[string]any](filepath.Join(root, ".atlas", "runtime", "budget.json"))
+		data, err := runtime.LoadJSON[map[string]any](filepath.Join(root, ".prumo", "runtime", "budget.json"))
 		if err != nil {
 			return serviceError(asJSON, err)
 		}
@@ -93,9 +93,9 @@ func runRuntime(asJSON bool, args []string) int {
 		return exitOK
 	case "run":
 		if len(args) > 1 && args[1] == "context" {
-			sources := []contextcompiler.Source{{Ref: "ENTRYPOINT.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "docs/ATLAS.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "README.md", Authority: "reference", Freshness: "current", TokenCost: 100}}
+			sources := []contextcompiler.Source{{Ref: "ENTRYPOINT.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "docs/PRUMO.md", Authority: "canonical", Freshness: "current", TokenCost: 100}, {Ref: "README.md", Authority: "reference", Freshness: "current", TokenCost: 100}}
 			manifest := contextcompiler.Compile(id, sources, 200)
-			if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "context", id+".manifest.json"), manifest); err != nil {
+			if err := runtime.SaveJSON(filepath.Join(root, ".prumo", "runtime", "context", id+".manifest.json"), manifest); err != nil {
 				return serviceError(asJSON, err)
 			}
 			if asJSON {
@@ -105,7 +105,7 @@ func runRuntime(asJSON bool, args []string) int {
 			return exitOK
 		}
 		if len(args) > 1 && (args[1] == "cancel" || args[1] == "resume") {
-			run, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".atlas", "runtime", "runs", id+".json"))
+			run, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".prumo", "runtime", "runs", id+".json"))
 			if err != nil {
 				return serviceError(asJSON, err)
 			}
@@ -117,7 +117,7 @@ func runRuntime(asJSON bool, args []string) int {
 			if err != nil {
 				return serviceError(asJSON, err)
 			}
-			if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "runs", id+".json"), run); err != nil {
+			if err := runtime.SaveJSON(filepath.Join(root, ".prumo", "runtime", "runs", id+".json"), run); err != nil {
 				return serviceError(asJSON, err)
 			}
 			if asJSON {
@@ -127,7 +127,7 @@ func runRuntime(asJSON bool, args []string) int {
 			return exitOK
 		}
 		if len(args) > 1 && args[1] == "show" {
-			record, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".atlas", "runtime", "runs", id+".json"))
+			record, err := runtime.LoadJSON[runtime.Run](filepath.Join(root, ".prumo", "runtime", "runs", id+".json"))
 			if err != nil {
 				return serviceError(asJSON, err)
 			}
@@ -138,17 +138,17 @@ func runRuntime(asJSON bool, args []string) int {
 			return exitOK
 		}
 		run := runtime.NewRun(id, "", "")
-		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "runs", id+".json"), run); err != nil {
+		if err := runtime.SaveJSON(filepath.Join(root, ".prumo", "runtime", "runs", id+".json"), run); err != nil {
 			return serviceError(asJSON, err)
 		}
 		record := runtime.ContinuationFromRun(run, runtime.InspectRepository(root), nil, []string{"start work"}, nil, []string{"inspect Goal and repository state"})
 		if err := runtime.SaveJSON(path, record); err != nil {
 			return serviceError(asJSON, err)
 		}
-		if err := runtime.SaveJSON(filepath.Join(root, ".atlas", "runtime", "budget.json"), map[string]any{"version": 1, "scope": "run", "limits": map[string]any{"input_tokens": 8000, "output_tokens": 3000, "tool_calls": 20}, "usage": map[string]any{}, "reservations": []any{}, "mode": "soft"}); err != nil {
+		if err := runtime.SaveJSON(filepath.Join(root, ".prumo", "runtime", "budget.json"), map[string]any{"version": 1, "scope": "run", "limits": map[string]any{"input_tokens": 8000, "output_tokens": 3000, "tool_calls": 20}, "usage": map[string]any{}, "reservations": []any{}, "mode": "soft"}); err != nil {
 			return serviceError(asJSON, err)
 		}
-		if err := observability.Append(filepath.Join(root, ".atlas", "runtime", "events.jsonl"), observability.NewEvent("run.created", "run.created", id, nil)); err != nil {
+		if err := observability.Append(filepath.Join(root, ".prumo", "runtime", "events.jsonl"), observability.NewEvent("run.created", "run.created", id, nil)); err != nil {
 			return serviceError(asJSON, err)
 		}
 		if asJSON {

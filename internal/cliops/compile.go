@@ -8,13 +8,14 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/connectors/antigravity"
-	"github.com/raillen/project-atlas-framework/internal/connectors/gemini"
-	"github.com/raillen/project-atlas-framework/internal/connectors/opencode"
-	"github.com/raillen/project-atlas-framework/internal/protocol/goals"
-	"github.com/raillen/project-atlas-framework/internal/protocol/plans"
-	"github.com/raillen/project-atlas-framework/internal/resolver"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/connectors/antigravity"
+	"github.com/raillen/prumo/internal/connectors/gemini"
+	"github.com/raillen/prumo/internal/connectors/opencode"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol/goals"
+	"github.com/raillen/prumo/internal/protocol/plans"
+	"github.com/raillen/prumo/internal/resolver"
 )
 
 func stringsFromAny(value any) []string {
@@ -74,7 +75,7 @@ func copyWorkforcePackage(source, target string) []string {
 
 func renderItem(item map[string]any) string {
 	if item == nil {
-		return "# Atlas Resource\n"
+		return "# Prumo Resource\n"
 	}
 	name := fmt.Sprint(item["name"])
 	if name == "<nil>" || name == "" {
@@ -120,7 +121,7 @@ func (s *Service) Compile(root, target string) ([]string, error) {
 	skillsManifest, _ := readJSON(filepath.Join(root, ".ai", "skills", "manifest.json"))
 	selectedAgents := stringsFromAny(agentsManifest["agents"])
 	selectedSkills := stringsFromAny(skillsManifest["skills"])
-	adapter, err := os.ReadFile(filepath.Join(s.repoRoot, "src", "project_atlas", "resources", "adapters", target+".md"))
+	adapter, err := os.ReadFile(filepath.Join(s.repoRoot, "src", "prumo", "resources", "adapters", target+".md"))
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +141,7 @@ func (s *Service) Compile(root, target string) ([]string, error) {
 		}
 		created = append(created, path)
 		for _, id := range selectedAgents {
-			agentPackage := filepath.Join(s.repoRoot, "src", "project_atlas", "resources", "workforce", "agents", id, "AGENT.md")
+			agentPackage := filepath.Join(s.repoRoot, "src", "prumo", "resources", "workforce", "agents", id, "AGENT.md")
 			path := filepath.Join(root, prefix, "agents", id+".md")
 			if data, err := os.ReadFile(agentPackage); err == nil {
 				if err := writeText(path, string(data)); err != nil {
@@ -152,7 +153,7 @@ func (s *Service) Compile(root, target string) ([]string, error) {
 			created = append(created, path)
 		}
 		for _, id := range selectedSkills {
-			skillPackage := filepath.Join(s.repoRoot, "src", "project_atlas", "resources", "workforce", "skills", id)
+			skillPackage := filepath.Join(s.repoRoot, "src", "prumo", "resources", "workforce", "skills", id)
 			targetDir := filepath.Join(root, prefix, "skills", id)
 			if info, err := os.Stat(skillPackage); err == nil && info.IsDir() {
 				created = append(created, copyWorkforcePackage(skillPackage, targetDir)...)
@@ -167,20 +168,20 @@ func (s *Service) Compile(root, target string) ([]string, error) {
 		return created, nil
 	}
 	if target == "traycer" {
-		path := filepath.Join(root, ".traycer", "PROJECT_ATLAS.md")
+		path := filepath.Join(root, ".traycer", "PROJECT_PRUMO.md")
 		content := strings.TrimRight(string(adapter), "\n") + "\n\n## LPC/PCA\nUse `ENTRYPOINT.md` + active Goal + progressive context. Generated context is not canonical.\n\n## Selected agents\n- " + strings.Join(selectedAgents, "\n- ") + "\n\n## Selected skills\n- " + strings.Join(selectedSkills, "\n- ")
 		if err := writeText(path, content); err != nil {
 			return nil, err
 		}
 		return []string{path}, nil
 	}
-	path := filepath.Join(root, ".atlas", "runtime", "compiled", target, "ENTRYPOINT.md")
-	content := strings.TrimRight(string(adapter), "\n") + "\n\n## Lean Progressive Context\nStart at `ENTRYPOINT.md`, `atlas.json`, the active Goal and `docs/ATLAS.md`. Do not preload the repository. Expand only relevant document sections/symbols/tests.\n\nSelected agents: " + strings.Join(selectedAgents, ", ") + "\nSelected skills: " + strings.Join(selectedSkills, ", ") + "\n"
+	path := filepath.Join(root, ".prumo", "runtime", "compiled", target, "ENTRYPOINT.md")
+	content := strings.TrimRight(string(adapter), "\n") + "\n\n## Lean Progressive Context\nStart at `ENTRYPOINT.md`, `prumo.json`, the active Goal and `docs/PRUMO.md`. Do not preload the repository. Expand only relevant document sections/symbols/tests.\n\nSelected agents: " + strings.Join(selectedAgents, ", ") + "\nSelected skills: " + strings.Join(selectedSkills, ", ") + "\n"
 	if err := writeText(path, content); err != nil {
 		return nil, err
 	}
-	ownership := filepath.Join(filepath.Dir(path), ".atlas-generated.json")
-	if err := writeJSON(ownership, map[string]any{"atlas_generated": true, "atlas_version": "0.4.0-dev", "generator": "compiler", "managed": true, "target": target}); err != nil {
+	ownership := filepath.Join(filepath.Dir(path), ".prumo-generated.json")
+	if err := writeJSON(ownership, map[string]any{"prumo_generated": true, "prumo_version": protocol.CLIVersion, "generator": "compiler", "managed": true, "target": target}); err != nil {
 		return nil, err
 	}
 	return []string{path}, nil
@@ -207,7 +208,7 @@ func (s *Service) ExplainWorkforce(profilePath string) (map[string]any, error) {
 }
 
 func (s *Service) workforceItem(kind, id string) map[string]any {
-	base := filepath.Join(s.repoRoot, "src", "project_atlas", "resources", "workforce")
+	base := filepath.Join(s.repoRoot, "src", "prumo", "resources", "workforce")
 	var dir, manifestName, docName string
 	switch kind {
 	case "agents":
@@ -314,7 +315,7 @@ func provenanceValue(value any) any {
 
 func (s *Service) ExplainContext(root, taskID string) (map[string]any, error) {
 	budget := map[string]any{"max_input_tokens": 8000, "max_retrieved_tokens": 4000}
-	path := filepath.Join(root, ".atlas", "runtime", "context", taskID+".cpack.json")
+	path := filepath.Join(root, ".prumo", "runtime", "context", taskID+".cpack.json")
 	if data, err := os.ReadFile(path); err == nil {
 		var pack map[string]any
 		if err := json.Unmarshal(data, &pack); err == nil {
@@ -382,15 +383,15 @@ func (s *Service) Doctor(root string) ([]map[string]any, error) {
 	for _, message := range s.Validate(root) {
 		findings = append(findings, map[string]any{"category": "schema/structure", "severity": "ERROR", "message": message, "target": root})
 	}
-	atlas, err := readJSON(filepath.Join(root, "atlas.json"))
+	prumo, err := readJSON(filepath.Join(root, "prumo.json"))
 	if err == nil {
-		version, _ := atlas["version"].(float64)
+		version, _ := prumo["version"].(float64)
 		if version < 2 {
-			findings = append(findings, map[string]any{"category": "version", "severity": "ERROR", "message": fmt.Sprintf("Project version %v is deprecated; run 'atlas migrate'", atlas["version"]), "target": "atlas.json"})
+			findings = append(findings, map[string]any{"category": "version", "severity": "ERROR", "message": fmt.Sprintf("Project version %v is deprecated; run 'prumo migrate'", prumo["version"]), "target": "prumo.json"})
 		}
-		if protocolValue, ok := atlas["protocol"].(map[string]any); ok {
+		if protocolValue, ok := prumo["protocol"].(map[string]any); ok {
 			if protocolVersion, ok := protocolValue["version"].(float64); ok && protocolVersion > 3 {
-				findings = append(findings, map[string]any{"category": "protocol", "severity": "WARNING", "message": fmt.Sprintf("Project protocol version %v is newer than framework runtime v0.3", protocolVersion), "target": "atlas.json"})
+				findings = append(findings, map[string]any{"category": "protocol", "severity": "WARNING", "message": fmt.Sprintf("Project protocol version %v is newer than framework runtime v0.3", protocolVersion), "target": "prumo.json"})
 			}
 		}
 	}

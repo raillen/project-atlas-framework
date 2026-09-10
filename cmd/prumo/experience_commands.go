@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/experience"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/experience"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func runExperience(asJSON bool, args []string) int {
@@ -32,7 +32,7 @@ func runExperience(asJSON bool, args []string) int {
 		return experienceUsage()
 	}
 
-	storeDir := filepath.Join(path, ".atlas", "experience")
+	storeDir := filepath.Join(path, ".prumo", "experience")
 	prov, err := experience.NewFileProvider(storeDir)
 	if err != nil {
 		if asJSON {
@@ -52,7 +52,7 @@ func runExperience(asJSON bool, args []string) int {
 		if asJSON {
 			return printEnvelope(protocol.OkEnvelope(statusData))
 		}
-		fmt.Println("=== ATLAS EXPERIENCE LAYER STATUS ===")
+		fmt.Println("=== PRUMO EXPERIENCE LAYER STATUS ===")
 		fmt.Printf("Storage Directory: %s\n", storeDir)
 		fmt.Printf("Active Proposals:  %d\n", len(props))
 		return exitOK
@@ -93,7 +93,7 @@ func runExperience(asJSON bool, args []string) int {
 
 func runExperienceHandoff(prov *experience.FileProvider, asJSON bool, args []string) int {
 	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "usage: atlas experience handoff [create|show|ack] [options]\n")
+		fmt.Fprintf(os.Stderr, "usage: prumo experience handoff [create|show|ack] [options]\n")
 		return exitUsage
 	}
 
@@ -209,6 +209,6 @@ func runExperienceHandoff(prov *experience.FileProvider, asJSON bool, args []str
 }
 
 func experienceUsage() int {
-	fmt.Fprintf(os.Stderr, "usage: atlas experience <status|handoff|events> [args]\n")
+	fmt.Fprintf(os.Stderr, "usage: prumo experience <status|handoff|events> [args]\n")
 	return exitUsage
 }

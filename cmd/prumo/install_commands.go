@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/install"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/install"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func installationHome(explicit string) (string, error) {
@@ -23,8 +23,8 @@ func runSetup(asJSON bool, explicitHome string) int {
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
-	if manifest.AtlasVersion == "" {
-		manifest.AtlasVersion = protocol.CLIVersion
+	if manifest.PrumoVersion == "" {
+		manifest.PrumoVersion = protocol.CLIVersion
 	}
 	if manifest.BinaryPath == "" {
 		if executable, err := os.Executable(); err == nil {
@@ -42,7 +42,7 @@ func runSetup(asJSON bool, explicitHome string) int {
 	if asJSON {
 		return printEnvelope(protocol.OkEnvelope(result))
 	}
-	fmt.Printf("Atlas setup complete: %s\n", home)
+	fmt.Printf("Prumo setup complete: %s\n", home)
 	fmt.Printf("Detected harnesses:")
 	detected := false
 	for name, present := range harnesses {
@@ -107,8 +107,8 @@ func runInstall(asJSON bool, explicitHome string, args []string) int {
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
-	if manifest.AtlasVersion == "" {
-		manifest.AtlasVersion = protocol.CLIVersion
+	if manifest.PrumoVersion == "" {
+		manifest.PrumoVersion = protocol.CLIVersion
 	}
 	if executable, err := os.Executable(); err == nil && manifest.BinaryPath == "" {
 		manifest.BinaryPath = executable
@@ -123,7 +123,7 @@ func runInstall(asJSON bool, explicitHome string, args []string) int {
 	if asJSON {
 		return printEnvelope(protocol.OkEnvelope(result))
 	}
-	fmt.Printf("Atlas installation state updated: %s\n", home)
+	fmt.Printf("Prumo installation state updated: %s\n", home)
 	return exitOK
 }
 
@@ -175,6 +175,6 @@ func runUninstall(asJSON bool, explicitHome string, args []string) int {
 	if asJSON {
 		return printEnvelope(protocol.OkEnvelope(result))
 	}
-	fmt.Printf("Atlas uninstall completed; project data preserved.\n")
+	fmt.Printf("Prumo uninstall completed; project data preserved.\n")
 	return exitOK
 }

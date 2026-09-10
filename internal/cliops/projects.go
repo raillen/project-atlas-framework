@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/resolver"
-	"github.com/raillen/project-atlas-framework/internal/validation"
+	"github.com/raillen/prumo/internal/resolver"
+	"github.com/raillen/prumo/internal/validation"
 )
 
 func (s *Service) ContextPlan(root, task string) map[string]any {
 	profile, strategy, reason := pickContext(task)
-	atlas, _ := readJSON(filepath.Join(root, "atlas.json"))
-	contextValue, _ := atlas["context"].(map[string]any)
+	prumo, _ := readJSON(filepath.Join(root, "prumo.json"))
+	contextValue, _ := prumo["context"].(map[string]any)
 	profiles, _ := contextValue["profiles"].(map[string]any)
 	budget := profiles[profile]
 	if budget == nil {
@@ -51,7 +51,7 @@ func pickContext(task string) (string, string, string) {
 }
 
 func (s *Service) ReportSummary(root string) (map[string]any, error) {
-	data, err := readJSON(filepath.Join(root, ".atlas/history/project-intelligence.json"))
+	data, err := readJSON(filepath.Join(root, ".prumo/history/project-intelligence.json"))
 	if err != nil {
 		return map[string]any{}, nil
 	}
@@ -68,7 +68,7 @@ func (s *Service) ReportAdd(root, file string) (map[string]any, error) {
 	if id == "" || id == "<nil>" {
 		return nil, errors.New("Task report requires id")
 	}
-	path := filepath.Join(root, ".atlas/history/project-intelligence.json")
+	path := filepath.Join(root, ".prumo/history/project-intelligence.json")
 	data, _ := readJSON(path)
 	tasks, _ := data["tasks"].([]any)
 	filtered := []any{}
@@ -114,7 +114,7 @@ func number(value any) float64 {
 
 func (s *Service) Snapshot(root, output string) error {
 	if output == "" {
-		output = filepath.Join(root, ".atlas", filepath.Base(root)+"-atlas-snapshot.zip")
+		output = filepath.Join(root, ".prumo", filepath.Base(root)+"-prumo-snapshot.zip")
 	}
 	if err := os.MkdirAll(filepath.Dir(output), 0755); err != nil {
 		return err
@@ -126,7 +126,7 @@ func (s *Service) Snapshot(root, output string) error {
 	defer file.Close()
 	archive := zip.NewWriter(file)
 	defer archive.Close()
-	for _, base := range []string{"ENTRYPOINT.md", "atlas.json", "PROJECT_STATE.md", "docs", ".ai", ".atlas/history"} {
+	for _, base := range []string{"ENTRYPOINT.md", "prumo.json", "PROJECT_STATE.md", "docs", ".ai", ".prumo/history"} {
 		path := filepath.Join(root, base)
 		info, err := os.Stat(path)
 		if err != nil {
@@ -138,7 +138,7 @@ func (s *Service) Snapshot(root, output string) error {
 					return err
 				}
 				rel, _ := filepath.Rel(root, child)
-				if strings.Contains(rel, ".atlas/runtime") || strings.Contains(rel, ".atlas/cache") || strings.Contains(rel, "__pycache__") {
+				if strings.Contains(rel, ".prumo/runtime") || strings.Contains(rel, ".prumo/cache") || strings.Contains(rel, "__pycache__") {
 					return nil
 				}
 				return addZip(archive, child, rel)
@@ -170,35 +170,35 @@ func addZip(archive *zip.Writer, path, rel string) error {
 }
 
 func (s *Service) Migrate(root string, dryRun bool) (map[string]any, error) {
-	path := filepath.Join(root, "atlas.json")
+	path := filepath.Join(root, "prumo.json")
 	if _, err := readJSON(path); err != nil {
-		if _, statErr := os.Stat(filepath.Join(root, ".atlas", "project-profile.yaml")); statErr == nil {
+		if _, statErr := os.Stat(filepath.Join(root, ".prumo", "project-profile.yaml")); statErr == nil {
 			return s.migrateV1(root, dryRun)
 		}
 		if _, statErr := os.Stat(filepath.Join(root, "PROJECT_MANIFEST.yaml")); statErr == nil {
 			return s.migrateV1(root, dryRun)
 		}
-		return nil, fmt.Errorf("atlas.json not found; cannot migrate to v0.3")
+		return nil, fmt.Errorf("prumo.json not found; cannot migrate to v0.3")
 	}
 	return s.migrateV2(root, dryRun)
 }
 
-var legacyFiles = []string{"PROJECT_MANIFEST.yaml", ".atlas/project-profile.yaml", ".ai/agents/manifest.yaml", ".ai/skills/manifest.yaml", ".ai/recipes/manifest.yaml", ".ai/orchestration/model-policy.yaml", ".ai/orchestration/orchestrator.yaml", ".ai/orchestration/fallbacks.yaml", ".ai/orchestration/model-scorecard.yaml"}
+var legacyFiles = []string{"PROJECT_MANIFEST.yaml", ".prumo/project-profile.yaml", ".ai/agents/manifest.yaml", ".ai/skills/manifest.yaml", ".ai/recipes/manifest.yaml", ".ai/orchestration/model-policy.yaml", ".ai/orchestration/orchestrator.yaml", ".ai/orchestration/fallbacks.yaml", ".ai/orchestration/model-scorecard.yaml"}
 
 func (s *Service) migrateV1(root string, dryRun bool) (map[string]any, error) {
 	if dryRun {
 		return map[string]any{"from_version": 1, "to_version": 3, "dry_run": true, "changes": []string{"Migrate v1 YAML to v2 JSON, then v2 to v3"}, "snapshot": nil}, nil
 	}
-	profilePath := filepath.Join(root, ".atlas", "project-profile.yaml")
+	profilePath := filepath.Join(root, ".prumo", "project-profile.yaml")
 	profileData, err := os.ReadFile(profilePath)
 	if err != nil {
-		return nil, fmt.Errorf("Legacy .atlas/project-profile.yaml not found")
+		return nil, fmt.Errorf("Legacy .prumo/project-profile.yaml not found")
 	}
 	profile, err := parseLegacyYAML(string(profileData))
 	if err != nil {
 		return nil, err
 	}
-	profileFile := filepath.Join(root, ".atlas", "profile-v1.json")
+	profileFile := filepath.Join(root, ".prumo", "profile-v1.json")
 	if err := writeJSON(profileFile, profile); err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (s *Service) migrateV1(root string, dryRun bool) (map[string]any, error) {
 		return nil, err
 	}
 	_ = os.Remove(profileFile)
-	created := []string{filepath.Join(root, "atlas.json")}
+	created := []string{filepath.Join(root, "prumo.json")}
 	for _, old := range legacyGoals {
 		data, err := os.ReadFile(old)
 		if err != nil {
@@ -247,17 +247,17 @@ func (s *Service) migrateV1(root string, dryRun bool) (map[string]any, error) {
 }
 
 func (s *Service) migrateV2(root string, dryRun bool) (map[string]any, error) {
-	path := filepath.Join(root, "atlas.json")
+	path := filepath.Join(root, "prumo.json")
 	data, err := readJSON(path)
 	if err != nil {
-		return nil, fmt.Errorf("atlas.json not found; cannot migrate to v0.3")
+		return nil, fmt.Errorf("prumo.json not found; cannot migrate to v0.3")
 	}
 	changes := []string{}
 	version, _ := data["version"].(float64)
 	if version < 3 || data["protocol"] == nil {
 		data["version"] = 3
 		data["protocol"] = map[string]any{"version": 3, "compatible": ">=3 <4"}
-		changes = append(changes, "Updated atlas.json to version 3 with protocol metadata")
+		changes = append(changes, "Updated prumo.json to version 3 with protocol metadata")
 		if !dryRun {
 			if err := writeJSON(path, data); err != nil {
 				return nil, err
@@ -266,7 +266,7 @@ func (s *Service) migrateV2(root string, dryRun bool) (map[string]any, error) {
 	}
 	report := map[string]any{"from_version": 2, "to_version": 3, "dry_run": dryRun, "changes": changes, "snapshot": nil}
 	if !dryRun {
-		snapshot := filepath.Join(root, ".atlas", "snapshots", fmt.Sprintf("pre_migration_v03_%s.zip", time.Now().UTC().Format("20060102150405")))
+		snapshot := filepath.Join(root, ".prumo", "snapshots", fmt.Sprintf("pre_migration_v03_%s.zip", time.Now().UTC().Format("20060102150405")))
 		if err := s.Snapshot(root, snapshot); err != nil {
 			return nil, err
 		}
@@ -277,7 +277,7 @@ func (s *Service) migrateV2(root string, dryRun bool) (map[string]any, error) {
 
 func ValidateWorkforce(repoRoot string) []string {
 	out := []string{}
-	base := filepath.Join(repoRoot, "src", "project_atlas", "resources", "workforce")
+	base := filepath.Join(repoRoot, "src", "prumo", "resources", "workforce")
 	checks := []struct{ kind, manifest, document, schema string }{
 		{"skills", "manifest.json", "SKILL.md", "skill.schema.json"},
 		{"agents", "manifest.json", "AGENT.md", "agent.schema.json"},
@@ -402,11 +402,11 @@ func (s *Service) FrameworkCheck() []string {
 		out = append(out, ValidateWorkforce(s.repoRoot)...)
 	}
 	for _, name := range []string{"generic", "chatgpt", "claude", "kimi", "codex", "claude-code", "traycer"} {
-		if _, err := os.Stat(filepath.Join(s.repoRoot, "src", "project_atlas", "resources", "adapters", name+".md")); err != nil {
+		if _, err := os.Stat(filepath.Join(s.repoRoot, "src", "prumo", "resources", "adapters", name+".md")); err != nil {
 			out = append(out, "missing adapter: "+name)
 		}
 	}
-	for _, name := range []string{"atlas.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json", "repository-policy.schema.json", "documentation-contract.schema.json", "documentation-profile.schema.json", "documentation-binding.schema.json", "documentation-coverage.schema.json", "documentation-readiness.schema.json", "documentation-delta.schema.json", "documentation-finding.schema.json", "executor-session.schema.json", "checkpoint.schema.json", "continuation-record.schema.json", "budget-envelope.schema.json", "context-manifest.schema.json", "side-effect-journal.schema.json", "tool-descriptor.schema.json", "model-descriptor.schema.json", "execution-environment.schema.json"} {
+	for _, name := range []string{"prumo.schema.json", "project-profile.schema.json", "goal.schema.json", "model-policy.schema.json", "task-report.schema.json", "repository-policy.schema.json", "documentation-contract.schema.json", "documentation-profile.schema.json", "documentation-binding.schema.json", "documentation-coverage.schema.json", "documentation-readiness.schema.json", "documentation-delta.schema.json", "documentation-finding.schema.json", "executor-session.schema.json", "checkpoint.schema.json", "continuation-record.schema.json", "budget-envelope.schema.json", "context-manifest.schema.json", "side-effect-journal.schema.json", "tool-descriptor.schema.json", "model-descriptor.schema.json", "execution-environment.schema.json"} {
 		if _, err := os.Stat(filepath.Join(s.repoRoot, "schemas", name)); err != nil {
 			out = append(out, "missing schema: "+name)
 		}

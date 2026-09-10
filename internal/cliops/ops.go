@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/protocol/goals"
-	"github.com/raillen/project-atlas-framework/internal/resolver"
-	"github.com/raillen/project-atlas-framework/internal/validation"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol/goals"
+	"github.com/raillen/prumo/internal/resolver"
+	"github.com/raillen/prumo/internal/validation"
 )
 
 type Service struct{ repoRoot string }
@@ -72,7 +72,7 @@ func (s *Service) Resolve(profilePath string) (resolver.Resolution, error) {
 func (s *Service) ModelPolicy(profile resolver.Profile) (map[string]any, error) {
 	models := profile.PreferredModels()
 	if len(models) == 0 {
-		return nil, errors.New("No preferred LLM roster configured. Project Atlas requires model preferences to be explicitly selected for every new project.")
+		return nil, errors.New("No preferred LLM roster configured. Prumo requires model preferences to be explicitly selected for every new project.")
 	}
 	roster := []map[string]any{}
 	ids := []string{}
@@ -99,7 +99,7 @@ func contextPolicy() map[string]any {
 	}{{"small", 3000, 6000, 500, 1000, 1, 0}, {"medium", 8000, 16000, 1500, 3000, 2, 1}, {"large", 16000, 32000, 3000, 6000, 3, 1}} {
 		profiles[v.name] = map[string]any{"context_target_tokens": v.target, "context_hard_tokens": v.hard, "output_target_tokens": v.out, "output_hard_tokens": v.outHard, "max_expansion_rounds": v.rounds, "max_delegation_depth": v.depth}
 	}
-	return map[string]any{"methodology": "lean-progressive-context", "architecture": "progressive-context-architecture", "mode": "progressive", "budget_profile": "medium", "profiles": profiles, "deep_recursion": map[string]any{"enabled": false, "experimental": true}, "runtime": map[string]any{"database": ".atlas/runtime/atlas.db", "completed_context_ttl": "0d", "failed_context_ttl": "7d"}}
+	return map[string]any{"methodology": "lean-progressive-context", "architecture": "progressive-context-architecture", "mode": "progressive", "budget_profile": "medium", "profiles": profiles, "deep_recursion": map[string]any{"enabled": false, "experimental": true}, "runtime": map[string]any{"database": ".prumo/runtime/prumo.db", "completed_context_ttl": "0d", "failed_context_ttl": "7d"}}
 }
 func (s *Service) Init(root, profilePath string) (resolver.Resolution, error) {
 	profile, err := s.Profile(profilePath)
@@ -121,8 +121,8 @@ func (s *Service) Init(root, profilePath string) (resolver.Resolution, error) {
 	if err != nil {
 		return resolver.Resolution{}, err
 	}
-	config := map[string]any{"version": 3, "protocol": map[string]any{"version": 3, "compatible": ">=3 <4"}, "framework": map[string]any{"name": "project-atlas-framework", "version": protocol.CLIVersion}, "project": project, "stack": profile.Raw["stack"], "features": profile.Raw["features"], "risk": profile.Raw["risk"], "quality": profile.Raw["quality"], "documentation": map[string]any{"entrypoint": "docs/ATLAS.md", "canonical_format": "markdown", "site": map[string]any{"enabled": true, "source": "docs", "generated": true, "public_internal_views": true}, "audiences": []string{"user", "developer", "operations", "agent"}, "virtual_chunking": true}, "context": contextPolicy(), "intelligence": map[string]any{"enabled": true, "path": ".atlas/history/project-intelligence.json", "task_reports": true, "track_input_tokens": true, "track_output_tokens": true, "track_cost": true, "distinguish_observed_estimated": true}, "orchestration": map[string]any{"protocol": "POP", "orchestrator": orchestrator, "autonomy": autonomy}, "goals": map[string]any{"active_phase": "P00", "active_goal": nil}, "ai": profile.Raw["ai"]}
-	if err := writeJSON(filepath.Join(root, "atlas.json"), config); err != nil {
+	config := map[string]any{"version": 3, "protocol": map[string]any{"version": 3, "compatible": ">=3 <4"}, "framework": map[string]any{"name": "prumo", "version": protocol.CLIVersion}, "project": project, "stack": profile.Raw["stack"], "features": profile.Raw["features"], "risk": profile.Raw["risk"], "quality": profile.Raw["quality"], "documentation": map[string]any{"entrypoint": "docs/PRUMO.md", "canonical_format": "markdown", "site": map[string]any{"enabled": true, "source": "docs", "generated": true, "public_internal_views": true}, "audiences": []string{"user", "developer", "operations", "agent"}, "virtual_chunking": true}, "context": contextPolicy(), "intelligence": map[string]any{"enabled": true, "path": ".prumo/history/project-intelligence.json", "task_reports": true, "track_input_tokens": true, "track_output_tokens": true, "track_cost": true, "distinguish_observed_estimated": true}, "orchestration": map[string]any{"protocol": "POP", "orchestrator": orchestrator, "autonomy": autonomy}, "goals": map[string]any{"active_phase": "P00", "active_goal": nil}, "ai": profile.Raw["ai"]}
+	if err := writeJSON(filepath.Join(root, "prumo.json"), config); err != nil {
 		return resolver.Resolution{}, err
 	}
 	for _, kind := range []string{"agents", "skills", "recipes"} {
@@ -157,25 +157,25 @@ func (s *Service) Init(root, profilePath string) (resolver.Resolution, error) {
 		return resolver.Resolution{}, err
 	}
 	now := time.Now().UTC().Format(time.RFC3339Nano)
-	if err := writeOrderedJSON(filepath.Join(root, ".atlas", "history", "project-intelligence.json"), []orderedField{{"version", 1}, {"updated_at", now}, {"summary", map[string]any{"tasks": 0, "input_tokens": 0, "output_tokens": 0, "cached_tokens": 0, "direct_cost": 0.0}}, {"tasks", []any{}}, {"debt", []any{}}}); err != nil {
+	if err := writeOrderedJSON(filepath.Join(root, ".prumo", "history", "project-intelligence.json"), []orderedField{{"version", 1}, {"updated_at", now}, {"summary", map[string]any{"tasks": 0, "input_tokens": 0, "output_tokens": 0, "cached_tokens": 0, "direct_cost": 0.0}}, {"tasks", []any{}}, {"debt", []any{}}}); err != nil {
 		return resolver.Resolution{}, err
 	}
 	projectName := filepath.Base(root)
 	if name, ok := project["name"].(string); ok && name != "" {
 		projectName = name
 	}
-	for _, dir := range []string{"docs", ".atlas/runtime", ".atlas/cache", ".ai/goals/P00"} {
+	for _, dir := range []string{"docs", ".prumo/runtime", ".prumo/cache", ".ai/goals/P00"} {
 		if err := os.MkdirAll(filepath.Join(root, dir), 0755); err != nil {
 			return resolver.Resolution{}, err
 		}
 	}
-	if err := writeText(filepath.Join(root, "PROJECT_STATE.md"), "# Current Project State\n\n- Project: **"+projectName+"**\n- Framework: **Project Atlas 0.4.0-dev**\n- Current phase: **P00 — Foundation**\n- Current goal: **not selected**\n- Context methodology: **Lean Progressive Context (LPC)**\n- Last updated: `"+now+"`\n\n## Next action\n\nDefine and lock the first measurable Goal before implementation begins.\n\n## Recovery order\n\n1. `ENTRYPOINT.md` or the platform adapter.\n2. `atlas.json`.\n3. `PROJECT_STATE.md`.\n4. `docs/ATLAS.md`.\n5. Active Goal under `.ai/goals/`.\n6. Only relevant canonical docs/symbols/tests selected by the context strategy.\n\nDo not load the entire repository by default.\n"); err != nil {
+	if err := writeText(filepath.Join(root, "PROJECT_STATE.md"), "# Current Project State\n\n- Project: **"+projectName+"**\n- Prumo: **"+protocol.CLIVersion+"**\n- Current phase: **P00 — Foundation**\n- Current goal: **not selected**\n- Context methodology: **Lean Progressive Context (LPC)**\n- Last updated: `"+now+"`\n\n## Next action\n\nDefine and lock the first measurable Goal before implementation begins.\n\n## Recovery order\n\n1. `ENTRYPOINT.md` or the platform adapter.\n2. `prumo.json`.\n3. `PROJECT_STATE.md`.\n4. `docs/PRUMO.md`.\n5. Active Goal under `.ai/goals/`.\n6. Only relevant canonical docs/symbols/tests selected by the context strategy.\n\nDo not load the entire repository by default.\n"); err != nil {
 		return resolver.Resolution{}, err
 	}
-	if err := writeText(filepath.Join(root, "docs", "ATLAS.md"), "# Project Atlas — "+projectName+"\n\nThis is the intent router for humans and agents. Add links as stable documentation is created; do not create empty documentation solely to populate this map.\n\n## Current state\n\n- [Project state](../PROJECT_STATE.md)\n- `atlas.json` — canonical project configuration\n\n## I want to use the product\n\nAdd user tutorials, how-to guides, reference and explanations under `docs/user/` as needed.\n\n## I want to develop/contribute\n\nAdd onboarding, codebase tour, build/test/debug and task-oriented development guides under `docs/developer/`.\n\n## I want to operate/support it\n\nAdd deployment, configuration, observability, runbooks, backup/recovery, troubleshooting and release guidance under `docs/operations/` / `docs/support/` as needed.\n\n## I am an AI agent\n\n1. Read the active Goal.\n2. Use the smallest sufficient context.\n3. Prefer structural/symbol/document-section pointers.\n4. Expand only when evidence is insufficient.\n5. Keep output bounded.\n6. Update only impacted canonical docs.\n7. Record evidence/intelligence and garbage-collect temporary context.\n\n## Architecture / decisions / specs\n\nAdd stable architecture, ADR/RFC and specifications as the project grows.\n\n## Goals\n\nGoals live under `.ai/goals/<phase>/` and define measurable completion.\n\n## Durable intelligence\n\nCompact project/task intelligence lives in `.atlas/history/project-intelligence.json`.\n"); err != nil {
+	if err := writeText(filepath.Join(root, "docs", "PRUMO.md"), "# Prumo — "+projectName+"\n\nThis is the intent router for humans and agents. Add links as stable documentation is created; do not create empty documentation solely to populate this map.\n\n## Current state\n\n- [Project state](../PROJECT_STATE.md)\n- `prumo.json` — canonical project configuration\n\n## I want to use the product\n\nAdd user tutorials, how-to guides, reference and explanations under `docs/user/` as needed.\n\n## I want to develop/contribute\n\nAdd onboarding, codebase tour, build/test/debug and task-oriented development guides under `docs/developer/`.\n\n## I want to operate/support it\n\nAdd deployment, configuration, observability, runbooks, backup/recovery, troubleshooting and release guidance under `docs/operations/` / `docs/support/` as needed.\n\n## I am an AI agent\n\n1. Read the active Goal.\n2. Use the smallest sufficient context.\n3. Prefer structural/symbol/document-section pointers.\n4. Expand only when evidence is insufficient.\n5. Keep output bounded.\n6. Update only impacted canonical docs.\n7. Record evidence/intelligence and garbage-collect temporary context.\n\n## Architecture / decisions / specs\n\nAdd stable architecture, ADR/RFC and specifications as the project grows.\n\n## Goals\n\nGoals live under `.ai/goals/<phase>/` and define measurable completion.\n\n## Durable intelligence\n\nCompact project/task intelligence lives in `.prumo/history/project-intelligence.json`.\n"); err != nil {
 		return resolver.Resolution{}, err
 	}
-	if err := writeText(filepath.Join(root, "ENTRYPOINT.md"), "# Project Atlas entrypoint\n\n1. Read `atlas.json`, `PROJECT_STATE.md` and `docs/ATLAS.md`.\n2. Read the active Goal and its dependencies.\n3. Start with the minimum sufficient context; do not read the entire repository.\n4. Prefer Context Packs/task maps, document sections, symbols and related tests.\n5. Expand context only when evidence is insufficient; delegation depth is bounded by `atlas.json`.\n6. Never weaken acceptance criteria silently.\n7. Keep code, tests and canonical docs synchronized through a Documentation Delta.\n8. Keep intermediate output compact and do not persist task-specific context files.\n9. Before completion, record evidence/project intelligence and remove temporary context.\n"); err != nil {
+	if err := writeText(filepath.Join(root, "ENTRYPOINT.md"), "# Prumo entrypoint\n\n1. Read `prumo.json`, `PROJECT_STATE.md` and `docs/PRUMO.md`.\n2. Read the active Goal and its dependencies.\n3. Start with the minimum sufficient context; do not read the entire repository.\n4. Prefer Context Packs/task maps, document sections, symbols and related tests.\n5. Expand context only when evidence is insufficient; delegation depth is bounded by `prumo.json`.\n6. Never weaken acceptance criteria silently.\n7. Keep code, tests and canonical docs synchronized through a Documentation Delta.\n8. Keep intermediate output compact and do not persist task-specific context files.\n9. Before completion, record evidence/project intelligence and remove temporary context.\n"); err != nil {
 		return resolver.Resolution{}, err
 	}
 	if err := ensureGitignore(root); err != nil {
@@ -191,7 +191,7 @@ func writeManifestJSON(path, kind string, values []string, reasons map[string]an
 	var out strings.Builder
 	out.WriteString("{\n")
 	out.WriteString("  \"generated_by\": {\n")
-	out.WriteString("    \"project_atlas\": \"0.2.0\"\n")
+	out.WriteString("    \"prumo\": \"0.2.0\"\n")
 	out.WriteString("  },\n")
 	valuesJSON, _ := json.MarshalIndent(values, "  ", "  ")
 	out.WriteString(fmt.Sprintf("  %q: %s,\n", kind, valuesJSON))
@@ -233,7 +233,7 @@ func ensureGitignore(root string) error {
 	if data, err := os.ReadFile(path); err == nil {
 		current = string(data)
 	}
-	required := []string{".atlas/runtime/", ".atlas/cache/"}
+	required := []string{".prumo/runtime/", ".prumo/cache/"}
 	lines := strings.Split(current, "\n")
 	missing := []string{}
 	for _, need := range required {
@@ -251,7 +251,7 @@ func ensureGitignore(root string) error {
 	if len(missing) == 0 {
 		return nil
 	}
-	addition := "\n# Project Atlas derived/runtime state\n" + strings.Join(missing, "\n") + "\n"
+	addition := "\n# Prumo derived/runtime state\n" + strings.Join(missing, "\n") + "\n"
 	return os.WriteFile(path, []byte(strings.TrimRight(current, "\n")+addition), 0644)
 }
 func (s *Service) SchemaDir() string {
@@ -260,15 +260,15 @@ func (s *Service) SchemaDir() string {
 
 func (s *Service) Validate(root string) []string {
 	out := []string{}
-	if _, err := os.Stat(filepath.Join(root, "atlas.json")); err != nil {
-		return []string{"not a recognized Project Atlas project: missing atlas.json"}
+	if _, err := os.Stat(filepath.Join(root, "prumo.json")); err != nil {
+		return []string{"not a recognized Prumo project: missing prumo.json"}
 	}
-	for _, rel := range []string{"docs/ATLAS.md", "PROJECT_STATE.md", "atlas.json", ".ai/orchestration/model-policy.json", ".ai/agents/manifest.json", ".ai/skills/manifest.json", ".ai/recipes/manifest.json", ".atlas/history/project-intelligence.json"} {
+	for _, rel := range []string{"docs/PRUMO.md", "PROJECT_STATE.md", "prumo.json", ".ai/orchestration/model-policy.json", ".ai/agents/manifest.json", ".ai/skills/manifest.json", ".ai/recipes/manifest.json", ".prumo/history/project-intelligence.json"} {
 		if _, err := os.Stat(filepath.Join(root, rel)); err != nil {
 			out = append(out, "missing required file: "+rel)
 		}
 	}
-	for _, rel := range []string{"atlas.json", ".ai/orchestration/model-policy.json"} {
+	for _, rel := range []string{"prumo.json", ".ai/orchestration/model-policy.json"} {
 		if data, err := os.ReadFile(filepath.Join(root, rel)); err == nil && !json.Valid(data) {
 			out = append(out, rel+": invalid JSON")
 		}
@@ -292,13 +292,13 @@ func (s *Service) Validate(root string) []string {
 		}
 		_ = registry
 	}
-	check("atlas.json", "atlas.schema.json")
+	check("prumo.json", "prumo.schema.json")
 	check(".ai/orchestration/model-policy.json", "model-policy.schema.json")
 	for _, path := range listGoals(root) {
 		rel, _ := filepath.Rel(root, path)
 		check(rel, "goal.schema.json")
 	}
-	legacy := []string{"PROJECT_MANIFEST.yaml", ".atlas/project-profile.yaml", ".ai/agents/manifest.yaml", ".ai/skills/manifest.yaml", ".ai/recipes/manifest.yaml", ".ai/orchestration/model-policy.yaml", ".ai/orchestration/orchestrator.yaml", ".ai/orchestration/fallbacks.yaml", ".ai/orchestration/model-scorecard.yaml"}
+	legacy := []string{"PROJECT_MANIFEST.yaml", ".prumo/project-profile.yaml", ".ai/agents/manifest.yaml", ".ai/skills/manifest.yaml", ".ai/recipes/manifest.yaml", ".ai/orchestration/model-policy.yaml", ".ai/orchestration/orchestrator.yaml", ".ai/orchestration/fallbacks.yaml", ".ai/orchestration/model-scorecard.yaml"}
 	generated := []string{}
 	for _, rel := range legacy {
 		if _, err := os.Stat(filepath.Join(root, rel)); err == nil {
@@ -322,7 +322,7 @@ func (s *Service) Validate(root string) []string {
 		if len(limit) > 10 {
 			limit = limit[:10]
 		}
-		out = append(out, "v0.2 Atlas canonical state contains legacy YAML; migrate/remove: "+strings.Join(limit, ", "))
+		out = append(out, "v0.2 Prumo canonical state contains legacy YAML; migrate/remove: "+strings.Join(limit, ", "))
 	}
 	return out
 }

@@ -5,13 +5,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	_ "github.com/raillen/project-atlas-framework/internal/connectors/antigravity"
-	_ "github.com/raillen/project-atlas-framework/internal/connectors/claudecode"
-	_ "github.com/raillen/project-atlas-framework/internal/connectors/codex"
-	_ "github.com/raillen/project-atlas-framework/internal/connectors/gemini"
-	_ "github.com/raillen/project-atlas-framework/internal/connectors/opencode"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/connectors"
+	_ "github.com/raillen/prumo/internal/connectors/antigravity"
+	_ "github.com/raillen/prumo/internal/connectors/claudecode"
+	_ "github.com/raillen/prumo/internal/connectors/codex"
+	_ "github.com/raillen/prumo/internal/connectors/gemini"
+	_ "github.com/raillen/prumo/internal/connectors/opencode"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func runConnector(asJSON bool, args []string) int {
@@ -25,25 +25,25 @@ func runConnector(asJSON bool, args []string) int {
 		return runConnectorList(asJSON)
 	case "install":
 		if len(args) < 2 {
-			err := fmt.Errorf("usage: atlas connector install <name>")
+			err := fmt.Errorf("usage: prumo connector install <name>")
 			return serviceError(asJSON, err)
 		}
 		return runConnectorInstall(asJSON, args[1], args[2:])
 	case "uninstall":
 		if len(args) < 2 {
-			err := fmt.Errorf("usage: atlas connector uninstall <name>")
+			err := fmt.Errorf("usage: prumo connector uninstall <name>")
 			return serviceError(asJSON, err)
 		}
 		return runConnectorUninstall(asJSON, args[1], args[2:])
 	case "validate":
 		if len(args) < 2 {
-			err := fmt.Errorf("usage: atlas connector validate <name>")
+			err := fmt.Errorf("usage: prumo connector validate <name>")
 			return serviceError(asJSON, err)
 		}
 		return runConnectorValidate(asJSON, args[1], args[2:])
 	case "negotiate":
 		if len(args) < 2 {
-			err := fmt.Errorf("usage: atlas connector negotiate <name> [--strict] [--caps <list>]")
+			err := fmt.Errorf("usage: prumo connector negotiate <name> [--strict] [--caps <list>]")
 			return serviceError(asJSON, err)
 		}
 		return runConnectorNegotiate(asJSON, args[1], args[2:])
@@ -74,7 +74,7 @@ func runConnectorList(asJSON bool) int {
 		}))
 	}
 
-	fmt.Println("Registered Project Atlas Connectors:")
+	fmt.Println("Registered Prumo Connectors:")
 	for _, r := range records {
 		fmt.Printf("  • %s (%s) - v%s [%s]\n", r["name"], r["id"], r["version"], r["enforcement"])
 		if caps, ok := r["capabilities"].([]string); ok && len(caps) > 0 {

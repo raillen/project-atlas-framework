@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/traceability"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/traceability"
 )
 
 func runTrace(asJSON bool, args []string) int {
@@ -33,13 +33,13 @@ func runTrace(asJSON bool, args []string) int {
 
 	if ref == "" {
 		if asJSON {
-			return envelopeError("missing_ref", "atlas trace requires a reference (goal, decision, file, or requirement)")
+			return envelopeError("missing_ref", "prumo trace requires a reference (goal, decision, file, or requirement)")
 		}
-		fmt.Fprintf(os.Stderr, "error: atlas trace requires a reference (goal, decision, file, or requirement)\n")
+		fmt.Fprintf(os.Stderr, "error: prumo trace requires a reference (goal, decision, file, or requirement)\n")
 		return exitUsage
 	}
 
-	storeDir := filepath.Join(path, ".atlas", "traceability")
+	storeDir := filepath.Join(path, ".prumo", "traceability")
 	graph, err := traceability.LoadGraph(storeDir)
 	if err != nil {
 		if asJSON {
@@ -70,7 +70,7 @@ func runTrace(asJSON bool, args []string) int {
 		return printEnvelope(protocol.OkEnvelope(trace))
 	}
 
-	fmt.Printf("=== ATLAS TRACEABILITY: %s ===\n\n", trace.Root.Title)
+	fmt.Printf("=== PRUMO TRACEABILITY: %s ===\n\n", trace.Root.Title)
 	fmt.Printf("Node ID:   %s\n", trace.Root.ID)
 	fmt.Printf("Kind:      %s\n", trace.Root.Kind)
 	if trace.Root.Ref != "" {
@@ -134,7 +134,7 @@ func runJournal(asJSON bool, args []string) int {
 		}
 	}
 
-	storeDir := filepath.Join(path, ".atlas", "traceability")
+	storeDir := filepath.Join(path, ".prumo", "traceability")
 	jour, err := traceability.LoadJournal(storeDir)
 	if err != nil {
 		if asJSON {

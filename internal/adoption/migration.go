@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/migrations"
+	"github.com/raillen/prumo/internal/migrations"
 )
 
 // MigrationActionType represents the kind of file operation in an adoption migration proposal.
@@ -140,16 +140,16 @@ func GenerateMigrationProposals(report AdoptionReport) []AdoptionMigrationPropos
 	var proposals []AdoptionMigrationProposal
 	now := time.Now().UTC().Format(time.RFC3339)
 
-	// Check if repository already has atlas.json
-	hasAtlasJSON := false
-	for _, art := range report.AtlasArtifacts {
-		if strings.Contains(art, "atlas.json") {
-			hasAtlasJSON = true
+	// Check if repository already has prumo.json
+	hasPrumoJSON := false
+	for _, art := range report.PrumoArtifacts {
+		if strings.Contains(art, "prumo.json") {
+			hasPrumoJSON = true
 			break
 		}
 	}
 
-	if !hasAtlasJSON {
+	if !hasPrumoJSON {
 		profileName := "standard"
 		if len(report.Profiles) > 0 {
 			profileName = report.Profiles[0].Profile
@@ -171,30 +171,30 @@ func GenerateMigrationProposals(report AdoptionReport) []AdoptionMigrationPropos
 		contentBytes, _ := json.MarshalIndent(manifestData, "", "  ")
 
 		p := AdoptionMigrationProposal{
-			ID:             "amp-init-atlas",
-			Title:          "Initialize project-atlas manifest (atlas.json)",
-			Description:    fmt.Sprintf("Creates atlas.json with detected profile %q and %d capabilities.", profileName, len(capList)),
+			ID:             "amp-init-prumo",
+			Title:          "Initialize Prumo manifest (prumo.json)",
+			Description:    fmt.Sprintf("Creates prumo.json with detected profile %q and %d capabilities.", profileName, len(capList)),
 			SourceFinding:  "classification.primary_profile",
 			Status:         ProposalStatusPendingReview,
 			ReviewRequired: true,
 			Actions: []MigrationAction{
 				{
 					Type:        ActionCreateFile,
-					TargetPath:  "atlas.json",
+					TargetPath:  "prumo.json",
 					Content:     string(contentBytes) + "\n",
-					Description: "Create root atlas.json manifest with detected repository classification.",
+					Description: "Create root prumo.json manifest with detected repository classification.",
 					Reversible:  true,
 				},
 			},
 			Contract: migrations.Contract{
-				ID:                "contract-amp-init-atlas",
+				ID:                "contract-amp-init-prumo",
 				FromVersion:       "0.0.0",
-				ToVersion:         "0.4.0",
-				Preconditions:     []string{"manifest_absent:atlas.json"},
+				ToVersion:         "0.5.0",
+				Preconditions:     []string{"manifest_absent:prumo.json"},
 				BackupStrategy:    "none",
-				AffectedArtifacts: []string{"atlas.json"},
+				AffectedArtifacts: []string{"prumo.json"},
 				Reversible:        true,
-				Rollback:          "rm atlas.json",
+				Rollback:          "rm prumo.json",
 			},
 			CreatedAt: now,
 		}
@@ -228,7 +228,7 @@ func GenerateMigrationProposals(report AdoptionReport) []AdoptionMigrationPropos
 			Contract: migrations.Contract{
 				ID:                "contract-amp-doc-bindings",
 				FromVersion:       "0.0.0",
-				ToVersion:         "0.4.0",
+				ToVersion:         "0.5.0",
 				Preconditions:     []string{"documentation_directory_exists"},
 				BackupStrategy:    "backup_file",
 				AffectedArtifacts: []string{"docs/contracts/bindings.json"},

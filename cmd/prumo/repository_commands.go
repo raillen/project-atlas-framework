@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/repositorypolicy"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/repositorypolicy"
 )
 
 func runRepositoryPolicy(asJSON bool, args []string) int {

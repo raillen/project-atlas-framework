@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func runDocumentation(asJSON bool, args []string) int {

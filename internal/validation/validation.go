@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 type Registry struct {

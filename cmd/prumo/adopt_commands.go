@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/adoption"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/adoption"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func runAdopt(asJSON bool, args []string) int {

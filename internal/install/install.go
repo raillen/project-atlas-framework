@@ -9,7 +9,7 @@ import (
 )
 
 type Manifest struct {
-	AtlasVersion           string            `json:"atlas_version"`
+	PrumoVersion           string            `json:"prumo_version"`
 	BinaryPath             string            `json:"binary_path"`
 	Connectors             map[string]string `json:"connectors"`
 	CreatedPaths           []string          `json:"created_paths"`
@@ -28,14 +28,14 @@ func HomeDir(explicit string) (string, error) {
 	if explicit != "" {
 		return filepath.Abs(explicit)
 	}
-	if value := os.Getenv("ATLAS_HOME"); value != "" {
+	if value := os.Getenv("PRUMO_HOME"); value != "" {
 		return filepath.Abs(value)
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(home, ".atlas"), nil
+	return filepath.Join(home, ".prumo"), nil
 }
 
 func ManifestPath(home string) string { return filepath.Join(home, "config", "installation.json") }

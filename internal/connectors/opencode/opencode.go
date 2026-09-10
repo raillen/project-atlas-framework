@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/install"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/install"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func init() {
@@ -33,7 +33,7 @@ func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "opencode",
 		Version:       protocol.CLIVersion,
-		ProtocolRange: ">=0.4.0 <0.5.0",
+		ProtocolRange: ">=0.5.0 <0.6.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
 			connectors.CapRestrictTools,
@@ -55,7 +55,7 @@ func (c *Connector) Contract() connectors.Contract {
 		Install: map[string]any{
 			"directory": ".opencode",
 			"config":    ".opencode/opencode.json",
-			"plugin":    ".opencode/plugins/atlas.ts",
+			"plugin":    ".opencode/plugins/prumo.ts",
 		},
 		Cleanup: map[string]any{
 			"scope":   "project",
@@ -95,7 +95,7 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 		},
 		"protected_paths": []string{
 			".git/",
-			".atlas/credentials",
+			".prumo/credentials",
 			".env",
 		},
 		"require_confirmation": []string{
@@ -110,23 +110,23 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 	}
 	created = append(created, guardPath)
 
-	// 2. TypeScript Plugin: .opencode/plugins/atlas.ts
+	// 2. TypeScript Plugin: .opencode/plugins/prumo.ts
 	pluginContent := `/**
- * Project Atlas - OpenCode Native Plugin
- * Version: 0.4.0
+ * Prumo - OpenCode Native Plugin
+ * Version: 0.5.0
  * 
- * Provides native harness integration between OpenCode and Project Atlas:
+ * Provides native harness integration between OpenCode and Prumo:
  * - Pre-tool validation (tool guards)
  * - Session lifecycle hooks (start, end, tool events)
  * - Lean Progressive Context injection
- * - Command routing to Atlas CLI
+ * - Command routing to Prumo CLI
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 
-export interface AtlasPluginConfig {
-  atlasHome?: string;
+export interface PrumoPluginConfig {
+  prumoHome?: string;
   projectRoot?: string;
   enforceToolGuards?: boolean;
 }
@@ -152,7 +152,7 @@ export function validateToolExecution(toolName: string, params: Record<string, a
       if (cmd.includes(dangerous)) {
         return {
           allowed: false,
-          reason: 'Atlas Tool Guard blocked execution of dangerous command: ' + dangerous
+          reason: 'Prumo Tool Guard blocked execution of dangerous command: ' + dangerous
         };
       }
     }
@@ -160,10 +160,10 @@ export function validateToolExecution(toolName: string, params: Record<string, a
 
   if (toolName === 'write_file' || toolName === 'write_to_file') {
     const target = String(params.path || params.TargetFile || '');
-    if (target.includes('.git/') || target.includes('.atlas/credentials')) {
+    if (target.includes('.git/') || target.includes('.prumo/credentials')) {
       return {
         allowed: false,
-        reason: 'Atlas Tool Guard protected sensitive path: ' + target
+        reason: 'Prumo Tool Guard protected sensitive path: ' + target
       };
     }
   }
@@ -181,7 +181,7 @@ export function onSessionStart(sessionID: string, projectRoot: string): { contex
 
   return {
     contextPrompt: [
-      '[Project Atlas v0.4] Native OpenCode Harness Active',
+      '[Prumo v0.5] Native OpenCode Harness Active',
       'Follow Lean Progressive Context: smallest sufficient context, pointer over payload.',
       'Active Entrypoint:',
       entrypointText
@@ -191,7 +191,7 @@ export function onSessionStart(sessionID: string, projectRoot: string): { contex
 
 // Session Lifecycle Hook: End
 export function onSessionEnd(sessionID: string, projectRoot: string, summary?: string): void {
-  const expDir = path.join(projectRoot, '.atlas', 'experience');
+  const expDir = path.join(projectRoot, '.prumo', 'experience');
   if (fs.existsSync(expDir)) {
     const eventFile = path.join(expDir, 'session-' + sessionID + '.json');
     const payload = {
@@ -204,23 +204,23 @@ export function onSessionEnd(sessionID: string, projectRoot: string, summary?: s
   }
 }
 `
-	pluginPath := filepath.Join(opencodeDir, "plugins", "atlas.ts")
+	pluginPath := filepath.Join(opencodeDir, "plugins", "prumo.ts")
 	if err := writeText(pluginPath, pluginContent); err != nil {
 		return nil, fmt.Errorf("failed to write TypeScript plugin: %w", err)
 	}
 	created = append(created, pluginPath)
 
-	// 3. Primary Agent: .opencode/agents/atlas.md
-	atlasAgent := `---
-name: Atlas
+	// 3. Primary Agent: .opencode/agents/prumo.md
+	prumoAgent := `---
+name: Prumo
 role: Primary Orchestrator
-description: Canonical Project Atlas primary agent in OpenCode
-version: 0.4.0
+description: Canonical Prumo primary agent in OpenCode
+version: 0.5.0
 ---
 
-# Project Atlas Primary Agent
+# Prumo Primary Agent
 
-You are the primary orchestrator of Project Atlas within OpenCode.
+You are the primary orchestrator of Prumo within OpenCode.
 
 ## Core Directives
 1. **Lean Progressive Context (LPC/PCA)**: Smallest sufficient context, progressive expansion, pointer over payload. Never preload the whole repository.
@@ -236,11 +236,11 @@ You are the primary orchestrator of Project Atlas within OpenCode.
    - verifier: test suites, linters, and quality gates
 5. **Zero-Transcript Experience**: Record structured evidence and session handoffs without conversational bloat.
 `
-	atlasAgentPath := filepath.Join(opencodeDir, "agents", "atlas.md")
-	if err := writeText(atlasAgentPath, atlasAgent); err != nil {
+	prumoAgentPath := filepath.Join(opencodeDir, "agents", "prumo.md")
+	if err := writeText(prumoAgentPath, prumoAgent); err != nil {
 		return nil, fmt.Errorf("failed to write primary agent: %w", err)
 	}
-	created = append(created, atlasAgentPath)
+	created = append(created, prumoAgentPath)
 
 	// 4. Subagents: .opencode/agents/architect.md, executor.md, verifier.md
 	subagents := map[string]string{
@@ -272,7 +272,7 @@ Purpose: Automated pragmatic clean code and security boundary review.
 Risk Level: low
 `,
 		"goal-management/SKILL.md": `# Goal Management Skill
-Purpose: Manage and transition lifecycle states of Project Atlas goals.
+Purpose: Manage and transition lifecycle states of Prumo goals.
 Risk Level: low
 `,
 		"evidence-collection/SKILL.md": `# Evidence Collection Skill
@@ -288,18 +288,18 @@ Risk Level: low
 		created = append(created, skillPath)
 	}
 
-	// 6. Commands: .opencode/commands/atlas.json
+	// 6. Commands: .opencode/commands/prumo.json
 	commands := map[string]any{
 		"commands": []map[string]any{
-			{"name": "goal", "description": "Manage Atlas goals", "action": "atlas goal"},
-			{"name": "plan", "description": "Inspect Living Plan", "action": "atlas plan"},
-			{"name": "trace", "description": "Trace requirements to code and evidence", "action": "atlas trace"},
-			{"name": "experience", "description": "View experience events and handoff", "action": "atlas experience"},
-			{"name": "adopt", "description": "Scan and adopt repository", "action": "atlas adopt"},
-			{"name": "status", "description": "Show Atlas project status", "action": "atlas status"},
+			{"name": "goal", "description": "Manage Prumo goals", "action": "prumo goal"},
+			{"name": "plan", "description": "Inspect Living Plan", "action": "prumo plan"},
+			{"name": "trace", "description": "Trace requirements to code and evidence", "action": "prumo trace"},
+			{"name": "experience", "description": "View experience events and handoff", "action": "prumo experience"},
+			{"name": "adopt", "description": "Scan and adopt repository", "action": "prumo adopt"},
+			{"name": "status", "description": "Show Prumo project status", "action": "prumo status"},
 		},
 	}
-	commandsPath := filepath.Join(opencodeDir, "commands", "atlas.json")
+	commandsPath := filepath.Join(opencodeDir, "commands", "prumo.json")
 	if err := writeJSON(commandsPath, commands); err != nil {
 		return nil, fmt.Errorf("failed to write commands: %w", err)
 	}
@@ -308,13 +308,13 @@ Risk Level: low
 	// 7. OpenCode Config: .opencode/opencode.json
 	opencodeConfig := map[string]any{
 		"$schema":       "https://opencode.ai/schema/v1.json",
-		"name":          "Project Atlas OpenCode Integration",
+		"name":          "Prumo OpenCode Integration",
 		"version":       protocol.CLIVersion,
-		"plugin":        []string{"plugins/atlas.ts"},
-		"primary_agent": "agents/atlas.md",
+		"plugin":        []string{"plugins/prumo.ts"},
+		"primary_agent": "agents/prumo.md",
 		"agents_dir":    "agents",
 		"skills_dir":    "skills",
-		"commands_file": "commands/atlas.json",
+		"commands_file": "commands/prumo.json",
 		"guards_file":   "guards/tool-policy.json",
 		"hooks": map[string]bool{
 			"on_session_start": true,
@@ -329,16 +329,16 @@ Risk Level: low
 	}
 	created = append(created, configPath)
 
-	// 8. Ownership Marker: .opencode/.atlas-generated.json
+	// 8. Ownership Marker: .opencode/.prumo-generated.json
 	ownership := map[string]any{
-		"atlas_generated": true,
-		"atlas_version":   protocol.CLIVersion,
+		"prumo_generated": true,
+		"prumo_version":   protocol.CLIVersion,
 		"generator":       "opencode-compiler",
 		"target":          "opencode",
 		"managed":         true,
 		"created_paths":   created,
 	}
-	ownershipPath := filepath.Join(opencodeDir, ".atlas-generated.json")
+	ownershipPath := filepath.Join(opencodeDir, ".prumo-generated.json")
 	if err := writeJSON(ownershipPath, ownership); err != nil {
 		return nil, fmt.Errorf("failed to write ownership marker: %w", err)
 	}
@@ -351,14 +351,14 @@ Risk Level: low
 		CreatedPaths: created,
 		ManifestPath: configPath,
 		Metadata: map[string]any{
-			"primary_agent": atlasAgentPath,
+			"primary_agent": prumoAgentPath,
 			"plugin":        pluginPath,
 			"guard_policy":  guardPath,
 		},
 	}, nil
 }
 
-// Install compiles native artifacts and registers OpenCode with ATLAS_HOME.
+// Install compiles native artifacts and registers OpenCode with PRUMO_HOME.
 func (c *Connector) Install(home string, projectRoot string, opts connectors.InstallOptions) (*connectors.InstallResult, error) {
 	if home == "" {
 		h, err := install.HomeDir("")
@@ -490,11 +490,11 @@ func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, 
 
 	requiredFiles := []string{
 		"opencode.json",
-		"plugins/atlas.ts",
-		"agents/atlas.md",
+		"plugins/prumo.ts",
+		"agents/prumo.md",
 		"guards/tool-policy.json",
-		"commands/atlas.json",
-		".atlas-generated.json",
+		"commands/prumo.json",
+		".prumo-generated.json",
 	}
 
 	for _, rel := range requiredFiles {
@@ -514,16 +514,16 @@ func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, 
 	}
 
 	// Verify ownership marker
-	ownershipPath := filepath.Join(opencodeDir, ".atlas-generated.json")
+	ownershipPath := filepath.Join(opencodeDir, ".prumo-generated.json")
 	if data, err := os.ReadFile(ownershipPath); err == nil {
 		var marker map[string]any
 		if err := json.Unmarshal(data, &marker); err != nil {
 			result.Valid = false
-			result.Errors = append(result.Errors, "invalid JSON in .atlas-generated.json")
+			result.Errors = append(result.Errors, "invalid JSON in .prumo-generated.json")
 		} else {
 			if marker["managed"] != true {
 				result.Valid = false
-				result.Errors = append(result.Errors, ".atlas-generated.json missing managed: true")
+				result.Errors = append(result.Errors, ".prumo-generated.json missing managed: true")
 			}
 			if marker["target"] != "opencode" {
 				result.Valid = false

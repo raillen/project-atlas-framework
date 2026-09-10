@@ -6,11 +6,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/raillen/project-atlas-framework/internal/environment"
-	"github.com/raillen/project-atlas-framework/internal/modelregistry"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/toolgateway"
-	"github.com/raillen/project-atlas-framework/internal/tooling"
+	"github.com/raillen/prumo/internal/environment"
+	"github.com/raillen/prumo/internal/modelregistry"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/toolgateway"
+	"github.com/raillen/prumo/internal/tooling"
 )
 
 func defaultToolRegistry() *toolgateway.Registry {

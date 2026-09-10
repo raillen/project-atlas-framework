@@ -8,7 +8,7 @@ import (
 )
 
 // MappingCandidate represents a candidate mapping from existing brownfield repository
-// documents to an Atlas Documentation Contract, without forcing filename changes.
+// documents to an Prumo Documentation Contract, without forcing filename changes.
 type MappingCandidate struct {
 	ID         string         `json:"id"`
 	ContractID string         `json:"contract_id"`

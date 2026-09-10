@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/indexing"
-	"github.com/raillen/project-atlas-framework/internal/runtime"
+	"github.com/raillen/prumo/internal/indexing"
+	"github.com/raillen/prumo/internal/runtime"
 )
 
 // ScanBudget controls how much work the scanner performs in a single pass.
@@ -398,7 +398,7 @@ func isManifest(name string) bool {
 		"pom.xml": true, "build.gradle": true, "build.gradle.kts": true,
 		"gemfile": true, "composer.json": true, "mix.exs": true,
 		"pubspec.yaml": true, "deno.json": true, "deno.jsonc": true,
-		"atlas.json": true, "requirements.txt": true,
+		"prumo.json": true, "requirements.txt": true,
 	}
 	return manifests[name]
 }

@@ -10,8 +10,8 @@ import (
 	"sort"
 	"strings"
 
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 // sessionIDPattern constrains planning session ids to stable identifiers that
@@ -151,7 +151,7 @@ func LatestSession(root string) (planning.PlanningSession, error) {
 
 // FocusSession returns the session for a goal scope, creating a blank one and
 // persisting it when none exists yet. An explicit missing sessionID creates a
-// new session under that id. This gives `atlas plan --goal <id>` deterministic
+// new session under that id. This gives `prumo plan --goal <id>` deterministic
 // create-or-resume semantics.
 func FocusSession(root, goal, sessionID string) (planning.PlanningSession, error) {
 	scope := "goal:" + strings.TrimSpace(goal)
@@ -198,7 +198,7 @@ func LoadSessionBindings(root string) ([]docengine.Binding, error) {
 }
 
 // SessionStatus is the machine-readable summary of a planning session used by
-// `atlas plan status`. Every field is derived from structured state only.
+// `prumo plan status`. Every field is derived from structured state only.
 type SessionStatus struct {
 	SessionID        string `json:"session_id"`
 	RunID            string `json:"run_id"`
