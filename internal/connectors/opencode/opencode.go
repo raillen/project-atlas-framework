@@ -310,7 +310,7 @@ Risk Level: low
 		"$schema":       "https://opencode.ai/schema/v1.json",
 		"name":          "Project Atlas OpenCode Integration",
 		"version":       "0.4.0",
-		"plugin":        "plugins/atlas.ts",
+		"plugin":        []string{"plugins/atlas.ts"},
 		"primary_agent": "agents/atlas.md",
 		"agents_dir":    "agents",
 		"skills_dir":    "skills",

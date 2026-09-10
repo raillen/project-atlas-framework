@@ -120,6 +120,24 @@ func TestOpenCodeCompileAndValidate(t *testing.T) {
 	if marker["managed"] != true || marker["target"] != "opencode" {
 		t.Fatalf("unexpected marker contents: %v", marker)
 	}
+
+	// Verify opencode.json schema compliance (plugin must be array of strings)
+	configPath := filepath.Join(projectRoot, ".opencode", "opencode.json")
+	cfgData, err := os.ReadFile(configPath)
+	if err != nil {
+		t.Fatalf("failed to read opencode.json: %v", err)
+	}
+	var cfg map[string]any
+	if err := json.Unmarshal(cfgData, &cfg); err != nil {
+		t.Fatalf("failed to unmarshal opencode.json: %v", err)
+	}
+	plugins, ok := cfg["plugin"].([]any)
+	if !ok || len(plugins) == 0 {
+		t.Fatalf("expected plugin to be a non-empty array in opencode.json, got: %T (%v)", cfg["plugin"], cfg["plugin"])
+	}
+	if plugins[0] != "plugins/atlas.ts" {
+		t.Fatalf("expected plugin[0] to be plugins/atlas.ts, got: %v", plugins[0])
+	}
 }
 
 func TestOpenCodeInstallAndUninstall(t *testing.T) {
