@@ -1,11 +1,11 @@
-# Project Atlas — reference-project
+# Prumo — conformance-project
 
 This is the intent router for humans and agents. Add links as stable documentation is created; do not create empty documentation solely to populate this map.
 
 ## Current state
 
 - [Project state](../PROJECT_STATE.md)
-- `atlas.json` — canonical project configuration
+- `prumo.json` — canonical project configuration
 
 ## I want to use the product
 
@@ -39,4 +39,4 @@ Goals live under `.ai/goals/<phase>/` and define measurable completion.
 
 ## Durable intelligence
 
-Compact project/task intelligence lives in `.atlas/history/project-intelligence.json`.
+Compact project/task intelligence lives in `.prumo/history/project-intelligence.json`.

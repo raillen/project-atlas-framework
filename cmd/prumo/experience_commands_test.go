@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/experience"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/experience"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func TestRunExperienceStatus(t *testing.T) {
@@ -19,7 +19,7 @@ func TestRunExperienceStatus(t *testing.T) {
 	if code != exitOK {
 		t.Fatalf("expected exitOK, got %d; out: %s", code, out)
 	}
-	if !strings.Contains(out, "ATLAS EXPERIENCE LAYER STATUS") {
+	if !strings.Contains(out, "PRUMO EXPERIENCE LAYER STATUS") {
 		t.Errorf("expected status header, got:\n%s", out)
 	}
 
@@ -96,7 +96,7 @@ func TestRunExperienceHandoffLifecycle(t *testing.T) {
 
 func TestRunExperienceEvents(t *testing.T) {
 	tmpDir := t.TempDir()
-	storeDir := filepath.Join(tmpDir, ".atlas", "experience")
+	storeDir := filepath.Join(tmpDir, ".prumo", "experience")
 
 	prov, err := experience.NewFileProvider(storeDir)
 	if err != nil {

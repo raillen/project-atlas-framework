@@ -21,8 +21,8 @@ func TestMigrateLegacyProject(t *testing.T) {
 			t.Fatalf("write: %v", err)
 		}
 	}
-	write(".atlas/project-profile.yaml", "version: 1\nproject:\n  name: Legacy\n  type: [cli]\nai:\n  orchestrator: native\n  autonomy: agentic\n  preferred_models:\n    - id: test/model\n      provider: test\n")
-	write("PROJECT_MANIFEST.yaml", "framework: {name: project-atlas-framework, version: 0.1.0}\n")
+	write(".prumo/project-profile.yaml", "version: 1\nproject:\n  name: Legacy\n  type: [cli]\nai:\n  orchestrator: native\n  autonomy: agentic\n  preferred_models:\n    - id: test/model\n      provider: test\n")
+	write("PROJECT_MANIFEST.yaml", "framework: {name: prumo, version: 0.1.0}\n")
 	write(".ai/goals/P00/P00-G01.goal.yaml", "id: P00-G01\ntitle: Foundation\nphase: P00\nstate: DRAFT\nobjective: Foundation\nacceptance: [Works]\ngates: {tests: required}\ndependencies: []\nevidence: []\n")
 	svc := New(repoRoot(t))
 	report, err := svc.Migrate(root, false)

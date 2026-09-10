@@ -1,10 +1,10 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "validate",
     "examples/brasa"
   ],
   "exit": 1,
-  "stdout": "Validation failed:\n- not a recognized Project Atlas project: missing atlas.json\n",
+  "stdout": "Validation failed:\n- not a recognized Prumo project: missing prumo.json\n",
   "stderr": ""
 }

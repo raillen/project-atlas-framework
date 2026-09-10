@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/app"
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	"github.com/raillen/prumo/internal/app"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 // writeDogfoodProject scaffolds a self-contained zero-to-ready project: a
@@ -19,7 +19,7 @@ import (
 func writeDogfoodProject(t *testing.T, root string) {
 	t.Helper()
 	files := map[string]string{
-		"atlas.json": `{"project":{"name":"dogfood","type":["core"]}}`,
+		"prumo.json": `{"project":{"name":"dogfood","type":["core"]}}`,
 		"docs/contracts/builtin.json": `[
 			{"id":"product.vision","version":1,"role":"product-vision","required_knowledge":["target users","primary outcome"],"blocking_questions":["q:v-users","q:v-outcome"]},
 			{"id":"project.scope","version":1,"role":"project-scope","required_knowledge":["non-goals","in-scope capabilities"],"blocking_questions":["q:s-boundaries"]}
@@ -86,7 +86,7 @@ func seedDogfoodSession(t *testing.T, root string) {
 
 func answerDogfood(t *testing.T, root, session, question, statement, classification string) planAnswerData {
 	t.Helper()
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	envelope, _ := runPlanJSON(t, []string{"--json", "plan", "answer", "--session", session, "--path", root,
 		"--question", question, "--statement", statement, "--classification", classification, "--actor", "owner"})
 	if !envelope.Ok {
@@ -100,7 +100,7 @@ func answerDogfood(t *testing.T, root, session, question, statement, classificat
 }
 
 func TestPlanAnswerResolvesDecision(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDogfoodProject(t, root)
 	seedDogfoodSession(t, root)
@@ -204,7 +204,7 @@ func TestPlanAnswerErrors(t *testing.T) {
 }
 
 func TestPlanDeltaProposesThenApplies(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDogfoodProject(t, root)
 	seedDogfoodSession(t, root)
@@ -256,7 +256,7 @@ func TestPlanDeltaProposesThenApplies(t *testing.T) {
 }
 
 func TestPlanDeltaRequiresAcceptedDecisions(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDogfoodProject(t, root)
 	seedDogfoodSession(t, root)
@@ -267,7 +267,7 @@ func TestPlanDeltaRequiresAcceptedDecisions(t *testing.T) {
 }
 
 func TestPlanBlueprintProposesGoal(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDogfoodProject(t, root)
 	seedDogfoodSession(t, root)
@@ -314,7 +314,7 @@ func TestPlanBlueprintProposesGoal(t *testing.T) {
 }
 
 func TestDogfoodZeroToReady(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDogfoodProject(t, root)
 	seedDogfoodSession(t, root)
@@ -387,7 +387,7 @@ func TestDogfoodZeroToReady(t *testing.T) {
 }
 
 func TestPlanAnswerTextOutput(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDogfoodProject(t, root)
 	seedDogfoodSession(t, root)

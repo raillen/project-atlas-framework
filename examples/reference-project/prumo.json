@@ -1,7 +1,7 @@
 {
   "ai": {
     "autonomy": "agentic",
-    "orchestrator": "atlas",
+    "orchestrator": "prumo",
     "preferred_models": [
       {
         "id": "google/gemini-2.5-pro",
@@ -54,7 +54,7 @@
     },
     "runtime": {
       "completed_context_ttl": "0d",
-      "database": ".atlas/runtime/atlas.db",
+      "database": ".prumo/runtime/prumo.db",
       "failed_context_ttl": "7d"
     }
   },
@@ -66,7 +66,7 @@
       "agent"
     ],
     "canonical_format": "markdown",
-    "entrypoint": "docs/ATLAS.md",
+    "entrypoint": "docs/PRUMO.md",
     "site": {
       "enabled": true,
       "generated": true,
@@ -83,7 +83,7 @@
     "continuous-documentation"
   ],
   "framework": {
-    "name": "project-atlas-framework",
+    "name": "prumo",
     "version": "0.2.0"
   },
   "goals": {
@@ -93,7 +93,7 @@
   "intelligence": {
     "distinguish_observed_estimated": true,
     "enabled": true,
-    "path": ".atlas/history/project-intelligence.json",
+    "path": ".prumo/history/project-intelligence.json",
     "task_reports": true,
     "track_cost": true,
     "track_input_tokens": true,
@@ -101,11 +101,11 @@
   },
   "orchestration": {
     "autonomy": "agentic",
-    "orchestrator": "atlas",
+    "orchestrator": "prumo",
     "protocol": "POP"
   },
   "project": {
-    "description": "Canonical agnostic reference project demonstrating full Project Atlas v0.4 architecture, exhaustive testing, and complete documentation hierarchy.",
+    "description": "Canonical agnostic reference project demonstrating full Prumo v0.4 architecture, exhaustive testing, and complete documentation hierarchy.",
     "name": "reference-project",
     "type": [
       "service",

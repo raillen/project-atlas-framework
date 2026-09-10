@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	"github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 func writeLivingPlanFixture(t *testing.T, root string) {
@@ -35,7 +35,7 @@ func sampleAcceptedDecisions() []planning.DecisionProposal {
 	return []planning.DecisionProposal{
 		{
 			ID:             "DP-001",
-			Statement:      "Atlas must expose a provider-neutral planning review state",
+			Statement:      "Prumo must expose a provider-neutral planning review state",
 			Classification: "explicit-decision",
 			Scope:          "planning",
 			Actor:          "owner",

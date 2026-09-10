@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMapDocumentationNonAtlasLayout(t *testing.T) {
+func TestMapDocumentationNonPrumoLayout(t *testing.T) {
 	facts := []ObservedFact{
 		{ID: "fact-0001", Kind: FactDoc, Key: "doc:README.md", Source: "README.md", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0002", Kind: FactDoc, Key: "doc:docs/design/system.md", Source: "docs/design/system.md", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
@@ -39,7 +39,7 @@ func TestMapDocumentationNonAtlasLayout(t *testing.T) {
 		}
 	}
 
-	// Verify docs/design/system.md mapped to architecture.system without requiring standard atlas filename
+	// Verify docs/design/system.md mapped to architecture.system without requiring standard prumo filename
 	if arch, ok := candMap["architecture.system"]; !ok {
 		t.Errorf("expected architecture.system mapping candidate")
 	} else {

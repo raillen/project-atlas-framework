@@ -35,7 +35,7 @@ func TestRunVersion(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("expected 0, got %d", code)
 	}
-	if !strings.Contains(out, "0.4.2") {
+	if !strings.Contains(out, "0.5.0") {
 		t.Fatalf("expected version output, got %q", out)
 	}
 }
@@ -74,7 +74,7 @@ func TestRunStatus(t *testing.T) {
 	}
 	if code, out := captureOutput(func() int {
 		return run([]string{"--json", "status", "--path", t.TempDir()})
-	}); code != 1 || !strings.Contains(out, "ATLAS_PROJECT_NOT_FOUND") {
+	}); code != 1 || !strings.Contains(out, "PRUMO_PROJECT_NOT_FOUND") {
 		t.Fatalf("expected project error envelope, got %d %q", code, out)
 	}
 }
@@ -107,7 +107,7 @@ func TestInstallLifecyclePreservesProject(t *testing.T) {
 }
 
 func TestCommandsEndToEnd(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	dir := t.TempDir()
 	profile := filepath.Join(testRepoRoot(t), "examples", "brasa", "project-profile.json")
 	if code := run([]string{"init", dir, "--profile", profile, "--non-interactive"}); code != 0 {
@@ -159,7 +159,7 @@ func TestRunHelp(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("expected exit code 0 for --help, got %d", code)
 	}
-	if !strings.Contains(out, "Project Atlas Framework CLI") || !strings.Contains(out, "Project Lifecycle:") {
+	if !strings.Contains(out, "Prumo CLI") || !strings.Contains(out, "Project Lifecycle:") {
 		t.Fatalf("expected general help output, got %q", out)
 	}
 
@@ -180,13 +180,13 @@ func TestRunCommandHelp(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("expected 0 for 'help init', got %d", code)
 	}
-	if !strings.Contains(out, "COMMAND: atlas init") || !strings.Contains(out, "--profile") {
+	if !strings.Contains(out, "COMMAND: prumo init") || !strings.Contains(out, "--profile") {
 		t.Fatalf("expected init command help, got %q", out)
 	}
 
-	// Test flag help: atlas tool --help
+	// Test flag help: prumo tool --help
 	code2, out2 := captureOutput(func() int { return run([]string{"tool", "--help"}) })
-	if code2 != 0 || !strings.Contains(out2, "COMMAND: atlas tool") {
+	if code2 != 0 || !strings.Contains(out2, "COMMAND: prumo tool") {
 		t.Fatalf("expected tool help for 'tool --help', got %d %q", code2, out2)
 	}
 }

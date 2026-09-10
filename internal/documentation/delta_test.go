@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/raillen/project-atlas-framework/internal/validation"
+	"github.com/raillen/prumo/internal/validation"
 )
 
 func writeDeltaFixture(t *testing.T, root string) {

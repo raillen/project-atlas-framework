@@ -5,7 +5,7 @@
     "compatible": ">=3 <4"
   },
   "framework": {
-    "name": "project-atlas-framework",
+    "name": "prumo",
     "version": "0.2.0"
   },
   "project": {
@@ -30,7 +30,7 @@
     "security": "high"
   },
   "documentation": {
-    "entrypoint": "docs/ATLAS.md",
+    "entrypoint": "docs/PRUMO.md",
     "canonical_format": "markdown",
     "site": {
       "enabled": true,
@@ -82,14 +82,14 @@
       "experimental": true
     },
     "runtime": {
-      "database": ".atlas/runtime/atlas.db",
+      "database": ".prumo/runtime/prumo.db",
       "completed_context_ttl": "0d",
       "failed_context_ttl": "7d"
     }
   },
   "intelligence": {
     "enabled": true,
-    "path": ".atlas/history/project-intelligence.json",
+    "path": ".prumo/history/project-intelligence.json",
     "task_reports": true,
     "track_input_tokens": true,
     "track_output_tokens": true,

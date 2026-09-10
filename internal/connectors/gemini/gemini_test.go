@@ -3,8 +3,8 @@ package gemini_test
 import (
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors/gemini"
-	"github.com/raillen/project-atlas-framework/internal/connectors/testkit"
+	"github.com/raillen/prumo/internal/connectors/gemini"
+	"github.com/raillen/prumo/internal/connectors/testkit"
 )
 
 func TestGeminiConnector(t *testing.T) {

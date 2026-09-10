@@ -8,7 +8,7 @@ import (
 
 func TestManifestRoundTripAndIdempotency(t *testing.T) {
 	home := t.TempDir()
-	manifest := Manifest{AtlasVersion: "0.4.0-dev", BinaryPath: "/tmp/atlas", Connectors: map[string]string{"opencode": "installed"}, CreatedPaths: []string{"/tmp/b", "/tmp/a", "/tmp/a"}}
+	manifest := Manifest{PrumoVersion: "0.4.0-dev", BinaryPath: "/tmp/prumo", Connectors: map[string]string{"opencode": "installed"}, CreatedPaths: []string{"/tmp/b", "/tmp/a", "/tmp/a"}}
 	if err := SaveManifest(home, manifest); err != nil {
 		t.Fatalf("save: %v", err)
 	}

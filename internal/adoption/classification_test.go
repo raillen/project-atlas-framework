@@ -8,14 +8,14 @@ import (
 func TestClassifyGoCLI(t *testing.T) {
 	facts := []ObservedFact{
 		{ID: "fact-0001", Kind: FactManifest, Key: "manifest:go.mod", Source: "go.mod", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
-		{ID: "fact-0002", Kind: FactFile, Key: "source:cmd/atlas/main.go", Source: "cmd/atlas/main.go", Extraction: ExtractionStaticPresence, Confidence: ConfidenceFactual},
+		{ID: "fact-0002", Kind: FactFile, Key: "source:cmd/prumo/main.go", Source: "cmd/prumo/main.go", Extraction: ExtractionStaticPresence, Confidence: ConfidenceFactual},
 		{ID: "fact-0003", Kind: FactTest, Key: "test:internal/app/service_test.go", Source: "internal/app/service_test.go", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0004", Kind: FactCI, Key: "ci:ci.yml", Source: ".github/workflows/ci.yml", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0005", Kind: FactDoc, Key: "doc:README.md", Source: "README.md", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0006", Kind: FactAgentRules, Key: "agent-rules:AGENTS.md", Source: "AGENTS.md", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0007", Kind: FactConfig, Key: "config:Dockerfile", Source: "Dockerfile", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0008", Kind: FactConfig, Key: "config:Makefile", Source: "Makefile", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
-		{ID: "fact-0009", Kind: FactSchema, Key: "schema:atlas.schema.json", Source: "schemas/atlas.schema.json", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
+		{ID: "fact-0009", Kind: FactSchema, Key: "schema:prumo.schema.json", Source: "schemas/prumo.schema.json", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 	}
 
 	result := Classify(facts)

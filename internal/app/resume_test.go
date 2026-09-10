@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/contextcompiler"
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	"github.com/raillen/prumo/internal/contextcompiler"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 func resumeSession(t *testing.T) planning.PlanningSession {

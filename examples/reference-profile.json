@@ -3,7 +3,7 @@
   "project": {
     "name": "reference-project",
     "type": ["service", "cli", "library"],
-    "description": "Canonical agnostic reference project demonstrating full Project Atlas v0.4 architecture, exhaustive testing, and complete documentation hierarchy."
+    "description": "Canonical agnostic reference project demonstrating full Prumo v0.4 architecture, exhaustive testing, and complete documentation hierarchy."
   },
   "stack": {
     "languages": ["agnostic"],
@@ -29,7 +29,7 @@
     "production-grade"
   ],
   "ai": {
-    "orchestrator": "atlas",
+    "orchestrator": "prumo",
     "autonomy": "agentic",
     "preferred_models": [
       {

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
-	"github.com/raillen/project-atlas-framework/internal/traceability"
+	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/traceability"
 )
 
 func TestRunTraceMissingRef(t *testing.T) {
@@ -26,7 +26,7 @@ func TestRunTraceHuman(t *testing.T) {
 	if code != exitOK {
 		t.Fatalf("expected exitOK (%d), got %d; out: %s", exitOK, code, out)
 	}
-	if !strings.Contains(out, "ATLAS TRACEABILITY: Traceability Engine") {
+	if !strings.Contains(out, "PRUMO TRACEABILITY: Traceability Engine") {
 		t.Errorf("expected header in trace output, got:\n%s", out)
 	}
 	if !strings.Contains(out, "Upstream Lineage") {
@@ -62,7 +62,7 @@ func TestRunTraceJSON(t *testing.T) {
 
 func TestRunJournal(t *testing.T) {
 	tmpDir := t.TempDir()
-	storeDir := filepath.Join(tmpDir, ".atlas", "traceability")
+	storeDir := filepath.Join(tmpDir, ".prumo", "traceability")
 
 	j := traceability.NewJournal()
 	_ = j.Add(traceability.JournalEntry{
@@ -71,7 +71,7 @@ func TestRunJournal(t *testing.T) {
 		Title:       "Traceability Verification",
 		Summary:     "Verified end-to-end trace query and journal storage.",
 		Decisions:   []string{"dec-clean-arch"},
-		CodeChanges: []string{"cmd/atlas/trace_commands.go"},
+		CodeChanges: []string{"cmd/prumo/trace_commands.go"},
 	})
 	if err := traceability.SaveJournal(storeDir, j); err != nil {
 		t.Fatalf("SaveJournal failed: %v", err)

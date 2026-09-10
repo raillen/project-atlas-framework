@@ -47,7 +47,7 @@ func runDocsDeltaJSON(t *testing.T, args []string) docsDeltaRecord {
 }
 
 func TestDocsDeltaLifecycle(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writeDeltaBindings(t, root)
 	changed := "docs/architecture/overview.md"
@@ -78,7 +78,7 @@ func TestDocsDeltaLifecycle(t *testing.T) {
 }
 
 func TestDocsDeltaProposeRequiresGoal(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	if code := run([]string{"docs", "delta", "propose", "--path", t.TempDir()}); code != 2 {
 		t.Fatalf("expected usage error, got %d", code)
 	}

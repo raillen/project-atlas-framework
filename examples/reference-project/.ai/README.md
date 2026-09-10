@@ -4,7 +4,7 @@
 A pasta `.ai/` armazena as definições canônicas de workforce (agentes, habilidades, receitas de execução) e as metas operacionais (Goals e Planos) vinculadas ao projeto.
 
 ## Para que serve?
-Permite que o framework Project Atlas resolva deterministicamente quais agentes, skills e receitas de trabalho estão autorizados e disponíveis para executar tarefas no projeto, mantendo políticas de modelos, integridade de locks e rastreabilidade de evidências.
+Permite que o framework Prumo resolva deterministicamente quais agentes, skills e receitas de trabalho estão autorizados e disponíveis para executar tarefas no projeto, mantendo políticas de modelos, integridade de locks e rastreabilidade de evidências.
 
 ## Inventário de Arquivos e Subdiretórios
 - `agents/`: Agentes resolvidos e manifestos de papéis.

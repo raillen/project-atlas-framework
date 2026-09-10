@@ -1,10 +1,10 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "doctor",
     "examples/conformance-project"
   ],
   "exit": 0,
-  "stdout": "Project Atlas Doctor: all checks passed cleanly.\n",
+  "stdout": "Prumo Doctor: all checks passed cleanly.\n",
   "stderr": ""
 }

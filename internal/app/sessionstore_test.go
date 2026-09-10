@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 func staticSession(id, scope, goal, updatedAt string) planning.PlanningSession {

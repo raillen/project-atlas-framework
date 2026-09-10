@@ -8,7 +8,7 @@ import (
 func TestBuildConfidenceLedger(t *testing.T) {
 	facts := []ObservedFact{
 		{ID: "fact-0001", Kind: FactManifest, Key: "manifest:go.mod", Source: "go.mod", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
-		{ID: "fact-0002", Kind: FactFile, Key: "source:cmd/atlas/main.go", Source: "cmd/atlas/main.go", Extraction: ExtractionStaticPresence, Confidence: ConfidenceFactual},
+		{ID: "fact-0002", Kind: FactFile, Key: "source:cmd/prumo/main.go", Source: "cmd/prumo/main.go", Extraction: ExtractionStaticPresence, Confidence: ConfidenceFactual},
 		{ID: "fact-0003", Kind: FactDoc, Key: "doc:README.md", Source: "README.md", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 		{ID: "fact-0004", Kind: FactDoc, Key: "doc:docs/design.md", Source: "docs/design.md", Extraction: ExtractionFilenamePattern, Confidence: ConfidenceFactual},
 	}

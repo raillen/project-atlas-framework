@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func TestRunAdoptHumanReport(t *testing.T) {
@@ -24,7 +24,7 @@ func TestRunAdoptHumanReport(t *testing.T) {
 		t.Fatalf("expected exitOK (%d), got %d; output:\n%s", exitOK, code, out)
 	}
 
-	if !strings.Contains(out, "PROJECT ATLAS — REPOSITORY ADOPTION REPORT") {
+	if !strings.Contains(out, "PROJECT PRUMO — REPOSITORY ADOPTION REPORT") {
 		t.Errorf("expected adoption report header in output, got:\n%s", out)
 	}
 	if !strings.Contains(out, "1. Classification") {
@@ -127,7 +127,7 @@ func TestRunAdoptNonInteractive(t *testing.T) {
 	if code != exitOK {
 		t.Fatalf("expected exitOK (%d), got %d; output:\n%s", exitOK, code, out)
 	}
-	if !strings.Contains(out, "Non-interactive pass") && !strings.Contains(out, "PROJECT ATLAS") {
+	if !strings.Contains(out, "Non-interactive pass") && !strings.Contains(out, "PROJECT PRUMO") {
 		t.Errorf("expected adoption output in non-interactive mode, got:\n%s", out)
 	}
 }
@@ -144,7 +144,7 @@ func TestRunAdoptProposeMigration(t *testing.T) {
 	if code != exitOK {
 		t.Fatalf("expected exitOK (%d), got %d; output:\n%s", exitOK, code, out)
 	}
-	if !strings.Contains(out, "ADOPTION MIGRATION PROPOSALS") || !strings.Contains(out, "amp-init-atlas") {
+	if !strings.Contains(out, "ADOPTION MIGRATION PROPOSALS") || !strings.Contains(out, "amp-init-prumo") {
 		t.Errorf("expected migration proposal output, got:\n%s", out)
 	}
 
@@ -178,11 +178,11 @@ func TestRunAdoptDryRunAndApply(t *testing.T) {
 	if !strings.Contains(outDry, "ADOPTION MIGRATION DRY-RUN") {
 		t.Errorf("expected dry-run header, got: %s", outDry)
 	}
-	if _, err := os.Stat(filepath.Join(root, "atlas.json")); err == nil {
-		t.Errorf("atlas.json should not exist after dry run")
+	if _, err := os.Stat(filepath.Join(root, "prumo.json")); err == nil {
+		t.Errorf("prumo.json should not exist after dry run")
 	}
 
-	// 2. Apply: should create atlas.json safely
+	// 2. Apply: should create prumo.json safely
 	codeApply, outApply := captureOutput(func() int {
 		return run([]string{"adopt", "--path", root, "--apply"})
 	})
@@ -192,8 +192,8 @@ func TestRunAdoptDryRunAndApply(t *testing.T) {
 	if !strings.Contains(outApply, "ADOPTION MIGRATION APPLIED") {
 		t.Errorf("expected applied header, got: %s", outApply)
 	}
-	if _, err := os.Stat(filepath.Join(root, "atlas.json")); err != nil {
-		t.Errorf("atlas.json should exist after apply: %v", err)
+	if _, err := os.Stat(filepath.Join(root, "prumo.json")); err != nil {
+		t.Errorf("prumo.json should exist after apply: %v", err)
 	}
 }
 

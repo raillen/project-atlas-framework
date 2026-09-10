@@ -10,7 +10,7 @@ func TestConnectorCommands(t *testing.T) {
 	// Setup isolated test environment
 	tmpHome := t.TempDir()
 	tmpProject := t.TempDir()
-	t.Setenv("ATLAS_HOME", tmpHome)
+	t.Setenv("PRUMO_HOME", tmpHome)
 
 	origWd, err := os.Getwd()
 	if err != nil {
@@ -70,7 +70,7 @@ func TestConnectorCommands(t *testing.T) {
 		t.Fatalf("runConnector uninstall opencode expected %d, got %d", exitOK, code)
 	}
 
-	// 7. Test backward-compatible 'atlas install connector opencode'
+	// 7. Test backward-compatible 'prumo install connector opencode'
 	if code := runInstall(false, tmpHome, []string{"connector", "opencode"}); code != exitOK {
 		t.Fatalf("runInstall connector opencode expected %d, got %d", exitOK, code)
 	}

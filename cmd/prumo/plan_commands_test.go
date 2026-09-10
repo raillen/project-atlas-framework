@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/app"
-	"github.com/raillen/project-atlas-framework/internal/planning"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/app"
+	"github.com/raillen/prumo/internal/planning"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 type planEnvelope struct {
@@ -56,7 +56,7 @@ func seededSession(t *testing.T, root string) {
 }
 
 func TestPlanGoalStartsSession(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	envelope, _ := runPlanJSON(t, []string{"--json", "plan", "--goal", "G042", "--path", root, "--session", "S1"})
 	if !envelope.Ok {
@@ -78,7 +78,7 @@ func TestPlanGoalStartsSession(t *testing.T) {
 }
 
 func TestPlanQuestionsOrderedByPriority(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	seededSession(t, root)
 	envelope, _ := runPlanJSON(t, []string{"--json", "plan", "questions", "--session", "PLAN-G042", "--path", root})
@@ -98,7 +98,7 @@ func TestPlanQuestionsOrderedByPriority(t *testing.T) {
 }
 
 func TestPlanStatusAggregatesSessions(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	sessionA := planning.NewPlanningSession("PLAN-A", "PLAN-A", "goal:G001", "G001")
 	if err := app.SaveSession(root, sessionA); err != nil {
@@ -122,7 +122,7 @@ func TestPlanStatusAggregatesSessions(t *testing.T) {
 }
 
 func TestPlanResumeCompilesContext(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	writePlanBindings(t, root)
 	seededSession(t, root)
@@ -156,7 +156,7 @@ func TestPlanResumeCompilesContext(t *testing.T) {
 }
 
 func TestPlanResumePressureStopsAtCritical(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	seededSession(t, root)
 	envelope, _ := runPlanJSON(t, []string{"--json", "plan", "resume", "--session", "PLAN-G042", "--path", root, "--budget", "40"})
@@ -173,7 +173,7 @@ func TestPlanResumePressureStopsAtCritical(t *testing.T) {
 }
 
 func TestPlanMissingSessionErrors(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	code, _ := captureOutput(func() int {
 		return run([]string{"--json", "plan", "status", "--session", "NOPE", "--path", t.TempDir()})
 	})
@@ -187,7 +187,7 @@ func TestPlanMissingSessionErrors(t *testing.T) {
 }
 
 func TestPlanUsage(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	if code := run([]string{"plan", "unknown-subcommand", "--path", t.TempDir()}); code != exitUsage {
 		t.Fatalf("expected usage exit for unknown subcommand, got %d", code)
 	}
@@ -200,7 +200,7 @@ func TestPlanUsage(t *testing.T) {
 }
 
 func TestPlanTextOutput(t *testing.T) {
-	t.Setenv("ATLAS_REPO_ROOT", testRepoRoot(t))
+	t.Setenv("PRUMO_REPO_ROOT", testRepoRoot(t))
 	root := t.TempDir()
 	seededSession(t, root)
 	code, output := captureOutput(func() int {

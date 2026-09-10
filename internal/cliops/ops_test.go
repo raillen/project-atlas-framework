@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -36,7 +37,7 @@ func goldenResolution(t *testing.T) map[string]any {
 
 func pythonResolution(t *testing.T, profile string) map[string]any {
 	t.Helper()
-	cmd := exec.Command("python3", "-c", "import json;from project_atlas.profile import load_profile;from project_atlas.resolver import resolve;import dataclasses;r=resolve(load_profile(__import__('pathlib').Path('"+profile+"')));print(json.dumps({'agents':r.agents,'skills':r.skills,'recipes':r.recipes,'reasons':r.reasons}))")
+	cmd := exec.Command("python3", "-c", "import json;from prumo.profile import load_profile;from prumo.resolver import resolve;import dataclasses;r=resolve(load_profile(__import__('pathlib').Path('"+profile+"')));print(json.dumps({'agents':r.agents,'skills':r.skills,'recipes':r.recipes,'reasons':r.reasons}))")
 	cmd.Dir = repoRoot(t)
 	cmd.Env = append(os.Environ(), "PYTHONPATH=src")
 	out, err := cmd.Output()
@@ -52,7 +53,7 @@ func pythonResolution(t *testing.T, profile string) map[string]any {
 
 func TestResolveMatchesPythonBrasa(t *testing.T) {
 	root := repoRoot(t)
-	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(root, "src", "prumo", "__init__.py")); os.IsNotExist(err) {
 		t.Skip("python oracle retired: Python implementation removed from src/")
 	}
 	svc := New(root)
@@ -155,12 +156,12 @@ func TestInitValidateCompileSnapshot(t *testing.T) {
 
 func TestFrameworkCheckMatchesPython(t *testing.T) {
 	root := repoRoot(t)
-	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(root, "src", "prumo", "__init__.py")); os.IsNotExist(err) {
 		t.Skip("python oracle retired: Python implementation removed from src/")
 	}
 	svc := New(root)
 	got := svc.FrameworkCheck()
-	cmd := exec.Command("python3", "-c", "from project_atlas.validator import validate_framework;import json;print(json.dumps(validate_framework()))")
+	cmd := exec.Command("python3", "-c", "from prumo.validator import validate_framework;import json;print(json.dumps(validate_framework()))")
 	cmd.Dir = root
 	cmd.Env = append(os.Environ(), "PYTHONPATH=src")
 	out, err := cmd.Output()
@@ -232,5 +233,77 @@ func TestInitScaffoldingCompleteness(t *testing.T) {
 		if f["severity"] == "ERROR" {
 			t.Fatalf("doctor reported error: %v", f)
 		}
+	}
+}
+
+func TestInitProducesPrumoIdentity(t *testing.T) {
+	root := repoRoot(t)
+	svc := New(root)
+	dir := t.TempDir()
+	if _, err := svc.Init(dir, filepath.Join(root, "examples", "brasa", "project-profile.json")); err != nil {
+		t.Fatalf("init: %v", err)
+	}
+
+	for _, rel := range []string{
+		"prumo.json",
+		"PROJECT_STATE.md",
+		"ENTRYPOINT.md",
+		"docs/PRUMO.md",
+		".prumo/history/project-intelligence.json",
+		".ai/agents/manifest.json",
+		".ai/skills/manifest.json",
+		".ai/recipes/manifest.json",
+	} {
+		if _, err := os.Stat(filepath.Join(dir, rel)); err != nil {
+			t.Fatalf("expected Prumo artifact %s to exist: %v", rel, err)
+		}
+	}
+
+	var legacy []string
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if strings.Contains(strings.ToLower(info.Name()), "atlas") {
+			rel, _ := filepath.Rel(dir, path)
+			legacy = append(legacy, rel)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("walk failed: %v", err)
+	}
+	if len(legacy) != 0 {
+		t.Fatalf("new Prumo project must not contain Atlas artifacts, found: %v", legacy)
+	}
+
+	data, err := os.ReadFile(filepath.Join(dir, "prumo.json"))
+	if err != nil {
+		t.Fatalf("read prumo.json: %v", err)
+	}
+	var manifest map[string]any
+	if err := json.Unmarshal(data, &manifest); err != nil {
+		t.Fatalf("parse prumo.json: %v", err)
+	}
+	framework, ok := manifest["framework"].(map[string]any)
+	if !ok || framework["name"] != "prumo" {
+		t.Fatalf("expected prumo.json framework.name=prumo, got %v", manifest["framework"])
+	}
+
+	for _, rel := range []string{"docs/PRUMO.md", "ENTRYPOINT.md", "PROJECT_STATE.md"} {
+		content, err := os.ReadFile(filepath.Join(dir, rel))
+		if err != nil {
+			t.Fatalf("read %s: %v", rel, err)
+		}
+		if strings.Contains(string(content), "atlas.json") || strings.Contains(string(content), "docs/ATLAS.md") {
+			t.Fatalf("%s references legacy Atlas artifacts", rel)
+		}
+	}
+
+	if errors := svc.Validate(dir); len(errors) != 0 {
+		t.Fatalf("validate: %v", errors)
+	}
+	if findings, err := svc.Doctor(dir); err != nil || len(findings) != 0 {
+		t.Fatalf("doctor: %v %v", findings, err)
 	}
 }

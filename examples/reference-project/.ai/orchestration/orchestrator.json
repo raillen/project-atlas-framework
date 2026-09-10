@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "primary": "atlas",
+  "primary": "prumo",
   "protocol": "project-orchestration-protocol-v2",
   "autonomy": "agentic",
   "source_of_truth": "repository",

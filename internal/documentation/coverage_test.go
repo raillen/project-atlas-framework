@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestAtlasAuditAndReadiness(t *testing.T) {
+func TestPrumoAuditAndReadiness(t *testing.T) {
 	root, _ := filepath.Abs("../..")
 	audit, err := Audit(root)
 	if err != nil {

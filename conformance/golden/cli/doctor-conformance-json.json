@@ -1,6 +1,6 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "doctor",
     "examples/conformance-project",
     "--json"

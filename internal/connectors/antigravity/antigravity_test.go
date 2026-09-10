@@ -3,8 +3,8 @@ package antigravity_test
 import (
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors/antigravity"
-	"github.com/raillen/project-atlas-framework/internal/connectors/testkit"
+	"github.com/raillen/prumo/internal/connectors/antigravity"
+	"github.com/raillen/prumo/internal/connectors/testkit"
 )
 
 func TestAntigravityConnector(t *testing.T) {

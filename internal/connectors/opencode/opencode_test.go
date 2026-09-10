@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/connectors/opencode"
-	"github.com/raillen/project-atlas-framework/internal/connectors/testkit"
-	"github.com/raillen/project-atlas-framework/internal/install"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/connectors/opencode"
+	"github.com/raillen/prumo/internal/connectors/testkit"
+	"github.com/raillen/prumo/internal/install"
 )
 
 func TestOpenCodeTestKit(t *testing.T) {
@@ -91,7 +91,7 @@ func TestOpenCodeCompileAndValidate(t *testing.T) {
 	}
 
 	// Verify plugin content
-	pluginPath := filepath.Join(projectRoot, ".opencode", "plugins", "atlas.ts")
+	pluginPath := filepath.Join(projectRoot, ".opencode", "plugins", "prumo.ts")
 	data, err := os.ReadFile(pluginPath)
 	if err != nil {
 		t.Fatalf("failed to read plugin: %v", err)
@@ -108,7 +108,7 @@ func TestOpenCodeCompileAndValidate(t *testing.T) {
 	}
 
 	// Verify ownership marker
-	markerPath := filepath.Join(projectRoot, ".opencode", ".atlas-generated.json")
+	markerPath := filepath.Join(projectRoot, ".opencode", ".prumo-generated.json")
 	mdata, err := os.ReadFile(markerPath)
 	if err != nil {
 		t.Fatalf("failed to read marker: %v", err)
@@ -135,8 +135,8 @@ func TestOpenCodeCompileAndValidate(t *testing.T) {
 	if !ok || len(plugins) == 0 {
 		t.Fatalf("expected plugin to be a non-empty array in opencode.json, got: %T (%v)", cfg["plugin"], cfg["plugin"])
 	}
-	if plugins[0] != "plugins/atlas.ts" {
-		t.Fatalf("expected plugin[0] to be plugins/atlas.ts, got: %v", plugins[0])
+	if plugins[0] != "plugins/prumo.ts" {
+		t.Fatalf("expected plugin[0] to be plugins/prumo.ts, got: %v", plugins[0])
 	}
 }
 

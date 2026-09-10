@@ -131,7 +131,7 @@ func TestExperienceProposals(t *testing.T) {
 
 func TestFileProviderAndRetention(t *testing.T) {
 	tmpDir := t.TempDir()
-	storeDir := filepath.Join(tmpDir, ".atlas", "experience")
+	storeDir := filepath.Join(tmpDir, ".prumo", "experience")
 
 	prov, err := NewFileProvider(storeDir)
 	if err != nil {
