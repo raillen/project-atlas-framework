@@ -103,9 +103,8 @@ func serviceError(asJSON bool, err error) int {
 }
 
 func usage() int {
-	fmt.Fprintf(os.Stderr, "usage: atlas [--json] <command> [args]\n")
-	fmt.Fprintf(os.Stderr, "commands:\n")
-	fmt.Fprintf(os.Stderr, "  version, status, setup, install, uninstall, connector, init, resolve, validate, goal, plan, adopt, trace, journal, experience, context, report, migrate, compile, snapshot, doctor, explain, framework-check, run, continue, budget, debug, tool, model, env\n")
+	fmt.Fprintf(os.Stderr, "Usage: atlas [--json] [--home <path>] <command> [subcommand] [flags]\n\n")
+	fmt.Fprintf(os.Stderr, "Run 'atlas --help' or 'atlas help' to view all available commands and options.\n")
 	return exitUsage
 }
 
@@ -148,6 +147,18 @@ func run(args []string) int {
 	}
 	if len(rest) == 0 {
 		return usage()
+	}
+	if rest[0] == "--help" || rest[0] == "-h" {
+		return PrintGeneralHelp(asJSON)
+	}
+	if rest[0] == "help" {
+		if len(rest) > 1 {
+			return PrintCommandHelp(rest[1], asJSON)
+		}
+		return PrintGeneralHelp(asJSON)
+	}
+	if hasFlag(rest[1:], "--help") || hasFlag(rest[1:], "-h") {
+		return PrintCommandHelp(rest[0], asJSON)
 	}
 	home := ""
 	cleaned := make([]string, 0, len(rest))
@@ -445,7 +456,8 @@ func run(args []string) int {
 		fmt.Println("Project Atlas framework validation passed.")
 		return exitOK
 	default:
-		fmt.Fprintf(os.Stderr, "error: unknown command: %s\n", rest[0])
+		fmt.Fprintf(os.Stderr, "error: unknown command '%s'\n\n", rest[0])
+		fmt.Fprintf(os.Stderr, "Run 'atlas --help' or 'atlas help' to view all available commands.\n")
 		return exitUsage
 	}
 }

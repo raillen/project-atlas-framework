@@ -153,3 +153,55 @@ func TestCommandsEndToEnd(t *testing.T) {
 		t.Fatalf("migrate failed: %d %q", code, out)
 	}
 }
+
+func TestRunHelp(t *testing.T) {
+	code, out := captureOutput(func() int { return run([]string{"--help"}) })
+	if code != 0 {
+		t.Fatalf("expected exit code 0 for --help, got %d", code)
+	}
+	if !strings.Contains(out, "Project Atlas Framework CLI") || !strings.Contains(out, "Project Lifecycle:") {
+		t.Fatalf("expected general help output, got %q", out)
+	}
+
+	// Also test -h and help
+	code2, out2 := captureOutput(func() int { return run([]string{"-h"}) })
+	if code2 != 0 || !strings.Contains(out2, "Usage:") {
+		t.Fatalf("expected help for -h, got %d %q", code2, out2)
+	}
+
+	code3, out3 := captureOutput(func() int { return run([]string{"help"}) })
+	if code3 != 0 || !strings.Contains(out3, "Usage:") {
+		t.Fatalf("expected help for 'help', got %d %q", code3, out3)
+	}
+}
+
+func TestRunCommandHelp(t *testing.T) {
+	code, out := captureOutput(func() int { return run([]string{"help", "init"}) })
+	if code != 0 {
+		t.Fatalf("expected 0 for 'help init', got %d", code)
+	}
+	if !strings.Contains(out, "COMMAND: atlas init") || !strings.Contains(out, "--profile") {
+		t.Fatalf("expected init command help, got %q", out)
+	}
+
+	// Test flag help: atlas tool --help
+	code2, out2 := captureOutput(func() int { return run([]string{"tool", "--help"}) })
+	if code2 != 0 || !strings.Contains(out2, "COMMAND: atlas tool") {
+		t.Fatalf("expected tool help for 'tool --help', got %d %q", code2, out2)
+	}
+}
+
+func TestRunHelpJSON(t *testing.T) {
+	code, out := captureOutput(func() int { return run([]string{"--json", "--help"}) })
+	if code != 0 {
+		t.Fatalf("expected 0 for --json --help, got %d", code)
+	}
+	if !strings.Contains(out, `"categories"`) || !strings.Contains(out, `"ok": true`) {
+		t.Fatalf("expected json help categories, got %q", out)
+	}
+
+	code2, out2 := captureOutput(func() int { return run([]string{"--json", "help", "compile"}) })
+	if code2 != 0 || !strings.Contains(out2, `"command": "compile"`) {
+		t.Fatalf("expected json command help, got %d %q", code2, out2)
+	}
+}
