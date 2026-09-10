@@ -32,7 +32,7 @@ func (c *Connector) Name() string { return "OpenCode Native Harness" }
 func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "opencode",
-		Version:       "0.4.0",
+		Version:       protocol.CLIVersion,
 		ProtocolRange: ">=0.4.0 <0.5.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
@@ -79,7 +79,7 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 
 	// 1. Tool Guards: .opencode/guards/tool-policy.json
 	guardPolicy := map[string]any{
-		"version":     "0.4.0",
+		"version":     protocol.CLIVersion,
 		"enforcement": "strict",
 		"primitives": []string{
 			connectors.CapPreToolBlock,
@@ -309,7 +309,7 @@ Risk Level: low
 	opencodeConfig := map[string]any{
 		"$schema":       "https://opencode.ai/schema/v1.json",
 		"name":          "Project Atlas OpenCode Integration",
-		"version":       "0.4.0",
+		"version":       protocol.CLIVersion,
 		"plugin":        []string{"plugins/atlas.ts"},
 		"primary_agent": "agents/atlas.md",
 		"agents_dir":    "agents",

@@ -30,7 +30,7 @@ func (c *Connector) Name() string { return "Google Antigravity Connector" }
 func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "antigravity",
-		Version:       "0.4.0",
+		Version:       protocol.CLIVersion,
 		ProtocolRange: ">=0.4.0 <0.5.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
@@ -90,7 +90,7 @@ This project uses Project Atlas v0.4 with Google Antigravity.
 
 	// 2. Harness Config
 	config := map[string]any{
-		"version":      "0.4.0",
+		"version":      protocol.CLIVersion,
 		"harness":      "antigravity",
 		"instructions": "GEMINI.md",
 		"skills_dir":   ".agents/skills",

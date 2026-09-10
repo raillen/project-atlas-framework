@@ -29,7 +29,7 @@ func (c *Connector) Name() string { return "OpenAI Codex CLI Connector" }
 func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "codex",
-		Version:       "0.4.0",
+		Version:       protocol.CLIVersion,
 		ProtocolRange: ">=0.4.0 <0.5.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
@@ -79,7 +79,7 @@ This project uses Project Atlas v0.4.
 
 	// 2. Configuration
 	config := map[string]any{
-		"version":       "0.4.0",
+		"version":       protocol.CLIVersion,
 		"harness":       "codex",
 		"instructions":  "AGENTS.md",
 		"subagents_dir": ".codex/agents",
