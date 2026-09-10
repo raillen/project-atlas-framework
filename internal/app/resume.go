@@ -3,9 +3,9 @@ package app
 import (
 	"sort"
 
-	"github.com/raillen/project-atlas-framework/internal/contextcompiler"
-	docengine "github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	"github.com/raillen/prumo/internal/contextcompiler"
+	docengine "github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 // DefaultResumeBudget is the default token budget used when no explicit budget

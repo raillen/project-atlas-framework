@@ -1,6 +1,6 @@
 # Writing Skills
 
-Project Atlas v0.3 introduces Skill Packages v2, a directory-based structure that encapsulates everything an AI agent needs to execute a specific task reliably.
+Prumo v0.3 introduces Skill Packages v2, a directory-based structure that encapsulates everything an AI agent needs to execute a specific task reliably.
 
 ## Skill Package v2 Directory Structure
 
@@ -46,7 +46,7 @@ The manifest defines the formal contract for the skill.
   "required_evidence": ["tests_pass", "lint_clean"],
   "stop_conditions": ["Max iterations reached", "Tests fail after 3 attempts"],
   "provenance": {
-    "author": "Atlas Team",
+    "author": "Prumo Team",
     "signature": "SHA256:xyz..."
   }
 }
@@ -79,7 +79,7 @@ Store boilerplate code or text formats the agent should use. Reference them in `
 Ensure every skill has an author and a mechanism to verify integrity (e.g., cryptographic signatures) in the `manifest.json`.
 
 ## Testing a New Skill
-Run `atlas test skill <skill_id>` to validate the schema and run any associated unit tests or conformance checks in FakeRuntime.
+Run `prumo test skill <skill_id>` to validate the schema and run any associated unit tests or conformance checks in FakeRuntime.
 
 ## Resolver Selection
 The resolver uses the `select` block in the manifest to match skills to the current project context (stack, features, etc.).

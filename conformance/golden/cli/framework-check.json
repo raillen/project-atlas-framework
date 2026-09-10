@@ -1,9 +1,9 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "framework-check"
   ],
   "exit": 0,
-  "stdout": "Project Atlas framework validation passed.\n",
+  "stdout": "Prumo framework validation passed.\n",
   "stderr": ""
 }

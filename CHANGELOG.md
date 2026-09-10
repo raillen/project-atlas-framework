@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 — Prumo rebrand
+
+- **New identity:** Project Atlas Framework is now **Prumo** — a Git-native project protocol and CLI for software built by humans and AI agents. No Atlas compatibility layer is kept (pre-v1 clean break).
+- **CLI:** `atlas` → `prumo` (`cmd/prumo`, binary `prumo`/`prumo.exe`).
+- **Project format:** `atlas.json` → `prumo.json`, `.atlas/` → `.prumo/`, `docs/ATLAS.md` → `docs/PRUMO.md`, `ATLAS_HOME` → `PRUMO_HOME`.
+- **Module:** `github.com/raillen/project-atlas-framework` → `github.com/raillen/prumo`.
+- **Schemas:** `schemas/atlas*.schema.json` → `schemas/prumo*.schema.json` with `$id` under `https://raw.githubusercontent.com/raillen/prumo/main/schemas/`; envelope codes `ATLAS_*` → `PRUMO_*`; `framework.name` const is now `prumo`.
+- **Workforce:** `atlas-navigation` skill → `prumo-navigation`; connector ownership markers are `.prumo-generated.json` with `prumo_version`.
+- **Tooling:** install/uninstall/release scripts, CI and docs target `raillen/prumo` and the `prumo` binary.
+- See ADR 004 for the full decision record.
+
 ## 0.3.0 — Execution-Ready Protocol
 
 - **Strict Machine Contracts:** 24 JSON schemas governing Goals v2, Plans, Tasks, Evidence, Gates, Events, Policies (Permissions, Approvals, Trust, Models, Execution), and Context Packs.
@@ -8,9 +19,9 @@
 - **Explainable Workforce Resolution:** Multi-pass deterministic workforce resolver emitting explainability traces and reasons.
 - **Platform Adapter Compiler v2:** Skill package compiler injecting complete skill bundles into Codex (`AGENTS.md`, `.codex/skills/`) and Claude Code (`CLAUDE.md`, `.claude/skills/`).
 - **Event Protocol & Trust Model:** Structured append-only event stream specification and 3-tier trust hierarchy (trusted policy > contextual data > untrusted data).
-- **Diagnostics & Explainability CLI:** `atlas doctor` with comprehensive DAG cycle and lock checks, `atlas explain` covering workforce/agents/skills/recipes/context/models, and `atlas migrate` with automated backup snapshots.
+- **Diagnostics & Explainability CLI:** `prumo doctor` with comprehensive DAG cycle and lock checks, `prumo explain` covering workforce/agents/skills/recipes/context/models, and `prumo migrate` with automated backup snapshots.
 - **Fake Runtime & Conformance Suite:** Deterministic provider-neutral execution simulator and golden test vectors in `conformance/`.
-- **Expanded Documentation & Real Examples:** Comprehensive guides across getting-started, user-guide, authoring, integration, reference, and development; real working example projects for `rust-cli`, `react-saas`, `rust-desktop`, `game-engine`, `atlas-flow`, and `conformance-project`.
+- **Expanded Documentation & Real Examples:** Comprehensive guides across getting-started, user-guide, authoring, integration, reference, and development; real working example projects for `rust-cli`, `react-saas`, `rust-desktop`, `game-engine`, `prumo-flow`, and `conformance-project`.
 
 ## 0.2.0 — Lean Progressive Context evolution
 

@@ -311,7 +311,7 @@ func TestBrownfieldCorpusNoDocs(t *testing.T) {
 	}
 }
 
-func TestDogfoodProjectAtlasSelfAudit(t *testing.T) {
+func TestDogfoodPrumoSelfAudit(t *testing.T) {
 	repoRoot, _ := filepath.Abs("../../")
 
 	opts := ScanOptions{
@@ -327,7 +327,7 @@ func TestDogfoodProjectAtlasSelfAudit(t *testing.T) {
 		t.Fatalf("self-adoption audit failed: %v", err)
 	}
 
-	// Project Atlas is now a pure Go repository with CLI and Schemas (Python retired)
+	// Prumo is now a pure Go repository with CLI and Schemas (Python retired)
 	hasGo := false
 	for _, l := range report.Classification.Languages {
 		if l == "go" {
@@ -348,14 +348,14 @@ func TestDogfoodProjectAtlasSelfAudit(t *testing.T) {
 		t.Errorf("expected cli app type in self audit, got %v", report.Classification.AppTypes)
 	}
 
-	// Atlas artifacts detected
-	if len(report.AtlasArtifacts) == 0 {
-		t.Errorf("expected Atlas artifacts detected in self-audit")
+	// Prumo artifacts detected
+	if len(report.PrumoArtifacts) == 0 {
+		t.Errorf("expected Prumo artifacts detected in self-audit")
 	}
 
 	// Invariant: Non-destructive verification (human report renders cleanly)
 	rendered := RenderHumanReport(report)
-	if !strings.Contains(rendered, "PROJECT ATLAS — REPOSITORY ADOPTION REPORT") {
+	if !strings.Contains(rendered, "PROJECT PRUMO — REPOSITORY ADOPTION REPORT") {
 		t.Errorf("human report did not render correctly")
 	}
 }

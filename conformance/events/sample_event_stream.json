@@ -4,7 +4,7 @@
     "type": "project.opened",
     "timestamp": "2026-08-14T17:00:00Z",
     "project_id": "conformance-project",
-    "producer": "atlas-flow",
+    "producer": "prumo-flow",
     "payload": {
       "framework_version": "0.3.0"
     }
@@ -15,7 +15,7 @@
     "timestamp": "2026-08-14T17:00:01Z",
     "project_id": "conformance-project",
     "goal_id": "P01-G01",
-    "producer": "atlas-flow",
+    "producer": "prumo-flow",
     "payload": {
       "revision": 1
     }

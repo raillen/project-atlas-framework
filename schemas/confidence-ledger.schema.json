@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/confidence-ledger.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/confidence-ledger.schema.json",
   "$comment": "F-G05: confidence ledger recording all non-trivial inferences with evidence and alternatives.",
   "type": "object",
   "required": ["version", "entries", "summary"],

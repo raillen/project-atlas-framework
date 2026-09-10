@@ -1,14 +1,14 @@
 # Gemini Integration
 
-This guide explains how to compile Atlas configurations for Gemini-based workflows.
+This guide explains how to compile Prumo configurations for Gemini-based workflows.
 
 ## Generic Adapter Compilation
 
-Gemini uses the generic adapter. Run `atlas compile generic --target gemini`.
+Gemini uses the generic adapter. Run `prumo compile generic --target gemini`.
 
 ## Configuration
 
-Configure your `atlas.json` to prioritize Gemini-compatible skills (e.g., avoiding skills that rely heavily on specific non-Gemini system prompts).
+Configure your `prumo.json` to prioritize Gemini-compatible skills (e.g., avoiding skills that rely heavily on specific non-Gemini system prompts).
 
 ## AGENTS.md Structure
 

@@ -1,6 +1,6 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://project-atlas.dev/schemas/scan-result.schema.json",
+  "$id":"https://raw.githubusercontent.com/raillen/prumo/main/schemas/scan-result.schema.json",
   "$comment":"F-G01: complete scanner output for a repository discovery pass.",
   "type":"object",
   "required":["version","root","revision","facts","budget"],
@@ -10,7 +10,7 @@
     "revision":{"type":"string"},
     "branch":{"type":"string"},
     "dirty":{"type":"boolean"},
-    "facts":{"type":"array","items":{"$ref":"https://project-atlas.dev/schemas/observed-fact.schema.json"}},
+    "facts":{"type":"array","items":{"$ref":"https://raw.githubusercontent.com/raillen/prumo/main/schemas/observed-fact.schema.json"}},
     "budget":{"$ref":"#/$defs/budget_status"},
     "scanned_at":{"type":"string","format":"date-time"},
     "previous_revision":{"type":"string","description":"Revision of previous scan for incremental mode"},

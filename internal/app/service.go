@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 
-	"github.com/raillen/project-atlas-framework/internal/project"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/project"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 type VersionInfo struct {

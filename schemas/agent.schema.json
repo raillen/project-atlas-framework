@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/agent.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/agent.schema.json",
   "type": "object",
   "required": ["id", "name", "purpose"],
   "properties": {

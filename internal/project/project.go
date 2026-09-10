@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 var (
@@ -20,7 +20,7 @@ func FindRoot(start string) (string, error) {
 		return "", err
 	}
 	for {
-		manifest := filepath.Join(curr, "atlas.json")
+		manifest := filepath.Join(curr, "prumo.json")
 		if _, err := os.Stat(manifest); err == nil {
 			return curr, nil
 		}
@@ -40,7 +40,7 @@ type Manifest struct {
 
 func LoadManifest(root string) (Manifest, error) {
 	var manifest Manifest
-	data, err := os.ReadFile(filepath.Join(root, "atlas.json"))
+	data, err := os.ReadFile(filepath.Join(root, "prumo.json"))
 	if err != nil {
 		return manifest, fmt.Errorf("%w: %s", ErrProjectNotFound, err)
 	}
@@ -48,7 +48,7 @@ func LoadManifest(root string) (Manifest, error) {
 		return manifest, fmt.Errorf("%w: %s", ErrInvalidProject, err)
 	}
 	if manifest.Version < 2 {
-		return manifest, fmt.Errorf("%w: unsupported atlas.json version %d", ErrInvalidProject, manifest.Version)
+		return manifest, fmt.Errorf("%w: unsupported prumo.json version %d", ErrInvalidProject, manifest.Version)
 	}
 	return manifest, nil
 }

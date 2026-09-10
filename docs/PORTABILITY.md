@@ -16,13 +16,13 @@ Supported initial targets:
 
 Platform output is generated and replaceable.
 
-Codex/Claude Code may require platform-native role/skill files. Generic/chat targets should use temporary compiled entrypoints/context under `.atlas/runtime/compiled/`, not committed duplicate context packs.
+Codex/Claude Code may require platform-native role/skill files. Generic/chat targets should use temporary compiled entrypoints/context under `.prumo/runtime/compiled/`, not committed duplicate context packs.
 
 Adapters should point agents back to:
 
 1. `ENTRYPOINT.md`;
-2. `atlas.json`;
-3. `docs/ATLAS.md`;
+2. `prumo.json`;
+3. `docs/PRUMO.md`;
 4. active Goal;
 5. the Progressive Context rules.
 
@@ -45,11 +45,11 @@ YAML is legacy import/read compatibility.
 
 Portable conventions:
 
-- `ProjectAtlas: bootstrap`
-- `ProjectAtlas: finalize`
-- `ProjectAtlas: update`
-- `ProjectAtlas: audit`
-- `ProjectAtlas: recover`
-- `ProjectAtlas: migrate`
+- `Prumo: bootstrap`
+- `Prumo: finalize`
+- `Prumo: update`
+- `Prumo: audit`
+- `Prumo: recover`
+- `Prumo: migrate`
 
 They describe intent and are not required platform syntax.

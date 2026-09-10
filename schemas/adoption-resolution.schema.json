@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/adoption-resolution.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/adoption-resolution.schema.json",
   "$comment": "F-G07: adoption uncertainty interview questions and resolution choices.",
   "type": "object",
   "required": ["version", "questions", "resolved_count", "unresolved_count"],

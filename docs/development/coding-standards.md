@@ -1,4 +1,4 @@
-# Project Atlas v0.4 Coding Standards (Go)
+# Prumo v0.4 Coding Standards (Go)
 
 > Clean Code is permanent implementation policy — applied pragmatically, not dogmatically.
 
@@ -74,7 +74,7 @@ var ErrGoalLocked = errors.New("goal is locked and cannot be modified without am
 
 ## Definition of Done
 
-A change to Atlas Core is complete when:
+A change to Prumo Core is complete when:
 1. Compiles and formats (`gofmt -l .` empty)
 2. Passes unit + relevant integration tests (`go test -race ./...`)
 3. Passes `go vet ./...` and `staticcheck ./...`
@@ -96,13 +96,13 @@ Before adding new service, package, database, interface, or daemon:
 
 ## Portability Rule
 
-> No behavior required to interpret an Atlas project may depend exclusively on a SaaS, LLM, IDE, plugin, or external database.
+> No behavior required to interpret an Prumo project may depend exclusively on a SaaS, LLM, IDE, plugin, or external database.
 
 ## No-Nos
 
 - Singletons with global mutable state
 - Reflection/metaprogramming where explicit structure suffices
-- Duplicating Atlas rules in adapters
+- Duplicating Prumo rules in adapters
 - `panic` for user errors
 - Interfaces with one implementation and no test/integration justification
 - Gigabytes of context in one function/package

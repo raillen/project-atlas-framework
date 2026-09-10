@@ -1,6 +1,6 @@
 # Architecture
 
-Project Atlas is built around a schema-first, compiler-driven architecture.
+Prumo is built around a schema-first, compiler-driven architecture.
 
 ## High-Level Architecture Diagram
 
@@ -39,7 +39,7 @@ All configurations (skills, agents, recipes) are backed by strict JSON schemas. 
 
 ## Canonical vs Generated Content
 
-Human-maintained (canonical) content lives in `src/project_atlas/resources/` or project config. Generated content (e.g., `.codex/`) is ephemeral and should not be edited manually.
+Human-maintained (canonical) content lives in `src/prumo/resources/` or project config. Generated content (e.g., `.codex/`) is ephemeral and should not be edited manually.
 
 ## Protocol Versioning
 

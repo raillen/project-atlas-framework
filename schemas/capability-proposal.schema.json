@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/capability-proposal.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/capability-proposal.schema.json",
   "$comment": "F-G03: candidate capability and profile proposals from repository classification.",
   "type": "object",
   "required": ["version", "capabilities", "profiles"],

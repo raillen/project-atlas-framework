@@ -13,7 +13,7 @@ For identical fixture input, compare:
 3. **stderr** — relevant diagnostics, excluding environment-specific noise
 4. **JSON** — envelope/data/error codes, normalized only by explicitly approved rules
 5. **Filesystem effects** — created, modified, deleted paths; file bytes where canonical
-6. **Canonical artifacts** — `atlas.json`, Goals, plans, generated adapters and other protocol outputs
+6. **Canonical artifacts** — `prumo.json`, Goals, plans, generated adapters and other protocol outputs
 7. **Error behavior** — stable codes and preserved context/cause
 
 ## Fixture Layout
@@ -39,7 +39,7 @@ Existing conformance directories remain in place. New subdirectories are added o
 
 ## Fixture Categories
 
-- Valid and invalid `atlas.json` / project profiles
+- Valid and invalid `prumo.json` / project profiles
 - Goal lock, amendment, transition, illegal mutation
 - Valid and cyclic Plan DAG
 - Context pack and budget behavior
@@ -57,13 +57,13 @@ Python v0.3 generates the reference:
 
 ```bash
 python -m pytest tests/test_conformance.py
-atlas <command> <args> --json > conformance/golden/json/<case>.json
+prumo <command> <args> --json > conformance/golden/json/<case>.json
 ```
 
 Go executes the same case:
 
 ```bash
-go run ./cmd/atlas <command> <args> --json
+go run ./cmd/prumo <command> <args> --json
 ```
 
 Golden updates require an intentional protocol decision, an updated schema/ADR, and review. Never regenerate all outputs as a convenience.

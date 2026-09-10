@@ -32,7 +32,7 @@ A new connector can be built against the Connector SDK and passes contract tests
 
 - Reusable contract verification suite:
   - `VerifyContract`: checks schema, ID, version, protocol range, capabilities, and enforcement.
-  - `VerifyCompilation`: checks compilation outputs and `.atlas-generated.json` ownership marker.
+  - `VerifyCompilation`: checks compilation outputs and `.prumo-generated.json` ownership marker.
   - `VerifyIdempotentInstall`: checks repeated install convergence and cleanup manifest creation.
   - `VerifySafeUninstall`: checks that user files are preserved and managed artifacts are removed.
   - `VerifyNegotiation`: checks capability negotiation under strict and non-strict conditions.
@@ -51,9 +51,9 @@ A new connector can be built against the Connector SDK and passes contract tests
 
 ### 5. CLI Integration & Verification
 
-- `atlas connector list`: lists all registered connectors, versions, enforcements, and capabilities.
-- `atlas connector install <name>`: installs any registered connector and sets up cleanup manifests.
-- `atlas connector validate <name>`: verifies connector artifact integrity and ownership markers.
-- `atlas connector uninstall <name>`: performs clean removal.
-- `atlas connector negotiate <name> [--strict] [--caps <list>]`: evaluates compatibility and graceful degradations.
+- `prumo connector list`: lists all registered connectors, versions, enforcements, and capabilities.
+- `prumo connector install <name>`: installs any registered connector and sets up cleanup manifests.
+- `prumo connector validate <name>`: verifies connector artifact integrity and ownership markers.
+- `prumo connector uninstall <name>`: performs clean removal.
+- `prumo connector negotiate <name> [--strict] [--caps <list>]`: evaluates compatibility and graceful degradations.
 - All unit and integration tests pass with race detection enabled.

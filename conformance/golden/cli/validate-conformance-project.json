@@ -1,10 +1,10 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "validate",
     "examples/conformance-project"
   ],
   "exit": 0,
-  "stdout": "Project Atlas validation passed.\n",
+  "stdout": "Prumo validation passed.\n",
   "stderr": ""
 }

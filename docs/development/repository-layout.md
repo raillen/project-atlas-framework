@@ -1,13 +1,13 @@
-# Project Atlas v0.4 Canonical Repository Layout
+# Prumo v0.4 Canonical Repository Layout
 
 > Directories only exist when they have real content. No empty packages for diagrammatic completeness.
 
 ## Root Structure
 
 ```text
-project-atlas-framework/
+prumo/
 ├── cmd/
-│   └── atlas/
+│   └── prumo/
 │       ├── main.go
 │       └── main_test.go
 ├── internal/
@@ -83,17 +83,17 @@ project-atlas-framework/
 ├── AGENTS.md
 ├── ENTRYPOINT.md
 ├── FRAMEWORK.md
-└── docs/ATLAS.md
+└── docs/PRUMO.md
 ```
 
 ## Directory Responsibilities
 
 | Path | Purpose | Embedded? |
 |------|---------|-----------|
-| `cmd/atlas/` | CLI entrypoint — thin adapter to `internal/app` | No |
+| `cmd/prumo/` | CLI entrypoint — thin adapter to `internal/app` | No |
 | `internal/app/` | Application services (use cases, orchestration) | No |
 | `internal/protocol/` | Stable domain types & invariants (Goals, Plans, Tasks, Events, Evidence, Gates) | No |
-| `internal/project/` | Project discovery, `atlas.json`, profiles, capabilities | No |
+| `internal/project/` | Project discovery, `prumo.json`, profiles, capabilities | No |
 | `internal/resolver/` | Workforce, risk, recipe, model policy, context selection | No |
 | `internal/compiler/` | Target adapter interface + generators | No |
 | `internal/validator/` | JSON Schema validation (Draft 2020-12) | No |

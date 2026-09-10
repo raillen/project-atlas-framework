@@ -36,7 +36,7 @@ func ScanSecrets(root string) ([]SecretFinding, error) {
 	skipDirs := map[string]bool{
 		".git":         true,
 		"node_modules": true,
-		".atlas/cache": true,
+		".prumo/cache": true,
 		"vendor":       true,
 	}
 
@@ -101,7 +101,7 @@ func ScanHeaders(targetURL string) ([]HeaderFinding, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "ProjectAtlas-Tooling/0.4")
+	req.Header.Set("User-Agent", "Prumo-Tooling/0.5")
 
 	resp, err := client.Do(req)
 	if err != nil {

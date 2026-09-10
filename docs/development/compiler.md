@@ -1,17 +1,17 @@
 # Compiler Internals
 
-Project Atlas compiles Goals and workforce into adapter-specific formats for different orchestrators and IDEs.
+Prumo compiles Goals and workforce into adapter-specific formats for different orchestrators and IDEs.
 
 ## Overview
 
 The compiler transforms the canonical JSON/Markdown project representation into formats that each platform understands:
 
 ```
-atlas.json + .ai/goals/ + .ai/agents/ + .ai/skills/
+prumo.json + .ai/goals/ + .ai/agents/ + .ai/skills/
                               ↓
                         compile_target(target)
                               ↓
-              .codex/ | .claude/ | .traycer/ | .atlas/runtime/
+              .codex/ | .claude/ | .traycer/ | .prumo/runtime/
 ```
 
 **No platform-specific data pollutes the canonical project.** The adapter is generated at compile time.
@@ -22,7 +22,7 @@ atlas.json + .ai/goals/ + .ai/agents/ + .ai/skills/
 
 **Purpose:** Standalone runtime entrypoint for any LLM orchestrator.
 
-**Output:** `.atlas/runtime/compiled/generic/ENTRYPOINT.md`
+**Output:** `.prumo/runtime/compiled/generic/ENTRYPOINT.md`
 
 Contains:
 - Framework invariants
@@ -34,7 +34,7 @@ Contains:
 **Use case:** Local CLI, custom automation, generic API clients.
 
 ```bash
-atlas compile --target generic
+prumo compile --target generic
 ```
 
 ---
@@ -56,7 +56,7 @@ atlas compile --target generic
 **Use case:** GitHub Copilot Chat in VS Code/GitHub.com.
 
 ```bash
-atlas compile --target codex
+prumo compile --target codex
 # Creates .codex/ with agent/skill tree
 ```
 
@@ -79,7 +79,7 @@ atlas compile --target codex
 **Use case:** Claude Code (via Anthropic API or IDE).
 
 ```bash
-atlas compile --target claude-code
+prumo compile --target claude-code
 # Creates .claude/ with agent/skill tree
 ```
 
@@ -89,7 +89,7 @@ atlas compile --target claude-code
 
 **Purpose:** OpenAI ChatGPT / GPT-4 integration.
 
-**Output:** `.atlas/runtime/compiled/chatgpt/ENTRYPOINT.md`
+**Output:** `.prumo/runtime/compiled/chatgpt/ENTRYPOINT.md`
 
 Contains:
 - LPC/PCA instructions
@@ -105,7 +105,7 @@ Contains:
 **Use case:** ChatGPT web/API, custom integrations.
 
 ```bash
-atlas compile --target chatgpt
+prumo compile --target chatgpt
 ```
 
 ---
@@ -114,7 +114,7 @@ atlas compile --target chatgpt
 
 **Purpose:** Kimi LLM (Chinese market) integration.
 
-**Output:** `.atlas/runtime/compiled/kimi/ENTRYPOINT.md`
+**Output:** `.prumo/runtime/compiled/kimi/ENTRYPOINT.md`
 
 Contains:
 - LPC instructions adapted for Kimi
@@ -130,7 +130,7 @@ Contains:
 **Use case:** Moonshot Kimi API/Chat.
 
 ```bash
-atlas compile --target kimi
+prumo compile --target kimi
 ```
 
 ---
@@ -139,7 +139,7 @@ atlas compile --target kimi
 
 **Purpose:** Anthropic's internal trace/audit system for agent execution.
 
-**Output:** `.traycer/PROJECT_ATLAS.md`
+**Output:** `.traycer/PROJECT_PRUMO.md`
 
 Contains:
 - Execution trace format
@@ -156,7 +156,7 @@ Contains:
 **Use case:** Internal Anthropic execution, multi-turn reasoning traces.
 
 ```bash
-atlas compile --target traycer
+prumo compile --target traycer
 ```
 
 ---
@@ -165,7 +165,7 @@ atlas compile --target traycer
 
 **Purpose:** Direct Claude API (non-Code tool) integration.
 
-**Output:** `.atlas/runtime/compiled/claude/ENTRYPOINT.md`
+**Output:** `.prumo/runtime/compiled/claude/ENTRYPOINT.md`
 
 Contains:
 - Raw Claude system prompt format
@@ -181,7 +181,7 @@ Contains:
 **Use case:** Anthropic Claude API direct calls.
 
 ```bash
-atlas compile --target claude
+prumo compile --target claude
 ```
 
 ---
@@ -192,7 +192,7 @@ atlas compile --target claude
 
 ```python
 root = Path(project_path)
-atlas_json = load_data(root / "atlas.json")
+prumo_json = load_data(root / "prumo.json")
 agents_manifest = load_data(root / ".ai/agents/manifest.json")
 skills_manifest = load_data(root / ".ai/skills/manifest.json")
 ```
@@ -207,13 +207,13 @@ selected_skills = skills_manifest.get("skills", [])  # List of skill IDs
 ### Step 3: Render Target-Specific Format
 
 For **codex** / **claude-code**: Generate `.{target}/agents/{id}.md` + `.{target}/skills/{id}/` tree
-For **generic** / **chatgpt** / **claude** / **kimi**: Generate `.atlas/runtime/compiled/{target}/ENTRYPOINT.md`
-For **traycer**: Generate `.traycer/PROJECT_ATLAS.md`
+For **generic** / **chatgpt** / **claude** / **kimi**: Generate `.prumo/runtime/compiled/{target}/ENTRYPOINT.md`
+For **traycer**: Generate `.traycer/PROJECT_PRUMO.md`
 
 ### Step 4: Preserve Canonical
 
 Original project remains **untouched**:
-- ✅ `atlas.json` unchanged
+- ✅ `prumo.json` unchanged
 - ✅ `.ai/` structure unchanged
 - ✅ No YAML artifacts generated (v0.3+ policy)
 
@@ -221,7 +221,7 @@ Original project remains **untouched**:
 
 ## Adapter Format Reference
 
-Each adapter is stored in `src/project_atlas/resources/adapters/{target}.md`:
+Each adapter is stored in `src/prumo/resources/adapters/{target}.md`:
 
 ```
 resources/
@@ -251,7 +251,7 @@ resources/
 ## Example: Compiling for Codex
 
 ```bash
-$ atlas compile --target codex --path my-project
+$ prumo compile --target codex --path my-project
 
 # Creates:
 # .codex/AGENTS.md
@@ -267,7 +267,7 @@ $ atlas compile --target codex --path my-project
 ## Example: Compiling for Claude Code
 
 ```bash
-$ atlas compile --target claude-code --path my-project
+$ prumo compile --target claude-code --path my-project
 
 # Creates:
 # .claude/CLAUDE.md

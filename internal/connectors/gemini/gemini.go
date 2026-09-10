@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/install"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/install"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func init() {
@@ -30,7 +30,7 @@ func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "gemini",
 		Version:       protocol.CLIVersion,
-		ProtocolRange: ">=0.4.0 <0.5.0",
+		ProtocolRange: ">=0.5.0 <0.6.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
 			connectors.CapCommands,
@@ -69,7 +69,7 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 	config := map[string]any{
 		"version":           protocol.CLIVersion,
 		"harness":           "gemini-cli",
-		"instructions_file": "prompts/atlas.md",
+		"instructions_file": "prompts/prumo.md",
 		"commands_file":     "commands.json",
 		"subagents_dir":     "subagents",
 	}
@@ -80,13 +80,13 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 	created = append(created, configPath)
 
 	// 2. Primary instructions
-	instructions := `# Project Atlas for Gemini CLI
+	instructions := `# Prumo for Gemini CLI
 
 Follow Lean Progressive Context (LPC/PCA): smallest sufficient context, progressive expansion, pointer over payload.
-Start at ENTRYPOINT.md, atlas.json, and the active Goal.
+Start at ENTRYPOINT.md, prumo.json, and the active Goal.
 Do not scan the whole codebase unless explicitly requested.
 `
-	instPath := filepath.Join(geminiDir, "prompts", "atlas.md")
+	instPath := filepath.Join(geminiDir, "prompts", "prumo.md")
 	if err := writeText(instPath, instructions); err != nil {
 		return nil, err
 	}
@@ -109,10 +109,10 @@ Do not scan the whole codebase unless explicitly requested.
 	// 4. Commands
 	commands := map[string]any{
 		"commands": []map[string]any{
-			{"name": "goal", "description": "Manage Atlas goals", "command": "atlas goal"},
-			{"name": "plan", "description": "Inspect Living Plan", "command": "atlas plan"},
-			{"name": "trace", "description": "Trace requirements to code", "command": "atlas trace"},
-			{"name": "status", "description": "Show project status", "command": "atlas status"},
+			{"name": "goal", "description": "Manage Prumo goals", "command": "prumo goal"},
+			{"name": "plan", "description": "Inspect Living Plan", "command": "prumo plan"},
+			{"name": "trace", "description": "Trace requirements to code", "command": "prumo trace"},
+			{"name": "status", "description": "Show project status", "command": "prumo status"},
 		},
 	}
 	cmdPath := filepath.Join(geminiDir, "commands.json")
@@ -123,14 +123,14 @@ Do not scan the whole codebase unless explicitly requested.
 
 	// 5. Ownership marker
 	ownership := map[string]any{
-		"atlas_generated": true,
-		"atlas_version":   protocol.CLIVersion,
+		"prumo_generated": true,
+		"prumo_version":   protocol.CLIVersion,
 		"generator":       "gemini-connector",
 		"target":          "gemini",
 		"managed":         true,
 		"created_paths":   created,
 	}
-	markerPath := filepath.Join(geminiDir, ".atlas-generated.json")
+	markerPath := filepath.Join(geminiDir, ".prumo-generated.json")
 	if err := writeJSON(markerPath, ownership); err != nil {
 		return nil, err
 	}
@@ -219,9 +219,9 @@ func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, 
 
 	required := []string{
 		"config.json",
-		"prompts/atlas.md",
+		"prompts/prumo.md",
 		"commands.json",
-		".atlas-generated.json",
+		".prumo-generated.json",
 	}
 	for _, rel := range required {
 		p := filepath.Join(geminiDir, rel)
@@ -233,7 +233,7 @@ func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, 
 		}
 	}
 
-	markerPath := filepath.Join(geminiDir, ".atlas-generated.json")
+	markerPath := filepath.Join(geminiDir, ".prumo-generated.json")
 	if data, err := os.ReadFile(markerPath); err == nil {
 		var marker map[string]any
 		if json.Unmarshal(data, &marker) == nil {

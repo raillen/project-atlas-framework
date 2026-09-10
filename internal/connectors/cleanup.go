@@ -6,10 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/raillen/project-atlas-framework/internal/install"
+	"github.com/raillen/prumo/internal/install"
 )
 
-// SaveCleanup writes the cleanup manifest for a connector into ATLAS_HOME.
+// SaveCleanup writes the cleanup manifest for a connector into PRUMO_HOME.
 func SaveCleanup(home, connectorID string, manifest install.CleanupManifest) error {
 	path := install.CleanupPath(home, connectorID)
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
@@ -22,7 +22,7 @@ func SaveCleanup(home, connectorID string, manifest install.CleanupManifest) err
 	return os.WriteFile(path, append(data, '\n'), 0644)
 }
 
-// LoadCleanup reads the cleanup manifest for a connector from ATLAS_HOME.
+// LoadCleanup reads the cleanup manifest for a connector from PRUMO_HOME.
 func LoadCleanup(home, connectorID string) (*install.CleanupManifest, error) {
 	path := install.CleanupPath(home, connectorID)
 	data, err := os.ReadFile(path)
@@ -58,7 +58,7 @@ func ExecuteCleanup(home, connectorID string, projectRoot string, pruneDirs ...s
 	cleanupPath := install.CleanupPath(home, connectorID)
 	_ = os.Remove(cleanupPath)
 
-	// Update installation manifest in ATLAS_HOME
+	// Update installation manifest in PRUMO_HOME
 	instManifest, err := install.LoadManifest(home)
 	if err == nil {
 		delete(instManifest.Connectors, connectorID)

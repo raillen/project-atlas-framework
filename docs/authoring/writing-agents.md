@@ -1,6 +1,6 @@
 # Writing Agents
 
-Agents in Project Atlas are defined by Agent Packages. An agent is a specialized persona equipped with a set of skills and permissions.
+Agents in Prumo are defined by Agent Packages. An agent is a specialized persona equipped with a set of skills and permissions.
 
 ## Agent Package Directory Structure
 

@@ -10,7 +10,7 @@ func TestLoadDogfoodPolicy(t *testing.T) {
 	if err != nil {
 		t.Fatalf("root: %v", err)
 	}
-	policy, err := Load(filepath.Join(root, ".atlas", "repository", "policy.json"))
+	policy, err := Load(filepath.Join(root, ".prumo", "repository", "policy.json"))
 	if err != nil {
 		t.Fatalf("policy: %v", err)
 	}

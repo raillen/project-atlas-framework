@@ -53,11 +53,11 @@ func TestSecretProviders(t *testing.T) {
 		t.Fatalf("static secret resolution failed: %v, %s", err, val)
 	}
 
-	os.Setenv("ATLAS_TEST_SECRET", "my-env-secret-val")
-	defer os.Unsetenv("ATLAS_TEST_SECRET")
+	os.Setenv("PRUMO_TEST_SECRET", "my-env-secret-val")
+	defer os.Unsetenv("PRUMO_TEST_SECRET")
 
 	envProv := EnvSecretProvider{}
-	valEnv, err := envProv.Resolve(SecretReference{ID: "test", Name: "ATLAS_TEST_SECRET", Provider: "env"})
+	valEnv, err := envProv.Resolve(SecretReference{ID: "test", Name: "PRUMO_TEST_SECRET", Provider: "env"})
 	if err != nil || valEnv != "my-env-secret-val" {
 		t.Fatalf("env secret resolution failed: %v, %s", err, valEnv)
 	}

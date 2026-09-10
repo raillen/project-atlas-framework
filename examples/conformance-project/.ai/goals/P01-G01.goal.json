@@ -4,7 +4,7 @@
   "phase": "P01",
   "revision": 1,
   "state": "LOCKED",
-  "objective": "Validate end-to-end Project Atlas v0.3 protocol contracts.",
+  "objective": "Validate end-to-end Prumo v0.3 protocol contracts.",
   "constraints": [],
   "non_goals": [],
   "acceptance": [

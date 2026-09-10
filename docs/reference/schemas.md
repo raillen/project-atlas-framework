@@ -1,7 +1,7 @@
 # Schemas Reference
 
-All Project Atlas JSON schemas reside in `schemas/`:
-- `atlas.schema.json`
+All Prumo JSON schemas reside in `schemas/`:
+- `prumo.schema.json`
 - `goal.schema.json`
 - `goal-amendment.schema.json`
 - `plan.schema.json`

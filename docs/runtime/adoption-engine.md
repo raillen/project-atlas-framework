@@ -5,8 +5,8 @@ Notion design (Livro Vivo pages 06 and 71). Repository version has authority ove
 
 ## Purpose
 
-Adoption lets Atlas enter brownfield projects without destructive restructuring. It
-discovers what exists, classifies the repository, maps evidence to Atlas concepts,
+Adoption lets Prumo enter brownfield projects without destructive restructuring. It
+discovers what exists, classifies the repository, maps evidence to Prumo concepts,
 records confidence, and proposes incremental migration — without promoting inference to
 canonical truth.
 
@@ -21,7 +21,7 @@ canonical truth.
 
 ## Non-goals
 
-- rewriting an entire layout to "look Atlas";
+- rewriting an entire layout to "look Prumo";
 - trusting README as authority;
 - mandatory embeddings;
 - auto-deleting legacy docs;
@@ -31,7 +31,7 @@ canonical truth.
 ## Pipeline
 
 ```text
-atlas adopt
+prumo adopt
   → discover            (facts, revision-aware)
   → classify            (language, toolchain, project type, capabilities)
   → map                 (semantic mapping → candidate bindings)
@@ -73,7 +73,7 @@ Observed facts are separated from inferences.
 
 **Inference / MappingCandidate:**
 
-- target Atlas concept;
+- target Prumo concept;
 - supporting evidence refs;
 - confidence;
 - ambiguity/alternatives;
@@ -98,7 +98,7 @@ Classification is evidence-driven and may be `unknown`.
 
 ## Semantic mapping
 
-Map existing content to Documentation Contracts **without requiring Atlas filenames**.
+Map existing content to Documentation Contracts **without requiring Prumo filenames**.
 Example: `docs/design/system.md` can satisfy the architecture contract if the knowledge
 items really exist. M5 Coverage Engine evaluates quality; Adoption discovers candidate
 bindings.
@@ -128,7 +128,7 @@ Must separate clearly:
 
 - observed repository facts;
 - likely capabilities/profile;
-- existing Atlas-compatible artifacts;
+- existing Prumo-compatible artifacts;
 - proposed doc bindings;
 - missing/partial/stale docs;
 - contradictions;
@@ -142,10 +142,10 @@ Readable human output plus `--json` machine representation.
 
 ## Modes
 
-- `atlas adopt --audit-only` — no canonical mutation;
-- `atlas adopt --interactive` — uses Living Plan to resolve uncertainty;
-- `atlas adopt --non-interactive` — generates report/proposals without asking;
-- `atlas adopt --strict` — only high-confidence deterministic mapping, flags ambiguity.
+- `prumo adopt --audit-only` — no canonical mutation;
+- `prumo adopt --interactive` — uses Living Plan to resolve uncertainty;
+- `prumo adopt --non-interactive` — generates report/proposals without asking;
+- `prumo adopt --strict` — only high-confidence deterministic mapping, flags ambiguity.
 
 Default must be non-destructive. Aliases follow existing CLI conventions.
 
@@ -162,19 +162,19 @@ Adoption finding
   → apply
 ```
 
-Examples: create `atlas.json`/profile with confirmed facts; add documentation bindings;
+Examples: create `prumo.json`/profile with confirmed facts; add documentation bindings;
 move/normalize config only when necessary; compile connector config; create canonical
 Goal/docs from accepted decisions.
 
 ## No forced layout
 
-Atlas works with the existing source layout. Atlas-native `.ai/` directories may store
+Prumo works with the existing source layout. Prumo-native `.ai/` directories may store
 protocol state, but source/docs do not need to move into a rigid template to be
 recognized.
 
 ## Brownfield vs M5 boundary
 
-M5 knows explicitly configured / Atlas-native contracts and bindings. Phase F discovers
+M5 knows explicitly configured / Prumo-native contracts and bindings. Phase F discovers
 unknown arbitrary repository sources and **proposes** bindings/capabilities. Do not
 duplicate Coverage/Readiness semantics.
 
@@ -214,15 +214,15 @@ Candidates:
 ## CLI
 
 ```text
-atlas adopt
-atlas adopt --audit-only
-atlas adopt --interactive
-atlas adopt --non-interactive
-atlas adopt --strict
-atlas adopt status/report      # if needed
+prumo adopt
+prumo adopt --audit-only
+prumo adopt --interactive
+prumo adopt --non-interactive
+prumo adopt --strict
+prumo adopt status/report      # if needed
 ```
 
-`atlas adopt` must not hide external network/tool use; explain/plan first when necessary.
+`prumo adopt` must not hide external network/tool use; explain/plan first when necessary.
 
 ## Goal decomposition (M7)
 
@@ -240,7 +240,7 @@ atlas adopt status/report      # if needed
 
 For fixtures (representative, synthetic/public):
 
-- Go CLI with good non-Atlas docs;
+- Go CLI with good non-Prumo docs;
 - web app monorepo;
 - compiler project;
 - repo with stale README;
@@ -266,7 +266,7 @@ For fixtures (representative, synthetic/public):
 
 ## Dogfood
 
-Beyond the Atlas-native repository, test Adoption on at least 3 brownfield repositories
+Beyond the Prumo-native repository, test Adoption on at least 3 brownfield repositories
 of different styles — ideally a real user project later, but public/local synthetic
 corpus first.
 

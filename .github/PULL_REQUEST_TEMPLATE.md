@@ -14,7 +14,7 @@
 
 <!-- What is deliberately not included? -->
 
-## Atlas trace
+## Prumo trace
 
 Goal:
 

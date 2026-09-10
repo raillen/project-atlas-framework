@@ -1,12 +1,12 @@
-# Project Atlas Trust Model
+# Prumo Trust Model
 
 ## 1. Overview
 
-The Project Atlas Trust Model establishes formal boundaries between authoritative policy, repository context, and untrusted inputs. In agentic workflows, LLMs process diverse information sources. Without an explicit trust hierarchy, untrusted input (such as malicious issue descriptions, external web pages, or compromised third-party dependencies) could alter locked goals, bypass security gates, or execute unauthorized operations.
+The Prumo Trust Model establishes formal boundaries between authoritative policy, repository context, and untrusted inputs. In agentic workflows, LLMs process diverse information sources. Without an explicit trust hierarchy, untrusted input (such as malicious issue descriptions, external web pages, or compromised third-party dependencies) could alter locked goals, bypass security gates, or execute unauthorized operations.
 
 ## 2. Trust Classification
 
-Project Atlas categorizes all information into three distinct trust tiers:
+Prumo categorizes all information into three distinct trust tiers:
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -30,7 +30,7 @@ Project Atlas categorizes all information into three distinct trust tiers:
 ### 2.1 Trusted Policy (`trusted`)
 Authoritative artifacts that govern agent execution and verification:
 - Locked Goals (`.ai/goals/*.goal.json` with `state: "LOCKED"`);
-- Project configuration (`atlas.json`, `.ai/orchestration/model-policy.json`);
+- Project configuration (`prumo.json`, `.ai/orchestration/model-policy.json`);
 - Permission policies (`schemas/permission-policy.schema.json`);
 - Approval policies (`schemas/approval-policy.schema.json`);
 - Architectural Decision Records (ADRs) in `docs/adr/`.

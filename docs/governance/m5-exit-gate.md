@@ -11,13 +11,13 @@ M5 exit gate (per `docs/development/phases.md`): documentation contracts enforce
 - Contract registry: `docs/contracts/builtin.json` (8 contracts), schema `schemas/documentation-contract.schema.json`.
 - Bindings: `docs/contracts/bindings.json` with `owned` sources, `answered_questions`, and `evidence`.
 - Machine schema validation on load; every stor/delta validated against `schemas/documentation-delta.schema.json`.
-- Verification: `atlas docs audit` reports all applicable contracts `implementation-ready`.
+- Verification: `prumo docs audit` reports all applicable contracts `implementation-ready`.
 
 ### 2. Profiles selectable
 
 - Profile registry: `docs/profiles/builtin.json` (7 profiles), schema `schemas/documentation-profile.schema.json`.
-- Applicability resolution via project capabilities (`atlas.json` project type/features plus detected `cmd`, `schemas`, `go.mod`).
-- Verification: `atlas docs profiles` lists `api-service`, `cli`, `compiler`, `core-software`, `desktop-gui`, `library`, `web-application`.
+- Applicability resolution via project capabilities (`prumo.json` project type/features plus detected `cmd`, `schemas`, `go.mod`).
+- Verification: `prumo docs profiles` lists `api-service`, `cli`, `compiler`, `core-software`, `desktop-gui`, `library`, `web-application`.
 
 ### 3. Delta tracked
 
@@ -25,21 +25,21 @@ M5 exit gate (per `docs/development/phases.md`): documentation contracts enforce
 - Deterministic IDs (SHA-256 of goal, sorted contracts, sorted documents); stable across re-analysis.
 - Lifecycle: `proposed → reviewed → accepted → applied` (applied requires evidence) or `proposed → rejected`; versions advance and all transitions validate.
 - Local persistence under `.ai/docs/deltas/DD-<12hex>.json`, schema-validated on read, corruption-rejected.
-- CLI: `atlas docs delta propose|list|show|transition`.
+- CLI: `prumo docs delta propose|list|show|transition`.
 - Conformance fixture: `conformance/documentation/valid_delta.json`.
 
 ### 4. Contradictions detected
 
 - Deterministic contradiction and causal-staleness findings (`DetectContradictions`, `DetectStaleness`).
 - Contradictions are findings only; they are never silently resolved by recency or model output.
-- CLI: `atlas docs contradictions`.
+- CLI: `prumo docs contradictions`.
 
 ## Evidence (framework dogfood on this repository)
 
-- `atlas docs audit` — all 7 applicable contracts `implementation-ready`.
-- `atlas docs readiness --goal M5` — `ready: true`, no blocking contracts, no blocking questions.
-- `atlas docs contradictions` — deterministic findings (0 for current tree).
-- `atlas docs profiles` — all 7 built-in profiles resolvable.
+- `prumo docs audit` — all 7 applicable contracts `implementation-ready`.
+- `prumo docs readiness --goal M5` — `ready: true`, no blocking contracts, no blocking questions.
+- `prumo docs contradictions` — deterministic findings (0 for current tree).
+- `prumo docs profiles` — all 7 built-in profiles resolvable.
 
 ## Test evidence
 
@@ -51,7 +51,7 @@ M5 exit gate (per `docs/development/phases.md`): documentation contracts enforce
 
 ## Governance
 
-- Documentation Delta application remains governed by Repository Change Governance (`.atlas/repository/policy.json`): branch, commit, Pull Request, validation, review, and merge.
+- Documentation Delta application remains governed by Repository Change Governance (`.prumo/repository/policy.json`): branch, commit, Pull Request, validation, review, and merge.
 - `feat/c-g06-documentation-delta-tracking` merged to `main` via PR #21 (squash).
 - Machine schemas under `schemas/documentation-*.schema.json` are the contract surface; changes require schema updates and conformance fixtures.
 

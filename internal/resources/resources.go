@@ -33,7 +33,7 @@ func FindSchemasDir(repoRoot string) string {
 }
 
 func FindResourcesDir(repoRoot string) string {
-	return filepath.Join(repoRoot, "src", "project_atlas", "resources")
+	return filepath.Join(repoRoot, "src", "prumo", "resources")
 }
 
 func OpenSchema(repoRoot, schemaName string) ([]byte, error) {

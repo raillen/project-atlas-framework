@@ -1,3 +1,3 @@
 # Generic Platform Integration
 
-Generates standard `.atlas/runtime/compiled/generic/ENTRYPOINT.md` usable by any LLM coding assistant.
+Generates standard `.prumo/runtime/compiled/generic/ENTRYPOINT.md` usable by any LLM coding assistant.

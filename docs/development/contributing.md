@@ -4,13 +4,13 @@ The short contribution guide is maintained at [`CONTRIBUTING.md`](../../CONTRIBU
 
 ## Repository entrypoints
 
-Read `AGENTS.md`, `ENTRYPOINT.md`, `FRAMEWORK.md`, and `docs/ATLAS.md` before changing behavior. New work must preserve the provider-neutral core policy and Lean Progressive Context discipline.
+Read `AGENTS.md`, `ENTRYPOINT.md`, `FRAMEWORK.md`, and `docs/PRUMO.md` before changing behavior. New work must preserve the provider-neutral core policy and Lean Progressive Context discipline.
 
 ## Development setup
 
 ```bash
-git clone git@github.com:raillen/project-atlas-framework.git
-cd project-atlas-framework
+git clone git@github.com:raillen/prumo.git
+cd prumo
 go test ./...
 go vet ./...
 gofmt -l cmd internal embedded_assets.go
@@ -35,15 +35,15 @@ go test -v -race ./...
 ## Schemas, workforce, and CLI
 
 - Update the canonical schema in `schemas/` before changing a machine contract.
-- Keep agents, skills, and recipes under `src/project_atlas/resources/` until the migration explicitly moves canonical content.
+- Keep agents, skills, and recipes under `src/prumo/resources/` until the migration explicitly moves canonical content.
 - Add differential tests for resolver, Goals, compiler, validation, scaffolding, migration, doctor, and explain behavior.
 - Validate all compiler targets after changing shared compiler logic.
-- Run `atlas framework-check` behavior coverage after catalog/workforce changes.
+- Run `prumo framework-check` behavior coverage after catalog/workforce changes.
 
 ## Migration discipline
 
 - The Python v0.3 runtime was retired in ADR 002; the repository is 100% pure Go.
-- Do not change the Atlas protocol only to make Go implementation easier.
+- Do not change the Prumo protocol only to make Go implementation easier.
 - New v0.4 capabilities require closed Goals, documentation, and acceptance criteria.
 - Lock content, ADRs, and schemas must change explicitly, not silently.
 

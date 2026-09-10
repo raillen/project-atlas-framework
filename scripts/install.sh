@@ -1,10 +1,10 @@
 #!/bin/sh
 set -eu
 
-REPOSITORY="${ATLAS_REPOSITORY:-raillen/project-atlas-framework}"
-VERSION="${ATLAS_VERSION:-v0.4.2}"
-INSTALL_DIR="${ATLAS_INSTALL_DIR:-${HOME}/.local/bin}"
-ATLAS_HOME_VALUE="${ATLAS_HOME:-${HOME}/.atlas}"
+REPOSITORY="${PRUMO_REPOSITORY:-raillen/prumo}"
+VERSION="${PRUMO_VERSION:-v0.5.0}"
+INSTALL_DIR="${PRUMO_INSTALL_DIR:-${HOME}/.local/bin}"
+PRUMO_HOME_VALUE="${PRUMO_HOME:-${HOME}/.prumo}"
 BASE_URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}"
 
 case "$(uname -s)" in
@@ -20,7 +20,7 @@ case "$(uname -m)" in
 esac
 
 case "$OS" in
-  linux|darwin) ASSET="atlas-${OS}-${ARCH}" ;;
+  linux|darwin) ASSET="prumo-${OS}-${ARCH}" ;;
 esac
 
 if ! command -v curl >/dev/null 2>&1; then
@@ -64,14 +64,14 @@ fi
 
 mkdir -p "$INSTALL_DIR"
 chmod 0755 "${TEMP_DIR}/${ASSET}"
-TARGET="${INSTALL_DIR}/atlas"
+TARGET="${INSTALL_DIR}/prumo"
 STAGED="${TARGET}.tmp.$$"
 cp "${TEMP_DIR}/${ASSET}" "$STAGED"
 chmod 0755 "$STAGED"
 mv "$STAGED" "$TARGET"
 
-ATLAS_HOME="$ATLAS_HOME_VALUE" "$TARGET" setup >/dev/null
-printf '%s\n' "Atlas ${VERSION} installed at ${TARGET}."
+PRUMO_HOME="$PRUMO_HOME_VALUE" "$TARGET" setup >/dev/null
+printf '%s\n' "Prumo ${VERSION} installed at ${TARGET}."
 
 # Configure system PATH idempotently
 case ":${PATH}:" in
@@ -81,31 +81,31 @@ case ":${PATH}:" in
   *)
     UPDATED_FILES=""
     if [ -f "${HOME}/.bashrc" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.bashrc"; then
-      printf '\n# Added by Project Atlas\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.bashrc"
+      printf '\n# Added by Prumo\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.bashrc"
       UPDATED_FILES="${UPDATED_FILES} ~/.bashrc"
     fi
 
     if [ -f "${HOME}/.zshrc" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.zshrc"; then
-      printf '\n# Added by Project Atlas\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.zshrc"
+      printf '\n# Added by Prumo\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.zshrc"
       UPDATED_FILES="${UPDATED_FILES} ~/.zshrc"
     fi
 
     if [ -f "${HOME}/.config/fish/config.fish" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.config/fish/config.fish"; then
-      printf '\n# Added by Project Atlas\nfish_add_path "%s"\n' "$INSTALL_DIR" >> "${HOME}/.config/fish/config.fish"
+      printf '\n# Added by Prumo\nfish_add_path "%s"\n' "$INSTALL_DIR" >> "${HOME}/.config/fish/config.fish"
       UPDATED_FILES="${UPDATED_FILES} ~/.config/fish/config.fish"
     fi
 
     if [ -f "${HOME}/.profile" ] && ! grep -qF "$INSTALL_DIR" "${HOME}/.profile"; then
-      printf '\n# Added by Project Atlas\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.profile"
+      printf '\n# Added by Prumo\nexport PATH="%s:$PATH"\n' "$INSTALL_DIR" >> "${HOME}/.profile"
       UPDATED_FILES="${UPDATED_FILES} ~/.profile"
     fi
 
     if [ -n "$UPDATED_FILES" ]; then
       printf '%s\n' "Configured PATH in:${UPDATED_FILES}"
-      printf '%s\n' "To start using atlas in this terminal session, run:"
+      printf '%s\n' "To start using prumo in this terminal session, run:"
       printf '%s\n' "  export PATH=\"${INSTALL_DIR}:\$PATH\""
     fi
     ;;
 esac
 
-printf '%s\n' "Run: atlas version"
+printf '%s\n' "Run: prumo version"

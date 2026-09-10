@@ -116,7 +116,7 @@ type ValidationResult struct {
 	Files     []string `json:"files,omitempty"`
 }
 
-// Connector interface defines the lifecycle for an Atlas connector harness.
+// Connector interface defines the lifecycle for an Prumo connector harness.
 type Connector interface {
 	ID() string
 	Name() string

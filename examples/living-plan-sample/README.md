@@ -14,7 +14,7 @@ ready, with the applied delta recorded in
 
 | File | Role |
 |------|------|
-| `atlas.json` | canonical project configuration |
+| `prumo.json` | canonical project configuration |
 | `docs/profiles/builtin.json` | project-scoped mini registry: one `core-software` profile |
 | `docs/contracts/builtin.json` | the two applicable contracts (`product.vision`, `project.scope`) |
 | `docs/contracts/bindings.json` | contract → source bindings, ownership and answered questions |
@@ -27,7 +27,7 @@ ready, with the applied delta recorded in
 Build the CLI (from the framework root):
 
 ```sh
-go build -o /tmp/atlas ./cmd/atlas
+go build -o /tmp/prumo ./cmd/prumo
 ```
 
 Copy the sample to a scratch directory, then seed a planning session with the
@@ -35,10 +35,10 @@ two open questions that tripped docs readiness (this is the harness/goal-focus
 step that produces open questions from the coverage audit):
 
 ```sh
-atlas --json docs readiness --path ./copy --goal G-SAMPLE
+prumo --json docs readiness --path ./copy --goal G-SAMPLE
 # {"ready": false, "blocking_contracts": ["project.scope"]}
 
-atlas --json plan questions --session PLAN-SAMPLE --path ./copy
+prumo --json plan questions --session PLAN-SAMPLE --path ./copy
 # Q1 [blocker]   Which capabilities are out of scope for the first delivery?
 # Q2 [high-risk] Which target users drive the primary outcome?
 ```
@@ -46,7 +46,7 @@ atlas --json plan questions --session PLAN-SAMPLE --path ./copy
 1. **Answer the blocker** — an explicit user decision, owner attributed.
 
    ```sh
-   atlas plan answer --session PLAN-SAMPLE --path ./copy \
+   prumo plan answer --session PLAN-SAMPLE --path ./copy \
      --question Q1 --classification explicit-decision --actor owner \
      --statement "Networking, observability and storage backends are out of scope for the first delivery."
    # resolved Q1 (explicit-decision): open questions now 1
@@ -55,7 +55,7 @@ atlas --json plan questions --session PLAN-SAMPLE --path ./copy
 2. **Answer the remaining question** — a constraint for the vision contract.
 
    ```sh
-   atlas plan answer --session PLAN-SAMPLE --path ./copy \
+   prumo plan answer --session PLAN-SAMPLE --path ./copy \
      --question Q2 --classification constraint --actor owner \
      --statement "CLI operators and automation harnesses define the primary outcome; reviewers are secondary."
    # resolved Q2 (constraint): open questions now 0
@@ -64,7 +64,7 @@ atlas --json plan questions --session PLAN-SAMPLE --path ./copy
 3. **Review the canonical decisions** recorded in the session.
 
    ```sh
-   atlas plan decisions --session PLAN-SAMPLE --path ./copy
+   prumo plan decisions --session PLAN-SAMPLE --path ./copy
    ```
 
 4. **Document impacts** — the accepted decisions imply a proposed delta touching
@@ -72,7 +72,7 @@ atlas --json plan questions --session PLAN-SAMPLE --path ./copy
    docs; that is the authoring step below.
 
    ```sh
-   atlas plan delta --session PLAN-SAMPLE --path ./copy
+   prumo plan delta --session PLAN-SAMPLE --path ./copy
    ```
 
 5. **Author the scope document and bind it** (repository governance). In this
@@ -80,21 +80,21 @@ atlas --json plan questions --session PLAN-SAMPLE --path ./copy
    binding to replay this step truthfully.
 
    ```sh
-   atlas plan delta --apply --session PLAN-SAMPLE --path ./copy
+   prumo plan delta --apply --session PLAN-SAMPLE --path ./copy
    # delta DD-… state=applied, evidence=[DP-Q1-dec, DP-Q2-dec], ready=true
    ```
 
 6. **Readiness re-passes** — derived coverage, not an assertion.
 
    ```sh
-   atlas --json docs readiness --path ./copy --goal G-SAMPLE
+   prumo --json docs readiness --path ./copy --goal G-SAMPLE
    # {"ready": true, "coverage": [["product.vision","implementation-ready"],["project.scope","implementation-ready"]]}
    ```
 
 7. **Propose the goal** — acceptance criteria plus the task DAG when requested.
 
    ```sh
-   atlas plan blueprint --plan --session PLAN-SAMPLE --path ./copy
+   prumo plan blueprint --plan --session PLAN-SAMPLE --path ./copy
    ```
 
 ## Why it matters

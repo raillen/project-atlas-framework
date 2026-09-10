@@ -1,24 +1,24 @@
 # Portable Continuation
 
-D1 separates durable Atlas Runs from temporary executor sessions.
+D1 separates durable Prumo Runs from temporary executor sessions.
 
 ```text
 Run != ExecutorSession
 ```
 
-A Run remains the same when model, harness, or session changes. The current baseline stores derived runtime records under `.atlas/runtime/` and exposes:
+A Run remains the same when model, harness, or session changes. The current baseline stores derived runtime records under `.prumo/runtime/` and exposes:
 
 ```bash
-atlas run --run R001 --path ./project
-atlas continue --run R001 --path ./project --json
-atlas continue --run R001 --path ./project --prompt
+prumo run --run R001 --path ./project
+prumo continue --run R001 --path ./project --json
+prumo continue --run R001 --path ./project --prompt
 ```
 
 The portable continuation record must contain enough structured state to rehydrate a fresh executor: Run identity, Goal/Task refs, branch/revision/dirty state, completed/current/pending work, decisions, evidence, blockers, pending side effects, and next steps.
 
 Do not persist transcript, chain-of-thought, credentials, or raw sensitive tool output.
 
-Before D1 continuation is fully wired to real Run/Checkpoint persistence, use `.atlas/runtime/bootstrap-continuation.md` as temporary derived state. It must remain ignored and contain only engineering facts.
+Before D1 continuation is fully wired to real Run/Checkpoint persistence, use `.prumo/runtime/bootstrap-continuation.md` as temporary derived state. It must remain ignored and contain only engineering facts.
 
 Resume safety requires:
 

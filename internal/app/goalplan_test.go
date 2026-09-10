@@ -3,14 +3,14 @@ package app
 import (
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/documentation"
-	"github.com/raillen/project-atlas-framework/internal/planning"
+	"github.com/raillen/prumo/internal/documentation"
+	"github.com/raillen/prumo/internal/planning"
 )
 
 func readyPreview() planning.Preview {
 	return planning.Preview{
 		Extracted: []planning.DecisionProposal{
-			{ID: "DP-001", Statement: "Atlas must be provider-neutral", Classification: "explicit-decision", Status: planning.StatusAccepted, Affected: []string{"architecture.system"}},
+			{ID: "DP-001", Statement: "Prumo must be provider-neutral", Classification: "explicit-decision", Status: planning.StatusAccepted, Affected: []string{"architecture.system"}},
 			{ID: "DP-002", Statement: "No proprietary runtime required", Classification: "non-goal", Status: planning.StatusAccepted, Affected: []string{"architecture.system"}},
 		},
 		BlockersResolved: 1,

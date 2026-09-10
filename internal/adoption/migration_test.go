@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/migrations"
+	"github.com/raillen/prumo/internal/migrations"
 )
 
 func TestGenerateMigrationProposals(t *testing.T) {
@@ -25,7 +25,7 @@ func TestGenerateMigrationProposals(t *testing.T) {
 		Capabilities: []CapabilityProposal{
 			{Capability: "ci-cd", Confidence: ConfidenceHigh},
 		},
-		AtlasArtifacts: []string{}, // no atlas.json
+		PrumoArtifacts: []string{}, // no prumo.json
 		DocBindings: []CandidateBinding{
 			{
 				ContractID: "architecture",
@@ -41,8 +41,8 @@ func TestGenerateMigrationProposals(t *testing.T) {
 
 	// 1. Manifest proposal
 	initProp := proposals[0]
-	if initProp.ID != "amp-init-atlas" {
-		t.Errorf("expected proposal ID amp-init-atlas, got %s", initProp.ID)
+	if initProp.ID != "amp-init-prumo" {
+		t.Errorf("expected proposal ID amp-init-prumo, got %s", initProp.ID)
 	}
 	if initProp.Status != ProposalStatusPendingReview {
 		t.Errorf("expected pending-review status, got %s", initProp.Status)
@@ -50,8 +50,8 @@ func TestGenerateMigrationProposals(t *testing.T) {
 	if !initProp.ReviewRequired {
 		t.Errorf("expected review_required=true")
 	}
-	if len(initProp.Actions) != 1 || initProp.Actions[0].TargetPath != "atlas.json" {
-		t.Errorf("expected create action for atlas.json")
+	if len(initProp.Actions) != 1 || initProp.Actions[0].TargetPath != "prumo.json" {
+		t.Errorf("expected create action for prumo.json")
 	}
 	if !initProp.Contract.Reversible {
 		t.Errorf("expected contract reversible=true")
@@ -66,13 +66,13 @@ func TestGenerateMigrationProposals(t *testing.T) {
 		t.Errorf("expected action targeting bindings.json, got %v", docProp.Actions)
 	}
 
-	// Case where atlas.json already exists
-	reportWithAtlas := report
-	reportWithAtlas.AtlasArtifacts = []string{"atlas.json"}
-	props2 := GenerateMigrationProposals(reportWithAtlas)
+	// Case where prumo.json already exists
+	reportWithPrumo := report
+	reportWithPrumo.PrumoArtifacts = []string{"prumo.json"}
+	props2 := GenerateMigrationProposals(reportWithPrumo)
 	for _, p := range props2 {
-		if p.ID == "amp-init-atlas" {
-			t.Errorf("should not propose amp-init-atlas when atlas.json already exists")
+		if p.ID == "amp-init-prumo" {
+			t.Errorf("should not propose amp-init-prumo when prumo.json already exists")
 		}
 	}
 }
@@ -125,28 +125,28 @@ func TestDryRunAndApply(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	proposal := AdoptionMigrationProposal{
-		ID:             "amp-init-atlas",
-		Title:          "Initialize project-atlas manifest",
+		ID:             "amp-init-prumo",
+		Title:          "Initialize Prumo manifest",
 		Status:         ProposalStatusPendingReview,
 		ReviewRequired: true,
 		Actions: []MigrationAction{
 			{
 				Type:        ActionCreateFile,
-				TargetPath:  "atlas.json",
+				TargetPath:  "prumo.json",
 				Content:     "{\"version\":1}\n",
-				Description: "Create atlas.json",
+				Description: "Create prumo.json",
 				Reversible:  true,
 			},
 		},
 		Contract: migrations.Contract{
-			ID:                "contract-amp-init-atlas",
+			ID:                "contract-amp-init-prumo",
 			FromVersion:       "0.0.0",
-			ToVersion:         "0.4.0",
-			Preconditions:     []string{"manifest_absent:atlas.json"},
+			ToVersion:         "0.5.0",
+			Preconditions:     []string{"manifest_absent:prumo.json"},
 			BackupStrategy:    "none",
-			AffectedArtifacts: []string{"atlas.json"},
+			AffectedArtifacts: []string{"prumo.json"},
 			Reversible:        true,
-			Rollback:          "rm atlas.json",
+			Rollback:          "rm prumo.json",
 		},
 	}
 
@@ -158,7 +158,7 @@ func TestDryRunAndApply(t *testing.T) {
 	if !dryRun.PreconditionsPassed {
 		t.Errorf("expected preconditions passed in dry run")
 	}
-	if len(dryRun.Plan) != 1 || !strings.Contains(dryRun.Plan[0].DiffPreview, "+++ atlas.json") {
+	if len(dryRun.Plan) != 1 || !strings.Contains(dryRun.Plan[0].DiffPreview, "+++ prumo.json") {
 		t.Errorf("unexpected dry run diff: %v", dryRun.Plan)
 	}
 
@@ -187,7 +187,7 @@ func TestDryRunAndApply(t *testing.T) {
 	}
 
 	// Check file was created
-	written, err := os.ReadFile(filepath.Join(tmpDir, "atlas.json"))
+	written, err := os.ReadFile(filepath.Join(tmpDir, "prumo.json"))
 	if err != nil {
 		t.Fatalf("failed reading created file: %v", err)
 	}
@@ -195,12 +195,12 @@ func TestDryRunAndApply(t *testing.T) {
 		t.Errorf("unexpected file content: %s", string(written))
 	}
 
-	// 4. Precondition check: running dry run now should fail because atlas.json exists
+	// 4. Precondition check: running dry run now should fail because prumo.json exists
 	dryRun2, err := DryRun(tmpDir, proposal)
 	if err != nil {
 		t.Fatalf("dry run 2 failed: %v", err)
 	}
 	if dryRun2.PreconditionsPassed {
-		t.Errorf("expected preconditions to fail since atlas.json already exists")
+		t.Errorf("expected preconditions to fail since prumo.json already exists")
 	}
 }

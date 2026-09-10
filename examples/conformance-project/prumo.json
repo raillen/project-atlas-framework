@@ -1,0 +1,118 @@
+{
+  "version": 3,
+  "protocol": {
+    "version": 3,
+    "compatible": ">=3 <4"
+  },
+  "framework": {
+    "name": "prumo",
+    "version": "0.2.0"
+  },
+  "project": {
+    "name": "conformance-project",
+    "type": [
+      "cli"
+    ]
+  },
+  "stack": {
+    "languages": [
+      "rust"
+    ]
+  },
+  "features": [
+    "cli",
+    "testing"
+  ],
+  "risk": [
+    "security"
+  ],
+  "quality": {
+    "security": "high"
+  },
+  "documentation": {
+    "entrypoint": "docs/PRUMO.md",
+    "canonical_format": "markdown",
+    "site": {
+      "enabled": true,
+      "source": "docs",
+      "generated": true,
+      "public_internal_views": true
+    },
+    "audiences": [
+      "user",
+      "developer",
+      "operations",
+      "agent"
+    ],
+    "virtual_chunking": true
+  },
+  "context": {
+    "methodology": "lean-progressive-context",
+    "architecture": "progressive-context-architecture",
+    "mode": "progressive",
+    "budget_profile": "medium",
+    "profiles": {
+      "small": {
+        "context_target_tokens": 3000,
+        "context_hard_tokens": 6000,
+        "output_target_tokens": 500,
+        "output_hard_tokens": 1000,
+        "max_expansion_rounds": 1,
+        "max_delegation_depth": 0
+      },
+      "medium": {
+        "context_target_tokens": 8000,
+        "context_hard_tokens": 16000,
+        "output_target_tokens": 1500,
+        "output_hard_tokens": 3000,
+        "max_expansion_rounds": 2,
+        "max_delegation_depth": 1
+      },
+      "large": {
+        "context_target_tokens": 16000,
+        "context_hard_tokens": 32000,
+        "output_target_tokens": 3000,
+        "output_hard_tokens": 6000,
+        "max_expansion_rounds": 3,
+        "max_delegation_depth": 1
+      }
+    },
+    "deep_recursion": {
+      "enabled": false,
+      "experimental": true
+    },
+    "runtime": {
+      "database": ".prumo/runtime/prumo.db",
+      "completed_context_ttl": "0d",
+      "failed_context_ttl": "7d"
+    }
+  },
+  "intelligence": {
+    "enabled": true,
+    "path": ".prumo/history/project-intelligence.json",
+    "task_reports": true,
+    "track_input_tokens": true,
+    "track_output_tokens": true,
+    "track_cost": true,
+    "distinguish_observed_estimated": true
+  },
+  "orchestration": {
+    "protocol": "POP",
+    "orchestrator": "native",
+    "autonomy": "agentic"
+  },
+  "goals": {
+    "active_phase": "P00",
+    "active_goal": null
+  },
+  "ai": {
+    "orchestrator": "native",
+    "autonomy": "agentic",
+    "preferred_models": [
+      {
+        "id": "claude-3-7-sonnet",
+        "provider": "anthropic"
+      }
+    ]
+  }
+}

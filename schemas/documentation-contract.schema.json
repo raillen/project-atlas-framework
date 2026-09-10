@@ -1,6 +1,6 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://project-atlas.dev/schemas/documentation-contract.schema.json",
+  "$id":"https://raw.githubusercontent.com/raillen/prumo/main/schemas/documentation-contract.schema.json",
   "type":"object",
   "required":["id","version","role","description","required_knowledge","blocking_questions","update_triggers","staleness"],
   "properties": {

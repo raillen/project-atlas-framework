@@ -13,10 +13,10 @@ func TestOpenSchema(t *testing.T) {
 		t.Fatalf("failed to create schemas dir: %v", err)
 	}
 	content := `{"$schema": "http://json-schema.org/draft-07/schema#"}`
-	if err := os.WriteFile(filepath.Join(schemasDir, "atlas.schema.json"), []byte(content), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(schemasDir, "prumo.schema.json"), []byte(content), 0644); err != nil {
 		t.Fatalf("failed to write schema: %v", err)
 	}
-	data, err := OpenSchema(root, "atlas.schema.json")
+	data, err := OpenSchema(root, "prumo.schema.json")
 	if err != nil {
 		t.Fatalf("expected schema to open, got error: %v", err)
 	}
@@ -27,7 +27,7 @@ func TestOpenSchema(t *testing.T) {
 
 func TestFindResourcesDir(t *testing.T) {
 	got := FindResourcesDir("/repo")
-	expected := filepath.Join("/repo", "src", "project_atlas", "resources")
+	expected := filepath.Join("/repo", "src", "prumo", "resources")
 	if got != expected {
 		t.Fatalf("expected %s, got %s", expected, got)
 	}

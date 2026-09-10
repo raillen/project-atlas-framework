@@ -6,25 +6,25 @@
 profile → init → validate → doctor → Goal → context → compile → evidence → review
 ```
 
-O Atlas organiza estado canônico no repositório. O harness executa ações; o Atlas mantém protocolo, políticas, Goals, evidências e adapters.
+O Prumo organiza estado canônico no repositório. O harness executa ações; o Prumo mantém protocolo, políticas, Goals, evidências e adapters.
 
 ## 1. Criar um projeto
 
 ```bash
-atlas init ./my-project \
+prumo init ./my-project \
   --profile examples/brasa/project-profile.json \
   --non-interactive
 ```
 
-O profile deve declarar `ai.preferred_models`. O resultado contém `atlas.json`, `.ai/`, `docs/ATLAS.md`, `PROJECT_STATE.md` e histórico derivado.
+O profile deve declarar `ai.preferred_models`. O resultado contém `prumo.json`, `.ai/`, `docs/PRUMO.md`, `PROJECT_STATE.md` e histórico derivado.
 
 ## 2. Validar e diagnosticar
 
 ```bash
-atlas validate ./my-project
-atlas doctor ./my-project
-atlas --json doctor ./my-project
-atlas framework-check
+prumo validate ./my-project
+prumo doctor ./my-project
+prumo --json doctor ./my-project
+prumo framework-check
 ```
 
 `validate` verifica estrutura e schemas. `doctor` verifica também versionamento, locks, dependencies, DAGs, workforce, policies, gates e evidence.
@@ -32,14 +32,14 @@ atlas framework-check
 ## 3. Criar e bloquear Goals
 
 ```bash
-atlas goal new P00-G01 "Foundation" \
+prumo goal new P00-G01 "Foundation" \
   --phase P00 \
   --objective "Establish a tested project foundation." \
   --path ./my-project
 
-atlas goal list --path ./my-project
-atlas goal state P00-G01 PLANNED --path ./my-project
-atlas goal state P00-G01 LOCKED --path ./my-project
+prumo goal list --path ./my-project
+prumo goal state P00-G01 PLANNED --path ./my-project
+prumo goal state P00-G01 LOCKED --path ./my-project
 ```
 
 Estados válidos:
@@ -51,7 +51,7 @@ DRAFT → PLANNED → LOCKED → EXECUTING → VERIFYING → REVIEWING → DONE
 Estados podem ir para `BLOCKED` conforme as transições do protocolo. `DONE` exige evidence. Goal bloqueado deve ser alterado com amendment:
 
 ```bash
-atlas goal amend P00-G01 \
+prumo goal amend P00-G01 \
   --file amendment.json \
   --path ./my-project
 ```
@@ -59,7 +59,7 @@ atlas goal amend P00-G01 \
 ## 4. Planejar contexto
 
 ```bash
-atlas context plan "debug authentication regression" \
+prumo context plan "debug authentication regression" \
   --path ./my-project \
   --json
 ```
@@ -69,11 +69,11 @@ O planner escolhe uma estratégia e budget conforme o risco sem carregar o repos
 ## 5. Resolver workforce
 
 ```bash
-atlas resolve examples/brasa/project-profile.json --json
-atlas explain workforce examples/brasa/project-profile.json --json
-atlas explain agent architect --json
-atlas explain skill clean-code --json
-atlas explain recipe web-feature --json
+prumo resolve examples/brasa/project-profile.json --json
+prumo explain workforce examples/brasa/project-profile.json --json
+prumo explain agent architect --json
+prumo explain skill clean-code --json
+prumo explain recipe web-feature --json
 ```
 
 A resolução é determinística para os mesmos profile, catálogo e recursos.
@@ -81,10 +81,10 @@ A resolução é determinística para os mesmos profile, catálogo e recursos.
 ## 6. Compilar adapters
 
 ```bash
-atlas compile --target generic --path ./my-project
-atlas compile --target codex --path ./my-project
-atlas compile --target claude-code --path ./my-project
-atlas compile --target traycer --path ./my-project
+prumo compile --target generic --path ./my-project
+prumo compile --target codex --path ./my-project
+prumo compile --target claude-code --path ./my-project
+prumo compile --target traycer --path ./my-project
 ```
 
 Targets disponíveis:
@@ -98,18 +98,18 @@ Saídas são derivadas. Edite o catálogo/workforce canônico, não o adapter ge
 ## 7. Reports e inteligência
 
 ```bash
-atlas report add conformance/fixtures/task-report.json --path ./my-project
-atlas report summary --path ./my-project --json
+prumo report add conformance/fixtures/task-report.json --path ./my-project
+prumo report summary --path ./my-project --json
 ```
 
-Reports alimentam `.atlas/history/project-intelligence.json`, que é estado derivado e reconstruível.
+Reports alimentam `.prumo/history/project-intelligence.json`, que é estado derivado e reconstruível.
 
 ## 8. Snapshot e migração
 
 ```bash
-atlas snapshot ./my-project --output ./my-project-backup.zip
-atlas migrate ./my-project --dry-run --json
-atlas migrate ./my-project
+prumo snapshot ./my-project --output ./my-project-backup.zip
+prumo migrate ./my-project --dry-run --json
+prumo migrate ./my-project
 ```
 
 Sempre execute `--dry-run` antes de migrações. A migração cria snapshot prévio quando altera o projeto.
@@ -117,10 +117,10 @@ Sempre execute `--dry-run` antes de migrações. A migração cria snapshot pré
 ## 9. Saída JSON para automações
 
 ```bash
-atlas --json version
-atlas --json validate ./my-project
-atlas --json framework-check
-atlas --json compile --target generic --path ./my-project
+prumo --json version
+prumo --json validate ./my-project
+prumo --json framework-check
+prumo --json compile --target generic --path ./my-project
 ```
 
 Contrato comum:
@@ -150,61 +150,61 @@ Códigos principais:
 ## 10. Instalação e estado global
 
 ```bash
-atlas --home ./atlas-home setup
-atlas --home ./atlas-home install connector opencode
-atlas --home ./atlas-home uninstall --connectors --purge-cache
+prumo --home ./prumo-home setup
+prumo --home ./prumo-home install connector opencode
+prumo --home ./prumo-home uninstall --connectors --purge-cache
 ```
 
-Use `--home` em CI, testes, devboxes e cenários que não devem tocar `~/.atlas`.
+Use `--home` em CI, testes, devboxes e cenários que não devem tocar `~/.prumo`.
 
 ## 11. Aposentadoria do Python (ADR 002)
 
-O runtime e a suíte de testes em Python v0.3 foram aposentados e removidos (ADR 002). O Atlas v0.4 é 100% Go nativo e autocontido. Conformance e validação são executadas diretamente pela suíte de testes em Go.
+O runtime e a suíte de testes em Python v0.3 foram aposentados e removidos (ADR 002). O Prumo v0.5 é 100% Go nativo e autocontido. Conformance e validação são executadas diretamente pela suíte de testes em Go.
 
 ## Command reference
 
 ### Core
 
 ```text
-atlas version
-atlas status --path <path>
-atlas setup
-atlas install connector <id>
-atlas uninstall [--connectors] [--purge-cache] [--purge-global-config]
-atlas init <path> --profile <profile> --non-interactive
-atlas validate [path]
-atlas doctor [path] [--json]
-atlas framework-check
+prumo version
+prumo status --path <path>
+prumo setup
+prumo install connector <id>
+prumo uninstall [--connectors] [--purge-cache] [--purge-global-config]
+prumo init <path> --profile <profile> --non-interactive
+prumo validate [path]
+prumo doctor [path] [--json]
+prumo framework-check
 ```
 
 ### Protocol
 
 ```text
-atlas goal new <id> <title> --phase <phase> [--objective <text>] [--path <path>]
-atlas goal state <id> <state> [--reason <text>] [--path <path>]
-atlas goal amend <id> [--file <path>] [--reason <text>] [--approved-by <actor>] [--path <path>]
-atlas goal list [--path <path>]
-atlas context plan <task> [--path <path>] [--json]
-atlas report add <file> [--path <path>]
-atlas report summary [--path <path>]
-atlas migrate [path] [--dry-run] [--json]
-atlas snapshot [path] [--output <path>]
-atlas docs delta propose --goal <goal> [--path <project>] [changed ...] [--json]
-atlas docs delta list [--path <project>] [--json]
-atlas docs delta show --id <delta> [--path <project>] [--json]
-atlas docs delta transition --id <delta> --state <state> [--evidence <id>]... [--path <project>] [--json]
+prumo goal new <id> <title> --phase <phase> [--objective <text>] [--path <path>]
+prumo goal state <id> <state> [--reason <text>] [--path <path>]
+prumo goal amend <id> [--file <path>] [--reason <text>] [--approved-by <actor>] [--path <path>]
+prumo goal list [--path <path>]
+prumo context plan <task> [--path <path>] [--json]
+prumo report add <file> [--path <path>]
+prumo report summary [--path <path>]
+prumo migrate [path] [--dry-run] [--json]
+prumo snapshot [path] [--output <path>]
+prumo docs delta propose --goal <goal> [--path <project>] [changed ...] [--json]
+prumo docs delta list [--path <project>] [--json]
+prumo docs delta show --id <delta> [--path <project>] [--json]
+prumo docs delta transition --id <delta> --state <state> [--evidence <id>]... [--path <project>] [--json]
 ```
 
 ### Resolution, explanation, and compiler
 
 ```text
-atlas resolve <profile> [--json]
-atlas explain workforce <profile> [--json]
-atlas explain agent <id> [--json]
-atlas explain skill <id> [--json]
-atlas explain recipe <id> [--json]
-atlas explain context <task-id> [--path <path>] [--json]
-atlas explain model <role> [--path <path>] [--json]
-atlas explain execution <profile> [--path <path>] [--json]
-atlas compile --target <target> [--path <path>] [--json]
+prumo resolve <profile> [--json]
+prumo explain workforce <profile> [--json]
+prumo explain agent <id> [--json]
+prumo explain skill <id> [--json]
+prumo explain recipe <id> [--json]
+prumo explain context <task-id> [--path <path>] [--json]
+prumo explain model <role> [--path <path>] [--json]
+prumo explain execution <profile> [--path <path>] [--json]
+prumo compile --target <target> [--path <path>] [--json]
 ```

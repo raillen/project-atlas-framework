@@ -66,7 +66,7 @@ func LoadBindings(root string) ([]Binding, error) {
 }
 func Capabilities(root string) map[string]bool {
 	capabilities := map[string]bool{"core": true}
-	if data, err := os.ReadFile(filepath.Join(root, "atlas.json")); err == nil {
+	if data, err := os.ReadFile(filepath.Join(root, "prumo.json")); err == nil {
 		var project map[string]any
 		if json.Unmarshal(data, &project) == nil {
 			if features, ok := project["features"].([]any); ok {

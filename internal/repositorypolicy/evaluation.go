@@ -82,7 +82,7 @@ type Action struct {
 }
 
 func PolicyPath(root string) string {
-	return filepath.Join(root, ".atlas", "repository", "policy.json")
+	return filepath.Join(root, ".prumo", "repository", "policy.json")
 }
 
 func LoadPolicy(root string) (Policy, error) {

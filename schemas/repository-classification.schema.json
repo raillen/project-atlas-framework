@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/repository-classification.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/repository-classification.schema.json",
   "$comment": "F-G02: evidence-driven repository classification output.",
   "type": "object",
   "required": ["version", "signals"],

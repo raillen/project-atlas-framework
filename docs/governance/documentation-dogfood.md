@@ -1,10 +1,10 @@
 # M5 Documentation System v2 — Dogfood Report
 
-Run against the Project Atlas repository:
+Run against the Prumo repository:
 
 ```bash
-atlas --json docs audit --path .
-atlas --json docs readiness --goal M5 --path .
+prumo --json docs audit --path .
+prumo --json docs readiness --goal M5 --path .
 ```
 
 Observed result:

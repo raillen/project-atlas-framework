@@ -1,10 +1,10 @@
 # Claude Code Integration
 
-This guide explains how to integrate Project Atlas with Claude Code.
+This guide explains how to integrate Prumo with Claude Code.
 
 ## Compilation Output
 
-Running `atlas compile claude-code` produces:
+Running `prumo compile claude-code` produces:
 
 ```text
 .claude/
@@ -19,10 +19,10 @@ Claude is directed by `CLAUDE.md` to utilize the specific directory structure of
 
 ## Step-by-Step
 
-1. `atlas init`: Initialize Atlas.
-2. `atlas compile claude-code`: Build the Claude integration.
+1. `prumo init`: Initialize Prumo.
+2. `prumo compile claude-code`: Build the Claude integration.
 3. Verify output: Review `CLAUDE.md`.
 
 ## Customization and Overrides
 
-Use project-local overrides in your Atlas config to modify skill selection or agent personas specifically for the Claude compilation target.
+Use project-local overrides in your Prumo config to modify skill selection or agent personas specifically for the Claude compilation target.

@@ -47,13 +47,13 @@ func normalizeTimestamps(value any) any {
 
 func TestConformanceInitMatchesPython(t *testing.T) {
 	root := repoRoot(t)
-	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(root, "src", "prumo", "__init__.py")); os.IsNotExist(err) {
 		t.Skip("python oracle retired: Python implementation removed from src/")
 	}
 	pyDir := t.TempDir()
 	goDir := t.TempDir()
 	profile := filepath.Join(root, "examples", "brasa", "project-profile.json")
-	pyCmd := exec.Command("python3", "-m", "project_atlas", "init", pyDir, "--profile", profile, "--non-interactive")
+	pyCmd := exec.Command("python3", "-m", "prumo", "init", pyDir, "--profile", profile, "--non-interactive")
 	pyCmd.Dir = root
 	pyCmd.Env = append(os.Environ(), "PYTHONPATH=src")
 	if out, err := pyCmd.CombinedOutput(); err != nil {
@@ -63,7 +63,7 @@ func TestConformanceInitMatchesPython(t *testing.T) {
 	if _, err := svc.Init(goDir, profile); err != nil {
 		t.Fatalf("go init: %v", err)
 	}
-	compare := []string{"atlas.json", ".ai/agents/manifest.json", ".ai/skills/manifest.json", ".ai/recipes/manifest.json", ".ai/orchestration/model-policy.json", ".ai/orchestration/orchestrator.json", ".ai/orchestration/fallbacks.json", ".ai/orchestration/model-scorecard.json"}
+	compare := []string{"prumo.json", ".ai/agents/manifest.json", ".ai/skills/manifest.json", ".ai/recipes/manifest.json", ".ai/orchestration/model-policy.json", ".ai/orchestration/orchestrator.json", ".ai/orchestration/fallbacks.json", ".ai/orchestration/model-scorecard.json"}
 	for _, rel := range compare {
 		want := canonicalJSON(t, filepath.Join(pyDir, rel))
 		got := canonicalJSON(t, filepath.Join(goDir, rel))
@@ -75,13 +75,13 @@ func TestConformanceInitMatchesPython(t *testing.T) {
 
 func TestConformanceCompileMatchesPython(t *testing.T) {
 	root := repoRoot(t)
-	if _, err := os.Stat(filepath.Join(root, "src", "project_atlas", "__init__.py")); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(root, "src", "prumo", "__init__.py")); os.IsNotExist(err) {
 		t.Skip("python oracle retired: Python implementation removed from src/")
 	}
 	pyDir := t.TempDir()
 	goDir := t.TempDir()
 	profile := filepath.Join(root, "examples", "brasa", "project-profile.json")
-	pyInit := exec.Command("python3", "-m", "project_atlas", "init", pyDir, "--profile", profile, "--non-interactive")
+	pyInit := exec.Command("python3", "-m", "prumo", "init", pyDir, "--profile", profile, "--non-interactive")
 	pyInit.Dir = root
 	pyInit.Env = append(os.Environ(), "PYTHONPATH=src")
 	if out, err := pyInit.CombinedOutput(); err != nil {
@@ -92,7 +92,7 @@ func TestConformanceCompileMatchesPython(t *testing.T) {
 		t.Fatalf("go init: %v", err)
 	}
 	for _, target := range []string{"generic", "chatgpt", "claude", "kimi", "codex", "claude-code", "traycer"} {
-		pyCmd := exec.Command("python3", "-m", "project_atlas", "compile", "--target", target, "--path", pyDir)
+		pyCmd := exec.Command("python3", "-m", "prumo", "compile", "--target", target, "--path", pyDir)
 		pyCmd.Dir = root
 		pyCmd.Env = append(os.Environ(), "PYTHONPATH=src")
 		if out, err := pyCmd.CombinedOutput(); err != nil {

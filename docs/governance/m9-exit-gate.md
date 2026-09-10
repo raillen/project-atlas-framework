@@ -47,7 +47,7 @@ and retention policies manage storage expiration.
 
 - Defined in `internal/experience/provider.go`:
   - Interface `ExperienceProvider` with methods for recording events, saving/loading summaries, and creating/acknowledging handoffs.
-  - `FileProvider` implements thread-safe file storage under `.atlas/experience/`.
+  - `FileProvider` implements thread-safe file storage under `.prumo/experience/`.
 
 ---
 
@@ -69,13 +69,13 @@ and retention policies manage storage expiration.
 
 ### 7. CLI Surface
 
-- Implemented in `cmd/atlas/experience_commands.go` and `cmd/atlas/main.go`:
-  - `atlas experience status`
-  - `atlas experience handoff create --id <id> --from <from> --to <to> --goal <goal>`
-  - `atlas experience handoff show <id>`
-  - `atlas experience handoff ack <id> --actor <actor>`
-  - `atlas experience events --session <id>`
-- Verified by automated tests in `cmd/atlas/experience_commands_test.go`.
+- Implemented in `cmd/prumo/experience_commands.go` and `cmd/prumo/main.go`:
+  - `prumo experience status`
+  - `prumo experience handoff create --id <id> --from <from> --to <to> --goal <goal>`
+  - `prumo experience handoff show <id>`
+  - `prumo experience handoff ack <id> --actor <actor>`
+  - `prumo experience events --session <id>`
+- Verified by automated tests in `cmd/prumo/experience_commands_test.go`.
 
 ---
 
@@ -86,7 +86,7 @@ and retention policies manage storage expiration.
 - `gofmt -l .` — clean.
 - `python -m pytest -q` — 136 pass (Python oracle preserved).
 - Experience suite (`internal/experience`): all tests passing (100%).
-- CLI suite (`cmd/atlas`): all tests passing (100%).
+- CLI suite (`cmd/prumo`): all tests passing (100%).
 
 ---
 

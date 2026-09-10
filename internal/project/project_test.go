@@ -8,8 +8,8 @@ import (
 
 func TestFindRoot(t *testing.T) {
 	root := t.TempDir()
-	if err := os.WriteFile(filepath.Join(root, "atlas.json"), []byte("{}"), 0644); err != nil {
-		t.Fatalf("failed to create atlas.json: %v", err)
+	if err := os.WriteFile(filepath.Join(root, "prumo.json"), []byte("{}"), 0644); err != nil {
+		t.Fatalf("failed to create prumo.json: %v", err)
 	}
 	nested := filepath.Join(root, "a", "b")
 	if err := os.MkdirAll(nested, 0755); err != nil {
@@ -28,14 +28,14 @@ func TestFindRootNotFound(t *testing.T) {
 	root := t.TempDir()
 	_, err := FindRoot(root)
 	if err == nil {
-		t.Fatalf("expected error for missing atlas.json")
+		t.Fatalf("expected error for missing prumo.json")
 	}
 }
 
 func TestLoadManifest(t *testing.T) {
 	root := t.TempDir()
-	if err := os.WriteFile(filepath.Join(root, "atlas.json"), []byte(`{"version":3,"protocol":{"version":3},"project":{"name":"demo"}}`), 0644); err != nil {
-		t.Fatalf("failed to create atlas.json: %v", err)
+	if err := os.WriteFile(filepath.Join(root, "prumo.json"), []byte(`{"version":3,"protocol":{"version":3},"project":{"name":"demo"}}`), 0644); err != nil {
+		t.Fatalf("failed to create prumo.json: %v", err)
 	}
 	manifest, err := LoadManifest(root)
 	if err != nil {
@@ -48,8 +48,8 @@ func TestLoadManifest(t *testing.T) {
 
 func TestLoadManifestInvalid(t *testing.T) {
 	root := t.TempDir()
-	if err := os.WriteFile(filepath.Join(root, "atlas.json"), []byte(`{"version":1}`), 0644); err != nil {
-		t.Fatalf("failed to create atlas.json: %v", err)
+	if err := os.WriteFile(filepath.Join(root, "prumo.json"), []byte(`{"version":1}`), 0644); err != nil {
+		t.Fatalf("failed to create prumo.json: %v", err)
 	}
 	if _, err := LoadManifest(root); err == nil {
 		t.Fatalf("expected error for legacy manifest version")

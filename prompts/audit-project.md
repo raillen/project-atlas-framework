@@ -1,11 +1,11 @@
-# ProjectAtlas: audit
+# Prumo: audit
 
 Audit the project for implementation/documentation/protocol drift.
 
 Check:
 - active Goals/evidence;
 - user/developer/operations documentation gaps;
-- broken ATLAS routing;
+- broken PRUMO routing;
 - Markdown/JSON canonical-format policy;
 - generated/runtime context accidentally committed;
 - context/output budget policy;

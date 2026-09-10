@@ -41,25 +41,25 @@ func getScaffoldTemplates() []scaffoldFile {
 			relPath:  "README.md",
 			optional: true,
 			content: func(projectName, _ string) string {
-				return fmt.Sprintf(`# %s — Project Atlas Framework
+				return fmt.Sprintf(`# %s — Prumo
 
-Este projeto utiliza o **Project Atlas Framework v0.4** para colaboração humano-agente com governança, orquestração e contexto enxuto (Lean Progressive Context).
+Este projeto utiliza o **Prumo v0.5** para colaboração humano-agente com governança, orquestração e contexto enxuto (Lean Progressive Context).
 
 ## Estrutura do Projeto
 
 `+"```text"+`
-├── atlas.json                       # Manifesto canônico do projeto (protocolo v3)
+├── prumo.json                       # Manifesto canônico do projeto (protocolo v3)
 ├── ENTRYPOINT.md                    # Roteador de contexto Lean Progressive Context
 ├── PROJECT_STATE.md                 # Estado operacional, fase ativa e recuperação
 ├── CHANGELOG.md                     # Histórico estruturado de alterações
 ├── README.md                        # Visão geral do projeto e guia de navegação
 ├── .ai/                             # Recursos e orquestração de IA (agentes, metas, planos)
 │   └── README.md
-├── .atlas/                          # Metadados de runtime, cache e inteligência
+├── .prumo/                          # Metadados de runtime, cache e inteligência
 │   └── README.md
 └── docs/                            # Documentação canônica orientada a papéis
     ├── README.md
-    ├── ATLAS.md                     # Roteador de intenção (mapa de documentação)
+    ├── PRUMO.md                     # Roteador de intenção (mapa de documentação)
     ├── architecture/                # Visão de sistemas, Clean Code e ADRs
     ├── product/                     # Visão de produto e escopo
     ├── development/                 # Padrões de código e estratégia exaustiva de testes
@@ -72,17 +72,17 @@ Este projeto utiliza o **Project Atlas Framework v0.4** para colaboração human
 
 1. **Validação do Projeto**:
    `+"```bash"+`
-   atlas validate .
+   prumo validate .
    `+"```"+`
 2. **Diagnóstico do Projeto**:
    `+"```bash"+`
-   atlas doctor .
+   prumo doctor .
    `+"```"+`
 3. **Compilar Adaptador para seu Agente**:
    `+"```bash"+`
-   atlas compile --target antigravity .
-   atlas compile --target codex .
-   atlas compile --target claude-code .
+   prumo compile --target antigravity .
+   prumo compile --target codex .
+   prumo compile --target claude-code .
    `+"```"+`
 4. **Ciclo de Desenvolvimento com Metas**:
    Consulte [`+"`docs/development/testing-strategy.md`"+`](docs/development/testing-strategy.md) para o ciclo TDD/BDD com testes exaustivos.
@@ -100,8 +100,8 @@ O formato baseia-se no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 ## [0.1.0] - %s
 
 ### Adicionado
-- Inicialização da estrutura canônica do Project Atlas v0.4.
-- Configuração do manifesto `+"`atlas.json`"+` e orquestração `+"`.ai/`"+`.
+- Inicialização da estrutura canônica do Prumo v0.5.
+- Configuração do manifesto `+"`prumo.json`"+` e orquestração `+"`.ai/`"+`.
 - Definição da hierarquia de documentação canônica em `+"`docs/`"+`.
 - Contrato estrito de arquitetura em `+"`docs/architecture/clean-code-contract.md`"+`.
 - Estratégia de testes exaustivos em `+"`docs/development/testing-strategy.md`"+` (unitários, integração, conformidade, segurança SAST/secrets, performance/stress, UI).
@@ -118,7 +118,7 @@ O formato baseia-se no [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0
 A pasta ` + "`.ai/`" + ` armazena as definições canônicas de workforce (agentes, habilidades, receitas de execução) e as metas operacionais (Goals e Planos) vinculadas ao projeto.
 
 ## Para que serve?
-Permite que o framework Project Atlas resolva deterministicamente quais agentes, skills e receitas de trabalho estão autorizados e disponíveis para executar tarefas no projeto, mantendo políticas de modelos, integridade de locks e rastreabilidade de evidências.
+Permite que o Prumo resolva deterministicamente quais agentes, skills e receitas de trabalho estão autorizados e disponíveis para executar tarefas no projeto, mantendo políticas de modelos, integridade de locks e rastreabilidade de evidências.
 
 ## Inventário de Arquivos e Subdiretórios
 - ` + "`agents/`" + `: Agentes resolvidos e manifestos de papéis.
@@ -186,7 +186,7 @@ As receitas coordenam múltiplos agentes e habilidades para resolver objetivos c
 Contém as metas formais de desenvolvimento (Goals) do projeto, organizadas hierarquicamente por fases macro (` + "`P00`" + `, ` + "`P01`" + `, etc.).
 
 ## Para que serve?
-No Project Atlas, nenhum código é escrito sem um Goal explicitamente definido e medido. Metas no estado LOCKED possuem um hash de integridade SHA-256 e só podem ser modificadas através do comando formal ` + "`atlas goal amend`" + `.
+No Prumo, nenhum código é escrito sem um Goal explicitamente definido e medido. Metas no estado LOCKED possuem um hash de integridade SHA-256 e só podem ser modificadas através do comando formal ` + "`prumo goal amend`" + `.
 
 ## Inventário
 - ` + "`P00/`" + `: Fase de Fundação e Arquitetura do projeto.
@@ -230,15 +230,15 @@ Garante previsibilidade, controle orçamentário e resiliência nas chamadas aos
 			},
 		},
 		{
-			relPath: ".atlas/README.md",
+			relPath: ".prumo/README.md",
 			content: func(_, _ string) string {
-				return `# Diretório Operacional do Atlas (` + "`.atlas/`" + `)
+				return `# Diretório Operacional do Prumo (` + "`.prumo/`" + `)
 
 ## O que é este diretório?
-Contém metadados de execução, caches de desempenho, histórico analítico e estado derivado mantidos pelo Project Atlas CLI.
+Contém metadados de execução, caches de desempenho, histórico analítico e estado derivado mantidos pelo Prumo CLI.
 
 ## Para que serve?
-Isola todo estado temporário ou derivado do código-fonte canônico. Dados em ` + "`.atlas/runtime/`" + ` e ` + "`.atlas/cache/`" + ` são voláteis e não devem ser versionados no Git (com exceção do histórico estruturado em ` + "`history/`" + `).
+Isola todo estado temporário ou derivado do código-fonte canônico. Dados em ` + "`.prumo/runtime/`" + ` e ` + "`.prumo/cache/`" + ` são voláteis e não devem ser versionados no Git (com exceção do histórico estruturado em ` + "`history/`" + `).
 
 ## Inventário
 - ` + "`cache/`" + `: Cache de resoluções de esquemas e pacotes para acelerar comandos do CLI.
@@ -248,9 +248,9 @@ Isola todo estado temporário ou derivado do código-fonte canônico. Dados em `
 			},
 		},
 		{
-			relPath: ".atlas/runtime/README.md",
+			relPath: ".prumo/runtime/README.md",
 			content: func(_, _ string) string {
-				return `# Estado de Execução (` + "`.atlas/runtime/`" + `)
+				return `# Estado de Execução (` + "`.prumo/runtime/`" + `)
 
 ## O que é este diretório?
 Área de estado volátil onde o motor de execução (Control Plane) mantém checkpoints e planos dinâmicos (Living Plan).
@@ -264,28 +264,28 @@ Permite pausas, retentativas e retomadas resilientes de sessões de agentes sem 
 			},
 		},
 		{
-			relPath: ".atlas/cache/README.md",
+			relPath: ".prumo/cache/README.md",
 			content: func(_, _ string) string {
-				return `# Cache Local (` + "`.atlas/cache/`" + `)
+				return `# Cache Local (` + "`.prumo/cache/`" + `)
 
 ## O que é este diretório?
-Área de cache local de disco utilizada pelo Project Atlas CLI.
+Área de cache local de disco utilizada pelo Prumo CLI.
 
 ## Para que serve?
 Armazena dados indexados de compilação e esquemas para evitar acessos repetitivos ao disco e manter execuções de comandos sub-milissegundo.
 
 ## Inventário
-- Arquivos de cache derivados. Este diretório é ignorado pelo Git e pode ser apagado a qualquer momento com segurança (` + "`atlas uninstall --purge-cache`" + `).
+- Arquivos de cache derivados. Este diretório é ignorado pelo Git e pode ser apagado a qualquer momento com segurança (` + "`prumo uninstall --purge-cache`" + `).
 `
 			},
 		},
 		{
-			relPath: ".atlas/history/README.md",
+			relPath: ".prumo/history/README.md",
 			content: func(_, _ string) string {
-				return `# Histórico e Inteligência (` + "`.atlas/history/`" + `)
+				return `# Histórico e Inteligência (` + "`.prumo/history/`" + `)
 
 ## O que é este diretório?
-Repositório de inteligência durável e telemetria operacional mantido pelo Atlas.
+Repositório de inteligência durável e telemetria operacional mantido pelo Prumo.
 
 ## Para que serve?
 Registra custos de LLM (tokens de entrada/saída), número de iterações por tarefa, débitos técnicos identificados e histórico de decisões tomadas.
@@ -307,7 +307,7 @@ A pasta ` + "`docs/`" + ` é a fonte canônica da verdade para todas as especifi
 Implementa o princípio de **Documentação Canônica Viva**: o repositório é autossuficiente e todo o conhecimento técnico essencial reside diretamente no código e em arquivos Markdown padronizados.
 
 ## Roteador Central
-Consulte [` + "`ATLAS.md`" + `](ATLAS.md) como ponto de entrada para navegação guiada por intenção (usuário, desenvolvedor, operador, agente).
+Consulte [` + "`PRUMO.md`" + `](PRUMO.md) como ponto de entrada para navegação guiada por intenção (usuário, desenvolvedor, operador, agente).
 
 ## Inventário de Subdiretórios
 - ` + "`architecture/`" + `: Arquitetura do sistema, boundaries, contratos de Clean Code e ADRs.
@@ -582,7 +582,7 @@ flowchart LR
 | Unitário & Corrida | Go test / Vitest / Pytest | ` + "`go test -v -race ./...`" + ` |
 | Formatação | Official formatter | ` + "`gofmt -d .`" + ` ou ` + "`prettier --check .`" + ` |
 | Linter | Staticcheck / ESLint / Ruff | ` + "`staticcheck ./...`" + ` |
-| Segurança | Secret scanner / Trivy | ` + "`atlas tool scan-secrets .`" + ` |
+| Segurança | Secret scanner / Trivy | ` + "`prumo tool scan-secrets .`" + ` |
 | UI & E2E | Playwright | ` + "`npx playwright test`" + ` |
 | Carga | k6 / Vegeta | ` + "`k6 run load-test.js`" + ` |
 `

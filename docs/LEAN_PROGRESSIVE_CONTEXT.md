@@ -1,10 +1,10 @@
 # Lean Progressive Context (LPC)
 
-**Lean Progressive Context (LPC)** is the Project Atlas methodology for minimizing LLM context and output while preserving task correctness. Its implementation architecture is the **Progressive Context Architecture (PCA)**; the runtime component is the **Progressive Context Engine (PCE)**.
+**Lean Progressive Context (LPC)** is the Prumo methodology for minimizing LLM context and output while preserving task correctness. Its implementation architecture is the **Progressive Context Architecture (PCA)**; the runtime component is the **Progressive Context Engine (PCE)**.
 
 ## One-sentence definition
 
-Atlas LPC/PCA compiles canonical project knowledge into small, temporary task contexts, expands them only when evidence requires it, bounds both input and output, and discards operational context after durable knowledge has been promoted.
+Prumo LPC/PCA compiles canonical project knowledge into small, temporary task contexts, expands them only when evidence requires it, bounds both input and output, and discards operational context after durable knowledge has been promoted.
 
 ## Why
 
@@ -144,7 +144,7 @@ A child task should normally return a compact finding, evidence and confidence, 
 
 ## Budgets
 
-Projects define target/hard limits in `atlas.json`.
+Projects define target/hard limits in `prumo.json`.
 
 Typical dimensions:
 
@@ -182,7 +182,7 @@ Failed/interrupted tasks may keep a compact recovery capsule for a configurable 
 
 ## Recursion policy
 
-Project Atlas does not depend on Recursive Language Models.
+Prumo does not depend on Recursive Language Models.
 
 - depth 0/external context ideas are compatible with LPC;
 - single-level isolated delegation is allowed when bounded;

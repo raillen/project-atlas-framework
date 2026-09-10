@@ -1,10 +1,10 @@
 # Codex Integration
 
-This guide explains how to integrate Project Atlas with Codex agents.
+This guide explains how to integrate Prumo with Codex agents.
 
 ## Compilation Output
 
-Running `atlas compile codex` produces an integration layer tailored for Codex:
+Running `prumo compile codex` produces an integration layer tailored for Codex:
 
 ```text
 .codex/
@@ -19,13 +19,13 @@ Codex agents are instructed via `AGENTS.md` to look in the `.codex/skills/` dire
 
 ## Step-by-Step
 
-1. `atlas init`: Initialize the project configuration.
-2. `atlas compile codex`: Generate the Codex integration artifacts.
+1. `prumo init`: Initialize the project configuration.
+2. `prumo compile codex`: Generate the Codex integration artifacts.
 3. Verify output: Check `.codex/AGENTS.md` and ensure skills are present.
 
 ## Customization
 
-You can override skills locally by placing modified versions in `src/project_atlas/resources/custom_skills/` before compiling.
+You can override skills locally by placing modified versions in `src/prumo/resources/custom_skills/` before compiling.
 
 ## Troubleshooting
 

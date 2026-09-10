@@ -132,7 +132,7 @@ func anyMatch(values any, actual map[string]bool) bool {
 type Catalog struct{ Sections map[string][]map[string]any }
 
 func LoadCatalog(repoRoot string) (Catalog, error) {
-	base := filepath.Join(repoRoot, "src", "project_atlas", "resources", "catalog")
+	base := filepath.Join(repoRoot, "src", "prumo", "resources", "catalog")
 	manifestBytes, err := os.ReadFile(filepath.Join(base, "catalog.json"))
 	if err != nil {
 		return Catalog{}, err

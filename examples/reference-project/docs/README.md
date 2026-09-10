@@ -7,7 +7,7 @@ A pasta `docs/` é a fonte canônica da verdade para todas as especificações d
 Implementa o princípio de **Documentação Canônica Viva**: o repositório é autossuficiente e todo o conhecimento técnico essencial reside diretamente no código e em arquivos Markdown padronizados.
 
 ## Roteador Central
-Consulte [`ATLAS.md`](ATLAS.md) como ponto de entrada para navegação guiada por intenção (usuário, desenvolvedor, operador, agente).
+Consulte [`PRUMO.md`](PRUMO.md) como ponto de entrada para navegação guiada por intenção (usuário, desenvolvedor, operador, agente).
 
 ## Inventário de Subdiretórios
 - `architecture/`: Arquitetura do sistema, boundaries, contratos de Clean Code e ADRs.

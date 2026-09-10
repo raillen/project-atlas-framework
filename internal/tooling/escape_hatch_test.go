@@ -86,8 +86,8 @@ void kernel_entry() {
 		t.Fatal(err)
 	}
 
-	atlasDir := filepath.Join(tempDir, ".atlas")
-	if err := os.MkdirAll(atlasDir, 0755); err != nil {
+	prumoDir := filepath.Join(tempDir, ".prumo")
+	if err := os.MkdirAll(prumoDir, 0755); err != nil {
 		t.Fatal(err)
 	}
 
@@ -114,7 +114,7 @@ void kernel_entry() {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(atlasDir, "escape-hatches.json"), data, 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(prumoDir, "escape-hatches.json"), data, 0644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -140,7 +140,7 @@ func TestScanEscapeHatchesInlineAnnotation(t *testing.T) {
 	zigCode := `const std = @import("std");
 
 pub fn bufferCast(bytes: [*]u8) *u32 {
-    // ATLAS:ESCAPE_HATCH[EH-ZIG-01]
+    // PRUMO:ESCAPE_HATCH[EH-ZIG-01]
     return @ptrCast(bytes);
 }
 `

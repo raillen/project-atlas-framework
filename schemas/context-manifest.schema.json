@@ -1,6 +1,6 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://project-atlas.dev/schemas/context-manifest.schema.json",
+  "$id":"https://raw.githubusercontent.com/raillen/prumo/main/schemas/context-manifest.schema.json",
   "type":"object","required":["version","run_id","sources","estimated_tokens"],
   "properties":{"version":{"type":"integer","const":1},"run_id":{"type":"string"},"sources":{"type":"array","items":{"type":"object","required":["ref","included"],"properties":{"ref":{"type":"string"},"included":{"type":"boolean"},"authority":{"type":"string"},"freshness":{"type":"string"},"token_cost":{"type":"integer","minimum":0},"reason":{"type":"string"}},"additionalProperties":true}},"estimated_tokens":{"type":"integer","minimum":0},"pressure":{"enum":["healthy","pressure","compact","critical"]}},"additionalProperties":true
 }

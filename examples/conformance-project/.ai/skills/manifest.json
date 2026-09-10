@@ -1,10 +1,10 @@
 {
   "generated_by": {
-    "project_atlas": "0.2.0"
+    "prumo": "0.2.0"
   },
   "skills": [
     "architecture-quality",
-    "atlas-navigation",
+    "prumo-navigation",
     "clean-code",
     "code-review",
     "dependency-management",
@@ -30,7 +30,7 @@
     "architecture-quality": [
       "core"
     ],
-    "atlas-navigation": [
+    "prumo-navigation": [
       "core"
     ],
     "clean-code": [

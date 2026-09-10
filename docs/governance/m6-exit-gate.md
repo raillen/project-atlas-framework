@@ -14,7 +14,7 @@ approved baseline; no agent suggestion is silently promoted.
 ### 1. Initial intent → implementation-ready without a manual megaprompt
 
 - Deterministic end-to-end dogfood test `TestDogfoodZeroToReady`
-  (`cmd/atlas/plan_z2r_test.go`) drives the full loop through `run()`: blocked
+  (`cmd/prumo/plan_z2r_test.go`) drives the full loop through `run()`: blocked
   readiness → questions → answered decisions → proposed delta → governance patch
   → applied delta → passing readiness → blueprint proposal.
 - Committed sample project `examples/living-plan-sample/` ships at the ready
@@ -26,7 +26,7 @@ approved baseline; no agent suggestion is silently promoted.
 
 ### 2. Goal-specific planning closes only the relevant gaps
 
-- Planning and readiness are goal-scoped: `atlas plan --goal <id>`,
+- Planning and readiness are goal-scoped: `prumo plan --goal <id>`,
   `docs readiness --goal <id>`; the documentation engine ignores unrelated
   contracts when computing coverage for a Goal (M5 regression suite).
 - The sample loop only touches `product.vision` and `project.scope`; unrelated
@@ -47,7 +47,7 @@ approved baseline; no agent suggestion is silently promoted.
 
 - Session checkpoint persisted under `.ai/plan/sessions/<id>.json` as
   `session.Checkpoint()` (`internal/app/sessionstore.go`, E-G07).
-- `atlas plan resume` recompiles context from canonical decisions + open
+- `prumo plan resume` recompiles context from canonical decisions + open
   questions + checkpoint (`internal/app/resume_test.go`,
   `internal/planning/session_test.go`); no transcript is reintroduced.
 
@@ -76,7 +76,7 @@ approved baseline; no agent suggestion is silently promoted.
 
 - `agent-suggestion` classifications never promote to decisions and keep the
   question open (answer authority enforcement in `internal/planning` +
-  `cmd/atlas/plan_z2r_test.go`: `TestPlanAnswerNeverPromotesAgentSuggestion`,
+  `cmd/prumo/plan_z2r_test.go`: `TestPlanAnswerNeverPromotesAgentSuggestion`,
   `TestPlanAnswerUnresolvedKeepsQuestionOpen`).
 
 ## Evidence (framework dogfood on this repository)

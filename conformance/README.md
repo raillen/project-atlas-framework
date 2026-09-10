@@ -1,9 +1,9 @@
-# Conformance Testing: Project Atlas v0.3 Oracle vs. v0.4 Go
+# Conformance Testing: Prumo v0.3 Oracle vs. v0.4 Go
 
 ## Purpose
 This directory hosts differential test fixtures, golden references, and validation datasets used to ensure behavioral parity between:
-- Project Atlas v0.3 (Python reference oracle)
-- Project Atlas v0.4 (Go implementation)
+- Prumo v0.3 (Python reference oracle)
+- Prumo v0.4 (Go implementation)
 
 ## Structure
 - `V03_BASELINE.json`: Metadata defining the verified v0.3 baseline, test suites, and commands.
@@ -14,11 +14,11 @@ This directory hosts differential test fixtures, golden references, and validati
 When porting a command to Go:
 1. Run fixture through Python v0.3:
    ```bash
-   atlas <cmd> <args> --json > conformance/golden/<feature>.golden.json
+   prumo <cmd> <args> --json > conformance/golden/<feature>.golden.json
    ```
 2. Run identical fixture through Go v0.4:
    ```bash
-   go run ./cmd/atlas <cmd> <args> --json
+   go run ./cmd/prumo <cmd> <args> --json
    ```
 3. Assert exact match in:
    - Exit code

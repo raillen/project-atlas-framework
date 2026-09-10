@@ -5,10 +5,10 @@
 Use Semantic Versioning-compatible release tags:
 
 ```text
-v0.4.0-alpha.1
-v0.4.0-beta.1
-v0.4.0-rc.1
-v0.4.0
+v0.5.0-alpha.1
+v0.5.0-beta.1
+v0.5.0-rc.1
+v0.5.0
 v1.0.0
 ```
 
@@ -40,14 +40,14 @@ Release changes enter `main` through a Pull Request with:
 - `checksums.txt`;
 - `release.json`.
 
-The release workflow uploads these artifacts on `v0.4.*` tags.
+The release workflow uploads these artifacts on `v0.5.*` tags.
 
 ## Promotion
 
 Release progression:
 
 ```text
-0.4.0-alpha → 0.4.0-beta → 0.4.0-rc → 0.4.0
+0.5.0-alpha → 0.5.0-beta → 0.5.0-rc → 0.5.0
 ```
 
 Promotion requires the relevant phase gate, full Go checks, Python oracle checks while migration is active, conformance, and release smoke tests.

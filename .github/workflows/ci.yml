@@ -19,20 +19,20 @@ jobs:
         run: go vet ./...
       - name: Go test
         run: go test -v -race ./...
-      - name: Build Atlas CLI
-        run: go build -o /tmp/atlas ./cmd/atlas
+      - name: Build Prumo CLI
+        run: go build -o /tmp/prumo ./cmd/prumo
       - name: CLI smoke test
         run: |
-          rm -rf /tmp/atlas-smoke
-          /tmp/atlas init /tmp/atlas-smoke --profile examples/brasa/project-profile.json --non-interactive
-          /tmp/atlas validate /tmp/atlas-smoke
-          /tmp/atlas context plan "add a transition template" --path /tmp/atlas-smoke --json
-          /tmp/atlas goal new P00-G01 "Foundation" --phase P00 --path /tmp/atlas-smoke
-          /tmp/atlas goal list --path /tmp/atlas-smoke
-          /tmp/atlas compile --target codex --path /tmp/atlas-smoke
-          /tmp/atlas compile --target traycer --path /tmp/atlas-smoke
-          /tmp/atlas compile --target opencode --path /tmp/atlas-smoke
-          /tmp/atlas connector list
-          /tmp/atlas framework-check
-          test ! -e /tmp/atlas-smoke/PROJECT_MANIFEST.yaml
-          test ! -e /tmp/atlas-smoke/.atlas/project-profile.yaml
+          rm -rf /tmp/prumo-smoke
+          /tmp/prumo init /tmp/prumo-smoke --profile examples/brasa/project-profile.json --non-interactive
+          /tmp/prumo validate /tmp/prumo-smoke
+          /tmp/prumo context plan "add a transition template" --path /tmp/prumo-smoke --json
+          /tmp/prumo goal new P00-G01 "Foundation" --phase P00 --path /tmp/prumo-smoke
+          /tmp/prumo goal list --path /tmp/prumo-smoke
+          /tmp/prumo compile --target codex --path /tmp/prumo-smoke
+          /tmp/prumo compile --target traycer --path /tmp/prumo-smoke
+          /tmp/prumo compile --target opencode --path /tmp/prumo-smoke
+          /tmp/prumo connector list
+          /tmp/prumo framework-check
+          test ! -e /tmp/prumo-smoke/PROJECT_MANIFEST.yaml
+          test ! -e /tmp/prumo-smoke/.prumo/project-profile.yaml

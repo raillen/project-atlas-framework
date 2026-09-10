@@ -1,0 +1,66 @@
+{
+  "id": "network-security",
+  "name": "Network Security",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Enforce TLS 1.3 encryption, certificate pinning, strict socket timeouts, and firewall rules.",
+  "risk_level": "high",
+  "modes": [
+    "implementation",
+    "review"
+  ],
+  "inputs": [
+    "Security policy",
+    "Target codebase",
+    "Threat model"
+  ],
+  "outputs": [
+    "Security audit report",
+    "Vulnerability remediation patches",
+    "Security gate evidence"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [
+    "templates/network-security-report.md"
+  ],
+  "checks": [
+    "checks/network-security-checklist.md"
+  ],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "security-scan",
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "prumo",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "features_any": [
+      "networking",
+      "multiplayer"
+    ],
+    "risk_any": [
+      "security"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

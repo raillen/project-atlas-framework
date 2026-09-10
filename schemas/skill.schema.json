@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/skill.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/skill.schema.json",
   "type": "object",
   "required": [
     "id",

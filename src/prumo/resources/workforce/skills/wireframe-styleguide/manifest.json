@@ -1,0 +1,25 @@
+{
+  "id": "wireframe-styleguide",
+  "name": "Wireframe and Style Guide Planning",
+  "version": 1,
+  "schema_version": 2,
+  "select": {
+    "features_any": [
+      "wireframes",
+      "design-system"
+    ]
+  },
+  "purpose": "Produce wireframes, tokens, and component state specifications.",
+  "risk_level": "low",
+  "modes": [
+    "design"
+  ],
+  "requires_any": [],
+  "tools": [],
+  "provenance": {
+    "source": "prumo",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  }
+}

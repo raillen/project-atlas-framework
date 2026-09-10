@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/connector-contract.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/connector-contract.schema.json",
   "title": "ConnectorContract",
   "description": "Machine-readable contract specifying connector capabilities, enforcement level, hooks, and lifecycle behavior",
   "type": "object",

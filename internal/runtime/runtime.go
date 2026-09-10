@@ -154,7 +154,7 @@ func InspectRepository(root string) RepositoryState {
 }
 
 func ContinuationFromRun(run Run, repo RepositoryState, completed, current, pending, next []string) ContinuationRecord {
-	return ContinuationRecord{Version: 1, Project: "atlas", Goal: run.GoalID, Task: run.TaskID, Run: run.ID, State: string(run.Status), Repository: repo, Completed: completed, Current: current, Pending: pending, NextSteps: next, PendingSideEffects: run.PendingSideEffects, Evidence: run.Evidence}
+	return ContinuationRecord{Version: 1, Project: "prumo", Goal: run.GoalID, Task: run.TaskID, Run: run.ID, State: string(run.Status), Repository: repo, Completed: completed, Current: current, Pending: pending, NextSteps: next, PendingSideEffects: run.PendingSideEffects, Evidence: run.Evidence}
 }
 
 func SaveJSON(path string, value any) error {
@@ -184,7 +184,7 @@ func SortStrings(values []string) []string {
 }
 func RenderPrompt(record ContinuationRecord) string {
 	var b strings.Builder
-	b.WriteString("Atlas Portable Continuation\n\n")
+	b.WriteString("Prumo Portable Continuation\n\n")
 	fmt.Fprintf(&b, "Run: %s\nState: %s\n", record.Run, record.State)
 	if record.Goal != "" {
 		fmt.Fprintf(&b, "Goal: %s\n", record.Goal)

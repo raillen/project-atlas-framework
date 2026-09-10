@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func TestServiceVersion(t *testing.T) {
@@ -22,8 +22,8 @@ func TestServiceVersion(t *testing.T) {
 
 func TestServiceProjectRoot(t *testing.T) {
 	root := t.TempDir()
-	if err := os.WriteFile(filepath.Join(root, "atlas.json"), []byte(`{"version":2}`), 0644); err != nil {
-		t.Fatalf("failed to create atlas.json: %v", err)
+	if err := os.WriteFile(filepath.Join(root, "prumo.json"), []byte(`{"version":2}`), 0644); err != nil {
+		t.Fatalf("failed to create prumo.json: %v", err)
 	}
 	svc := NewService()
 	info, err := svc.ProjectRoot(context.Background(), root)

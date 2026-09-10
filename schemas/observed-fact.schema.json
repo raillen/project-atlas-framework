@@ -1,6 +1,6 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://project-atlas.dev/schemas/observed-fact.schema.json",
+  "$id":"https://raw.githubusercontent.com/raillen/prumo/main/schemas/observed-fact.schema.json",
   "$comment":"F-G01: scanner observed fact — a single verifiable piece of repository evidence.",
   "type":"object",
   "required":["id","kind","key","source","extraction"],

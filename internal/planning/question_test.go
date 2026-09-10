@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/validation"
+	"github.com/raillen/prumo/internal/validation"
 )
 
 func TestPriorityParseString(t *testing.T) {

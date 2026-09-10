@@ -1,9 +1,9 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "--version"
   ],
   "exit": 0,
-  "stdout": "Project Atlas 0.3.0\n",
+  "stdout": "Prumo 0.5.0\n",
   "stderr": ""
 }

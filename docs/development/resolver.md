@@ -1,6 +1,6 @@
 # Resolver
 
-The Resolver is the heart of Project Atlas, responsible for dynamically selecting the right capabilities for a given context.
+The Resolver is the heart of Prumo, responsible for dynamically selecting the right capabilities for a given context.
 
 ## Resolution Algorithm
 
@@ -16,7 +16,7 @@ The resolver applies filters in the following order:
 
 ## Explainability Traces
 
-Use `atlas explain` to view exactly why a specific skill was included or excluded during resolution.
+Use `prumo explain` to view exactly why a specific skill was included or excluded during resolution.
 
 ## Determinism Guarantees
 

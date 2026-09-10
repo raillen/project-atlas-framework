@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/connector-negotiation.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/connector-negotiation.schema.json",
   "title": "ConnectorNegotiationResult",
   "description": "Schema contract for connector capability negotiation results and graceful degradations",
   "type": "object",

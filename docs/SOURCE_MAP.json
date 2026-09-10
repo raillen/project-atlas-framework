@@ -1,19 +1,19 @@
 {
   "generated_at": "2026-09-08",
-  "source": "Project Atlas Framework — Livro Vivo v0.4",
-  "source_url": "https://app.notion.com/p/raillen/Project-Atlas-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85",
+  "source": "Prumo — Livro Vivo v0.4",
+  "source_url": "https://app.notion.com/p/raillen/Project-Prumo-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85",
   "documents": [
     {
       "local_path": "docs/product/vision.md",
       "notion_pages": [
-        { "title": "Project Atlas Framework — Livro Vivo v0.4 (hub)", "role": "vision summary, fundamental decisions, macro-architecture" }
+        { "title": "Prumo — Livro Vivo v0.4 (hub)", "role": "vision summary, fundamental decisions, macro-architecture" }
       ],
       "semantic_role": "product vision, scope, non-goals, operational target"
     },
     {
       "local_path": "docs/product/scope-v0.4.md",
       "notion_pages": [
-        { "title": "Project Atlas Framework — Livro Vivo v0.4 (hub)", "role": "macro-architecture, objective" },
+        { "title": "Prumo — Livro Vivo v0.4 (hub)", "role": "macro-architecture, objective" },
         { "title": "01 — Stack Go, Clean Code e Migração do Core Python", "role": "target stack, migration phases, deprecation criteria" },
         { "title": "14 — Roadmap de Implementação v0.4", "role": "milestones, dependency ordering, release strategy, amendments" },
         { "title": "16 — Gap Analysis v0.3 → v0.4", "role": "component classification, corrections, doc updates" }
@@ -23,14 +23,14 @@
     {
       "local_path": "docs/architecture/overview.md",
       "notion_pages": [
-        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "planes, boundaries, internal interfaces, dependency direction, design rules" }
+        { "title": "02 — Arquitetura Prumo v0.4 e Boundaries do Core", "role": "planes, boundaries, internal interfaces, dependency direction, design rules" }
       ],
       "semantic_role": "high-level topology, plane boundaries, dependency rules, design principles"
     },
     {
       "local_path": "docs/architecture/dependency-rules.md",
       "notion_pages": [
-        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "internal boundaries, rules of dependency, interface placement" },
+        { "title": "02 — Arquitetura Prumo v0.4 e Boundaries do Core", "role": "internal boundaries, rules of dependency, interface placement" },
         { "title": "17 — Estrutura Canônica de Repositório Alvo", "role": "package layout, internal vs integration, embedding strategy" }
       ],
       "semantic_role": "package dependency graph, hard rules, interface placement, import hygiene"
@@ -92,7 +92,7 @@
     {
       "local_path": "docs/runtime/control-plane.md",
       "notion_pages": [
-        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "control plane boundary, dependency direction, new application boundaries" },
+        { "title": "02 — Arquitetura Prumo v0.4 e Boundaries do Core", "role": "control plane boundary, dependency direction, new application boundaries" },
         { "title": "48 — Agent Runtime Control Plane: Arquitetura e Princípios", "role": "planes, governance rule, success criteria" },
         { "title": "49 — Budget Manager, Cost Governance e Rate Limits", "role": "budget envelope, scopes, limits, cost manager, rate limits, evidence" },
         { "title": "50 — Context Compiler, Token Budget, Cache e Compaction", "role": "compiler pipeline, manifest, window distinction, tool-output budgets, pressure, retrieval, evals" },
@@ -101,7 +101,7 @@
         { "title": "53 — Model Registry, Router, Drift, Fallback e Provider Health", "role": "registry metadata, router inputs/outputs, eval-driven, drift, fallback, health, verification" },
         { "title": "55 — Observability Plane, Run Explainability e Incident Bundles", "role": "telemetry, explainability commands, storage, OTLP, incident bundles, privacy" },
         { "title": "56 — Automation Engine, Event Rules, DLQ e Safety", "role": "automation model, contract, idempotency, retry, DLQ, scheduler deferral" },
-        { "title": "57 — Atlas Package & Runtime Manager, atlas.lock e Provider Isolation", "role": "package types, manifest, lockfile, runtime manager, installation ownership, offline bundles" },
+        { "title": "57 — Prumo Package & Runtime Manager, prumo.lock e Provider Isolation", "role": "package types, manifest, lockfile, runtime manager, installation ownership, offline bundles" },
         { "title": "58 — Migration Engine, Unified Review Queue e State Evolution", "role": "migration contract, safety, journal, review queue, rule" },
         { "title": "60 — Secrets, Data Classification e Egress Governance", "role": "data classes, egress policy, secret provider, scopes, redaction, injection boundary, audit" }
       ],
@@ -301,7 +301,7 @@
     {
       "local_path": "docs/adr/003-language-engineering-safety-subsystem.md",
       "notion_pages": [
-        { "title": "02 — Arquitetura Atlas v0.4 e Boundaries do Core", "role": "ADR 003 Language Engineering & Safety Skills Subsystem" }
+        { "title": "02 — Arquitetura Prumo v0.4 e Boundaries do Core", "role": "ADR 003 Language Engineering & Safety Skills Subsystem" }
       ],
       "semantic_role": "architectural decision record: executable contracts, escape hatch registry, and systems language skills"
     }

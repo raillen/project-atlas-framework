@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/adoption-migration-proposal.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/adoption-migration-proposal.schema.json",
   "title": "AdoptionMigrationProposal",
   "description": "Formal migration proposal generated from adoption audit findings, governed by Review Queue before application",
   "type": "object",
@@ -46,7 +46,7 @@
       }
     },
     "contract": {
-      "$ref": "https://project-atlas.dev/schemas/atlas-migration.schema.json"
+      "$ref": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/prumo-migration.schema.json"
     },
     "created_at": { "type": "string" }
   },

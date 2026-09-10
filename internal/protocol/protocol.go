@@ -3,18 +3,18 @@ package protocol
 import "errors"
 
 const (
-	CLIVersion      = "0.4.2"
+	CLIVersion      = "0.5.0"
 	ProtocolVersion = "1"
 )
 
 const (
 	CodeSuccess               = "OK"
-	CodeValidationFailed      = "ATLAS_VALIDATION_FAILED"
-	CodePolicyDenied          = "ATLAS_POLICY_DENIED"
-	CodeConfiguration         = "ATLAS_CONFIGURATION_ERROR"
-	CodeUnavailableCapability = "ATLAS_UNAVAILABLE_CAPABILITY"
-	CodeInternal              = "ATLAS_INTERNAL_ERROR"
-	CodeProjectNotFound       = "ATLAS_PROJECT_NOT_FOUND"
+	CodeValidationFailed      = "PRUMO_VALIDATION_FAILED"
+	CodePolicyDenied          = "PRUMO_POLICY_DENIED"
+	CodeConfiguration         = "PRUMO_CONFIGURATION_ERROR"
+	CodeUnavailableCapability = "PRUMO_UNAVAILABLE_CAPABILITY"
+	CodeInternal              = "PRUMO_INTERNAL_ERROR"
+	CodeProjectNotFound       = "PRUMO_PROJECT_NOT_FOUND"
 )
 
 var (

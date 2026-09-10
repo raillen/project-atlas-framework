@@ -1,19 +1,19 @@
-# Project Atlas Framework
+# Prumo
 
-Project Atlas is a Git-native protocol and CLI for software projects built with humans and AI agents.
+Prumo is a Git-native protocol and CLI for software projects built with humans and AI agents.
 
-The repository is the durable source of truth. Atlas stores canonical project state in Markdown, JSON, JSON Schema, and Git; generated adapters, caches, indexes, and runtime state remain derived.
+The repository is the durable source of truth. Prumo stores canonical project state in Markdown, JSON, JSON Schema, and Git; generated adapters, caches, indexes, and runtime state remain derived.
 
 ## Current release line
 
-Project Atlas v0.4 is a pure Go distribution (ADR 002).
+Prumo v0.5 is a pure Go distribution (ADR 002).
 
-- **Go v0.4** is the official single-binary CLI and Core implementation.
+- **Go v0.5** is the official single-binary CLI and Core implementation.
 - Python v0.3 has been completely retired (ADR 002).
 - Zero external runtime dependencies (no Python, pip, or virtualenv required).
 - All canonical assets (schemas, catalog, workforce, adapters) are embedded directly into the Go binary.
 
-## What Atlas provides
+## What Prumo provides
 
 - Project initialization from a profile.
 - Deterministic agent, skill, recipe, risk, and model-policy resolution.
@@ -34,47 +34,47 @@ Requirements:
 - Git.
 
 ```bash
-git clone git@github.com:raillen/project-atlas-framework.git
-cd project-atlas-framework
+git clone git@github.com:raillen/prumo.git
+cd prumo
 
-go run ./cmd/atlas version
-go run ./cmd/atlas --json version
+go run ./cmd/prumo version
+go run ./cmd/prumo --json version
 ```
 
 Expected version output:
 
 ```text
-0.4.2
+0.5.0
 ```
 
-Run `atlas --help` or `atlas <command> --help` to view all available commands, options, and quick examples. You can also consult the [CLI reference](docs/manual/usage.md#command-reference).
+Run `prumo --help` or `prumo <command> --help` to view all available commands, options, and quick examples. You can also consult the [CLI reference](docs/manual/usage.md#command-reference).
 
 ## Initialize a project
 
 Create a profile with at least one preferred model, then initialize a project:
 
 ```bash
-go run ./cmd/atlas init ./my-project \
+go run ./cmd/prumo init ./my-project \
   --profile examples/brasa/project-profile.json \
   --non-interactive
 
-go run ./cmd/atlas validate ./my-project
-go run ./cmd/atlas doctor ./my-project
+go run ./cmd/prumo validate ./my-project
+go run ./cmd/prumo doctor ./my-project
 ```
 
-`atlas init` creates canonical project files such as `atlas.json`, `.ai/`, `docs/ATLAS.md`, `PROJECT_STATE.md`, and `.atlas/history/`. It does not install a harness globally.
+`prumo init` creates canonical project files such as `prumo.json`, `.ai/`, `docs/PRUMO.md`, `PROJECT_STATE.md`, and `.prumo/history/`. It does not install a harness globally.
 
 ## Work with Goals
 
 ```bash
-go run ./cmd/atlas goal new P00-G01 "Foundation" \
+go run ./cmd/prumo goal new P00-G01 "Foundation" \
   --phase P00 \
   --objective "Establish the project foundation." \
   --path ./my-project
 
-go run ./cmd/atlas goal state P00-G01 PLANNED --path ./my-project
-go run ./cmd/atlas goal state P00-G01 LOCKED --path ./my-project
-go run ./cmd/atlas goal list --path ./my-project
+go run ./cmd/prumo goal state P00-G01 PLANNED --path ./my-project
+go run ./cmd/prumo goal state P00-G01 LOCKED --path ./my-project
+go run ./cmd/prumo goal list --path ./my-project
 ```
 
 Locked Goals must be changed through `goal amend`; direct edits are detected by the lock digest.
@@ -82,9 +82,9 @@ Locked Goals must be changed through `goal amend`; direct edits are detected by 
 ## Compile a harness adapter
 
 ```bash
-go run ./cmd/atlas compile --target generic --path ./my-project
-go run ./cmd/atlas compile --target codex --path ./my-project
-go run ./cmd/atlas compile --target claude-code --path ./my-project
+go run ./cmd/prumo compile --target generic --path ./my-project
+go run ./cmd/prumo compile --target codex --path ./my-project
+go run ./cmd/prumo compile --target claude-code --path ./my-project
 ```
 
 Generated artifacts are derived. The canonical project files and workforce packages remain the source of truth.
@@ -92,24 +92,24 @@ Generated artifacts are derived. The canonical project files and workforce packa
 ## One-Link Install (Linux, macOS & Windows)
 
 ### Linux & macOS
-Downloads the release binary, verifies SHA-256 checksums, installs to `~/.local/bin/atlas`, and configures your shell `PATH` automatically:
+Downloads the release binary, verifies SHA-256 checksums, installs to `~/.local/bin/prumo`, and configures your shell `PATH` automatically:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/raillen/prumo/main/scripts/install.sh | sh
 ```
 
 ### Windows (PowerShell)
-Downloads the Windows binary, verifies SHA-256 checksums, installs to `%LOCALAPPDATA%\Programs\atlas\atlas.exe`, and permanently configures user `PATH`:
+Downloads the Windows binary, verifies SHA-256 checksums, installs to `%LOCALAPPDATA%\Programs\prumo\prumo.exe`, and permanently configures user `PATH`:
 
 ```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.ps1 | iex"
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/prumo/main/scripts/install.ps1 | iex"
 ```
 
 
 For a reversible uninstall, review the script before running it:
 
 ```bash
-curl --fail --location https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/uninstall.sh -o uninstall.sh
+curl --fail --location https://raw.githubusercontent.com/raillen/prumo/main/scripts/uninstall.sh -o uninstall.sh
 sh uninstall.sh --mode pure --dry-run
 sh uninstall.sh --mode pure
 ```
@@ -117,9 +117,9 @@ sh uninstall.sh --mode pure
 Use a portable installation home when testing or working in CI:
 
 ```bash
-go run ./cmd/atlas --home ./atlas-home setup
-go run ./cmd/atlas --home ./atlas-home install connector opencode
-go run ./cmd/atlas --home ./atlas-home uninstall --connectors --purge-cache --purge-global-config
+go run ./cmd/prumo --home ./prumo-home setup
+go run ./cmd/prumo --home ./prumo-home install connector opencode
+go run ./cmd/prumo --home ./prumo-home uninstall --connectors --purge-cache --purge-global-config
 ```
 
 Uninstall never removes project files, `.ai/`, docs, Goals, Plans, Evidence, or other repository data. Read the [installation manual](docs/manual/installation.md) and [uninstall manual](docs/manual/uninstallation.md).
@@ -129,9 +129,9 @@ Uninstall never removes project files, `.ai/`, docs, Goals, Plans, Evidence, or 
 Commands that support automation accept `--json`:
 
 ```bash
-go run ./cmd/atlas --json version
-go run ./cmd/atlas --json doctor ./my-project
-go run ./cmd/atlas --json framework-check
+go run ./cmd/prumo --json version
+go run ./cmd/prumo --json doctor ./my-project
+go run ./cmd/prumo --json framework-check
 ```
 
 The envelope is:
@@ -179,7 +179,7 @@ The Go suite includes comprehensive tests for initialization, resolver behavior,
 - [Documentation System v2](docs/governance/documentation-system.md)
 - [Documentation source map](docs/SOURCE_MAP.json)
 
-Use `docs/ATLAS.md` as the repository documentation router. Do not load the entire documentation tree for a single task.
+Use `docs/PRUMO.md` as the repository documentation router. Do not load the entire documentation tree for a single task.
 
 ## License and contribution
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/language-profile.schema.json",
-  "title": "Atlas Language Engineering Profile",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/language-profile.schema.json",
+  "title": "Prumo Language Engineering Profile",
   "description": "Schema defining language-specific engineering constraints, compiler flags, sanitizers, strictness levels, and prohibited patterns.",
   "type": "object",
   "required": [

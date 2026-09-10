@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/raillen/project-atlas-framework/internal/scm/github"
+	"github.com/raillen/prumo/internal/scm/github"
 )
 
 type RepositoryService struct {
@@ -17,7 +17,7 @@ type RepositoryService struct {
 func NewService(root string) *RepositoryService { return &RepositoryService{Root: root} }
 
 func (s *RepositoryService) Load() (Policy, error) {
-	return Load(filepath.Join(s.Root, ".atlas", "repository", "policy.json"))
+	return Load(filepath.Join(s.Root, ".prumo", "repository", "policy.json"))
 }
 
 func (s *RepositoryService) CheckRemote(policy Policy, token string) (map[string]any, error) {
@@ -149,7 +149,7 @@ func (s *RepositoryService) Apply(policy Policy, token string, dryRun bool) (map
 
 func MainRulesetPayload(policy Policy) map[string]any {
 	return map[string]any{
-		"name":        "Atlas main governance",
+		"name":        "Prumo main governance",
 		"target":      "branch",
 		"enforcement": "active",
 		"conditions":  map[string]any{"ref_name": map[string]any{"include": []string{"~DEFAULT_BRANCH"}, "exclude": []string{}}},
@@ -163,7 +163,7 @@ func MainRulesetPayload(policy Policy) map[string]any {
 }
 
 func SaveDefault(root string) error {
-	path := filepath.Join(root, ".atlas", "repository", "policy.json")
+	path := filepath.Join(root, ".prumo", "repository", "policy.json")
 	if _, err := os.Stat(path); err == nil {
 		return nil
 	}

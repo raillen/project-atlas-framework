@@ -3,8 +3,8 @@ package claudecode_test
 import (
 	"testing"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors/claudecode"
-	"github.com/raillen/project-atlas-framework/internal/connectors/testkit"
+	"github.com/raillen/prumo/internal/connectors/claudecode"
+	"github.com/raillen/prumo/internal/connectors/testkit"
 )
 
 func TestClaudeCodeConnector(t *testing.T) {

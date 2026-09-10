@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/raillen/project-atlas-framework/internal/connectors"
-	"github.com/raillen/project-atlas-framework/internal/install"
-	"github.com/raillen/project-atlas-framework/internal/protocol"
+	"github.com/raillen/prumo/internal/connectors"
+	"github.com/raillen/prumo/internal/install"
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func init() {
@@ -31,7 +31,7 @@ func (c *Connector) Contract() connectors.Contract {
 	return connectors.Contract{
 		ID:            "antigravity",
 		Version:       protocol.CLIVersion,
-		ProtocolRange: ">=0.4.0 <0.5.0",
+		ProtocolRange: ">=0.5.0 <0.6.0",
 		Capabilities: []string{
 			connectors.CapAdvise,
 			connectors.CapCommands,
@@ -72,10 +72,10 @@ func (c *Connector) Compile(projectRoot string, opts connectors.CompileOptions) 
 
 	// 1. GEMINI.md entrypoint in project root
 	geminiMD := `# GEMINI.md
-This project uses Project Atlas v0.4 with Google Antigravity.
+This project uses Prumo v0.5 with Google Antigravity.
 
 - Follow Lean Progressive Context: smallest sufficient context, progressive expansion, pointer over payload.
-- Read ENTRYPOINT.md, atlas.json, and the active Goal before taking any actions.
+- Read ENTRYPOINT.md, prumo.json, and the active Goal before taking any actions.
 - Test-Driven Development: Every implementation requires exhaustive automated tests (unit, integration, conformance).
 - Security First: Zero hardcoded secrets, follow least privilege, audit dependencies and sanitize inputs.
 - Clean Architecture: High cohesion, low coupling, modularity, explicit domain boundaries.
@@ -149,10 +149,10 @@ This project uses Project Atlas v0.4 with Google Antigravity.
 		"version": "1.0",
 		"hooks": map[string]any{
 			connectors.HookSessionStart: []map[string]string{
-				{"type": "command", "exec": "atlas status --json"},
+				{"type": "command", "exec": "prumo status --json"},
 			},
 			connectors.HookSessionEnd: []map[string]string{
-				{"type": "command", "exec": "atlas doctor --json"},
+				{"type": "command", "exec": "prumo doctor --json"},
 			},
 			connectors.HookToolBefore: []map[string]string{
 				{"type": "audit", "check": "security_boundary"},
@@ -189,7 +189,7 @@ This project uses Project Atlas v0.4 with Google Antigravity.
 		skillDir := filepath.Join(agentsDir, "skills", skillID)
 		sourceSkillDir := ""
 		if opts.RepoRoot != "" {
-			cand := filepath.Join(opts.RepoRoot, "src", "project_atlas", "resources", "workforce", "skills", skillID)
+			cand := filepath.Join(opts.RepoRoot, "src", "prumo", "resources", "workforce", "skills", skillID)
 			if info, err := os.Stat(cand); err == nil && info.IsDir() {
 				sourceSkillDir = cand
 			}
@@ -201,7 +201,7 @@ This project uses Project Atlas v0.4 with Google Antigravity.
 		} else {
 			skillMD := fmt.Sprintf(`---
 name: %s
-description: Atlas skill for %s with automated quality checks.
+description: Prumo skill for %s with automated quality checks.
 ---
 
 # Skill: %s
@@ -220,14 +220,14 @@ Verify outputs against quality checklists before declaring completion.
 
 	// 7. Ownership marker
 	ownership := map[string]any{
-		"atlas_generated": true,
-		"atlas_version":   protocol.CLIVersion,
+		"prumo_generated": true,
+		"prumo_version":   protocol.CLIVersion,
 		"generator":       "connector-antigravity",
 		"target":          "antigravity",
 		"managed":         true,
 		"created_paths":   created,
 	}
-	markerPath := filepath.Join(agentsDir, ".atlas-generated.json")
+	markerPath := filepath.Join(agentsDir, ".prumo-generated.json")
 	if err := writeJSON(markerPath, ownership); err != nil {
 		return nil, err
 	}
@@ -321,7 +321,7 @@ func (c *Connector) Validate(projectRoot string) (*connectors.ValidationResult, 
 		"GEMINI.md",
 		".agents/config.json",
 		".agents/hooks.json",
-		".agents/.atlas-generated.json",
+		".agents/.prumo-generated.json",
 	}
 	for _, rel := range required {
 		p := filepath.Join(projectRoot, rel)

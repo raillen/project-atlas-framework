@@ -1,11 +1,11 @@
 # Architecture
 
-Project Atlas separates durable truth from generated execution views and temporary agent context.
+Prumo separates durable truth from generated execution views and temporary agent context.
 
 ```text
 Project repository
 ├── Canonical knowledge (Markdown)
-├── atlas.json + Goals/manifests/intelligence (JSON)
+├── prumo.json + Goals/manifests/intelligence (JSON)
 ├── Goals + evidence
 ├── Selected AI workforce
 └── Project history
@@ -35,7 +35,7 @@ Project repository
 Canonical sources are intentionally human-maintainable:
 
 - Markdown: product/user/developer/operations/architecture/spec/ADR knowledge.
-- JSON: `atlas.json`, Goals, workforce manifests, model policy and compact durable Project Intelligence.
+- JSON: `prumo.json`, Goals, workforce manifests, model policy and compact durable Project Intelligence.
 
 Generated artifacts include indexes, summaries, context renderings, site output and platform adapters. They can be rebuilt and never outrank canonical sources.
 
@@ -74,15 +74,15 @@ Deep recursive execution is not a framework default.
 
 ## Documentation architecture
 
-A project exposes explicit user, developer, operations and agent surfaces. The ATLAS routes by intent. Documents may remain moderately sized and are chunked virtually by headings/symbols instead of being split into microfiles solely for LLM consumption.
+A project exposes explicit user, developer, operations and agent surfaces. The PRUMO routes by intent. Documents may remain moderately sized and are chunked virtually by headings/symbols instead of being split into microfiles solely for LLM consumption.
 
 ## Project configuration
 
-v0.2+ projects use one canonical root configuration, `atlas.json`, instead of duplicating project profile + project manifest truth.
+v0.2+ projects use one canonical root configuration, `prumo.json`, instead of duplicating project profile + project manifest truth.
 
 ## Runtime
 
-Derived indexes, knowledge graph caches and temporary context should use a runtime database such as `.atlas/runtime/atlas.db` and remain gitignored.
+Derived indexes, knowledge graph caches and temporary context should use a runtime database such as `.prumo/runtime/prumo.db` and remain gitignored.
 
 Language-specific structural analysis is an adapter concern. C# projects should prefer Roslyn for semantic/symbol analysis rather than treating source code only as text.
 

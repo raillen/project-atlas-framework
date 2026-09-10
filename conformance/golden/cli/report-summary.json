@@ -1,6 +1,6 @@
 {
   "args": [
-    "atlas",
+    "prumo",
     "report",
     "summary",
     "--path",

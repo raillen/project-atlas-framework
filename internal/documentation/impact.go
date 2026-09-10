@@ -102,7 +102,7 @@ func unique(values []string) []string {
 func DetectContradictions(root string) ([]Finding, error) {
 	values := map[string][]string{}
 	pattern := regexp.MustCompile(`(?i)(?:port|default_port)\s*(?:=|:)\s*([0-9]{2,5})`)
-	for _, source := range []string{"atlas.json", "docs/manual/installation.md", "docs/reference/cli.md", "docs/architecture/overview.md"} {
+	for _, source := range []string{"prumo.json", "docs/manual/installation.md", "docs/reference/cli.md", "docs/architecture/overview.md"} {
 		data, err := os.ReadFile(filepath.Join(root, source))
 		if err != nil {
 			continue

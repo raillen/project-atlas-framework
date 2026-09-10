@@ -1,12 +1,12 @@
-# Installing Atlas v0.4
+# Installing Prumo v0.4
 
-Atlas v0.4 distributes a single static binary. Python is not required to run the Go CLI.
+Prumo v0.4 distributes a single static binary. Python is not required to run the Go CLI.
 
 ## Development Build
 
 ```bash
-go build -o /tmp/atlas ./cmd/atlas
-/tmp/atlas --json version
+go build -o /tmp/prumo ./cmd/prumo
+/tmp/prumo --json version
 ```
 
 ## Release Build
@@ -20,9 +20,9 @@ cat dist/checksums.txt
 ## Setup and Portable Home
 
 ```bash
-atlas --home ~/.atlas setup
-atlas --home ./project-home setup
-ATLAS_HOME=./project-home atlas setup
+prumo --home ~/.prumo setup
+prumo --home ./project-home setup
+PRUMO_HOME=./project-home prumo setup
 ```
 
 Setup records the installation manifest and detects available harnesses. Running setup twice converges to the same manifest.
@@ -30,18 +30,18 @@ Setup records the installation manifest and detects available harnesses. Running
 ## Install Connectors
 
 ```bash
-atlas --home ~/.atlas install connector opencode
+prumo --home ~/.prumo install connector opencode
 ```
 
-Connector state lives under `ATLAS_HOME/connectors/<id>/cleanup.json`.
+Connector state lives under `PRUMO_HOME/connectors/<id>/cleanup.json`.
 
 ## Uninstall Safely
 
 ```bash
-atlas --home ~/.atlas uninstall
-atlas --home ~/.atlas uninstall --connectors
-atlas --home ~/.atlas uninstall --purge-cache
-atlas --home ~/.atlas uninstall --purge-global-config
+prumo --home ~/.prumo uninstall
+prumo --home ~/.prumo uninstall --connectors
+prumo --home ~/.prumo uninstall --purge-cache
+prumo --home ~/.prumo uninstall --purge-global-config
 ```
 
 Uninstall never deletes repository data: `.ai/`, docs, goals, plans, evidence, and all project files remain untouched. Purge flags only remove cache, derived runtime state, or global configuration.

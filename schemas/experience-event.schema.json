@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/experience-event.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/experience-event.schema.json",
   "title": "SessionEvent",
-  "description": "Structured session event for the Atlas Experience Layer (not conversational transcript)",
+  "description": "Structured session event for the Prumo Experience Layer (not conversational transcript)",
   "type": "object",
   "required": ["id", "session_id", "type", "summary", "timestamp"],
   "properties": {

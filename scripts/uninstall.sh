@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-MODE="${ATLAS_UNINSTALL_MODE:-full}"
+MODE="${PRUMO_UNINSTALL_MODE:-full}"
 DRY_RUN=0
 HOME_OVERRIDE=""
 BINARY=""
@@ -12,8 +12,8 @@ usage() {
 Usage: uninstall.sh [--home <path>] [--binary <path>] [--remove-binary] [--mode pure|full] [--dry-run]
 
 Modes:
-  pure   remove only Atlas installation state, connectors, cache, and config
-  full   additionally remove the atlas binary from PATH
+  pure   remove only Prumo installation state, connectors, cache, and config
+  full   additionally remove the prumo binary from PATH
 USAGE
 }
 
@@ -56,11 +56,11 @@ resolve_home() {
     printf '%s\n' "$HOME_OVERRIDE"
     return 0
   fi
-  if [ -n "${ATLAS_HOME:-}" ]; then
-    printf '%s\n' "$ATLAS_HOME"
+  if [ -n "${PRUMO_HOME:-}" ]; then
+    printf '%s\n' "$PRUMO_HOME"
     return 0
   fi
-  printf '%s/.atlas\n' "$HOME"
+  printf '%s/.prumo\n' "$HOME"
 }
 
 resolve_binary() {
@@ -68,14 +68,14 @@ resolve_binary() {
     printf '%s\n' "$BINARY"
     return 0
   fi
-  command -v atlas || true
+  command -v prumo || true
 }
 
-ATLAS_HOME_VALUE="$(resolve_home)"
+PRUMO_HOME_VALUE="$(resolve_home)"
 BIN_PATH="$(resolve_binary)"
 
 if [ "$REMOVE_BINARY" -eq 1 ] && [ -z "$BIN_PATH" ]; then
-  printf '%s\n' "No atlas binary found in PATH; refusing to guess." >&2
+  printf '%s\n' "No prumo binary found in PATH; refusing to guess." >&2
   exit 1
 fi
 
@@ -88,7 +88,7 @@ case "$MODE" in
 esac
 
 if [ "$DRY_RUN" -eq 1 ]; then
-  printf '%s\n' "Would run uninstall in ${ATLAS_HOME_VALUE} with mode ${MODE}."
+  printf '%s\n' "Would run uninstall in ${PRUMO_HOME_VALUE} with mode ${MODE}."
   if [ "$REMOVE_BINARY" -eq 1 ]; then
     printf '%s\n' "Would remove binary ${BIN_PATH}."
   fi
@@ -97,16 +97,16 @@ if [ "$DRY_RUN" -eq 1 ]; then
 fi
 
 if [ -z "$BIN_PATH" ]; then
-  printf '%s\n' "No atlas binary available; nothing to execute." >&2
+  printf '%s\n' "No prumo binary available; nothing to execute." >&2
   exit 1
 fi
 
 # Never touch the current repository: only managed installation state is purged.
-ATLAS_HOME="$ATLAS_HOME_VALUE" "$BIN_PATH" uninstall --connectors --purge-cache --purge-global-config
+PRUMO_HOME="$PRUMO_HOME_VALUE" "$BIN_PATH" uninstall --connectors --purge-cache --purge-global-config
 
 if [ "$MODE" = "full" ] && [ "$REMOVE_BINARY" -eq 1 ]; then
   rm -f "$BIN_PATH"
   printf '%s\n' "Removed binary ${BIN_PATH}."
 fi
 
-printf '%s\n' "Atlas uninstalled from ${ATLAS_HOME_VALUE}; repository data was preserved."
+printf '%s\n' "Prumo uninstalled from ${PRUMO_HOME_VALUE}; repository data was preserved."

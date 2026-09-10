@@ -1,4 +1,4 @@
 
-# Project Atlas derived/runtime state
-.atlas/runtime/
-.atlas/cache/
+# Prumo derived/runtime state
+.prumo/runtime/
+.prumo/cache/

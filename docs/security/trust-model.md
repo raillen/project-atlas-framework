@@ -1,9 +1,9 @@
-# Project Atlas Security & Trust Model
+# Prumo Security & Trust Model
 
 ## Trust Layers (Highest → Lowest Authority)
 
-1. **Atlas Core binary** — signed, verified release artifact
-2. **Canonical project config** — `atlas.json`, goals, plans, docs under version control
+1. **Prumo Core binary** — signed, verified release artifact
+2. **Canonical project config** — `prumo.json`, goals, plans, docs under version control
 3. **Project-local generated adapters** — ownership-marked, compiler-produced
 4. **Third-party connectors/providers** — declared capabilities, isolation, permissions
 5. **External skills/plugins** — user-installed, capability-declared, never auto-elevate
@@ -13,7 +13,7 @@
 ## Core Rules
 
 - Never execute new project-local hook silently in an untrusted project.
-- Distinguish `generated-by-Atlas` from `user-owned` files via metadata markers.
+- Distinguish `generated-by-Prumo` from `user-owned` files via metadata markers.
 - Never log or persist secrets in Experience Layer, telemetry, or incident bundles.
 - Shell actions pass through policy when risk requires.
 - TypeScript plugins and external skills never exceed Core authority.
@@ -37,12 +37,12 @@ Never wholesale-replace host global config files. Use structured merge, fragment
 
 ## Generated Artifact Markers
 
-Files or blocks produced by Atlas carry machine-readable ownership/version metadata to enable safe update and uninstall:
+Files or blocks produced by Prumo carry machine-readable ownership/version metadata to enable safe update and uninstall:
 
 ```json
 {
-  "atlas_generated": true,
-  "atlas_version": "0.4.x",
+  "prumo_generated": true,
+  "prumo_version": "0.5.x",
   "generator": "compiler|install|migration",
   "checksum": "sha256:...",
   "managed": true
@@ -71,7 +71,7 @@ Projects with sensitive capabilities must include:
 
 ## Safe Mode
 
-`atlas --safe` or equivalent policy disables destructive shell, external plugins, and writes outside the project root. Useful during adoption of unknown repositories.
+`prumo --safe` or equivalent policy disables destructive shell, external plugins, and writes outside the project root. Useful during adoption of unknown repositories.
 
 ## Data Classification
 
@@ -83,7 +83,7 @@ Model/tool route checks data class + provider privacy + destination. Example: `r
 
 ## SecretProvider Contract
 
-Future backends: environment, OS keyring, 1Password, Vault, cloud secret managers. `atlas.json` stores references, never values.
+Future backends: environment, OS keyring, 1Password, Vault, cloud secret managers. `prumo.json` stores references, never values.
 
 ## Secret Scopes
 
