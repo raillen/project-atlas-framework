@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/journal-entry.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/journal-entry.schema.json",
   "title": "JournalEntry",
   "description": "Synthesized implementation journal entry (no chain-of-thought persisted)",
   "type": "object",

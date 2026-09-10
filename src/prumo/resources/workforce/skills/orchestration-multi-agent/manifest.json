@@ -1,0 +1,25 @@
+{
+  "id": "orchestration-multi-agent",
+  "name": "Multi-Agent Orchestration",
+  "version": 1,
+  "schema_version": 2,
+  "select": {
+    "features_any": [
+      "multi-agent",
+      "orchestration"
+    ]
+  },
+  "purpose": "Plan execution as dependency DAGs, isolate work, and cap retries.",
+  "risk_level": "high",
+  "modes": [
+    "design"
+  ],
+  "requires_any": [],
+  "tools": [],
+  "provenance": {
+    "source": "prumo",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  }
+}

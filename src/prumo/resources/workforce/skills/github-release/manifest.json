@@ -1,0 +1,60 @@
+{
+  "id": "github-release",
+  "name": "GitHub Release Packaging",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Draft release notes, generate changelog deltas, and attach verified release assets.",
+  "risk_level": "medium",
+  "modes": [
+    "documentation",
+    "implementation"
+  ],
+  "inputs": [
+    "Repository context",
+    "Issue / PR specifications",
+    "Roadmap Goal"
+  ],
+  "outputs": [
+    "Structured GitHub artifact",
+    "Validation confirmation"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [
+    "templates/issue-template.md"
+  ],
+  "checks": [],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "test",
+    "review"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "prumo",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "features_any": [
+      "github",
+      "deployment"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

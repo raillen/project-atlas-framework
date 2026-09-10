@@ -1,0 +1,61 @@
+{
+  "id": "compiler-development",
+  "name": "Compiler Development",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Implement parsers, ASTs, intermediate representations, and code generation.",
+  "risk_level": "high",
+  "modes": [
+    "implementation"
+  ],
+  "inputs": [
+    "Task requirements",
+    "System architecture",
+    "Relevant source files"
+  ],
+  "outputs": [
+    "Implementation / verification output",
+    "Evidence record"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [],
+  "checks": [],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "prumo",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "project_types": [
+      "compiler",
+      "language"
+    ],
+    "features_any": [
+      "compiler",
+      "scripting",
+      "language"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

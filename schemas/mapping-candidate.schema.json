@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/mapping-candidate.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/mapping-candidate.schema.json",
   "$comment": "F-G04: semantic documentation mapping candidates and proposed bindings.",
   "type": "object",
   "required": ["version", "candidates", "bindings"],

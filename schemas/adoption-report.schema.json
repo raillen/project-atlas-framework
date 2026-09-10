@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/adoption-report.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/adoption-report.schema.json",
   "$comment": "F-G06: canonical adoption report clearly separating facts, inferences, proposals, risks, and next steps.",
   "type": "object",
   "required": [
@@ -10,7 +10,7 @@
     "classification",
     "profiles",
     "capabilities",
-    "atlas_artifacts",
+    "prumo_artifacts",
     "doc_bindings",
     "doc_coverage",
     "contradictions",
@@ -48,28 +48,28 @@
       "additionalProperties": false
     },
     "classification": {
-      "$ref": "https://project-atlas.dev/schemas/repository-classification.schema.json"
+      "$ref": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/repository-classification.schema.json"
     },
     "profiles": {
       "type": "array",
       "items": {
-        "$ref": "https://project-atlas.dev/schemas/capability-proposal.schema.json#/$defs/profile_candidate"
+        "$ref": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/capability-proposal.schema.json#/$defs/profile_candidate"
       }
     },
     "capabilities": {
       "type": "array",
       "items": {
-        "$ref": "https://project-atlas.dev/schemas/capability-proposal.schema.json#/$defs/capability_proposal"
+        "$ref": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/capability-proposal.schema.json#/$defs/capability_proposal"
       }
     },
-    "atlas_artifacts": {
+    "prumo_artifacts": {
       "type": "array",
       "items": { "type": "string" }
     },
     "doc_bindings": {
       "type": "array",
       "items": {
-        "$ref": "https://project-atlas.dev/schemas/mapping-candidate.schema.json#/$defs/candidate_binding"
+        "$ref": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/mapping-candidate.schema.json#/$defs/candidate_binding"
       }
     },
     "doc_coverage": {
@@ -87,7 +87,7 @@
       "items": { "type": "string" }
     },
     "ledger": {
-      "$ref": "https://project-atlas.dev/schemas/confidence-ledger.schema.json"
+      "$ref": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/confidence-ledger.schema.json"
     },
     "migration_proposals": {
       "type": "array",

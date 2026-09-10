@@ -1,0 +1,57 @@
+{
+  "id": "frontend-web",
+  "name": "Frontend Web Engineering",
+  "version": 1,
+  "schema_version": 2,
+  "purpose": "Implement modern, accessible web applications and UI components.",
+  "risk_level": "medium",
+  "modes": [
+    "implementation"
+  ],
+  "inputs": [
+    "API specifications",
+    "Domain models",
+    "UI wireframes"
+  ],
+  "outputs": [
+    "Tested web / backend service",
+    "API test evidence"
+  ],
+  "requires": [],
+  "conflicts": [],
+  "capabilities": [
+    "filesystem.read",
+    "filesystem.write",
+    "process.spawn"
+  ],
+  "references": [],
+  "templates": [],
+  "checks": [],
+  "scripts": [],
+  "examples": [],
+  "required_evidence": [
+    "test"
+  ],
+  "stop_conditions": [
+    "Task acceptance criteria satisfied with evidence",
+    "Token budget exhausted",
+    "Blocked on external dependency"
+  ],
+  "provenance": {
+    "origin": "framework",
+    "license": "MIT",
+    "source": "prumo",
+    "version": "0.3.0",
+    "checksum": "",
+    "modified": "2026-08-14"
+  },
+  "select": {
+    "project_types": [
+      "web-saas",
+      "ecommerce",
+      "web-app"
+    ]
+  },
+  "requires_any": [],
+  "tools": []
+}

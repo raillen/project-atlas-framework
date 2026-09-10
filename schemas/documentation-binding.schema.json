@@ -1,13 +1,13 @@
 {
   "$schema":"https://json-schema.org/draft/2020-12/schema",
-  "$id":"https://project-atlas.dev/schemas/documentation-binding.schema.json",
+  "$id":"https://raw.githubusercontent.com/raillen/prumo/main/schemas/documentation-binding.schema.json",
   "type":"object",
   "required":["contract_id","sources","ownership","authority"],
   "properties": {
     "contract_id":{"type":"string"},
     "sources":{"type":"array","items":{"type":"string"}},
     "sections":{"type":"object","additionalProperties":{"type":"array","items":{"type":"string"}}},
-    "ownership":{"enum":["human-maintained","atlas-maintained","generated","external/reference"]},
+    "ownership":{"enum":["human-maintained","prumo-maintained","generated","external/reference"]},
     "authority":{"enum":["locked-protocol","accepted-adr","canonical-documentation","generated-reference","external-source","agent-proposal"]}
   },
   "additionalProperties":false

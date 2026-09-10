@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/trace-graph.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/trace-graph.schema.json",
   "title": "TraceGraph",
   "description": "Typed traceability graph linking requirements, decisions, code, tests, docs, and evidence",
   "type": "object",

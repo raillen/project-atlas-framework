@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/repository-policy.schema.json",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/repository-policy.schema.json",
   "type": "object",
   "required": ["schema_version", "repository", "branches", "commits", "pushes", "issues", "pull_requests", "reviews", "merge", "agents", "releases", "tags", "github", "emergency_bypass"],
   "properties": {

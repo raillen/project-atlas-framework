@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://project-atlas.dev/schemas/escape-hatch.schema.json",
-  "title": "Atlas Escape Hatch Registry",
-  "description": "Schema for registering, tracking, and auditing low-level escape hatches, unsafe operations, and rule suppressions in an Atlas project.",
+  "$id": "https://raw.githubusercontent.com/raillen/prumo/main/schemas/escape-hatch.schema.json",
+  "title": "Prumo Escape Hatch Registry",
+  "description": "Schema for registering, tracking, and auditing low-level escape hatches, unsafe operations, and rule suppressions in an Prumo project.",
   "type": "object",
   "required": [
     "schema_version",
