@@ -1,11 +1,11 @@
 # AGENTS.md
 
-This repository develops Project Atlas itself.
+This repository develops Prumo itself.
 
-- Start with `ENTRYPOINT.md`, `FRAMEWORK.md`, and `docs/ATLAS.md`.
+- Start with `ENTRYPOINT.md`, `FRAMEWORK.md`, and `docs/PRUMO.md`.
 - Preserve provider-neutral core policy.
 - Follow Lean Progressive Context: smallest sufficient context, progressive expansion, bounded output.
-- Treat `src/project_atlas/resources/catalog/catalog.json` as the canonical workforce registry.
+- Treat `src/prumo/resources/catalog/catalog.json` as the canonical workforce registry.
 - Platform-specific behavior belongs in adapters, not core policy.
 - New human-maintained project artifacts use Markdown or JSON only.
 - YAML support is legacy read compatibility; do not generate new YAML artifacts.
@@ -18,20 +18,20 @@ This repository develops Project Atlas itself.
 - New context mechanisms must report token/cost impact and have a stopping condition.
 - Deep recursive execution remains experimental and disabled by default.
 
-# Project Atlas Development Authority
+# Prumo Development Authority
 
 ## Knowledge authority
 
 1. Canonical repository specs, schemas and ADRs
 2. Accepted local engineering documentation
-3. Project Atlas Living Book in Notion
+3. Prumo Living Book in Notion
 4. Agent inference
 5. External sources
 
-The Project Atlas Living Book is available through the Notion MCP.
+The Prumo Living Book is available through the Notion MCP.
 
 Living Book:
-https://app.notion.com/p/raillen/Project-Atlas-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85
+https://app.notion.com/p/raillen/Project-Prumo-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85
 
 Use Notion on demand when:
 - a local specification is missing;
@@ -47,7 +47,7 @@ Retrieve only pages relevant to the current Goal.
 Once a design decision is promoted into a canonical repository specification,
 the repository version has authority over the Notion version for implementation.
 
-# Project Atlas Development Context
+# Prumo Development Context
 
 ## Canonical Local Documentation
 
@@ -64,7 +64,7 @@ All authoritative engineering specifications live under `docs/` in this reposito
 ## Notion Living Book (On-Demand Retrieval)
 
 The Living Book is available via Notion MCP:
-https://app.notion.com/p/raillen/Project-Atlas-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85
+https://app.notion.com/p/raillen/Project-Prumo-Framework-Livro-Vivo-v0-4-3d59bb7d023f8168a69ac57326eddc85
 
 Agents must:
 1. **Retrieve only pages relevant to the current Goal** — never load the entire book.
@@ -82,7 +82,7 @@ Agents must:
 Repository governance is canonical in `docs/governance/repository-governance.md`.
 
 Before remote Git/SCM mutations:
-- read the effective repository policy in `.atlas/repository/policy.json`;
+- read the effective repository policy in `.prumo/repository/policy.json`;
 - do not push directly to `main`;
 - do not force push protected branches;
 - use Pull Requests;

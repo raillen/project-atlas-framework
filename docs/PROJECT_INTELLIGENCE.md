@@ -63,7 +63,7 @@ Do not create one permanent report file per task by default. Store compact task 
 The recommended v0.2 durable source is one JSON data file, for example:
 
 ```text
-.atlas/history/project-intelligence.json
+.prumo/history/project-intelligence.json
 ```
 
 Runtime raw traces/caches belong in SQLite and are not canonical.

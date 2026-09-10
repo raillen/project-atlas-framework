@@ -1,20 +1,20 @@
-# Atlas v0.4 Installation Contract
+# Prumo v0.5 Installation Contract
 
 This contract defines how the Go binary, global state, and project-local state coexist without destructive side effects.
 
 ## Home Directory Layout
 
-`ATLAS_HOME` resolution order:
+`PRUMO_HOME` resolution order:
 
 1. `--home <path>` CLI flag.
-2. `ATLAS_HOME` environment variable.
-3. `~/.atlas` fallback (`%USERPROFILE%\.atlas` on Windows).
+2. `PRUMO_HOME` environment variable.
+3. `~/.prumo` fallback (`%USERPROFILE%\.prumo` on Windows).
 
-Layout under `ATLAS_HOME`:
+Layout under `PRUMO_HOME`:
 
 ```text
-ATLAS_HOME/
-├── bin/atlas
+PRUMO_HOME/
+├── bin/prumo
 ├── config/installation.json
 ├── cache/
 ├── logs/
@@ -26,11 +26,11 @@ The process working directory is the only project state touched. Global state ne
 
 ## Installation Manifest
 
-`ATLAS_HOME/config/installation.json`:
+`PRUMO_HOME/config/installation.json`:
 
 ```json
 {
-  "atlas_version": "0.4.x",
+  "prumo_version": "0.5.x",
   "binary_path": "...",
   "connectors": {},
   "created_paths": [],
@@ -54,15 +54,15 @@ Each connector records:
 }
 ```
 
-Uninstall removes only recorded paths and fragments. Any path containing user modifications not produced by Atlas is reported as a leftover instead of deleted.
+Uninstall removes only recorded paths and fragments. Any path containing user modifications not produced by Prumo is reported as a leftover instead of deleted.
 
 ## Safety Rules
 
 - Default uninstall never deletes repository data: `.ai/`, docs, goals, plans, evidence, or any project file.
 - `--purge-cache` removes only cache, derived databases, and logs.
-- `--purge-global-config` removes only configuration under `ATLAS_HOME/config`.
+- `--purge-global-config` removes only configuration under `PRUMO_HOME/config`.
 - `--connectors` removes only connector state tracked in cleanup manifests.
-- `setup` never writes outside `ATLAS_HOME`, except when compiling project-local adapters into the current repository.
+- `setup` never writes outside `PRUMO_HOME`, except when compiling project-local adapters into the current repository.
 - Install and setup are idempotent: repeated execution converges to the same manifest.
 
 ## Release Distribution
@@ -71,12 +71,12 @@ Releases publish checksum files and a manifest with platform binaries:
 
 ```text
 dist/
-├── atlas-linux-amd64
-├── atlas-linux-arm64
-├── atlas-darwin-amd64
-├── atlas-darwin-arm64
-├── atlas-windows-amd64.exe
-├── atlas-windows-arm64.exe
+├── prumo-linux-amd64
+├── prumo-linux-arm64
+├── prumo-darwin-amd64
+├── prumo-darwin-arm64
+├── prumo-windows-amd64.exe
+├── prumo-windows-arm64.exe
 ├── checksums.txt
 └── release.json
 ```

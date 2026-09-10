@@ -1,11 +1,11 @@
-# Atlas v0.4 Architecture Overview
+# Prumo v0.4 Architecture Overview
 
 ## High-Level Topology
 
 ```mermaid
 flowchart LR
     H[Human / Agent Request] --> HA[Harness Adapter]
-    HA --> CORE[Atlas Core - Go]
+    HA --> CORE[Prumo Core - Go]
     CORE --> PP[Protocol & Policy Engine]
     CORE --> DE[Documentation Engine]
     CORE --> PL[Planning Engine]
@@ -44,7 +44,7 @@ The major components are Protocol Domain, Project Service, Resolution Service, D
 | `EnvironmentService` | Sandbox contract, isolation requirements, execution environments |
 | `AutomationService` | Event-driven rules, DLQ, idempotency, concurrency keys |
 | `ObservabilityService` | Structured telemetry, explainability, incident bundles |
-| `PackageRuntimeService` | `atlas.lock`, provider isolation, supply chain verification |
+| `PackageRuntimeService` | `prumo.lock`, provider isolation, supply chain verification |
 
 ### Knowledge Plane (Canonical State)
 | Engine | Responsibility |
@@ -88,7 +88,7 @@ flowchart TD
 - Domain/Protocol never imports CLI, concrete storage, or harness
 - CLI depends on Application Services
 - Storage implements ports defined by consumers
-- Integrations call Atlas Core via stable CLI JSON/stdio or versioned API
+- Integrations call Prumo Core via stable CLI JSON/stdio or versioned API
 - SQLite never required to interpret canonical state
 - External harness never controls invariants
 
@@ -108,25 +108,25 @@ Interfaces exist **only** at real boundaries with multiple implementations:
 
 Versioned, stable commands for plugins/adapters:
 ```
-atlas internal project-status --json
-atlas internal resolve --json
-atlas internal validate-tool --json
-atlas internal docs-impact --json
-atlas internal context --json
-atlas internal handoff --json
+prumo internal project-status --json
+prumo internal resolve --json
+prumo internal validate-tool --json
+prumo internal docs-impact --json
+prumo internal context --json
+prumo internal handoff --json
 ```
 
 ## Protocol Version Negotiation
 
 Every adapter declares:
 - connector id/version
-- Atlas protocol version supported
+- Prumo protocol version supported
 - capabilities
 - lifecycle hooks
 - write-blocking support
 - agent/skill primitives
 
-Atlas refuses "strict" enforcement when harness lacks sufficient primitives.
+Prumo refuses "strict" enforcement when harness lacks sufficient primitives.
 
 ## Design Principle
 

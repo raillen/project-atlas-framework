@@ -1,12 +1,12 @@
 # Testing
 
-Project Atlas emphasizes rigorous testing to ensure deterministic behavior, contract conformance, and backward compatibility.
+Prumo emphasizes rigorous testing to ensure deterministic behavior, contract conformance, and backward compatibility.
 
 ## Test Suite Organization (Go v0.4)
 
 The test suite is written in pure Go and organized by package:
 
-- `cmd/atlas`: CLI end-to-end and entrypoint tests (`main_test.go`).
+- `cmd/prumo`: CLI end-to-end and entrypoint tests (`main_test.go`).
 - `internal/validation`: Draft 2020-12 JSON Schema validation and `$ref` resolution tests.
 - `internal/goals`: Goal lifecycle, SHA-256 lock integrity, and amendment evaluation logic.
 - `internal/resolver`: Deterministic agent, skill, recipe, risk, and model-policy resolution.
@@ -47,4 +47,4 @@ Differential conformance fixtures are stored under `conformance/golden/` (such a
 
 ## Python Runtime Retirement (ADR 002)
 
-The legacy Python v0.3 test suite (`tests/`) and runtime modules have been fully retired (ADR 002). No Python interpreter is required to build, test, or execute Project Atlas.
+The legacy Python v0.3 test suite (`tests/`) and runtime modules have been fully retired (ADR 002). No Python interpreter is required to build, test, or execute Prumo.

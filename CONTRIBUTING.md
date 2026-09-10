@@ -1,6 +1,6 @@
-# Contributing to Project Atlas
+# Contributing to Prumo
 
-Start with `AGENTS.md`, `ENTRYPOINT.md`, and `docs/ATLAS.md`.
+Start with `AGENTS.md`, `ENTRYPOINT.md`, and `docs/PRUMO.md`.
 
 ## Quick contribution flow
 
@@ -71,7 +71,7 @@ Invalid subjects include `update`, `wip`, `final`, and untracked prose without a
 gofmt -l cmd internal
 go test ./...
 go vet ./...
-go run ./cmd/atlas repo policy check
+go run ./cmd/prumo repo policy check
 pytest
 ```
 
@@ -90,7 +90,7 @@ Risk determines verification:
 
 ## Release policy
 
-Releases use semantic tags such as `v0.4.0-alpha.1` and `v0.4.0`. Published release tags are immutable. See `docs/governance/release-policy.md`.
+Releases use semantic tags such as `v0.5.0-alpha.1` and `v0.5.0`. Published release tags are immutable. See `docs/governance/release-policy.md`.
 
 ## Security reporting
 
@@ -98,7 +98,7 @@ Report vulnerabilities privately through `SECURITY.md`. Do not open public Issue
 
 ## Troubleshooting
 
-- `atlas repo policy check` reports the local repository state.
-- `atlas repo policy plan --json` reports deterministic remediation.
-- Use `atlas repo policy apply --dry-run` before any remote remediation.
+- `prumo repo policy check` reports the local repository state.
+- `prumo repo policy plan --json` reports deterministic remediation.
+- Use `prumo repo policy apply --dry-run` before any remote remediation.
 - Repository state changes require explicit commands and, when remote, appropriate credentials.

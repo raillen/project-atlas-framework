@@ -1,16 +1,16 @@
-# Project Atlas Windows PowerShell Installer
-# Usage: powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.ps1 | iex"
+# Prumo Windows PowerShell Installer
+# Usage: powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/prumo/main/scripts/install.ps1 | iex"
 
 [CmdletBinding()]
 param(
-    [string]$Repository = $(if ($env:ATLAS_REPOSITORY) { $env:ATLAS_REPOSITORY } else { "raillen/project-atlas-framework" }),
-    [string]$Version = $(if ($env:ATLAS_VERSION) { $env:ATLAS_VERSION } else { "v0.4.2" }),
-    [string]$InstallDir = $(if ($env:ATLAS_INSTALL_DIR) { $env:ATLAS_INSTALL_DIR } else { "$env:LOCALAPPDATA\Programs\atlas" })
+    [string]$Repository = $(if ($env:PRUMO_REPOSITORY) { $env:PRUMO_REPOSITORY } else { "raillen/prumo" }),
+    [string]$Version = $(if ($env:PRUMO_VERSION) { $env:PRUMO_VERSION } else { "v0.5.0" }),
+    [string]$InstallDir = $(if ($env:PRUMO_INSTALL_DIR) { $env:PRUMO_INSTALL_DIR } else { "$env:LOCALAPPDATA\Programs\prumo" })
 )
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "Installing Project Atlas $Version for Windows..." -ForegroundColor Cyan
+Write-Host "Installing Prumo $Version for Windows..." -ForegroundColor Cyan
 
 # Detect architecture
 $arch = "amd64"
@@ -21,7 +21,7 @@ if ($env:PROCESSOR_ARCHITECTURE -eq "ARM64" -or $env:PROCESSOR_ARCHITEW6432 -eq 
     exit 1
 }
 
-$asset = "atlas-windows-$arch.exe"
+$asset = "prumo-windows-$arch.exe"
 $baseUrl = "https://github.com/$Repository/releases/download/$Version"
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.Guid]::NewGuid().ToString())
 New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
@@ -64,7 +64,7 @@ try {
         New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
     }
 
-    $targetExe = Join-Path $InstallDir "atlas.exe"
+    $targetExe = Join-Path $InstallDir "prumo.exe"
     Copy-Item -Path (Join-Path $tempDir $asset) -Destination $targetExe -Force
     Write-Host "Installed executable to $targetExe" -ForegroundColor Green
 
@@ -87,8 +87,8 @@ try {
     }
 
     Write-Host ""
-    Write-Host "Project Atlas $Version installed successfully!" -ForegroundColor Cyan
-    Write-Host "Run: atlas version" -ForegroundColor Yellow
+    Write-Host "Prumo $Version installed successfully!" -ForegroundColor Cyan
+    Write-Host "Run: prumo version" -ForegroundColor Yellow
 }
 finally {
     Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue

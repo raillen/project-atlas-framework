@@ -43,4 +43,4 @@ Validate:
 
 ## CI
 
-GitHub Actions runs Python compile/tests, framework validation and CLI smoke tests. Projects using Atlas must add domain-specific gates.
+GitHub Actions runs Python compile/tests, framework validation and CLI smoke tests. Projects using Prumo must add domain-specific gates.

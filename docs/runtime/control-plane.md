@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Control Plane is the explicit boundary between Atlas decisions and execution. It makes long-running, multi-agent, multi-provider work bounded, resumable, observable, and policy-governed.
+The Control Plane is the explicit boundary between Prumo decisions and execution. It makes long-running, multi-agent, multi-provider work bounded, resumable, observable, and policy-governed.
 
 ## Planes
 
@@ -89,7 +89,7 @@ Default policy examples: read inside root may be automatic; writes depend on per
 
 ## Model Registry and Router
 
-Registry stores provider/model metadata, context/modalities, structured output/tool support, reasoning controls, cache, privacy/data policy, pricing, rate limits, latency class, and Atlas eval history.
+Registry stores provider/model metadata, context/modalities, structured output/tool support, reasoning controls, cache, privacy/data policy, pricing, rate limits, latency class, and Prumo eval history.
 
 Router inputs: task class, complexity, risk, context/tools/modality needs, latency/cost budget, privacy/data class, and eval scores. Output includes route, alternatives, and policy constraints. Route decisions are explainable.
 
@@ -117,9 +117,9 @@ Local-first storage uses SQLite/derived artifacts. OTLP is optional. Incident bu
 
 ## Package and Runtime Manager
 
-Atlas Packages initially include skill, connector, test-provider, experience-provider, and publication-adapter. Manifests declare protocol range, platform, dependencies, permissions, runtime requirements, checksum/signature/provenance, and install/cleanup strategy.
+Prumo Packages initially include skill, connector, test-provider, experience-provider, and publication-adapter. Manifests declare protocol range, platform, dependencies, permissions, runtime requirements, checksum/signature/provenance, and install/cleanup strategy.
 
-`atlas.lock` records resolved versions and integrity for reproducible capability sets. Auxiliary runtimes live under `$ATLAS_HOME/runtimes/...`, isolated from projects. Installation owner (Homebrew, WinGet, script, distro, dev build) is recorded; self-update respects package-manager ownership.
+`prumo.lock` records resolved versions and integrity for reproducible capability sets. Auxiliary runtimes live under `$PRUMO_HOME/runtimes/...`, isolated from projects. Installation owner (Homebrew, WinGet, script, distro, dev build) is recorded; self-update respects package-manager ownership.
 
 ## Migration and Review
 

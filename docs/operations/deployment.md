@@ -1,6 +1,6 @@
 # Installation and Deployment
 
-This is the operational index for Atlas v0.4 deployment. The user-facing procedure is maintained in the [installation manual](../manual/installation.md). The uninstall procedure is maintained in the [uninstallation manual](../manual/uninstallation.md).
+This is the operational index for Prumo v0.4 deployment. The user-facing procedure is maintained in the [installation manual](../manual/installation.md). The uninstall procedure is maintained in the [uninstallation manual](../manual/uninstallation.md).
 
 ## Release requirements
 
@@ -13,8 +13,8 @@ This is the operational index for Atlas v0.4 deployment. The user-facing procedu
 ## Build from source
 
 ```bash
-go build -trimpath -o ./atlas ./cmd/atlas
-./atlas version
+go build -trimpath -o ./prumo ./cmd/prumo
+./prumo version
 ```
 
 ## Build release artifacts
@@ -38,16 +38,16 @@ Python v0.3 has been completely retired (ADR 002). CI executes pure Go checks an
 ## Project deployment checks
 
 ```bash
-atlas validate ./project
-atlas doctor ./project
-atlas framework-check
+prumo validate ./project
+prumo doctor ./project
+prumo framework-check
 ```
 
 Do not deploy a project with failing validation or unresolved critical Doctor findings. Generated adapters must be regenerated from canonical resources rather than hand-edited.
 
 ## Installation ownership
 
-The installation manifest lives under `ATLAS_HOME/config/installation.json`. It records the binary path, connectors, managed fragments, and paths created by Atlas. Package-manager-owned binaries must not be overwritten silently.
+The installation manifest lives under `PRUMO_HOME/config/installation.json`. It records the binary path, connectors, managed fragments, and paths created by Prumo. Package-manager-owned binaries must not be overwritten silently.
 
 ## Rollback
 

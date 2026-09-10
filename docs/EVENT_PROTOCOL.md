@@ -1,10 +1,10 @@
-# Project Atlas Event Protocol
+# Prumo Event Protocol
 
 ## 1. Overview
 
-The Project Atlas Event Protocol defines a standardized, append-only, provider-neutral envelope for recording lifecycle events across Goals, Plans, Tasks, Runs, Attempts, Context, Tools, Evidence, and Gates.
+The Prumo Event Protocol defines a standardized, append-only, provider-neutral envelope for recording lifecycle events across Goals, Plans, Tasks, Runs, Attempts, Context, Tools, Evidence, and Gates.
 
-Events are emitted by execution runtimes (such as Atlas Flow or CLI runners) and can be consumed for:
+Events are emitted by execution runtimes (such as Prumo Flow or CLI runners) and can be consumed for:
 - Observability and tracing;
 - Project Intelligence metrics aggregation;
 - Audit trails and conformance verification;
@@ -20,13 +20,13 @@ All events conform to `schemas/event.schema.json`:
   "id": "evt-20260814-001",
   "type": "task.started",
   "timestamp": "2026-08-14T17:00:00Z",
-  "project_id": "project-atlas-framework",
+  "project_id": "prumo",
   "goal_id": "G-001",
   "plan_id": "P-001",
   "task_id": "T-001",
   "run_id": "R-001",
   "attempt_id": "A-001",
-  "producer": "atlas-flow",
+  "producer": "prumo-flow",
   "schema_version": 1,
   "payload": {
     "role": "implementer",

@@ -5,11 +5,11 @@ M5 makes documentation an engineering subsystem without requiring an LLM to deci
 ## Commands
 
 ```bash
-atlas docs contracts
-atlas docs contracts show architecture.system
-atlas docs profiles
-atlas docs audit --json
-atlas docs readiness --goal G042 --json
+prumo docs contracts
+prumo docs contracts show architecture.system
+prumo docs profiles
+prumo docs audit --json
+prumo docs readiness --goal G042 --json
 ```
 
 These commands are read-only. Documentation Delta application remains governed by Repository Change Governance.
@@ -33,7 +33,7 @@ M5 status: the deterministic foundation is implemented through contract/profile 
 
 - Built-in contracts: `docs/contracts/builtin.json`.
 - Built-in profiles: `docs/profiles/builtin.json`.
-- Atlas bindings: `docs/contracts/bindings.json`.
+- Prumo bindings: `docs/contracts/bindings.json`.
 - Machine schemas: `schemas/documentation-*.schema.json`.
 
 ## Authority
@@ -47,17 +47,17 @@ M5 implements contract/profile resolution, applicability, bindings, coverage, re
 ## Current command surface
 
 ```bash
-atlas docs contracts
-atlas docs profiles
-atlas docs audit --json
-atlas docs readiness --goal G042 --json
-atlas docs impact --path . changed/path.go --json
-atlas docs delta --goal G042 --json
-atlas docs delta propose --goal G042 --path . changed/path.go --json
-atlas docs delta list --path . --json
-atlas docs delta show --id DD-0123456789ab --path . --json
-atlas docs delta transition --id DD-0123456789ab --state reviewed --evidence EV-001 --path . --json
-atlas docs contradictions --json
+prumo docs contracts
+prumo docs profiles
+prumo docs audit --json
+prumo docs readiness --goal G042 --json
+prumo docs impact --path . changed/path.go --json
+prumo docs delta --goal G042 --json
+prumo docs delta propose --goal G042 --path . changed/path.go --json
+prumo docs delta list --path . --json
+prumo docs delta show --id DD-0123456789ab --path . --json
+prumo docs delta transition --id DD-0123456789ab --state reviewed --evidence EV-001 --path . --json
+prumo docs contradictions --json
 ```
 
 Coverage is deterministic and evidence-oriented. Current contradiction detection is intentionally conservative: it emits structured findings only when deterministic rules exist; it never silently resolves prose conflicts. Causal staleness uses contract update triggers and changed paths.

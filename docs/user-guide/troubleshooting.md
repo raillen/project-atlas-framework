@@ -4,27 +4,27 @@ See the [usage manual](../manual/usage.md) for supported workflows and the [inst
 
 ## Common failures
 
-### `atlas: command not found`
+### `prumo: command not found`
 
 Use a locally built binary or installation path:
 
 ```bash
-go build -trimpath -o ./atlas ./cmd/atlas
-./atlas version
+go build -trimpath -o ./prumo ./cmd/prumo
+./prumo version
 export PATH="$PWD:$PATH"
-atlas version
+prumo version
 ```
 
 Do not infer a broken global installation from a missing `PATH` entry.
 
-### `missing atlas.json` or `project root not found`
+### `missing prumo.json` or `project root not found`
 
-The command was executed outside an Atlas project:
+The command was executed outside an Prumo project:
 
 ```bash
-atlas validate ./my-project
-atlas status --path ./my-project
-atlas init ./my-project --profile examples/brasa/project-profile.json --non-interactive
+prumo validate ./my-project
+prumo status --path ./my-project
+prumo init ./my-project --profile examples/brasa/project-profile.json --non-interactive
 ```
 
 ### Goal lock digest mismatch
@@ -32,7 +32,7 @@ atlas init ./my-project --profile examples/brasa/project-profile.json --non-inte
 The locked Goal was changed outside `goal amend`. Inspect the Goal file and create an approved amendment:
 
 ```bash
-atlas goal state P00-G01 LOCKED --path ./my-project
+prumo goal state P00-G01 LOCKED --path ./my-project
 ```
 
 Never bypass a lock by copying or rewriting files manually.
@@ -52,8 +52,8 @@ DRAFT → PLANNED → LOCKED → EXECUTING → VERIFYING → REVIEWING → DONE
 Regenerate from canonical resources:
 
 ```bash
-atlas compile --target codex --path ./my-project
-atlas compile --target claude-code --path ./my-project
+prumo compile --target codex --path ./my-project
+prumo compile --target claude-code --path ./my-project
 ```
 
 Do not edit generated files such as `AGENTS.md`, `.codex/`, `.claude/`, or runtime ENTRYPOINT files.
@@ -65,9 +65,9 @@ Compare commands, exit codes, JSON, stdout/stderr, filesystem effects, and canon
 ## Recovery order
 
 1. `ENTRYPOINT.md` or the generated harness adapter.
-2. `atlas.json`.
+2. `prumo.json`.
 3. `PROJECT_STATE.md`.
-4. `docs/ATLAS.md`.
+4. `docs/PRUMO.md`.
 5. Active Goal under `.ai/goals/`.
 6. Only relevant canonical docs, symbols, and tests selected by the context strategy.
 

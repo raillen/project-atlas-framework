@@ -5,54 +5,54 @@
 | Cenário | Método |
 |---------|--------|
 | Usuário final | Binário de uma release publicada |
-| Desenvolvimento do Atlas | `go build` ou `go run` |
-| CI, testes e USB/devbox | `--home` ou `ATLAS_HOME` |
+| Desenvolvimento do Prumo | `go build` ou `go run` |
+| CI, testes e USB/devbox | `--home` ou `PRUMO_HOME` |
 | Automação e scripts | Binário Go compilado ou empacotado |
 
 ## Instalação com uma linha (One-Link Install)
 
 ### Linux e macOS
-O script detecta o sistema operacional e a arquitetura (`amd64`/`arm64`), baixa o binário e os checksums da release, valida a integridade SHA-256, instala em `~/.local/bin/atlas`, configura automaticamente o `PATH` nos arquivos de inicialização do seu shell (`~/.bashrc`, `~/.zshrc`, `~/.config/fish/config.fish` ou `~/.profile`) e executa `atlas setup`.
+O script detecta o sistema operacional e a arquitetura (`amd64`/`arm64`), baixa o binário e os checksums da release, valida a integridade SHA-256, instala em `~/.local/bin/prumo`, configura automaticamente o `PATH` nos arquivos de inicialização do seu shell (`~/.bashrc`, `~/.zshrc`, `~/.config/fish/config.fish` ou `~/.profile`) e executa `prumo setup`.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/raillen/prumo/main/scripts/install.sh | sh
 ```
 
 Para revisar antes de executar:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/raillen/prumo/main/scripts/install.sh -o install.sh
 less install.sh
 sh install.sh
 ```
 
 ### Windows (PowerShell)
-O script PowerShell detecta a arquitetura (`amd64`/`arm64`), baixa o binário `atlas-windows-*.exe`, valida a integridade SHA-256, instala em `%LOCALAPPDATA%\Programs\atlas\atlas.exe`, configura permanentemente o `PATH` do usuário no Registro do Windows e executa `atlas setup`.
+O script PowerShell detecta a arquitetura (`amd64`/`arm64`), baixa o binário `prumo-windows-*.exe`, valida a integridade SHA-256, instala em `%LOCALAPPDATA%\Programs\prumo\prumo.exe`, configura permanentemente o `PATH` do usuário no Registro do Windows e executa `prumo setup`.
 
 ```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/project-atlas-framework/main/scripts/install.ps1 | iex"
+powershell -ExecutionPolicy ByPass -c "irm https://raw.githubusercontent.com/raillen/prumo/main/scripts/install.ps1 | iex"
 ```
 
 Variáveis opcionais para customização:
 ```bash
-ATLAS_VERSION=v0.4.0-dev ATLAS_INSTALL_DIR="$HOME/.local/bin" sh install.sh
-ATLAS_HOME="$HOME/.atlas" sh install.sh
+PRUMO_VERSION=v0.5.0 PRUMO_INSTALL_DIR="$HOME/.local/bin" sh install.sh
+PRUMO_HOME="$HOME/.prumo" sh install.sh
 ```
 
 
 ## Desenvolvimento a partir do repositório
 
 ```bash
-git clone git@github.com:raillen/project-atlas-framework.git
-cd project-atlas-framework
+git clone git@github.com:raillen/prumo.git
+cd prumo
 go version
-go run ./cmd/atlas version
+go run ./cmd/prumo version
 ```
 
 Compilar um binário local:
 
 ```bash
-go build -trimpath -o ./atlas ./cmd/atlas
-./atlas version
+go build -trimpath -o ./prumo ./cmd/prumo
+./prumo version
 ```
 
 O binário Go não requer Python, Node ou CGO.
@@ -62,7 +62,7 @@ O binário Go não requer Python, Node ou CGO.
 O script oficial gera Linux amd64/arm64, macOS amd64/arm64 e Windows amd64/arm64:
 
 ```bash
-VERSION=0.4.0 sh scripts/release.sh
+VERSION=0.5.0 sh scripts/release.sh
 cat dist/checksums.txt
 cat dist/release.json
 ```
@@ -71,17 +71,17 @@ A instalação de release deve verificar o checksum antes de substituir o binár
 
 ## Estado global e modo portátil
 
-Por padrão, o Atlas usa `~/.atlas` em sistemas Unix-like. Use `ATLAS_HOME` ou `--home` para isolar o estado:
+Por padrão, o Prumo usa `~/.prumo` em sistemas Unix-like. Use `PRUMO_HOME` ou `--home` para isolar o estado:
 
 ```bash
-ATLAS_HOME="$PWD/.atlas-home" ./atlas setup
-./atlas --home "$PWD/.atlas-home" setup
+PRUMO_HOME="$PWD/.prumo-home" ./prumo setup
+./prumo --home "$PWD/.prumo-home" setup
 ```
 
 O estado global contém:
 
 ```text
-ATLAS_HOME/
+PRUMO_HOME/
 ├── config/installation.json
 ├── cache/
 ├── logs/
@@ -89,28 +89,28 @@ ATLAS_HOME/
 └── runtimes/
 ```
 
-Não confunda esse estado com `.atlas/` dentro de um projeto. O segundo pertence ao projeto e pode conter estado derivado local.
+Não confunda esse estado com `.prumo/` dentro de um projeto. O segundo pertence ao projeto e pode conter estado derivado local.
 
 ## Setup
 
 ```bash
-atlas --home ~/.atlas setup
+prumo --home ~/.prumo setup
 ```
 
 `setup` é idempotente e registra:
 
-- versão do Atlas;
+- versão do Prumo;
 - caminho do binário;
 - harnesses detectados no `PATH`;
 - estado de conectores;
-- caminhos gerenciados pelo Atlas.
+- caminhos gerenciados pelo Prumo.
 
 O comando não altera configurações globais de harnesses automaticamente.
 
 ## Instalar um conector
 
 ```bash
-atlas --home ~/.atlas install connector opencode
+prumo --home ~/.prumo install connector opencode
 ```
 
 O estado do conector deve possuir um cleanup manifest antes de qualquer remoção automática.
@@ -118,37 +118,37 @@ O estado do conector deve possuir um cleanup manifest antes de qualquer remoçã
 ## Verificar instalação
 
 ```bash
-atlas version
-atlas --json version
-atlas framework-check
-atlas --json framework-check
+prumo version
+prumo --json version
+prumo framework-check
+prumo --json framework-check
 ```
 
 Verificação de projeto:
 
 ```bash
-atlas validate ./my-project
-atlas doctor ./my-project
+prumo validate ./my-project
+prumo doctor ./my-project
 ```
 
 ## Depreciação e Aposentadoria do Python (ADR 002)
 
-O runtime e os testes em Python v0.3 foram completamente removidos (consulte [ADR 002](file:///home/raillen/Documentos/Projetos/project-atlas-framework/docs/adr/002-retire-python-runtime.md)). O Project Atlas v0.4 é distribuído exclusivamente em binário único compilado em Go, sem dependência de interpretadores externos, ambientes virtuais ou gerenciadores de pacotes Python.
+O runtime e os testes em Python v0.3 foram completamente removidos (consulte [ADR 002](../adr/002-retire-python-runtime.md)). O Prumo v0.5 é distribuído exclusivamente em binário único compilado em Go, sem dependência de interpretadores externos, ambientes virtuais ou gerenciadores de pacotes Python.
 
 ## Problemas comuns
 
 ### `go: command not found`
 Instale Go 1.22 ou superior e verifique `go version`.
 
-### `atlas: command not found`
+### `prumo: command not found`
 Use o caminho absoluto do binário ou coloque o diretório do binário no `PATH`:
 
 ```bash
 export PATH="$PWD/bin:$PATH"
 ```
 
-### `missing atlas.json`
-O comando foi executado fora de um projeto Atlas. Informe o caminho do projeto ou execute `atlas init` primeiro.
+### `missing prumo.json`
+O comando foi executado fora de um projeto Prumo. Informe o caminho do projeto ou execute `prumo init` primeiro.
 
 ### Falha de checksum
 Não use o artefato. Baixe novamente e compare com `dist/checksums.txt` ou com o checksum publicado pela release.
@@ -157,5 +157,5 @@ Não use o artefato. Baixe novamente e compare com `dist/checksums.txt` ou com o
 Use um home portátil novo para isolar o diagnóstico:
 
 ```bash
-atlas --home "$PWD/atlas-recovery-home" setup
+prumo --home "$PWD/prumo-recovery-home" setup
 ```

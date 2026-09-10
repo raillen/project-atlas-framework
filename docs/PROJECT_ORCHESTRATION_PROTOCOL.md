@@ -1,6 +1,6 @@
 # Project Orchestration Protocol (POP)
 
-POP defines how Project Atlas turns Goals into bounded agentic work while remaining independent of a specific orchestrator.
+POP defines how Prumo turns Goals into bounded agentic work while remaining independent of a specific orchestrator.
 
 ## Bootstrap rule AI-001
 

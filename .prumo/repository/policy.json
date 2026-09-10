@@ -31,6 +31,6 @@
   },
   "releases": {"tag_pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+([.-].*)?$", "immutable": true},
   "tags": {"release_patterns": ["v*.*.*"], "deletion": "deny", "rewrite": "deny"},
-  "github": {"repository": "raillen/project-atlas-framework", "rulesets": true, "required_checks": ["go-test"]},
+  "github": {"repository": "raillen/prumo", "rulesets": true, "required_checks": ["go-test"]},
   "emergency_bypass": {"enabled": true, "required_fields": ["reason", "actor", "timestamp", "operation", "scope", "risk", "evidence", "post_event_review"]}
 }

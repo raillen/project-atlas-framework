@@ -1,10 +1,10 @@
-# Atlas v0.4 Dependency Rules
+# Prumo v0.4 Dependency Rules
 
 ## Package Dependency Graph
 
 ```mermaid
 flowchart TD
-    CLI[cmd/atlas] --> APP[internal/app]
+    CLI[cmd/prumo] --> APP[internal/app]
     APP --> PROTO[internal/protocol]
     APP --> PROJECT[internal/project]
     APP --> RESOLVER[internal/resolver]
@@ -62,7 +62,7 @@ internal/app          → MAY import: internal/protocol, internal/project, inter
 
 ### 3. CLI Layer
 ```
-cmd/atlas             → MAY import: internal/app, internal/protocol
+cmd/prumo             → MAY import: internal/app, internal/protocol
                        → MUST NOT import: any internal/* besides app + protocol
 ```
 

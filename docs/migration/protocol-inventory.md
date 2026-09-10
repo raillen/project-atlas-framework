@@ -2,10 +2,10 @@
 
 ## Authority
 
-- v0.3 Python runtime: `src/project_atlas/` — executable compatibility oracle
+- v0.3 Python runtime: `src/prumo/` — executable compatibility oracle
 - v0.3 package metadata: `pyproject.toml`
 - v0.3 canonical schemas: `schemas/*.schema.json`
-- v0.3 bundled resources: `src/project_atlas/resources/`
+- v0.3 bundled resources: `src/prumo/resources/`
 - v0.3 fixtures: `conformance/`
 - v0.3 examples: `examples/`
 - v0.3 tests: `tests/`
@@ -16,7 +16,7 @@ No Python runtime, schema, resource, fixture, or example is removed or rewritten
 
 | Module | Responsibility | Go Target |
 |--------|----------------|-----------|
-| `cli.py` | CLI parser, dispatch, exit codes, output | `cmd/atlas` + `internal/app` |
+| `cli.py` | CLI parser, dispatch, exit codes, output | `cmd/prumo` + `internal/app` |
 | `compiler.py` | Target adapter generation | `internal/compiler` |
 | `context.py` | Lean Progressive Context planning | `internal/control-plane/context` |
 | `doctor.py` | Diagnostics, DAG checks, health checks | `internal/evidence-gates` + `internal/app` |
@@ -38,34 +38,34 @@ No Python runtime, schema, resource, fixture, or example is removed or rewritten
 
 | Command | Python Behavior | Go Parity Target |
 |---------|-----------------|------------------|
-| `atlas init [path]` | Initializes project and compiles profile | M2 |
-| `atlas resolve <profile>` | Resolves agents/skills/recipes | M2 |
-| `atlas validate [path]` | Validates project schemas | M2 |
-| `atlas goal new|state|amend|list` | Goal lifecycle | M2 |
-| `atlas context plan` | Context strategy/budget | M2 |
-| `atlas report add|summary` | Project intelligence | M2 |
-| `atlas migrate` | Legacy project migration | M2 |
-| `atlas compile --target` | Adapter generation | M3 |
-| `atlas snapshot` | Recovery archive | M2 |
-| `atlas doctor` | Health diagnostics | M2 |
-| `atlas explain` | Workforce/context/policy explanation | M2 |
-| `atlas framework-check` | Bundled catalog validation | M2 |
+| `prumo init [path]` | Initializes project and compiles profile | M2 |
+| `prumo resolve <profile>` | Resolves agents/skills/recipes | M2 |
+| `prumo validate [path]` | Validates project schemas | M2 |
+| `prumo goal new|state|amend|list` | Goal lifecycle | M2 |
+| `prumo context plan` | Context strategy/budget | M2 |
+| `prumo report add|summary` | Project intelligence | M2 |
+| `prumo migrate` | Legacy project migration | M2 |
+| `prumo compile --target` | Adapter generation | M3 |
+| `prumo snapshot` | Recovery archive | M2 |
+| `prumo doctor` | Health diagnostics | M2 |
+| `prumo explain` | Workforce/context/policy explanation | M2 |
+| `prumo framework-check` | Bundled catalog validation | M2 |
 
-Compatibility aliases must remain where the v0.4 CLI introduces a more structured surface (notably `atlas compile --target <id>`).
+Compatibility aliases must remain where the v0.4 CLI introduces a more structured surface (notably `prumo compile --target <id>`).
 
 ## Canonical Schemas
 
-The repository has 28 root schemas in `schemas/`: agent, approval-policy, atlas, attempt, context-budget, context-item, context-pack, context-plan, context-request, event, evidence, execution-policy, gate, gate-waiver, goal, goal-amendment, model-policy, permission-policy, plan, project-manifest, project-profile, recipe, repository-policy, run, skill, task, task-report, trust-policy.
+The repository has 28 root schemas in `schemas/`: agent, approval-policy, prumo, attempt, context-budget, context-item, context-pack, context-plan, context-request, event, evidence, execution-policy, gate, gate-waiver, goal, goal-amendment, model-policy, permission-policy, plan, project-manifest, project-profile, recipe, repository-policy, run, skill, task, task-report, trust-policy.
 
 The v0.4 protocol must conform to these schemas unless an explicit versioned schema migration is approved. Cross-schema references and Draft 2020-12 behavior must be preserved.
 
 ## Canonical Resources
 
-- Workforce registry: `src/project_atlas/resources/catalog/catalog.json`
+- Workforce registry: `src/prumo/resources/catalog/catalog.json`
 - Catalog files: `agents.json`, `skills.json`, `recipes.json`, `bundles.json`, `risk_rules.json`
-- Adapter templates: `src/project_atlas/resources/adapters/`
-- Workforce packages: `src/project_atlas/resources/workforce/`
-- Bundled schemas: `src/project_atlas/resources/schemas/`
+- Adapter templates: `src/prumo/resources/adapters/`
+- Workforce packages: `src/prumo/resources/workforce/`
+- Bundled schemas: `src/prumo/resources/schemas/`
 
 ## Root Scripts
 
@@ -78,7 +78,7 @@ Scripts are not runtime dependencies of the Go Core unless explicitly reclassifi
 
 - Python package version: `0.3.0`
 - Python test suite: 127 tests passing at bootstrap
-- Existing Go bootstrap: `go.mod`, `cmd/atlas`, `internal/app`, `internal/project`, `internal/protocol`, `internal/resources`, `internal/validation`
+- Existing Go bootstrap: `go.mod`, `cmd/prumo`, `internal/app`, `internal/project`, `internal/protocol`, `internal/resources`, `internal/validation`
 - Baseline manifest: `conformance/V03_BASELINE.json`
 
 ## Critical Contract Inventory To Freeze

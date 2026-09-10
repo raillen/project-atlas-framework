@@ -1,6 +1,6 @@
 # Repository Governance
 
-Repository changes are governed by `.atlas/repository/policy.json`, validated by `schemas/repository-policy.schema.json`, and enforced through code, CI, GitHub settings, and review.
+Repository changes are governed by `.prumo/repository/policy.json`, validated by `schemas/repository-policy.schema.json`, and enforced through code, CI, GitHub settings, and review.
 
 ## Key concepts
 
@@ -14,17 +14,17 @@ Repository changes are governed by `.atlas/repository/policy.json`, validated by
 ## Local policy
 
 ```bash
-go run ./cmd/atlas repo policy check
-go run ./cmd/atlas repo policy check --json
-go run ./cmd/atlas repo policy explain
-go run ./cmd/atlas repo policy plan --json
+go run ./cmd/prumo repo policy check
+go run ./cmd/prumo repo policy check --json
+go run ./cmd/prumo repo policy explain
+go run ./cmd/prumo repo policy plan --json
 ```
 
 - `check` inspects the policy, local Git state, branch naming, working tree, and HEAD subject. It never mutates state.
 - `explain` shows the rule, expected state, actual state, and enforcement reason.
 - `plan` produces deterministic, ordered remediation. It never mutates state.
-- `atlas repo policy apply --dry-run` reports what would change.
-- `atlas repo policy apply` requires `GITHUB_TOKEN` or `GH_TOKEN`, re-reads remote state before mutation, changes only settings/rulesets supported by the adapter, and remains privileged.
+- `prumo repo policy apply --dry-run` reports what would change.
+- `prumo repo policy apply` requires `GITHUB_TOKEN` or `GH_TOKEN`, re-reads remote state before mutation, changes only settings/rulesets supported by the adapter, and remains privileged.
 - `check` and `plan` never mutate remote state.
 
 Checks currently cover:
@@ -39,7 +39,7 @@ Checks currently cover:
 
 ## Remote policy
 
-The GitHub adapter uses the standard library and REST API. It does not require `gh` at runtime. Credentials come from `GITHUB_TOKEN` or `GH_TOKEN`. Tokens are never stored in `atlas.json`, repository policy, Git, logs, or evidence.
+The GitHub adapter uses the standard library and REST API. It does not require `gh` at runtime. Credentials come from `GITHUB_TOKEN` or `GH_TOKEN`. Tokens are never stored in `prumo.json`, repository policy, Git, logs, or evidence.
 
 Remote comparison distinguishes:
 
@@ -53,7 +53,7 @@ Planned remote actions classify side effect, reversibility, permission, and risk
 
 ## Agent permissions
 
-Default Atlas agent behavior:
+Default Prumo agent behavior:
 
 - Git read operations: allow.
 - Local branch and commit in project scope: allow.

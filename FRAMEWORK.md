@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Project Atlas is a versioned, Git-native engineering protocol for durable, portable and cost-aware AI-assisted development. Prompts, skills, agents, platform adapters and orchestrator configurations are distributions of the protocol, not the protocol itself.
+Prumo is a versioned, Git-native engineering protocol for durable, portable and cost-aware AI-assisted development. Prompts, skills, agents, platform adapters and orchestrator configurations are distributions of the protocol, not the protocol itself.
 
 The framework serves four audiences at once: product users, developers/contributors, operators/maintainers and AI agents. It also treats documentation publishing, project intelligence and LLM context efficiency as first-class engineering concerns.
 
@@ -10,7 +10,7 @@ The framework serves four audiences at once: product users, developers/contribut
 
 - **Git is durable memory.** Stable project truth must survive loss of chat history, provider state and local caches.
 - **Canonical before generated.** Human knowledge is maintained primarily in Markdown; machine configuration is maintained in JSON. Generated indexes, summaries, caches, dashboards and adapters never replace canonical sources.
-- **Few persistent formats.** New Atlas projects maintain Markdown and JSON. SQLite is permitted only for derived/runtime state and is not canonical. YAML is legacy read compatibility only.
+- **Few persistent formats.** New Prumo projects maintain Markdown and JSON. SQLite is permitted only for derived/runtime state and is not canonical. YAML is legacy read compatibility only.
 - **Project decisions outrank framework defaults.** An explicit project ADR/RFC is authoritative for that project.
 - **Goals define completion.** Roadmaps describe direction; locked Goals define measurable done conditions.
 - **Acceptance is protected.** Agents may propose amendments but cannot silently weaken locked criteria.
@@ -34,8 +34,8 @@ The framework serves four audiences at once: product users, developers/contribut
 1. Explicit current user/project decision.
 2. Accepted project ADR/RFC and locked Goal.
 3. Canonical project documentation.
-4. `atlas.json` and other project JSON contracts.
-5. Project Atlas Framework protocol.
+4. `prumo.json` and other project JSON contracts.
+5. Prumo protocol.
 6. Generated platform adapter.
 7. Generic model/tool defaults.
 

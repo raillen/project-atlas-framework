@@ -1,13 +1,13 @@
 # Recovery Guide
 
-Canonical Atlas projects recover from Git, snapshots, and deterministic regeneration. Reinstallation is rarely the right first action.
+Canonical Prumo projects recover from Git, snapshots, and deterministic regeneration. Reinstallation is rarely the right first action.
 
 ## Recovery order
 
 1. `ENTRYPOINT.md` or the generated harness adapter.
-2. `atlas.json`.
+2. `prumo.json`.
 3. `PROJECT_STATE.md`.
-4. `docs/ATLAS.md`.
+4. `docs/PRUMO.md`.
 5. Active Goal under `.ai/goals/`.
 6. Relevant canonical docs, symbols, and tests selected by the context strategy.
 
@@ -17,15 +17,15 @@ Do not hand-edit locked Goals or generated adapters. Prefer regeneration and app
 
 ```bash
 git status --short
-atlas doctor ./my-project
-atlas validate ./my-project
-atlas goal list --path ./my-project
+prumo doctor ./my-project
+prumo validate ./my-project
+prumo goal list --path ./my-project
 ```
 
 Create a portable snapshot before manual recovery:
 
 ```bash
-atlas snapshot ./my-project --output ./my-project-recovery.zip
+prumo snapshot ./my-project --output ./my-project-recovery.zip
 ```
 
 Restore from a known-good Git commit when local state diverged:
@@ -38,8 +38,8 @@ git restore --source=<commit> -- <paths>
 Regenerate adapters from canonical resources after restoring the source files:
 
 ```bash
-atlas compile --target codex --path ./my-project
-atlas compile --target claude-code --path ./my-project
+prumo compile --target codex --path ./my-project
+prumo compile --target claude-code --path ./my-project
 ```
 
 ## Restore global installation state
@@ -47,7 +47,7 @@ atlas compile --target claude-code --path ./my-project
 Use a clean portable home to isolate corrupted global state:
 
 ```bash
-atlas --home ./recovery-home setup
+prumo --home ./recovery-home setup
 ```
 
 Then reinstall only connectors that provide cleanup manifests. Data loss in a repository is never fixed by deleting the project directory.
@@ -61,8 +61,8 @@ Uninstall follows `docs/manual/uninstallation.md`. It removes installation state
 Preview migrations before applying them:
 
 ```bash
-atlas migrate ./my-project --dry-run --json
-atlas migrate ./my-project
+prumo migrate ./my-project --dry-run --json
+prumo migrate ./my-project
 ```
 
-The migration creates a timestamped pre-migration snapshot under `.atlas/snapshots/`.
+The migration creates a timestamped pre-migration snapshot under `.prumo/snapshots/`.

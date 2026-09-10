@@ -1,4 +1,4 @@
-# ProjectAtlas: update
+# Prumo: update
 
 Incorporate the newly approved project decision.
 

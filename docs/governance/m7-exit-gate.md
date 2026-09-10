@@ -16,7 +16,7 @@ the scanner is incremental and revision/branch-aware; malicious content and secr
 ### 1. Arbitrary existing repo can be audited without mutation (Zero Forced Layout)
 
 - Proven by automated regression tests across 6 brownfield fixture repositories (`internal/adoption/evals_test.go`):
-  - `TestBrownfieldCorpusGoCLI`: Go CLI with non-Atlas layout (`cmd/`, `internal/`, standard `README.md`, `docs/architecture.md`).
+  - `TestBrownfieldCorpusGoCLI`: Go CLI with non-Prumo layout (`cmd/`, `internal/`, standard `README.md`, `docs/architecture.md`).
   - `TestBrownfieldCorpusWebMonorepo`: Multi-package web application (React, Vite, Express, PostgreSQL).
   - `TestBrownfieldCorpusMaliciousInjection`: Untrusted repository containing prompt injection directives.
   - `TestBrownfieldCorpusSecretsEnv`: Repository containing `.env` and sensitive API keys.
@@ -38,13 +38,13 @@ the scanner is incremental and revision/branch-aware; malicious content and secr
 
 - Canonical `ConfidenceLedger` (`internal/adoption/ledger.go`, schema `schemas/confidence-ledger.schema.json`) registers all factual and inferred statements.
 - Invariant enforced by `LedgerEntry.Validate()`: Every low and medium confidence entry requires human confirmation (`RequiresConfirmation: true`) and links back to concrete observed fact IDs in `Evidence`.
-- `atlas adopt --strict` rejects execution if unconfirmed inferences or unresolved contradictions remain.
+- `prumo adopt --strict` rejects execution if unconfirmed inferences or unresolved contradictions remain.
 
 ---
 
 ### 4. M5 evaluates candidate bindings correctly
 
-- Non-Atlas documentation layouts are mapped to Atlas canonical documentation contracts (`internal/adoption/mapping.go`, schema `schemas/mapping-candidate.schema.json`).
+- Non-Prumo documentation layouts are mapped to Prumo canonical documentation contracts (`internal/adoption/mapping.go`, schema `schemas/mapping-candidate.schema.json`).
 - High-confidence bindings are proposed for contracts required by detected profiles (e.g. `product.vision`, `system.architecture`, `testing.strategy`).
 - Missing required contracts are reported in `DocCoverageSummary` without failing the audit.
 
@@ -62,12 +62,12 @@ the scanner is incremental and revision/branch-aware; malicious content and secr
 
 - Adoption Engine does not apply ad-hoc changes. Confirmed findings produce formal `AdoptionMigrationProposal` items (`internal/adoption/migration.go`, schema `schemas/adoption-migration-proposal.schema.json`).
 - Every proposal requires Review Queue approval before application (`review_required: true`).
-- `DryRun` evaluates preconditions (e.g., `manifest_absent:atlas.json`) and produces unified diff previews without disk mutations.
+- `DryRun` evaluates preconditions (e.g., `manifest_absent:prumo.json`) and produces unified diff previews without disk mutations.
 - `Apply` enforces approval invariant (`ProposalStatusApproved`), executes atomic reversible changes, and records audit evidence in `migrations.JournalEntry` with SHA-256 integrity hash.
-- CLI flags implemented in `cmd/atlas/adopt_commands.go`:
-  - `atlas adopt --propose-migration`
-  - `atlas adopt --dry-run`
-  - `atlas adopt --apply`
+- CLI flags implemented in `cmd/prumo/adopt_commands.go`:
+  - `prumo adopt --propose-migration`
+  - `prumo adopt --dry-run`
+  - `prumo adopt --apply`
 
 ---
 
@@ -87,14 +87,14 @@ the scanner is incremental and revision/branch-aware; malicious content and secr
 
 ---
 
-## Evidence (Dogfood Audit on Project Atlas Framework)
+## Evidence (Dogfood Audit on Prumo)
 
-- Full audit executed against the Project Atlas Framework repository itself (`TestDogfoodProjectAtlasSelfAudit`):
+- Full audit executed against the Prumo repository itself (`TestDogfoodPrumoSelfAudit`):
   - Detected languages: Go, Python, Shell.
   - Detected app-type: CLI.
   - Detected frameworks and toolchains: standard Go toolchain, pytest, JSON Schema.
-  - Discovered existing Atlas artifacts: `atlas.json`, canonical docs, contracts, schemas.
-  - Output rendered via `atlas adopt` and `RenderHumanReport` with zero file modifications.
+  - Discovered existing Prumo artifacts: `prumo.json`, canonical docs, contracts, schemas.
+  - Output rendered via `prumo adopt` and `RenderHumanReport` with zero file modifications.
 
 ---
 
@@ -105,7 +105,7 @@ the scanner is incremental and revision/branch-aware; malicious content and secr
 - `gofmt -l .` — clean.
 - `python -m pytest -q` — 136 pass (Python oracle preserved).
 - Adoption Engine suite (`internal/adoption`): 48 tests passing (100%).
-- CLI suite (`cmd/atlas`): all tests passing (100%).
+- CLI suite (`cmd/prumo`): all tests passing (100%).
 
 ---
 

@@ -8,15 +8,15 @@ build/
 .coverage
 htmlcov/
 
-# Project Atlas derived/runtime state
-.atlas/runtime/
-.atlas/cache/
-.atlas/runtime/bootstrap-continuation.md
-.atlas/runtime/continuation.json
-.atlas/runtime/runs/
+# Prumo derived/runtime state
+.prumo/runtime/
+.prumo/cache/
+.prumo/runtime/bootstrap-continuation.md
+.prumo/runtime/continuation.json
+.prumo/runtime/runs/
 
 # Go migration artifacts
-/atlas
+/prumo
 *.test
 *.out
 /dist/

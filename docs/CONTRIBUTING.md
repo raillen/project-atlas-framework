@@ -1,6 +1,6 @@
 # Contributing and Framework Evolution
 
-Project Atlas should learn from real projects without becoming a dumping ground for project-specific instructions.
+Prumo should learn from real projects without becoming a dumping ground for project-specific instructions.
 
 A reusable change should identify:
 

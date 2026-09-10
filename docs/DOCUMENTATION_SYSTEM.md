@@ -1,6 +1,6 @@
 # Documentation System
 
-Project Atlas treats documentation as a product surface for four audiences and as the canonical knowledge source for agents.
+Prumo treats documentation as a product surface for four audiences and as the canonical knowledge source for agents.
 
 ## Audiences
 
@@ -37,7 +37,7 @@ Use only the sections that the project genuinely needs:
 
 ```text
 docs/
-├── ATLAS.md
+├── PRUMO.md
 ├── product/
 ├── user/
 ├── onboarding/
@@ -57,9 +57,9 @@ docs/
 
 This is a semantic taxonomy, not a requirement to create an empty file in every directory.
 
-## ATLAS as intent router
+## PRUMO as intent router
 
-`docs/ATLAS.md` should answer "what are you trying to do?" before exposing the full document tree.
+`docs/PRUMO.md` should answer "what are you trying to do?" before exposing the full document tree.
 
 Typical routes:
 
@@ -77,7 +77,7 @@ Perform a release
 Work as an AI agent
 ```
 
-Sub-Atlases are allowed when a project is large, but they are maps rather than duplicate truth.
+Sub-Prumos are allowed when a project is large, but they are maps rather than duplicate truth.
 
 ## Developer documentation essentials
 
@@ -154,7 +154,7 @@ The framework goal is a documentation site that grows with the project.
 Rules:
 
 1. Canonical Markdown/JSON remains source of truth.
-2. Site navigation is generated from the documentation model/ATLAS where practical.
+2. Site navigation is generated from the documentation model/PRUMO where practical.
 3. Public and internal visibility can differ without duplicating documents.
 4. Search, versioning, breadcrumbs, related docs and API references are derived views.
 5. Project Intelligence dashboards consume durable project data.
@@ -188,6 +188,6 @@ A task evaluates, as applicable:
 - migration/compatibility;
 - operations/support;
 - changelog/release;
-- ATLAS links.
+- PRUMO links.
 
 "Not applicable" is valid; silent omission is not.

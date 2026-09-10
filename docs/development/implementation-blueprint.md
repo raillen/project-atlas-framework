@@ -1,8 +1,8 @@
-# Project Atlas v0.4 Implementation Blueprint
+# Prumo v0.4 Implementation Blueprint
 
 ## Objective
 
-Migrate Project Atlas from Python v0.3 to Go v0.4 with full protocol parity, then incrementally deliver the Control Plane, Documentation System, Living Plan, Adoption Engine, Knowledge/Experience layers, and native harness integrations — all validated by deterministic conformance and eval suites.
+Migrate Prumo from Python v0.3 to Go v0.4 with full protocol parity, then incrementally deliver the Control Plane, Documentation System, Living Plan, Adoption Engine, Knowledge/Experience layers, and native harness integrations — all validated by deterministic conformance and eval suites.
 
 ## Non-Goals
 
@@ -18,7 +18,7 @@ Migrate Project Atlas from Python v0.3 to Go v0.4 with full protocol parity, the
 | Plane | Key Components |
 |-------|----------------|
 | **Protocol** | Goals, Plans, Tasks, Events, Evidence, Gates, Schema Validation |
-| **Project** | Root discovery, `atlas.json`, profiles, capabilities |
+| **Project** | Root discovery, `prumo.json`, profiles, capabilities |
 | **Resolution** | Risk, workforce, recipes, model policy, context selection |
 | **Documentation** | Contracts, profiles, coverage, delta, contradictions |
 | **Planning** | Interview, decisions, open questions, authority, readiness |
@@ -47,7 +47,7 @@ Migrate Project Atlas from Python v0.3 to Go v0.4 with full protocol parity, the
 - **Zero v0.4 features in Python** — only critical bug fixes
 - **Python is oracle** — Go must match behavior, not just pass unit tests
 - **Golden fixtures are canon** — `conformance/golden/` captured from Python v0.3
-- **Schemas unchanged** — Go conforms to Atlas protocol; protocol never changes for Go convenience
+- **Schemas unchanged** — Go conforms to Prumo protocol; protocol never changes for Go convenience
 
 ## Macro-Phases
 
@@ -93,25 +93,25 @@ flowchart TD
 | **M1→M2** | Go module builds; CLI skeleton works; project discovery + schema validation + embedded resources + error model + test infra all green |
 | **M2→M3** | Goals/Plans/Tasks/Events/Evidence/Gates all ported; resolver/workforce/model policy ported; doctor/explain parity; conformance ≥ 90% on protocol |
 | **M3→M4** | Compiler parity for Codex, Claude Code, Generic; conformance 100% on critical contracts |
-| **M4→M5** | Binaries published; install/uninstall/setup work; Homebrew/Windows baseline; `atlas setup` wizard |
+| **M4→M5** | Binaries published; install/uninstall/setup work; Homebrew/Windows baseline; `prumo setup` wizard |
 | **M5→M6** | Documentation Contracts + Profiles + UI Pack + Delta + Contradiction framework all functional |
 | **M6→M7** | Interview protocol + decision extraction + authority model + incremental docs updates working |
 | **M7→M8** | Scanner + semantic mapping + capabilities + confidence ledger + adoption report + migration proposals |
 | **M8→M9** | Implementation journal + experiment/rejection/debt registers + typed graph + trace CLI |
 | **M9→M10** | Session events + summaries + handoffs + provider contract + experience proposals + retention |
-| **M10→M11** | OpenCode native compiler + Atlas primary agent + subagents/skills/commands + TS plugin + tool guards + session hooks + connector contract tests |
+| **M10→M11** | OpenCode native compiler + Prumo primary agent + subagents/skills/commands + TS plugin + tool guards + session hooks + connector contract tests |
 | **M11→M12** | Capability negotiation + cleanup manifests + test kit + Gemini CLI connector + Claude/Codex elevation |
 | **M12→v1.0** | Team runtime validated by real usage; production hardening complete |
 
 ## Self-Dogfooding Threshold
 
-- **M3+**: Atlas builds/tests itself (Go tests, `atlas doctor`, `atlas validate`)
-- **M5+**: Atlas documents its own development (contracts, profiles, readiness on Atlas repo)
-- **M6+**: Atlas plans its own features via Living Plan
-- **M7+**: Atlas adopts its own repo history (Adoption Engine on Atlas)
-- **M8+**: Atlas traces its own decisions (traceability on Atlas)
-- **M9+**: Atlas learns from its own sessions (Experience Layer on Atlas)
-- **M10+**: Atlas develops via OpenCode native harness
+- **M3+**: Prumo builds/tests itself (Go tests, `prumo doctor`, `prumo validate`)
+- **M5+**: Prumo documents its own development (contracts, profiles, readiness on Prumo repo)
+- **M6+**: Prumo plans its own features via Living Plan
+- **M7+**: Prumo adopts its own repo history (Adoption Engine on Prumo)
+- **M8+**: Prumo traces its own decisions (traceability on Prumo)
+- **M9+**: Prumo learns from its own sessions (Experience Layer on Prumo)
+- **M10+**: Prumo develops via OpenCode native harness
 
 ## Release Progression
 

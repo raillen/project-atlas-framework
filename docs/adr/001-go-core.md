@@ -1,4 +1,4 @@
-# ADR 001: Go Core for Project Atlas v0.4
+# ADR 001: Go Core for Prumo v0.4
 
 ## Status
 
@@ -6,11 +6,11 @@ Accepted
 
 ## Context
 
-Project Atlas v0.3 is implemented in Python (`src/project_atlas/`). The v0.4 architecture requires a single-binary, zero-CGO distribution that can run on Linux, macOS, and Windows without external runtime dependencies. Python's interpreter requirement, virtual environment management, and startup latency are blockers for the target user experience.
+Prumo v0.3 is implemented in Python (`src/prumo/`). The v0.4 architecture requires a single-binary, zero-CGO distribution that can run on Linux, macOS, and Windows without external runtime dependencies. Python's interpreter requirement, virtual environment management, and startup latency are blockers for the target user experience.
 
 ## Decision
 
-Go will be the official language of the Atlas Core and CLI starting with v0.4. The migration will proceed via conformance-driven parity:
+Go will be the official language of the Prumo Core and CLI starting with v0.4. The migration will proceed via conformance-driven parity:
 
 1. Freeze v0.3 observable contracts (exit codes, JSON envelopes, filesystem effects, schema validation).
 2. Build Go foundation (module, CLI skeleton, envelope, project discovery, error model).

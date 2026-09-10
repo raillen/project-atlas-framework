@@ -29,16 +29,16 @@ and runtime but are optional for the planner core.
 - autonomous architecture invention;
 - raw transcript as canonical memory;
 - model-specific conversation format;
-- implementing code as part of `atlas plan`;
+- implementing code as part of `prumo plan`;
 - replacing the Goal/Task protocol.
 
 ## Pipeline
 
 ```text
-atlas plan
+prumo plan
   → detect project / scope
     → new: profile + contract gap
-    → existing Atlas: docs audit
+    → existing Prumo: docs audit
   → question selection
   → guided interaction
   → decision extraction
@@ -51,15 +51,15 @@ atlas plan
     → ready → goal/plan ready for implementation
 ```
 
-For a non-Atlas brownfield repo, `atlas plan` may route to Adoption (Fase F); it must not
+For a non-Prumo brownfield repo, `prumo plan` may route to Adoption (Fase F); it must not
 duplicate the brownfield scanner.
 
 ## Planning scopes
 
-- `atlas plan` — project-level/general;
-- `atlas plan --goal <id>` — focus on an existing Goal;
-- `atlas plan --docs` — close documentation gaps;
-- `atlas plan --resume [session|run]` — resume from structured checkpoint state.
+- `prumo plan` — project-level/general;
+- `prumo plan --goal <id>` — focus on an existing Goal;
+- `prumo plan --docs` — close documentation gaps;
+- `prumo plan --resume [session|run]` — resume from structured checkpoint state.
 
 A conversational harness may expose native UI; the Core operates via structured
 requests/events.
@@ -264,4 +264,4 @@ Do not duplicate DocumentationDelta / Goal / Plan schemas.
 - E-G06: Goal/Plan output integration.
 - E-G07: resume/checkpoint + context compilation.
 - E-G08: CLI/harness-neutral interaction protocol.
-- E-G09: zero-to-ready Atlas sample/dogfood — see [`examples/living-plan-sample/README.md`](../../examples/living-plan-sample/README.md).
+- E-G09: zero-to-ready Prumo sample/dogfood — see [`examples/living-plan-sample/README.md`](../../examples/living-plan-sample/README.md).

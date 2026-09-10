@@ -1,4 +1,4 @@
-# Project Atlas v0.4 Scope
+# Prumo v0.4 Scope
 
 ## In Scope
 
@@ -46,16 +46,16 @@
 - **Execution Environments**: sandbox contract, isolation requirements
 - **Automation Engine**: event-driven rules, DLQ, idempotency, concurrency keys
 - **Observability**: structured timeline, explainability commands, incident bundles, local-first storage
-- **Package/Runtime Manager**: `atlas.lock`, provider isolation, supply chain verification
+- **Package/Runtime Manager**: `prumo.lock`, provider isolation, supply chain verification
 
 ### Integration Layer
 - **Connector Contract**: capability declaration, enforcement levels, protocol version negotiation, cleanup manifests
-- **OpenCode Native Harness**: native compiler, Atlas primary agent, subagents/skills/commands, TypeScript plugin, tool guards, session hooks
+- **OpenCode Native Harness**: native compiler, Prumo primary agent, subagents/skills/commands, TypeScript plugin, tool guards, session hooks
 - **Generic Fallback**: preserved for harnesses without native primitives
 
 ### Security & Trust
 - Trust layers (Core binary → canonical config → generated adapters → 3rd party → user content → model output)
-- Safe mode (`atlas --safe`)
+- Safe mode (`prumo --safe`)
 - Data classification & egress governance
 - SecretProvider contract
 - Generated artifact ownership markers

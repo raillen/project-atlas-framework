@@ -10,7 +10,7 @@ Which projects, Goals, incidents or benchmarks demonstrate it?
 
 ## Existing behavior
 
-What does Project Atlas currently do?
+What does Prumo currently do?
 
 ## Proposed generic rule
 

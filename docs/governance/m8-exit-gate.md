@@ -40,12 +40,12 @@ requirements, decisions, goals, code, tests, documentation, and evidence.
 
 ---
 
-### 4. CLI Surface (`atlas trace` and `atlas journal`)
+### 4. CLI Surface (`prumo trace` and `prumo journal`)
 
-- Implemented in `cmd/atlas/trace_commands.go`:
-  - `atlas trace <ref>`: Traces any goal, decision, code file, or requirement, returning structured upstream/downstream lineages in human terminal format or JSON envelope.
-  - `atlas journal [--goal <goal>] [--decision <decision>] [--file <file>]`: Queries implementation history.
-- Verified by automated tests in `cmd/atlas/trace_commands_test.go`.
+- Implemented in `cmd/prumo/trace_commands.go`:
+  - `prumo trace <ref>`: Traces any goal, decision, code file, or requirement, returning structured upstream/downstream lineages in human terminal format or JSON envelope.
+  - `prumo journal [--goal <goal>] [--decision <decision>] [--file <file>]`: Queries implementation history.
+- Verified by automated tests in `cmd/prumo/trace_commands_test.go`.
 
 ---
 
@@ -56,7 +56,7 @@ requirements, decisions, goals, code, tests, documentation, and evidence.
 - `gofmt -l .` — clean.
 - `python -m pytest -q` — 136 pass (Python oracle preserved).
 - Traceability suite (`internal/traceability`): all tests passing (100%).
-- CLI suite (`cmd/atlas`): all tests passing (100%).
+- CLI suite (`cmd/prumo`): all tests passing (100%).
 
 ---
 

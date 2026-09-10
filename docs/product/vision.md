@@ -1,15 +1,15 @@
-# Project Atlas — Product Vision v0.4
+# Prumo — Product Vision v0.4
 
 ## Purpose
 
-Project Atlas evolves from a Git-native execution-ready protocol into a **complete project engineering layer** assisted by humans and agents. It integrates planning, deep living documentation, execution, governance, episodic and experiential memory, traceability, validation, handoff, and adapter portability across harnesses without ceding project authority to any single harness.
+Prumo evolves from a Git-native execution-ready protocol into a **complete project engineering layer** assisted by humans and agents. It integrates planning, deep living documentation, execution, governance, episodic and experiential memory, traceability, validation, handoff, and adapter portability across harnesses without ceding project authority to any single harness.
 
 ## Core Capabilities (v0.4)
 
 | Capability | Description |
 |------------|-------------|
 | **Protocol Domain** | Goals, Plans, Tasks, Events, Evidence, Gates with deterministic lifecycle, schema validation, locks, amendments, and invariants. |
-| **Project Service** | Root discovery, `atlas.json`, capabilities, profiles, repository metadata, state snapshots. |
+| **Project Service** | Root discovery, `prumo.json`, capabilities, profiles, repository metadata, state snapshots. |
 | **Resolution Service** | Risk assessment, recipe selection, workforce resolution, model policy, context selection, documentation applicability. |
 | **Documentation Engine** | Contracts, profiles, gap analysis, ownership, delta tracking, contradiction checking, coverage/readiness. |
 | **Planning Engine** | Conversational interview, decision extraction, open questions, confidence scoring, authority model, readiness gates. |
@@ -38,8 +38,8 @@ Project Atlas evolves from a Git-native execution-ready protocol into a **comple
 
 ## Success Boundaries
 
-Atlas succeeds when canonical project state is explicit, implementation readiness is explainable, changes are evidenced, and a fresh executor can continue work without private conversation history. Atlas does not own product business decisions, replace the project's source code, or grant harnesses authority over protocol invariants.
+Prumo succeeds when canonical project state is explicit, implementation readiness is explainable, changes are evidenced, and a fresh executor can continue work without private conversation history. Prumo does not own product business decisions, replace the project's source code, or grant harnesses authority over protocol invariants.
 
 ## Operational Target
 
-A human opens any supported harness and asks *"implement custom shader support"*. Atlas resolves intent, context, Goal/Plan/Task, risk, recipe, workforce, applicable docs, implementation, tests, review, documentation delta, journal, evidence, and final state — without megaprompts or conversation memory.
+A human opens any supported harness and asks *"implement custom shader support"*. Prumo resolves intent, context, Goal/Plan/Task, risk, recipe, workforce, applicable docs, implementation, tests, review, documentation delta, journal, evidence, and final state — without megaprompts or conversation memory.

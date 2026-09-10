@@ -17,14 +17,14 @@ examples/brasa/project-profile.json
 ## 3. Initialize
 
 ```bash
-atlas init ./project --profile ./project-profile.json --non-interactive
+prumo init ./project --profile ./project-profile.json --non-interactive
 ```
 
 New projects receive:
 
-- `atlas.json`;
+- `prumo.json`;
 - `PROJECT_STATE.md`;
-- `docs/ATLAS.md`;
+- `docs/PRUMO.md`;
 - JSON workforce/model manifests;
 - `.ai/goals/`;
 - durable Project Intelligence seed;
@@ -33,7 +33,7 @@ New projects receive:
 ## 4. Validate
 
 ```bash
-atlas validate ./project --schemas ./schemas
+prumo validate ./project --schemas ./schemas
 ```
 
 ## 5. Define and lock Goals
@@ -44,7 +44,7 @@ Replace placeholder acceptance criteria before LOCKED. Agents execute against lo
 
 Before broad work:
 
-1. start from ATLAS + active Goal;
+1. start from PRUMO + active Goal;
 2. use direct/symbol/structural context first;
 3. load a known Context Pack when available;
 4. expand only if evidence is insufficient;
@@ -56,8 +56,8 @@ Do not generate permanent task context files.
 ## 7. Compile adapters only when needed
 
 ```bash
-atlas compile --target codex --path ./project
-atlas compile --target traycer --path ./project
+prumo compile --target codex --path ./project
+prumo compile --target traycer --path ./project
 ```
 
 Generic/chat compiled context is runtime state.
@@ -82,10 +82,10 @@ Canonical Markdown remains source of truth. Projects may continuously build a do
 
 ## 10. Recover anywhere
 
-A fresh model/tool reads `ENTRYPOINT.md`, `atlas.json`, `PROJECT_STATE.md`, `docs/ATLAS.md`, the active Goal and then expands context on demand.
+A fresh model/tool reads `ENTRYPOINT.md`, `prumo.json`, `PROJECT_STATE.md`, `docs/PRUMO.md`, the active Goal and then expands context on demand.
 
 ```bash
-atlas snapshot ./project
+prumo snapshot ./project
 ```
 
 Snapshots exclude runtime/cache state.

@@ -5,8 +5,8 @@ Monitor the Go v0.4 CLI through deterministic health checks, exit codes, JSON en
 ## Framework health
 
 ```bash
-atlas framework-check
-atlas --json framework-check
+prumo framework-check
+prumo --json framework-check
 ```
 
 The command validates canonical adapters, schemas, catalog references, and workforce packages.
@@ -14,9 +14,9 @@ The command validates canonical adapters, schemas, catalog references, and workf
 ## Project health
 
 ```bash
-atlas validate ./project
-atlas doctor ./project
-atlas --json doctor ./project
+prumo validate ./project
+prumo doctor ./project
+prumo --json doctor ./project
 ```
 
 Run after Goal transitions, migrations, compiler changes, and before release. Treat `ERROR` findings as blockers. Warnings require review according to the project risk policy.
@@ -26,9 +26,9 @@ Run after Goal transitions, migrations, compiler changes, and before release. Tr
 JSON output is stable for automation:
 
 ```bash
-atlas --json version
-atlas --json validate ./project
-atlas --json doctor ./project > doctor.json
+prumo --json version
+prumo --json validate ./project
+prumo --json doctor ./project > doctor.json
 ```
 
 Use stderr for operational diagnostics and preserve stdout when consuming JSON.
@@ -37,7 +37,7 @@ Use stderr for operational diagnostics and preserve stdout when consuming JSON.
 
 ```bash
 for target in generic chatgpt claude kimi codex claude-code traycer; do
-  atlas compile --target "$target" --path ./project
+  prumo compile --target "$target" --path ./project
   echo "$target: $?"
 done
 ```
@@ -48,10 +48,10 @@ Compare generated artifacts against the canonical project and source workforce. 
 
 ```bash
 git status --short
-du -sh ./project/.ai ./project/.atlas ./project/.codex ./project/.claude 2>/dev/null
+du -sh ./project/.ai ./project/.prumo ./project/.codex ./project/.claude 2>/dev/null
 ```
 
-Investigate unexpected generated files, unbounded `.atlas/runtime` growth, or changes outside the task scope.
+Investigate unexpected generated files, unbounded `.prumo/runtime` growth, or changes outside the task scope.
 
 ## CI health gates
 

@@ -1,4 +1,4 @@
-# Project Atlas v0.4 Implementation Phases
+# Prumo v0.4 Implementation Phases
 
 > **Rule**: Only fully detail current phase + next phase. Future phases remain architectural until dependencies mature.
 
@@ -42,7 +42,7 @@
 - [ ] Architecture Freeze ADR committed
 - [ ] 100% of v0.3 CLI surface cataloged with golden outputs
 - [ ] Conformance matrix covers all critical contracts
-- [ ] Go module builds empty `cmd/atlas` + `internal/*` skeleton
+- [ ] Go module builds empty `cmd/prumo` + `internal/*` skeleton
 
 **Exit Gate**: M0 complete when `docs/migration/protocol-inventory.md` and `conformance/V03_BASELINE.json` are reviewed and approved.
 
@@ -56,12 +56,12 @@
 
 **Scope**:
 - Go module + `go.sum`
-- `cmd/atlas/main.go` with machine envelope (`protocol_version`, `ok`, `data`, `diagnostics`, `warnings`)
+- `cmd/prumo/main.go` with machine envelope (`protocol_version`, `ok`, `data`, `diagnostics`, `warnings`)
 - `internal/protocol`: envelope types, version constants
 - `internal/app`: `Service` with `Version()`, `ProjectRoot()` stubs
-- `internal/project`: `FindRoot()` via `atlas.json` discovery
+- `internal/project`: `FindRoot()` via `prumo.json` discovery
 - `internal/validation`: JSON Schema validation (Draft 2020-12) — initially delegate to Python or use `gojsonschema`
-- `internal/resources`: access to `schemas/` + `src/project_atlas/resources/` via `io/fs.FS` abstraction (prepare for `go:embed`)
+- `internal/resources`: access to `schemas/` + `src/prumo/resources/` via `io/fs.FS` abstraction (prepare for `go:embed`)
 - Error model: wrapped errors with `%w`, sentinel errors, no panic for user errors
 - Test infrastructure: `go test -race ./...`, table-driven tests
 - CI: `gofmt`, `go vet`, `go test -race`, `staticcheck` (recommended)
@@ -73,7 +73,7 @@
 - Full CLI command surface
 
 **Deliverables**:
-- `cmd/atlas/main.go` with `version` command (`--json` support)
+- `cmd/prumo/main.go` with `version` command (`--json` support)
 - `internal/protocol/protocol.go` + tests
 - `internal/app/service.go` + tests
 - `internal/project/project.go` + tests
@@ -90,13 +90,13 @@
 - Python tests still 100% passing (no regression)
 
 **Acceptance Criteria**:
-- [ ] `go run ./cmd/atlas version` → `0.4.0-dev`
-- [ ] `go run ./cmd/atlas --json version` → valid envelope
+- [ ] `go run ./cmd/prumo version` → `0.4.0-dev`
+- [ ] `go run ./cmd/prumo --json version` → valid envelope
 - [ ] `go test -race ./...` all green
 - [ ] CI runs Python + Go quality gates
 - [ ] No circular dependencies in `internal/`
 
-**Exit Gate**: M1 complete when all Go quality gates pass in CI and `atlas version --json` produces valid envelope.
+**Exit Gate**: M1 complete when all Go quality gates pass in CI and `prumo version --json` produces valid envelope.
 
 ---
 
@@ -116,7 +116,7 @@
 - `gates/`: Gate, waiver, release readiness
 
 ### Project Service (`internal/project/`)
-- `atlas.json` load/parse with schema validation
+- `prumo.json` load/parse with schema validation
 - Profile loading, capabilities, model policy
 - Project state snapshot
 
@@ -132,12 +132,12 @@
 - Project validation against schemas
 
 ### CLI Commands (Parity)
-- `atlas init`, `resolve`, `validate`
-- `atlas goal new|state|amend|list`
-- `atlas context plan`
-- `atlas report add|summary`
-- `atlas migrate`
-- `atlas doctor`, `explain`, `framework-check`
+- `prumo init`, `resolve`, `validate`
+- `prumo goal new|state|amend|list`
+- `prumo context plan`
+- `prumo report add|summary`
+- `prumo migrate`
+- `prumo doctor`, `explain`, `framework-check`
 
 ### Compiler (`internal/compiler/`)
 - Target adapter interface
@@ -165,14 +165,14 @@
 - `go test -race ./...`, `go vet`, `gofmt`, `staticcheck` all pass
 
 **Acceptance Criteria**:
-- [ ] `atlas init --non-interactive --profile X` creates valid project
-- [ ] `atlas resolve` matches Python workforce/skills/recipes exactly
-- [ ] `atlas validate` catches same schema violations
-- [ ] `atlas goal` lifecycle identical (lock, amendment, transitions)
-- [ ] `atlas context plan` produces same budget/strategy
-- [ ] `atlas doctor` finds same issues
-- [ ] `atlas compile --target codex|claude-code|generic` generates byte-identical or semantically equivalent outputs
-- [ ] `atlas explain` outputs match for workforce, agent, skill, recipe, context, model, execution
+- [ ] `prumo init --non-interactive --profile X` creates valid project
+- [ ] `prumo resolve` matches Python workforce/skills/recipes exactly
+- [ ] `prumo validate` catches same schema violations
+- [ ] `prumo goal` lifecycle identical (lock, amendment, transitions)
+- [ ] `prumo context plan` produces same budget/strategy
+- [ ] `prumo doctor` finds same issues
+- [ ] `prumo compile --target codex|claude-code|generic` generates byte-identical or semantically equivalent outputs
+- [ ] `prumo explain` outputs match for workforce, agent, skill, recipe, context, model, execution
 - [ ] Conformance diff: zero failures on critical contracts
 
 **Exit Gate**: M2 complete when `go test -run Conformance` (or equivalent) shows 100% parity on all cataloged critical contracts.
@@ -215,23 +215,23 @@
 - Install script (`curl | sh`) with checksum verification
 - Homebrew tap
 - Windows packaging baseline (Scoop/WinGet)
-- `atlas setup` wizard (detect harnesses, select integrations, validate PATH, run doctor)
-- `atlas install connector <id>`, `atlas uninstall [--connectors|--purge-cache|--purge-global-config]`
+- `prumo setup` wizard (detect harnesses, select integrations, validate PATH, run doctor)
+- `prumo install connector <id>`, `prumo uninstall [--connectors|--purge-cache|--purge-global-config]`
 - Installation manifest (versions, paths, connectors, managed config fragments)
 - Cleanup manifests per connector
-- Portable mode (`atlas --home ./path`)
+- Portable mode (`prumo --home ./path`)
 - Idempotent install/uninstall
 
 **Non-Goals**: Auto-update from non-GitHub sources, complex multi-user server
 
-**Deliverables**: Release artifacts, install script, Homebrew formula, `atlas setup/install/uninstall`
+**Deliverables**: Release artifacts, install script, Homebrew formula, `prumo setup/install/uninstall`
 
 **Test/Eval Requirements**: Install/uninstall on clean VMs for all platforms; idempotency verified
 
 **Acceptance Criteria**:
-- [ ] `curl -fsSL install.sh | sh` installs working `atlas`
-- [ ] `atlas uninstall` removes binary + connectors + cache (not project data)
-- [ ] `atlas setup` detects harnesses and configures project-local adapters
+- [ ] `curl -fsSL install.sh | sh` installs working `prumo`
+- [ ] `prumo uninstall` removes binary + connectors + cache (not project data)
+- [ ] `prumo setup` detects harnesses and configures project-local adapters
 - [ ] Homebrew install works
 - [ ] Windows package installs
 
@@ -272,7 +272,7 @@ Canonical specification: `docs/runtime/living-plan.md`.
 - Readiness gates (block implementation until critical decisions confirmed)
 - Incremental documentation updates from decisions (Documentation Delta)
 
-**Non-Goals**: brownfield discovery (Fase F Adoption), autonomous architecture invention, raw transcript as canonical memory, model-specific conversation format, code generation as part of `atlas plan`.
+**Non-Goals**: brownfield discovery (Fase F Adoption), autonomous architecture invention, raw transcript as canonical memory, model-specific conversation format, code generation as part of `prumo plan`.
 
 **Goal Decomposition**:
 - E-G01: Question / OpenQuestion schemas + priority resolver.
@@ -283,7 +283,7 @@ Canonical specification: `docs/runtime/living-plan.md`.
 - E-G06: Goal/Plan output integration.
 - E-G07: resume/checkpoint + context compilation.
 - E-G08: CLI/harness-neutral interaction protocol.
-- E-G09: zero-to-ready Atlas sample/dogfood.
+- E-G09: zero-to-ready Prumo sample/dogfood.
 
 **Exit Gate (LIVING PLAN READY)**: New project can go from initial intent to implementation-ready via interview without a manual megaprompt; Goal-specific planning closes only relevant gaps; decisions/open questions carry authority and provenance; resume does not depend on transcript; docs/readiness/governance feedback loop works; question/decision evals reach approved baseline; no agent suggestion silently promoted.
 
@@ -297,13 +297,13 @@ Canonical specification: `docs/runtime/adoption-engine.md`.
 
 **Scope**:
 - Repository scanner (file types, frameworks, configs, docs)
-- Semantic documentation mapping (non-Atlas layouts → Atlas concepts)
+- Semantic documentation mapping (non-Prumo layouts → Prumo concepts)
 - Capability detection
 - Confidence ledger (scored mapping)
 - Adoption report
 - Migration proposals (non-destructive, reversible)
 
-**Non-Goals**: rewriting the entire layout to "look Atlas", trusting README as authority, mandatory embeddings, auto-deleting legacy docs, inferring user intent without confirmation, installing every detected connector/tool.
+**Non-Goals**: rewriting the entire layout to "look Prumo", trusting README as authority, mandatory embeddings, auto-deleting legacy docs, inferring user intent without confirmation, installing every detected connector/tool.
 
 **Goal Decomposition**:
 - F-G01: scanner facts + revision-aware sources.
@@ -328,7 +328,7 @@ Canonical specification: `docs/runtime/adoption-engine.md`.
 - Implementation Journal (synthesis, not chain-of-thought)
 - Experiment/Rejection/Debt registers
 - Typed traceability graph (req↔dec↔code↔test↔doc↔evidence)
-- `atlas trace <ref>` CLI
+- `prumo trace <ref>` CLI
 
 **Exit Gate**: Any code change traceable to decision/goal; journal queryable.
 
@@ -356,13 +356,13 @@ Canonical specification: `docs/runtime/adoption-engine.md`.
 
 **Scope**:
 - OpenCode native compiler (TypeScript plugin + agents + skills + commands + hooks)
-- Atlas primary agent for OpenCode
+- Prumo primary agent for OpenCode
 - Subagents, skills, commands mapped to OpenCode primitives
 - Tool guards (pre-tool validation)
 - Session hooks (start/end/tool events)
 - Connector Contract tests for OpenCode
 
-**Exit Gate**: `atlas connector install opencode` produces fully functional native integration.
+**Exit Gate**: `prumo connector install opencode` produces fully functional native integration.
 
 ---
 

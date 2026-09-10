@@ -1,4 +1,4 @@
-# Atlas v0.4 Testing Strategy
+# Prumo v0.4 Testing Strategy
 
 ## Principles
 
@@ -79,7 +79,7 @@ Include:
 
 Documentation contracts additionally need incomplete fixtures distinguishing `missing`, `partial`, `ready`, and `not-applicable`.
 
-Adoption fixtures need: good non-Atlas docs, duplicate docs, README/config contradiction, no docs, monorepo, mixed languages.
+Adoption fixtures need: good non-Prumo docs, duplicate docs, README/config contradiction, no docs, monorepo, mixed languages.
 
 ## Test Provider Contract
 
@@ -131,10 +131,10 @@ Heuristics require baseline comparison, then shadow eval → canary subset → p
 
 ## Dogfooding
 
-- M3+: Atlas builds/tests itself.
-- M5+: Atlas applies documentation contracts to its own repository.
-- M6+: Atlas plans features through Living Plan.
-- M7+: Atlas adopts its own repository.
-- M8+: Atlas traces its own decisions.
-- M9+: Atlas processes its structured experience.
-- M10+: Atlas development uses OpenCode native harness.
+- M3+: Prumo builds/tests itself.
+- M5+: Prumo applies documentation contracts to its own repository.
+- M6+: Prumo plans features through Living Plan.
+- M7+: Prumo adopts its own repository.
+- M8+: Prumo traces its own decisions.
+- M9+: Prumo processes its structured experience.
+- M10+: Prumo development uses OpenCode native harness.

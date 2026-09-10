@@ -1,11 +1,11 @@
-# Project Atlas Framework — Documentation Router
+# Prumo — Documentation Router
 
-ATLAS is an intent router. Read only the document needed for the current task; do not load the full repository documentation tree.
+PRUMO is an intent router. Read only the document needed for the current task; do not load the full repository documentation tree.
 
 ## Current implementation line
 
-- Go v0.4: active Core and CLI.
-- Python v0.3: compatibility oracle under `src/project_atlas/`.
+- Go v0.5: active Core and CLI.
+- Python v0.3: retired compatibility oracle (canonical resources preserved under `src/prumo/`).
 - Canonical formats: Markdown, JSON, JSON Schema, Git.
 - Derived state: caches, indexes, runtime context, generated adapters.
 
@@ -55,12 +55,12 @@ ATLAS is an intent router. Read only the document needed for the current task; d
 
 - [Documentation Contracts](contracts/builtin.json)
 - [Documentation Profiles](profiles/builtin.json)
-- `atlas docs contracts`
-- `atlas docs profiles`
-- `atlas docs audit`
-- `atlas docs readiness`
+- `prumo docs contracts`
+- `prumo docs profiles`
+- `prumo docs audit`
+- `prumo docs readiness`
 
-M5 documentation analysis is deterministic and read-only. Missing knowledge is reported; Atlas does not create empty documents or silently promote model prose to canonical state.
+M5 documentation analysis is deterministic and read-only. Missing knowledge is reported; Prumo does not create empty documents or silently promote model prose to canonical state.
 
 ## Protocol reference
 
@@ -77,8 +77,8 @@ M5 documentation analysis is deterministic and read-only. Missing knowledge is r
 ## Canonical machine contracts
 
 - Schemas: `schemas/`
-- Workforce registry: `src/project_atlas/resources/catalog/catalog.json`
-- Workforce packages: `src/project_atlas/resources/workforce/`
+- Workforce registry: `src/prumo/resources/catalog/catalog.json`
+- Workforce packages: `src/prumo/resources/workforce/`
 - Conformance fixtures: `conformance/`
 - Source provenance: `SOURCE_MAP.json`
 
