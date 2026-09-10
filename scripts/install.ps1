@@ -4,7 +4,7 @@
 [CmdletBinding()]
 param(
     [string]$Repository = $(if ($env:ATLAS_REPOSITORY) { $env:ATLAS_REPOSITORY } else { "raillen/project-atlas-framework" }),
-    [string]$Version = $(if ($env:ATLAS_VERSION) { $env:ATLAS_VERSION } else { "v0.4.1" }),
+    [string]$Version = $(if ($env:ATLAS_VERSION) { $env:ATLAS_VERSION } else { "v0.4.2" }),
     [string]$InstallDir = $(if ($env:ATLAS_INSTALL_DIR) { $env:ATLAS_INSTALL_DIR } else { "$env:LOCALAPPDATA\Programs\atlas" })
 )
 

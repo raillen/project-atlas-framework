@@ -44,10 +44,10 @@ go run ./cmd/atlas --json version
 Expected version output:
 
 ```text
-0.4.1
+0.4.2
 ```
 
-The CLI currently uses the subcommand surface directly. `atlas --help` is not yet implemented; use the [CLI reference](docs/manual/usage.md#command-reference).
+Run `atlas --help` or `atlas <command> --help` to view all available commands, options, and quick examples. You can also consult the [CLI reference](docs/manual/usage.md#command-reference).
 
 ## Initialize a project
 
