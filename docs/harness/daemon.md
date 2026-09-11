@@ -15,3 +15,8 @@ headless runs: `start/status/list/events/cancel/protocol` as JSON lines.
   resolve via `model.ForName` (fake default, real adapters need keys/URLs).
 - Tests: lifecycle (start→complete→events→list→protocol), cancel of a
   blocking run, and reconnect (new server, same store).
+- IDL: `schemas/protocol-manifest.json` (version, ops, args, schemas,
+  errors) is served by the `protocol` op and `prumo agent protocol
+  --manifest`. `protocol.Manifest()` is the code truth; the checked-in file
+  must match it (manifest_test.go) and every listed op must have a dispatch
+  branch (daemon dispatch test).

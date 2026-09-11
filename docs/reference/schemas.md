@@ -25,3 +25,4 @@ All Prumo JSON schemas reside in `schemas/`:
 - `harness-checkpoint.schema.json`
 - `harness-handoff.schema.json`
 - `agent-event.schema.json`
+- `protocol-manifest.json` (IDL: version, ops, args, schemas, errors)
