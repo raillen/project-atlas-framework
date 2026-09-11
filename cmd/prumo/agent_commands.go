@@ -64,6 +64,8 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentLogs(asJSON, args[1:])
 	case "steer":
 		return runAgentSteer(asJSON, args[1:])
+	case "stop":
+		return runAgentStop(asJSON, args[1:])
 	case "providers":
 		return runAgentProviders(asJSON, args[1:])
 	default:
@@ -178,6 +180,7 @@ func runAgentRun(asJSON bool, args []string) int {
 	tracker := runlayer.NewTracker(budgetTokens, budgetUSD, budgetTools)
 	counting := &runlayer.CountingTools{Base: tools, Tracker: tracker}
 	engine := perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}})
+	checkpoints := checkpoint.New(dir)
 	strict := false
 	if _, ok := f["strict"]; ok {
 		strict = true
@@ -188,7 +191,7 @@ func runAgentRun(asJSON bool, args []string) int {
 		Models:      provider,
 		Tools:       counting,
 		Perms:       engine,
-		Checkpoints: checkpoint.New(dir),
+		Checkpoints: checkpoints,
 		Events: func(ev agent.AgentEvent) {
 			if !asJSON {
 				fmt.Fprintf(os.Stderr, "[%s] %s\n", ev.Kind, ev.TurnID)
@@ -221,6 +224,7 @@ func runAgentRun(asJSON bool, args []string) int {
 		_, _ = runlayer.WriteEvidence(filepath.Join(dir, "evidence-"+runID+".json"),
 			runID, string(runner.State.Phase), runner.State.StopReason, tracker.Snapshot(), counting.ReportsCopy())
 		_ = runlayer.BridgeToObservability(filepath.Join(dir, "obs-"+runID+".jsonl"), timeline)
+		_, _ = checkpoints.Prune(5)
 	}
 	if err := runner.RunUntilDone(context.Background()); err != nil {
 		finishRun()
@@ -327,6 +331,7 @@ func appendAgentEvent(path string, ev agent.AgentEvent) {
 	}
 	defer f.Close()
 	_, _ = f.Write(append(data, '\n'))
+	_ = daemon.RotateLog(path, 2000)
 }
 
 func runAgentEvents(asJSON bool, args []string) int {
@@ -429,6 +434,11 @@ func runAgentServe(asJSON bool, args []string) int {
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
+	release, err := daemon.AcquireLock(store)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	defer release()
 	srv := daemon.New(sock, store, daemon.Deps{Tools: tools, Workspace: root})
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
@@ -542,6 +552,23 @@ func runAgentSteer(asJSON bool, args []string) int {
 		return printEnvelope(protocol.OkEnvelope(res))
 	}
 	fmt.Printf("Steered %s\n", runID)
+	return exitOK
+}
+
+func runAgentStop(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	root := f["path"]
+	if root == "" {
+		root = "."
+	}
+	store := filepath.Join(root, ".prumo", "runtime", "harness")
+	if err := daemon.Stop(store); err != nil {
+		return serviceError(asJSON, err)
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(map[string]any{"stopped": true}))
+	}
+	fmt.Println("daemon stopped")
 	return exitOK
 }
 

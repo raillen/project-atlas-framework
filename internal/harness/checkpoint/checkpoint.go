@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/raillen/prumo/internal/harness/agent"
@@ -96,7 +97,62 @@ func (s *Store) Latest(runID string) (agent.Checkpoint, error) {
 	return best, nil
 }
 
-// ---- Side-effect journal ----
+// Prune keeps the newest keep checkpoints per run, deleting older files.
+// Retention without provenance loss: records, events and knowledge stay;
+// only superseded intermediate checkpoints are collected.
+func (s *Store) Prune(keep int) (int, error) {
+	if keep < 1 {
+		keep = 1
+	}
+	entries, err := os.ReadDir(s.Dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	byRun := map[string][]string{}
+	for _, e := range entries {
+		name := e.Name()
+		if len(name) < 12 || name[:11] != "checkpoint-" || !strings.HasSuffix(name, ".json") {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(s.Dir, name))
+		if err != nil {
+			continue
+		}
+		var cp agent.Checkpoint
+		if err := json.Unmarshal(data, &cp); err != nil {
+			continue
+		}
+		byRun[cp.RunID] = append(byRun[cp.RunID], name)
+	}
+	removed := 0
+	for runID, names := range byRun {
+		if len(names) <= keep {
+			continue
+		}
+		type stamped struct {
+			name string
+			at   string
+		}
+		var ordered []stamped
+		for _, name := range names {
+			data, _ := os.ReadFile(filepath.Join(s.Dir, name))
+			var cp agent.Checkpoint
+			_ = json.Unmarshal(data, &cp)
+			ordered = append(ordered, stamped{name, cp.CreatedAt})
+		}
+		sort.Slice(ordered, func(i, j int) bool { return ordered[i].at < ordered[j].at })
+		for _, old := range ordered[:len(ordered)-keep] {
+			if err := os.Remove(filepath.Join(s.Dir, old.name)); err == nil {
+				removed++
+			}
+		}
+		_ = runID
+	}
+	return removed, nil
+}
 
 func (s *Store) loadEffects() []agent.PendingEffect {
 	var out []agent.PendingEffect

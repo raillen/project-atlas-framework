@@ -109,12 +109,14 @@ func (s *Server) appendEvent(runID string, ev agent.AgentEvent) {
 		return
 	}
 	_ = os.MkdirAll(s.StoreDir, 0o755)
-	f, err := os.OpenFile(s.eventPath(runID), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	path := s.eventPath(runID)
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 	if err != nil {
 		return
 	}
 	defer f.Close()
 	_, _ = f.Write(append(data, '\n'))
+	_ = RotateLog(path, 2000)
 }
 
 // Serve blocks until ctx is cancelled.
@@ -255,12 +257,13 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 	tracker := runlayer.NewTracker(0, 0, 0)
 	counting := &runlayer.CountingTools{Base: tools, Tracker: tracker}
 	engine := perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}})
+	checkpoints := checkpoint.New(filepath.Join(dir, "checkpoints"))
 	var timeline []agent.AgentEvent
 	runner := harnessruntime.NewRunner(harnessruntime.Services{
 		Models:      provider,
 		Tools:       counting,
 		Perms:       engine,
-		Checkpoints: checkpoint.New(filepath.Join(dir, "checkpoints")),
+		Checkpoints: checkpoints,
 		Events: func(ev agent.AgentEvent) {
 			s.appendEvent(runID, ev)
 			timeline = append(timeline, ev)
@@ -303,6 +306,7 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 	_, _ = runlayer.WriteEvidence(filepath.Join(dir, "evidence-"+runID+".json"),
 		runID, string(runner.State.Phase), runner.State.StopReason, tracker.Snapshot(), counting.ReportsCopy())
 	_ = runlayer.BridgeToObservability(filepath.Join(dir, "obs-"+runID+".jsonl"), timeline)
+	_, _ = checkpoints.Prune(5)
 	s.appendEvent(runID, agent.AgentEvent{ID: runID + "-finished", RunID: runID, Kind: "run.finished",
 		Payload: map[string]any{"status": status, "phase": string(runner.State.Phase)}, CreatedAt: agent.Now()})
 }

@@ -261,6 +261,16 @@ func TestAgentSteerValidatesFlags(t *testing.T) {
 	}
 }
 
+func TestAgentStopWithoutDaemon(t *testing.T) {
+	dir := t.TempDir()
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "stop", "--path", dir})
+	})
+	if code == 0 {
+		t.Fatal("stop without lock must fail")
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {
