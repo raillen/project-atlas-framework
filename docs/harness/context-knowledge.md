@@ -30,6 +30,11 @@ ValidateDelta/CommitDelta/Supersede/Promote/Refresh/Snapshot. Mutation is
 `KnowledgeDelta → Validate (policy/review) → Commit → KnowledgeChanged →
 derived rebuild` with optimistic-concurrency-friendly supersession.
 
+Run seeding (`knowledge.SeedRequirement/SeedEvidence`): every `agent run`
+and daemon run persists `knowledge-<run>.json` — Requirement from the goal
+at start, Evidence linked at finish — so coverage/readiness hold per run
+without manual bookkeeping. Global promotion still requires Delta review.
+
 ## Contradiction / Coverage / Readiness
 
 Separate engines. Typed `contradicts` edges (never substring heuristics);
