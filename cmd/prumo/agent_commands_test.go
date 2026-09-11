@@ -193,6 +193,30 @@ func TestAgentRunPersistsContextManifest(t *testing.T) {
 		t.Fatalf("goal must pack first: %v", first["ref"])
 	}
 }
+func TestAgentRunSeedsKnowledge(t *testing.T) {
+	dir := t.TempDir()
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "seed knowledge", "--path", dir, "--run", "R-know", "--max-turns", "1"})
+	})
+	if code != 0 {
+		t.Fatalf("agent run failed: code=%d", code)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, ".prumo", "runtime", "harness", "knowledge-R-know.json"))
+	if err != nil {
+		t.Fatalf("knowledge not persisted: %v", err)
+	}
+	var doc struct {
+		Records []map[string]any `json:"records"`
+		Rels    []map[string]any `json:"rels"`
+	}
+	if err := json.Unmarshal(data, &doc); err != nil {
+		t.Fatal(err)
+	}
+	if len(doc.Records) != 2 || len(doc.Rels) != 1 {
+		t.Fatalf("expected seeded requirement+evidence: %+v", doc)
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {

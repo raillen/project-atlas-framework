@@ -211,6 +211,28 @@ func TestEvalMultiAgentWorktree(t *testing.T) {
 	}
 }
 
+func TestEvalSeededRunIsCovered(t *testing.T) {
+	s := knowledge.New()
+	knowledge.SeedRequirement(s, "R-eval-k", "seeded goal")
+	knowledge.SeedEvidence(s, "R-eval-k", "complete", "completed", "cp1")
+	covered, uncovered := s.Coverage()
+	if len(covered) != 1 || len(uncovered) != 0 {
+		t.Fatalf("seeded run must be covered: %v %v", covered, uncovered)
+	}
+	dir := t.TempDir()
+	path := dir + "/knowledge-R-eval-k.json"
+	if err := s.Save(path); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := knowledge.Load(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ready, blockers := loaded.Readiness(); !ready {
+		t.Fatalf("reloaded run must be ready: %v", blockers)
+	}
+}
+
 func TestEvalKnowledgeAndDocs(t *testing.T) {
 	s := knowledge.New()
 	_ = s.Put(knowledge.Record{ID: "req-1", Kind: knowledge.KindRequirement, Title: "harness", Authority: "canonical", Trust: "high", Status: "active"})

@@ -20,6 +20,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
 	"github.com/raillen/prumo/internal/harness/contextv2"
+	"github.com/raillen/prumo/internal/harness/knowledge"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
@@ -262,6 +263,8 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 	}, runID, "S-daemon")
 	runner.MaxTurns = maxTurns
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
+	kstore := knowledge.New()
+	knowledge.SeedRequirement(kstore, runID, goal)
 	err := runner.RunUntilDone(ctx)
 	status := "complete"
 	if err != nil {
@@ -273,6 +276,8 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 		status = "yielded"
 	}
 	s.saveRecord(RunRecord{RunID: runID, Status: status, Phase: string(runner.State.Phase), StopReason: runner.State.StopReason})
+	knowledge.SeedEvidence(kstore, runID, string(runner.State.Phase), runner.State.StopReason, runID+"-latest")
+	_ = kstore.Save(filepath.Join(dir, "knowledge-"+runID+".json"))
 	s.appendEvent(runID, agent.AgentEvent{ID: runID + "-finished", RunID: runID, Kind: "run.finished",
 		Payload: map[string]any{"status": status, "phase": string(runner.State.Phase)}, CreatedAt: agent.Now()})
 }

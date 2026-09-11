@@ -28,6 +28,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/daemon"
 	"github.com/raillen/prumo/internal/harness/extagent"
 	"github.com/raillen/prumo/internal/harness/handoff"
+	"github.com/raillen/prumo/internal/harness/knowledge"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
@@ -179,11 +180,20 @@ func runAgentRun(asJSON bool, args []string) int {
 	}, runID, "S-1")
 	runner.MaxTurns = maxTurns
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
+	kstore := knowledge.New()
+	knowledge.SeedRequirement(kstore, runID, goal)
+	knowledgePath := filepath.Join(dir, "knowledge-"+runID+".json")
+	saveKnowledge := func() {
+		knowledge.SeedEvidence(kstore, runID, string(runner.State.Phase), runner.State.StopReason, runner.State.RunID+"-latest")
+		_ = kstore.Save(knowledgePath)
+	}
 	if err := runner.RunUntilDone(context.Background()); err != nil {
+		saveKnowledge()
 		appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-failed", RunID: runID, Kind: "run.failed", Payload: map[string]any{"error": err.Error()}, CreatedAt: agent.Now()})
 		return serviceError(asJSON, err)
 	}
 	appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-finished", RunID: runID, Kind: "run.finished", Payload: map[string]any{"phase": string(runner.State.Phase), "stop_reason": runner.State.StopReason}, CreatedAt: agent.Now()})
+	saveKnowledge()
 	result := map[string]any{"run_id": runID, "phase": string(runner.State.Phase), "stop_reason": runner.State.StopReason, "revision": runner.State.Revision, "turns": runner.TurnsDone}
 	if asJSON {
 		return printEnvelope(protocol.OkEnvelope(result))
@@ -348,10 +358,10 @@ func runAgentProtocol(asJSON bool, args []string) int {
 		return exitOK
 	}
 	result := map[string]any{
-		"version": harnessprotocol.Version,
+		"version":        harnessprotocol.Version,
 		"min_compatible": harnessprotocol.MinCompatible,
-		"schemas": harnessprotocol.Schemas,
-		"ops":     harnessprotocol.Ops,
+		"schemas":        harnessprotocol.Schemas,
+		"ops":            harnessprotocol.Ops,
 	}
 	if v, ok := f["client"]; ok && v != "" {
 		server, compatible, err := harnessprotocol.Negotiate(v)
