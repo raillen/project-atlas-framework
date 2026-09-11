@@ -72,7 +72,9 @@ Model: fake (deterministic), openai-compat (real HTTP/SSE), anthropic
 (real `/v1/messages` SSE: text, tool_use+partial_json merge, usage,
 overloaded/rate-limit retryability, ctx cancel; httptest-covered, live keys
 environmental via `--api-key`/`PRUMO_MODEL_API_KEY`).
-Agent: opencode-server, codex-cli, fake-agent.
+Agent: opencode-server, codex-cli, fake-agent adapters + availability probe
+(`prumo agent providers`; measured 2026-09-11: opencode-cli 1.18.30 and
+codex-cli 0.153.4 present, no server on 127.0.0.1:4096).
 
 ## Security/sandbox state
 

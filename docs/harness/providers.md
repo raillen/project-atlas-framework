@@ -29,6 +29,25 @@ Models, CreateSession/ResumeSession, Send/Cancel, Approve/Deny, Events, Close.
 
 External state is normalized, never canonical.
 
+## Availability matrix (`prumo agent providers`)
+
+`internal/harness/extagent/probe.go` reports honest availability: binaries +
+versions + server reachability, never assumed interop. Measured 2026-09-11
+(dev host):
+
+```text
+fake             model  available   builtin      deterministic double
+openai-compat    model  unconfigured             needs PRUMO_MODEL_BASE_URL
+anthropic        model  unconfigured             needs PRUMO_MODEL_API_KEY
+opencode-cli     agent  available   1.18.30      binary present
+opencode-server  agent  unavailable              nothing on 127.0.0.1:4096
+codex-cli        agent  available   0.153.4      binary present
+acp-generic      agent  unconfigured             needs PRUMO_ACP_URL
+```
+
+Live session interop against those CLIs/servers is the next matrix step;
+the adapters + probe are the conformance baseline it will run against.
+
 ## Model Gateway (internal, separate from Workforce)
 
 Package `internal/harness/gateway`. `ModelRoute/RouteTarget/ProviderHealth/
