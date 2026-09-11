@@ -188,6 +188,52 @@ func (c Client) Steer(ctx context.Context, runID, message string) error {
 	return err
 }
 
+// Job is one scheduled run template.
+type Job struct {
+	ID        string `json:"job_id"`
+	Goal      string `json:"goal"`
+	EverySecs int64  `json:"every_secs"`
+	NextRun   int64  `json:"next_run"`
+}
+
+// Schedule registers a recurring run (everySecs minimum 5, server-side).
+func (c Client) Schedule(ctx context.Context, goal, provider string, everySecs int64, maxTurns int) (string, error) {
+	out, err := c.call(ctx, map[string]any{"op": "schedule", "goal": goal, "provider": provider, "every_secs": everySecs, "max_turns": maxTurns})
+	if err != nil {
+		return "", err
+	}
+	id, _ := out["job_id"].(string)
+	return id, nil
+}
+
+// Unschedule removes a job.
+func (c Client) Unschedule(ctx context.Context, jobID string) error {
+	_, err := c.call(ctx, map[string]any{"op": "unschedule", "job_id": jobID})
+	return err
+}
+
+// Jobs lists scheduled jobs.
+func (c Client) Jobs(ctx context.Context) ([]Job, error) {
+	out, err := c.call(ctx, map[string]any{"op": "jobs"})
+	if err != nil {
+		return nil, err
+	}
+	raw, _ := out["jobs"].([]any)
+	jobs := make([]Job, 0, len(raw))
+	for _, item := range raw {
+		m, _ := item.(map[string]any)
+		var secs, next int64
+		if v, ok := m["every_secs"].(float64); ok {
+			secs = int64(v)
+		}
+		if v, ok := m["next_run"].(float64); ok {
+			next = int64(v)
+		}
+		jobs = append(jobs, Job{ID: strOf(m, "job_id"), Goal: strOf(m, "goal"), EverySecs: secs, NextRun: next})
+	}
+	return jobs, nil
+}
+
 // ProtocolInfo describes the daemon's IDL.
 type ProtocolInfo struct {
 	Version       string   `json:"version"`

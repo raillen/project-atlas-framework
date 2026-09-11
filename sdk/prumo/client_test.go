@@ -96,6 +96,17 @@ func TestSDKRoundtrip(t *testing.T) {
 	if err := c.Steer(ctx, "R-sdk", "too late"); err == nil {
 		t.Fatal("steer of a finished run must error")
 	}
+	job, err := c.Schedule(ctx, "nightly", "fake", 3600, 1)
+	if err != nil || job == "" {
+		t.Fatalf("schedule failed: %q %v", job, err)
+	}
+	jobs, err := c.Jobs(ctx)
+	if err != nil || len(jobs) != 1 || jobs[0].ID != job {
+		t.Fatalf("jobs failed: %+v %v", jobs, err)
+	}
+	if err := c.Unschedule(ctx, job); err != nil {
+		t.Fatalf("unschedule failed: %v", err)
+	}
 	var _ sdk.RunStatus
 	var _ sdk.Event
 }

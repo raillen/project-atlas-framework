@@ -66,6 +66,12 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentSteer(asJSON, args[1:])
 	case "stop":
 		return runAgentStop(asJSON, args[1:])
+	case "schedule":
+		return runAgentSchedule(asJSON, args[1:])
+	case "unschedule":
+		return runAgentUnschedule(asJSON, args[1:])
+	case "jobs":
+		return runAgentJobs(asJSON, args[1:])
 	case "providers":
 		return runAgentProviders(asJSON, args[1:])
 	default:
@@ -569,6 +575,72 @@ func runAgentStop(asJSON bool, args []string) int {
 		return printEnvelope(protocol.OkEnvelope(map[string]any{"stopped": true}))
 	}
 	fmt.Println("daemon stopped")
+	return exitOK
+}
+
+func runAgentSchedule(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	goal := f["goal"]
+	if goal == "" {
+		return serviceError(asJSON, fmt.Errorf("schedule requires --goal <text>"))
+	}
+	var every float64
+	if v, ok := f["every"]; ok {
+		fmt.Sscanf(v, "%f", &every)
+	}
+	res, err := daemonClient(f).Call(map[string]any{
+		"op": "schedule", "goal": goal, "provider": f["provider"],
+		"every_secs": every, "job_id": f["job"],
+	})
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if ok, _ := res["ok"].(bool); !ok {
+		return serviceError(asJSON, fmt.Errorf("%v", res["error"]))
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+	fmt.Printf("Scheduled %s\n", res["job_id"])
+	return exitOK
+}
+
+func runAgentUnschedule(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	if f["job"] == "" {
+		return serviceError(asJSON, fmt.Errorf("unschedule requires --job <id>"))
+	}
+	res, err := daemonClient(f).Call(map[string]any{"op": "unschedule", "job_id": f["job"]})
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if ok, _ := res["ok"].(bool); !ok {
+		return serviceError(asJSON, fmt.Errorf("%v", res["error"]))
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+	fmt.Printf("Unscheduled %s\n", f["job"])
+	return exitOK
+}
+
+func runAgentJobs(asJSON bool, args []string) int {
+	res, err := daemonClient(agentFlags(args)).Call(map[string]any{"op": "jobs"})
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+	jobs, _ := res["jobs"].([]any)
+	if len(jobs) == 0 {
+		fmt.Println("no jobs")
+		return exitOK
+	}
+	for _, j := range jobs {
+		m, _ := j.(map[string]any)
+		fmt.Printf("%s every=%vs goal=%s\n", m["job_id"], m["every_secs"], m["goal"])
+	}
 	return exitOK
 }
 
