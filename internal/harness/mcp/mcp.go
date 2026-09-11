@@ -9,9 +9,12 @@ package mcp
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os/exec"
 	"sync"
 	"sync/atomic"
@@ -88,6 +91,79 @@ func (p *PipeTransport) Close() error {
 	p.closeOnce.Do(func() { atomic.StoreInt32(&p.closed, 1) })
 	return nil
 }
+
+// HTTPTransport speaks Streamable-HTTP-style JSON-RPC (POST per call).
+// Session continuity uses the Mcp-Session-Id response header when the
+// server provides one; servers without sessions work statelessly. This is
+// the documented subset — SSE streams stay future work.
+type HTTPTransport struct {
+	URL     string
+	Headers map[string]string
+	Client  *http.Client
+
+	mu      sync.Mutex
+	pending [][]byte
+	session string
+}
+
+func (h *HTTPTransport) timeoutClient() *http.Client {
+	if h.Client != nil {
+		return h.Client
+	}
+	return &http.Client{Timeout: 30 * time.Second}
+}
+
+func (h *HTTPTransport) Send(_ context.Context, data []byte) error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	h.pending = append(h.pending, append([]byte{}, data...))
+	return nil
+}
+
+func (h *HTTPTransport) Receive(ctx context.Context) ([]byte, error) {
+	h.mu.Lock()
+	if len(h.pending) == 0 {
+		h.mu.Unlock()
+		return nil, fmt.Errorf("no pending request")
+	}
+	data := h.pending[0]
+	h.pending = h.pending[1:]
+	session := h.session
+	h.mu.Unlock()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, h.URL, bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	for k, v := range h.Headers {
+		req.Header.Set(k, v)
+	}
+	if session != "" {
+		req.Header.Set("Mcp-Session-Id", session)
+	}
+	resp, err := h.timeoutClient().Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("mcp http %d", resp.StatusCode)
+	}
+	if sid := resp.Header.Get("Mcp-Session-Id"); sid != "" {
+		h.mu.Lock()
+		h.session = sid
+		h.mu.Unlock()
+	}
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 4<<20))
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
+func (h *HTTPTransport) Close() error { return nil }
 
 // StdioTransport spawns `bin args...` speaking JSONL on stdio.
 type StdioTransport struct {
