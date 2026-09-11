@@ -1,0 +1,248 @@
+// Package prumo is the public typed SDK for the Prumo Harness daemon.
+//
+// Boundary invariant: this package imports stdlib only — never
+// prumo/internal. It is the client surface the future prumo-code repo (and
+// any third-party client) builds against. Wire shape follows
+// schemas/protocol-manifest.json v0.1.0.
+package prumo
+
+import (
+	"bufio"
+	"context"
+	"encoding/json"
+	"fmt"
+	"net"
+	"time"
+)
+
+// ProtocolVersion is the IDL this SDK speaks.
+const ProtocolVersion = "0.1.0"
+
+// Client talks to a harness daemon over its Unix socket.
+type Client struct {
+	SocketPath string
+	Timeout    time.Duration
+}
+
+func (c Client) timeout() time.Duration {
+	if c.Timeout <= 0 {
+		return 30 * time.Second
+	}
+	return c.Timeout
+}
+
+// Error is a typed daemon-side failure (ok:false payload).
+type Error struct {
+	Op      string
+	Message string
+}
+
+func (e *Error) Error() string { return fmt.Sprintf("daemon op %s: %s", e.Op, e.Message) }
+
+func (c Client) call(ctx context.Context, msg map[string]any) (map[string]any, error) {
+	op, _ := msg["op"].(string)
+	dialer := net.Dialer{Timeout: 5 * time.Second}
+	conn, err := dialer.DialContext(ctx, "unix", c.SocketPath)
+	if err != nil {
+		return nil, fmt.Errorf("dial %s: %w", c.SocketPath, err)
+	}
+	defer conn.Close()
+	if dl, ok := ctx.Deadline(); ok {
+		_ = conn.SetDeadline(dl)
+	} else {
+		_ = conn.SetDeadline(time.Now().Add(c.timeout()))
+	}
+	data, err := json.Marshal(msg)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := conn.Write(append(data, '\n')); err != nil {
+		return nil, err
+	}
+	sc := bufio.NewScanner(conn)
+	sc.Buffer(make([]byte, 4*1024*1024), 4*1024*1024)
+	if !sc.Scan() {
+		if err := sc.Err(); err != nil {
+			return nil, err
+		}
+		return nil, fmt.Errorf("no response from daemon")
+	}
+	var out map[string]any
+	if err := json.Unmarshal(sc.Bytes(), &out); err != nil {
+		return nil, err
+	}
+	if ok, _ := out["ok"].(bool); !ok {
+		msg, _ := out["error"].(string)
+		return nil, &Error{Op: op, Message: msg}
+	}
+	return out, nil
+}
+
+// RunStatus is the observable state of one run.
+type RunStatus struct {
+	RunID      string `json:"run_id"`
+	Status     string `json:"status"`
+	Phase      string `json:"phase"`
+	StopReason string `json:"stop_reason"`
+	Active     bool   `json:"active"`
+}
+
+// StartRequest launches a headless run.
+type StartRequest struct {
+	Goal      string
+	Provider  string
+	Model     string
+	BaseURL   string
+	MaxTurns  int
+	RunID     string
+	Workspace string
+}
+
+// Start launches a run and returns its id.
+func (c Client) Start(ctx context.Context, r StartRequest) (string, error) {
+	maxTurns := r.MaxTurns
+	if maxTurns <= 0 {
+		maxTurns = 5
+	}
+	out, err := c.call(ctx, map[string]any{
+		"op": "start", "goal": r.Goal, "provider": r.Provider, "model": r.Model,
+		"base_url": r.BaseURL, "max_turns": maxTurns, "run_id": r.RunID, "workspace": r.Workspace,
+	})
+	if err != nil {
+		return "", err
+	}
+	id, _ := out["run_id"].(string)
+	return id, nil
+}
+
+// Status queries one run.
+func (c Client) Status(ctx context.Context, runID string) (RunStatus, error) {
+	var st RunStatus
+	out, err := c.call(ctx, map[string]any{"op": "status", "run_id": runID})
+	if err != nil {
+		return st, err
+	}
+	st.RunID, _ = out["run_id"].(string)
+	st.Status, _ = out["status"].(string)
+	st.Phase, _ = out["phase"].(string)
+	st.StopReason, _ = out["stop_reason"].(string)
+	st.Active, _ = out["active"].(bool)
+	return st, nil
+}
+
+// List returns all runs known to the daemon.
+func (c Client) List(ctx context.Context) ([]RunStatus, error) {
+	out, err := c.call(ctx, map[string]any{"op": "list"})
+	if err != nil {
+		return nil, err
+	}
+	raw, _ := out["runs"].([]any)
+	states := make([]RunStatus, 0, len(raw))
+	for _, item := range raw {
+		m, _ := item.(map[string]any)
+		states = append(states, RunStatus{
+			RunID:  strOf(m, "run_id"),
+			Status: strOf(m, "status"),
+			Phase:  strOf(m, "phase"),
+		})
+	}
+	return states, nil
+}
+
+// Event is one timeline unit.
+type Event struct {
+	ID      string         `json:"id"`
+	RunID   string         `json:"run_id"`
+	Kind    string         `json:"kind"`
+	Payload map[string]any `json:"payload"`
+}
+
+// Events replays a run timeline (server-capped).
+func (c Client) Events(ctx context.Context, runID string) ([]Event, error) {
+	out, err := c.call(ctx, map[string]any{"op": "events", "run_id": runID})
+	if err != nil {
+		return nil, err
+	}
+	raw, _ := out["events"].([]any)
+	evs := make([]Event, 0, len(raw))
+	for _, item := range raw {
+		m, _ := item.(map[string]any)
+		ev := Event{ID: strOf(m, "id"), RunID: strOf(m, "run_id"), Kind: strOf(m, "kind")}
+		if p, ok := m["payload"].(map[string]any); ok {
+			ev.Payload = p
+		}
+		evs = append(evs, ev)
+	}
+	return evs, nil
+}
+
+// Cancel stops an active run.
+func (c Client) Cancel(ctx context.Context, runID string) error {
+	_, err := c.call(ctx, map[string]any{"op": "cancel", "run_id": runID})
+	return err
+}
+
+// ProtocolInfo describes the daemon's IDL.
+type ProtocolInfo struct {
+	Version       string   `json:"version"`
+	MinCompatible string   `json:"min_compatible"`
+	Schemas       []string `json:"schemas"`
+	Ops           []string `json:"ops"`
+}
+
+// Protocol fetches the daemon's IDL description.
+func (c Client) Protocol(ctx context.Context) (ProtocolInfo, error) {
+	var info ProtocolInfo
+	out, err := c.call(ctx, map[string]any{"op": "protocol"})
+	if err != nil {
+		return info, err
+	}
+	info.Version, _ = out["version"].(string)
+	info.MinCompatible, _ = out["min_compatible"].(string)
+	for _, s := range toStrSlice(out["schemas"]) {
+		info.Schemas = append(info.Schemas, s)
+	}
+	for _, s := range toStrSlice(out["ops"]) {
+		info.Ops = append(info.Ops, s)
+	}
+	return info, nil
+}
+
+// Wait polls Status until the run leaves "running" or ctx expires.
+func (c Client) Wait(ctx context.Context, runID string, poll time.Duration) (RunStatus, error) {
+	if poll <= 0 {
+		poll = 100 * time.Millisecond
+	}
+	t := time.NewTicker(poll)
+	defer t.Stop()
+	for {
+		st, err := c.Status(ctx, runID)
+		if err != nil {
+			return st, err
+		}
+		if st.Status != "running" {
+			return st, nil
+		}
+		select {
+		case <-ctx.Done():
+			return st, ctx.Err()
+		case <-t.C:
+		}
+	}
+}
+
+func strOf(m map[string]any, k string) string {
+	v, _ := m[k].(string)
+	return v
+}
+
+func toStrSlice(v any) []string {
+	raw, _ := v.([]any)
+	out := make([]string, 0, len(raw))
+	for _, item := range raw {
+		if s, ok := item.(string); ok {
+			out = append(out, s)
+		}
+	}
+	return out
+}
