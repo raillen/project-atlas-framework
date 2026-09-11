@@ -134,6 +134,18 @@ func (s *Server) Serve(ctx context.Context) error {
 		<-ctx.Done()
 		ln.Close()
 	}()
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				s.tickJobs()
+			}
+		}
+	}()
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -190,6 +202,12 @@ func (s *Server) dispatch(msg map[string]any) map[string]any {
 		return s.opCancel(str(msg, "run_id"))
 	case "steer":
 		return s.opSteer(str(msg, "run_id"), str(msg, "message"))
+	case "schedule":
+		return s.opSchedule(msg)
+	case "unschedule":
+		return s.opUnschedule(msg)
+	case "jobs":
+		return s.opJobs()
 	default:
 		return map[string]any{"ok": false, "error": "unknown op"}
 	}

@@ -101,6 +101,22 @@
         ]
       },
       {
+        "name": "schedule",
+        "args": [
+          "goal"
+        ]
+      },
+      {
+        "name": "unschedule",
+        "args": [
+          "job_id"
+        ]
+      },
+      {
+        "name": "jobs",
+        "args": []
+      },
+      {
         "name": "protocol",
         "args": []
       }

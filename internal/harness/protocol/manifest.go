@@ -4,7 +4,7 @@
 package protocol
 
 // Ops lists every daemon/CLI protocol operation in stable order.
-var Ops = []string{"start", "status", "list", "events", "cancel", "steer", "protocol"}
+var Ops = []string{"start", "status", "list", "events", "cancel", "steer", "schedule", "unschedule", "jobs", "protocol"}
 
 // ErrorCodes lists stable machine-readable error codes.
 var ErrorCodes = []string{
@@ -28,7 +28,10 @@ var OpArgs = map[string][]string{
 	"list":     {},
 	"events":   {"run_id"},
 	"cancel":   {"run_id"},
-	"steer":    {"run_id", "message"},
+	"steer":      {"run_id", "message"},
+	"schedule":   {"goal"},
+	"unschedule": {"job_id"},
+	"jobs":       {},
 	"protocol": {},
 }
 
