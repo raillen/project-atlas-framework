@@ -45,6 +45,10 @@ type Record struct {
 	UpdatedAt    string         `json:"updated_at"`
 	Refs         []string       `json:"refs,omitempty"`
 	Meta         map[string]any `json:"meta,omitempty"`
+	// Sensitivity gates cross-project promotion: public|internal|
+	// confidential|restricted. Empty means internal. Restricted never
+	// leaves its project (GAP-018).
+	Sensitivity string `json:"sensitivity,omitempty"`
 }
 
 // Relation is a typed edge between records.

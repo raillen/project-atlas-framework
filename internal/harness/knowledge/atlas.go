@@ -1,11 +1,12 @@
-// Memory Atlas (GAP-018 first slice, page 25 direction): a project-scoped,
-// file-backed memory index feeding the Context Compiler. Records carry
-// provenance/freshness; recall is lexical and bounded. Cross-project
-// promotion with privacy gates remains future work.
+// Memory Atlas (GAP-018): a project-scoped, file-backed memory index
+// feeding the Context Compiler, plus gated cross-project promotion.
+// Records carry provenance/freshness/sensitivity; recall is lexical and
+// bounded.
 package knowledge
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -132,4 +133,81 @@ func SnapshotAtlas(project string, s *Store) Atlas {
 	}
 	sort.Slice(mem, func(i, j int) bool { return mem[i].ID < mem[j].ID })
 	return Atlas{Project: project, Records: mem}
+}
+
+// PromotionPolicy gates cross-project memory promotion.
+type PromotionPolicy struct {
+	// AllowProjects lists target projects; empty denies all cross-project
+	// promotion (local recall unaffected).
+	AllowProjects []string
+	// MaxRecords caps promoted volume per call.
+	MaxRecords int
+}
+
+// PromotionResult reports what crossed the boundary.
+type PromotionResult struct {
+	Promoted []string `json:"promoted"`
+	Denied   []string `json:"denied"`
+}
+
+// Promote copies eligible memory records into the target atlas store:
+// internal/public only — restricted and confidential never leave their
+// project. Provenance is stamped; the source is untouched (copy, not move).
+func Promote(s *Store, ids []string, targetProject string, policy PromotionPolicy, target *Store) (PromotionResult, error) {
+	var res PromotionResult
+	allowed := false
+	for _, p := range policy.AllowProjects {
+		if p == targetProject {
+			allowed = true
+		}
+	}
+	if !allowed {
+		return res, fmt.Errorf("project %q not in promotion allowlist", targetProject)
+	}
+	max := policy.MaxRecords
+	if max <= 0 {
+		max = 25
+	}
+	for _, id := range ids {
+		if len(res.Promoted) >= max {
+			break
+		}
+		r, ok := s.Get(id)
+		if !ok || r.Kind != KindMemory || r.Status != "active" {
+			res.Denied = append(res.Denied, id+":not-found")
+			continue
+		}
+		sens := r.Sensitivity
+		if sens == "" {
+			sens = "internal"
+		}
+		if sens == "restricted" || sens == "confidential" {
+			res.Denied = append(res.Denied, id+":"+sens)
+			continue
+		}
+		cp := r
+		cp.Provenance = "promoted:" + provenanceProject(r) + "→" + targetProject + "|" + r.Provenance
+		cp.UpdatedAt = time.Now().UTC().Format(time.RFC3339Nano)
+		if err := target.Commit(Delta{ID: "promote-" + id, Author: "atlas-promotion", Upserts: []Record{cp}}); err != nil {
+			res.Denied = append(res.Denied, id+":commit-failed")
+			continue
+		}
+		res.Promoted = append(res.Promoted, id)
+	}
+	sort.Strings(res.Promoted)
+	sort.Strings(res.Denied)
+	return res, nil
+}
+
+func provenanceProject(r Record) string {
+	if strings.HasPrefix(r.Provenance, "run:") {
+		return "run"
+	}
+	if i := strings.Index(r.Provenance, "|"); i >= 0 {
+		return r.Provenance
+	}
+	if r.Provenance != "" {
+		return r.Provenance
+	}
+	return "unknown"
 }
