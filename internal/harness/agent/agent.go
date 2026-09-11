@@ -15,30 +15,30 @@ import (
 type Phase string
 
 const (
-	PhasePrepare          Phase = "prepare"
-	PhaseCompileContext   Phase = "compile_context"
-	PhaseRequestModel     Phase = "request_model"
+	PhasePrepare           Phase = "prepare"
+	PhaseCompileContext    Phase = "compile_context"
+	PhaseRequestModel      Phase = "request_model"
 	PhaseConsumeModelEvent Phase = "consume_model_event"
-	PhasePlanToolCalls    Phase = "plan_tool_calls"
-	PhasePermissionCheck  Phase = "permission_check"
-	PhaseExecuteTool      Phase = "execute_tool"
+	PhasePlanToolCalls     Phase = "plan_tool_calls"
+	PhasePermissionCheck   Phase = "permission_check"
+	PhaseExecuteTool       Phase = "execute_tool"
 	PhaseRecordObservation Phase = "record_observation"
-	PhaseEvaluateStop     Phase = "evaluate_stop"
-	PhaseCheckpoint       Phase = "checkpoint"
-	PhaseYield            Phase = "yield"
-	PhaseComplete         Phase = "complete"
-	PhaseFailed           Phase = "failed"
+	PhaseEvaluateStop      Phase = "evaluate_stop"
+	PhaseCheckpoint        Phase = "checkpoint"
+	PhaseYield             Phase = "yield"
+	PhaseComplete          Phase = "complete"
+	PhaseFailed            Phase = "failed"
 )
 
 // Role distinguishes message authors without leaking vendor roles.
 type Role string
 
 const (
-	RoleSystem    Role = "system"
-	RoleUser      Role = "user"
-	RoleAgent     Role = "agent"
-	RoleTool      Role = "tool"
-	RoleApprover  Role = "approver"
+	RoleSystem   Role = "system"
+	RoleUser     Role = "user"
+	RoleAgent    Role = "agent"
+	RoleTool     Role = "tool"
+	RoleApprover Role = "approver"
 )
 
 // Message is a normalized conversation unit.
@@ -53,15 +53,15 @@ type Message struct {
 
 // Turn groups one model call + its tool calls + observations.
 type Turn struct {
-	ID           string   `json:"id"`
-	RunID        string   `json:"run_id"`
-	SessionID    string   `json:"session_id"`
-	Index        int      `json:"index"`
-	MessageIDs   []string `json:"message_ids,omitempty"`
-	ToolCallIDs  []string `json:"tool_call_ids,omitempty"`
-	Status       string   `json:"status"`
-	StartedAt    string   `json:"started_at"`
-	EndedAt      string   `json:"ended_at,omitempty"`
+	ID          string   `json:"id"`
+	RunID       string   `json:"run_id"`
+	SessionID   string   `json:"session_id"`
+	Index       int      `json:"index"`
+	MessageIDs  []string `json:"message_ids,omitempty"`
+	ToolCallIDs []string `json:"tool_call_ids,omitempty"`
+	Status      string   `json:"status"`
+	StartedAt   string   `json:"started_at"`
+	EndedAt     string   `json:"ended_at,omitempty"`
 }
 
 // ToolCall is a vendor-neutral tool invocation request.
@@ -104,20 +104,20 @@ const (
 
 // PermissionRequest carries enough context for policy without LLM enforcement.
 type PermissionRequest struct {
-	ID               string         `json:"id"`
-	RunID            string         `json:"run_id"`
-	TurnID           string         `json:"turn_id"`
-	Agent            string         `json:"agent,omitempty"`
-	Action           string         `json:"action"`
-	Resource         string         `json:"resource,omitempty"`
-	ArgumentsSummary string         `json:"arguments_summary,omitempty"`
-	FilesystemScope  []string       `json:"filesystem_scope,omitempty"`
-	NetworkDests     []string       `json:"network_dests,omitempty"`
-	CredentialScopes []string       `json:"credential_scopes,omitempty"`
-	DataClass        string         `json:"data_class,omitempty"`
-	Reversibility    string         `json:"reversibility,omitempty"`
-	Risk             string         `json:"risk,omitempty"`
-	CreatedAt        string         `json:"created_at"`
+	ID               string   `json:"id"`
+	RunID            string   `json:"run_id"`
+	TurnID           string   `json:"turn_id"`
+	Agent            string   `json:"agent,omitempty"`
+	Action           string   `json:"action"`
+	Resource         string   `json:"resource,omitempty"`
+	ArgumentsSummary string   `json:"arguments_summary,omitempty"`
+	FilesystemScope  []string `json:"filesystem_scope,omitempty"`
+	NetworkDests     []string `json:"network_dests,omitempty"`
+	CredentialScopes []string `json:"credential_scopes,omitempty"`
+	DataClass        string   `json:"data_class,omitempty"`
+	Reversibility    string   `json:"reversibility,omitempty"`
+	Risk             string   `json:"risk,omitempty"`
+	CreatedAt        string   `json:"created_at"`
 }
 
 // PermissionResolution is the persisted approval event.
@@ -155,27 +155,27 @@ type ToolSpec struct {
 type ModelEventKind string
 
 const (
-	EventTextDelta       ModelEventKind = "text_delta"
-	EventReasoningDelta  ModelEventKind = "reasoning_delta"
-	EventToolCallDelta   ModelEventKind = "tool_call_delta"
-	EventToolCallReady   ModelEventKind = "tool_call_ready"
-	EventUsageUpdated    ModelEventKind = "usage_updated"
-	EventWarning         ModelEventKind = "warning"
-	EventError           ModelEventKind = "error"
-	EventCompleted       ModelEventKind = "completed"
-	EventCancelled       ModelEventKind = "cancelled"
+	EventTextDelta      ModelEventKind = "text_delta"
+	EventReasoningDelta ModelEventKind = "reasoning_delta"
+	EventToolCallDelta  ModelEventKind = "tool_call_delta"
+	EventToolCallReady  ModelEventKind = "tool_call_ready"
+	EventUsageUpdated   ModelEventKind = "usage_updated"
+	EventWarning        ModelEventKind = "warning"
+	EventError          ModelEventKind = "error"
+	EventCompleted      ModelEventKind = "completed"
+	EventCancelled      ModelEventKind = "cancelled"
 )
 
 // ModelEvent is a single normalized stream unit.
 type ModelEvent struct {
-	Kind       ModelEventKind `json:"kind"`
-	RequestID  string         `json:"request_id"`
-	Text       string         `json:"text,omitempty"`
-	ToolCall   *ToolCall      `json:"tool_call,omitempty"`
-	Usage      *Usage         `json:"usage,omitempty"`
-	Error      string         `json:"error,omitempty"`
-	Retryable  bool           `json:"retryable,omitempty"`
-	Finished   bool           `json:"finished,omitempty"`
+	Kind      ModelEventKind `json:"kind"`
+	RequestID string         `json:"request_id"`
+	Text      string         `json:"text,omitempty"`
+	ToolCall  *ToolCall      `json:"tool_call,omitempty"`
+	Usage     *Usage         `json:"usage,omitempty"`
+	Error     string         `json:"error,omitempty"`
+	Retryable bool           `json:"retryable,omitempty"`
+	Finished  bool           `json:"finished,omitempty"`
 }
 
 // Usage normalizes token/cost telemetry.
@@ -188,52 +188,52 @@ type Usage struct {
 // NativeAgentState is the canonical resumable state. Provider-private
 // reasoning is never required here.
 type NativeAgentState struct {
-	RunID          string         `json:"run_id"`
-	SessionID      string         `json:"session_id"`
-	TurnID         string         `json:"turn_id"`
-	Phase          Phase          `json:"phase"`
-	Revision       int            `json:"revision"`
-	ContextManifestID string      `json:"context_manifest_id,omitempty"`
-	ModelRoute     string         `json:"model_route,omitempty"`
-	PendingRequest *ModelRequest  `json:"pending_request,omitempty"`
-	PendingTools   []ToolCall     `json:"pending_tools,omitempty"`
-	PendingPerms   []string       `json:"pending_permissions,omitempty"`
-	StopReason     string         `json:"stop_reason,omitempty"`
-	Budget         map[string]any `json:"budget,omitempty"`
-	UpdatedAt      string         `json:"updated_at"`
+	RunID             string         `json:"run_id"`
+	SessionID         string         `json:"session_id"`
+	TurnID            string         `json:"turn_id"`
+	Phase             Phase          `json:"phase"`
+	Revision          int            `json:"revision"`
+	ContextManifestID string         `json:"context_manifest_id,omitempty"`
+	ModelRoute        string         `json:"model_route,omitempty"`
+	PendingRequest    *ModelRequest  `json:"pending_request,omitempty"`
+	PendingTools      []ToolCall     `json:"pending_tools,omitempty"`
+	PendingPerms      []string       `json:"pending_permissions,omitempty"`
+	StopReason        string         `json:"stop_reason,omitempty"`
+	Budget            map[string]any `json:"budget,omitempty"`
+	UpdatedAt         string         `json:"updated_at"`
 }
 
 // Checkpoint persists a safe-point snapshot.
 type Checkpoint struct {
-	ID          string           `json:"id"`
-	RunID       string           `json:"run_id"`
-	State       NativeAgentState `json:"state"`
-	WorkspaceRev string          `json:"workspace_rev,omitempty"`
-	CreatedAt   string           `json:"created_at"`
+	ID           string           `json:"id"`
+	RunID        string           `json:"run_id"`
+	State        NativeAgentState `json:"state"`
+	WorkspaceRev string           `json:"workspace_rev,omitempty"`
+	CreatedAt    string           `json:"created_at"`
 }
 
 // Continuation is the pointer-first resume bundle (no full transcript).
 type Continuation struct {
-	RunID             string   `json:"run_id"`
-	CheckpointID      string   `json:"checkpoint_id"`
-	ContextManifestID string   `json:"context_manifest_id,omitempty"`
-	Summary           string   `json:"summary,omitempty"`
+	RunID             string            `json:"run_id"`
+	CheckpointID      string            `json:"checkpoint_id"`
+	ContextManifestID string            `json:"context_manifest_id,omitempty"`
+	Summary           string            `json:"summary,omitempty"`
 	Refs              map[string]string `json:"refs,omitempty"`
 }
 
 // Handoff carries typed refs across agents/providers.
 type Handoff struct {
-	ID               string            `json:"id"`
-	From             string            `json:"from"`
-	To               string            `json:"to"`
-	RunID            string            `json:"run_id"`
-	GoalID           string            `json:"goal_id,omitempty"`
-	CheckpointID     string            `json:"checkpoint_id,omitempty"`
-	WorkspaceRev     string            `json:"workspace_rev,omitempty"`
-	ContextManifestID string           `json:"context_manifest_id,omitempty"`
-	Refs             map[string]string `json:"refs,omitempty"`
-	Summary          string            `json:"summary,omitempty"`
-	CreatedAt        string            `json:"created_at"`
+	ID                string            `json:"id"`
+	From              string            `json:"from"`
+	To                string            `json:"to"`
+	RunID             string            `json:"run_id"`
+	GoalID            string            `json:"goal_id,omitempty"`
+	CheckpointID      string            `json:"checkpoint_id,omitempty"`
+	WorkspaceRev      string            `json:"workspace_rev,omitempty"`
+	ContextManifestID string            `json:"context_manifest_id,omitempty"`
+	Refs              map[string]string `json:"refs,omitempty"`
+	Summary           string            `json:"summary,omitempty"`
+	CreatedAt         string            `json:"created_at"`
 }
 
 // AgentEvent is the normalized timeline unit for observability.
@@ -258,22 +258,22 @@ type DomainEvent struct {
 type EffectStatus string
 
 const (
-	EffectPending   EffectStatus = "pending"
-	EffectApplied   EffectStatus = "applied"
-	EffectFailed    EffectStatus = "failed"
+	EffectPending    EffectStatus = "pending"
+	EffectApplied    EffectStatus = "applied"
+	EffectFailed     EffectStatus = "failed"
 	EffectRolledBack EffectStatus = "rolled_back"
 )
 
 // PendingEffect has idempotency + recovery policy; duplicates must be zero.
 type PendingEffect struct {
-	ID              string       `json:"id"`
-	Kind            string       `json:"kind"`
-	Status          EffectStatus `json:"status"`
-	IdempotencyKey  string       `json:"idempotency_key"`
-	Target          string       `json:"target,omitempty"`
-	ObservableEffect string      `json:"observable_effect,omitempty"`
-	RecoveryPolicy  string       `json:"recovery_policy,omitempty"`
-	CreatedAt       string       `json:"created_at"`
+	ID               string       `json:"id"`
+	Kind             string       `json:"kind"`
+	Status           EffectStatus `json:"status"`
+	IdempotencyKey   string       `json:"idempotency_key"`
+	Target           string       `json:"target,omitempty"`
+	ObservableEffect string       `json:"observable_effect,omitempty"`
+	RecoveryPolicy   string       `json:"recovery_policy,omitempty"`
+	CreatedAt        string       `json:"created_at"`
 }
 
 // NewID helpers avoid hidden globals; callers inject ids in production.

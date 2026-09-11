@@ -15,18 +15,18 @@ import (
 type Delegation string
 
 const (
-	DelegationSolo       Delegation = "solo"
-	DelegationManual     Delegation = "manual"
-	DelegationSuggested  Delegation = "suggested"
+	DelegationSolo        Delegation = "solo"
+	DelegationManual      Delegation = "manual"
+	DelegationSuggested   Delegation = "suggested"
 	DelegationBoundedAuto Delegation = "bounded_auto"
 )
 
 // Role is one agent binding.
 type Role struct {
-	Name      string `json:"name"`
-	Binding   string `json:"binding"` // provider/agent id
+	Name      string             `json:"name"`
+	Binding   string             `json:"binding"` // provider/agent id
 	Budget    map[string]float64 `json:"budget,omitempty"`
-	Workspace string `json:"workspace,omitempty"`
+	Workspace string             `json:"workspace,omitempty"`
 }
 
 // Team groups roles with explicit ownership.
@@ -74,6 +74,6 @@ type ReviewInput struct {
 
 // ReviewVerdict is the explicit review outcome.
 type ReviewVerdict struct {
-	 Approve bool   `json:"approve"`
-	 Notes  string `json:"notes,omitempty"`
+	Approve bool   `json:"approve"`
+	Notes   string `json:"notes,omitempty"`
 }

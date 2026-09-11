@@ -184,9 +184,9 @@ func (a *Anthropic) consumeSSE(ctx context.Context, req agent.ModelRequest, resp
 				PartialJSON string `json:"partial_json"`
 			} `json:"delta"`
 			ContentBlock *struct {
-				Type  string `json:"type"`
-				ID    string `json:"id"`
-				Name  string `json:"name"`
+				Type string `json:"type"`
+				ID   string `json:"id"`
+				Name string `json:"name"`
 			} `json:"content_block"`
 			Usage *struct {
 				InputTokens  int `json:"input_tokens"`

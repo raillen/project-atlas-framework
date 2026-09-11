@@ -122,8 +122,8 @@ func Write(path, content string) (Artifact, error) {
 
 // Manifest describes one build for provenance.
 type Manifest struct {
-	Order       []string `json:"order"`
-	Fingerprint string   `json:"fingerprint"`
+	Order       []string   `json:"order"`
+	Fingerprint string     `json:"fingerprint"`
 	Artifacts   []Artifact `json:"artifacts"`
 }
 

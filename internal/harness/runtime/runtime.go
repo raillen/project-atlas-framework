@@ -15,11 +15,11 @@ import (
 
 // Services wires the ports the loop depends on (no vendor types).
 type Services struct {
-	Models     model.Provider
-	Tools      ToolExecutor
-	Perms      *perm.Engine
+	Models      model.Provider
+	Tools       ToolExecutor
+	Perms       *perm.Engine
 	Checkpoints *checkpoint.Store
-	Events     func(agent.AgentEvent)
+	Events      func(agent.AgentEvent)
 	// ContextManifest builds the context pointer for a turn.
 	ContextManifest func(ctx context.Context, state agent.NativeAgentState) (string, error)
 	// Budgets enforcement hook; nil disables.
@@ -52,9 +52,9 @@ type Runner struct {
 // NewRunner initializes a Run session.
 func NewRunner(svc Services, runID, sessionID string) *Runner {
 	return &Runner{
-		Svc: svc,
-		State: agent.NativeAgentState{RunID: runID, SessionID: sessionID, TurnID: "turn-1", Phase: agent.PhasePrepare, Revision: 1, UpdatedAt: agent.Now()},
-		Turn: agent.Turn{ID: "turn-1", RunID: runID, SessionID: sessionID, Index: 1, Status: "open", StartedAt: agent.Now()},
+		Svc:      svc,
+		State:    agent.NativeAgentState{RunID: runID, SessionID: sessionID, TurnID: "turn-1", Phase: agent.PhasePrepare, Revision: 1, UpdatedAt: agent.Now()},
+		Turn:     agent.Turn{ID: "turn-1", RunID: runID, SessionID: sessionID, Index: 1, Status: "open", StartedAt: agent.Now()},
 		MaxTurns: 10,
 	}
 }

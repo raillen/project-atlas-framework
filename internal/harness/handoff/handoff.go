@@ -38,7 +38,7 @@ func Build(from, to string, state agent.NativeAgentState, workspaceRev, summary 
 		refs[k] = v
 	}
 	h := agent.Handoff{
-		ID: fmt.Sprintf("handoff-%s-%d", state.RunID, time.Now().UTC().UnixNano()),
+		ID:   fmt.Sprintf("handoff-%s-%d", state.RunID, time.Now().UTC().UnixNano()),
 		From: from, To: to, RunID: state.RunID,
 		CheckpointID: refs["checkpoint"], WorkspaceRev: workspaceRev,
 		ContextManifestID: state.ContextManifestID, Refs: refs,

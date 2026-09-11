@@ -32,19 +32,19 @@ const (
 
 // Record is one typed knowledge unit.
 type Record struct {
-	ID         string         `json:"id"`
-	Kind       Kind           `json:"kind"`
-	Title      string         `json:"title"`
-	Body       string         `json:"body,omitempty"`
-	Authority  string         `json:"authority"` // canonical|reference|imported|untrusted
-	Trust      string         `json:"trust"`     // high|medium|low
-	Status     string         `json:"status"`    // active|superseded|deprecated|draft
-	Provenance string         `json:"provenance,omitempty"`
-	Supersedes string         `json:"supersedes,omitempty"`
-	SupersededBy string       `json:"superseded_by,omitempty"`
-	UpdatedAt  string         `json:"updated_at"`
-	Refs       []string       `json:"refs,omitempty"`
-	Meta       map[string]any `json:"meta,omitempty"`
+	ID           string         `json:"id"`
+	Kind         Kind           `json:"kind"`
+	Title        string         `json:"title"`
+	Body         string         `json:"body,omitempty"`
+	Authority    string         `json:"authority"` // canonical|reference|imported|untrusted
+	Trust        string         `json:"trust"`     // high|medium|low
+	Status       string         `json:"status"`    // active|superseded|deprecated|draft
+	Provenance   string         `json:"provenance,omitempty"`
+	Supersedes   string         `json:"supersedes,omitempty"`
+	SupersededBy string         `json:"superseded_by,omitempty"`
+	UpdatedAt    string         `json:"updated_at"`
+	Refs         []string       `json:"refs,omitempty"`
+	Meta         map[string]any `json:"meta,omitempty"`
 }
 
 // Relation is a typed edge between records.
@@ -139,11 +139,11 @@ func (s *Store) Affected(id string) []Record {
 
 // Delta is one proposed mutation batch.
 type Delta struct {
-	ID      string   `json:"id"`
-	Author  string   `json:"author"`
-	Upserts []Record `json:"upserts,omitempty"`
+	ID      string     `json:"id"`
+	Author  string     `json:"author"`
+	Upserts []Record   `json:"upserts,omitempty"`
 	Links   []Relation `json:"links,omitempty"`
-	Reason  string   `json:"reason,omitempty"`
+	Reason  string     `json:"reason,omitempty"`
 }
 
 // Validate enforces policy/review gates without committing.

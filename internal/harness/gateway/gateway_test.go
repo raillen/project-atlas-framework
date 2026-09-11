@@ -50,8 +50,8 @@ type named struct {
 	p    *model.FakeProvider
 }
 
-func (n named) Name() string                        { return n.name }
-func (n named) Capabilities() model.Capabilities    { return n.p.Capabilities() }
+func (n named) Name() string                                 { return n.name }
+func (n named) Capabilities() model.Capabilities             { return n.p.Capabilities() }
 func (n named) Models(ctx context.Context) ([]string, error) { return n.p.Models(ctx) }
 func (n named) Health(ctx context.Context) (string, error)   { return n.p.Health(ctx) }
 func (n named) Stream(ctx context.Context, r agent.ModelRequest) (<-chan agent.ModelEvent, error) {

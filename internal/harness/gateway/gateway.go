@@ -30,9 +30,9 @@ type ModelRoute struct {
 
 // Health tracks per-provider circuit state.
 type Health struct {
-	Status       string `json:"status"` // healthy|degraded|open
-	Failures     int    `json:"failures"`
-	LastFailure  string `json:"last_failure,omitempty"`
+	Status        string `json:"status"` // healthy|degraded|open
+	Failures      int    `json:"failures"`
+	LastFailure   string `json:"last_failure,omitempty"`
 	CooldownUntil string `json:"cooldown_until,omitempty"`
 }
 

@@ -13,17 +13,17 @@ import (
 
 // Item is one retrieval candidate.
 type Item struct {
-	Ref        string  `json:"ref"`
-	Authority  string  `json:"authority"` // canonical|reference|imported|untrusted
-	Trust      string  `json:"trust"`     // high|medium|low
-	Privacy    string  `json:"privacy"`   // public|internal|confidential|restricted
-	Freshness  string  `json:"freshness"` // ISO time or "current"
-	Rev        string  `json:"rev,omitempty"`
-	Score      float64 `json:"score"`
-	Method     string  `json:"method"` // exact|fts|semantic|graph
-	TokenCost  int     `json:"token_cost"`
-	Content    string  `json:"content,omitempty"`
-	DependsOn  []string `json:"depends_on,omitempty"`
+	Ref       string   `json:"ref"`
+	Authority string   `json:"authority"` // canonical|reference|imported|untrusted
+	Trust     string   `json:"trust"`     // high|medium|low
+	Privacy   string   `json:"privacy"`   // public|internal|confidential|restricted
+	Freshness string   `json:"freshness"` // ISO time or "current"
+	Rev       string   `json:"rev,omitempty"`
+	Score     float64  `json:"score"`
+	Method    string   `json:"method"` // exact|fts|semantic|graph
+	TokenCost int      `json:"token_cost"`
+	Content   string   `json:"content,omitempty"`
+	DependsOn []string `json:"depends_on,omitempty"`
 }
 
 // Manifest is the replayable v2 output.

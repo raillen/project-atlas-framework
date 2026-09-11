@@ -64,7 +64,7 @@ func TestPermissionDenial(t *testing.T) {
 	fake := model.NewFake(map[string][]model.ScriptStep{"*": []model.ScriptStep{{Kind: "tool_call", Tool: &agent.ToolCall{ID: "c1", Name: "edit.patch", IdempotencyKey: "k"}}, {Kind: "complete"}}})
 	r := NewRunner(Services{
 		Models: fake, Tools: &stubTools{kinds: map[string]string{"edit.patch": "destructive"}},
-		Perms: perm.New(perm.Policy{DefaultAction: agent.PermissionDeny}),
+		Perms:       perm.New(perm.Policy{DefaultAction: agent.PermissionDeny}),
 		Checkpoints: checkpoint.New(t.TempDir()),
 	}, "R3", "S1")
 	r.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: "x"}}
@@ -101,7 +101,7 @@ func TestBudgetExhaustion(t *testing.T) {
 	fake := model.NewFake(map[string][]model.ScriptStep{"*": []model.ScriptStep{{Kind: "usage", Usage: &agent.Usage{InputTokens: 1000000, OutputTokens: 0}}, {Kind: "complete"}}})
 	r := NewRunner(Services{
 		Models: fake, Tools: &stubTools{}, Perms: perm.New(perm.Policy{DefaultAction: agent.PermissionAllow}),
-		Checkpoints: checkpoint.New(t.TempDir()),
+		Checkpoints:   checkpoint.New(t.TempDir()),
 		ConsumeBudget: func(u agent.Usage) error { return errors.New("hard budget exhausted") },
 	}, "R5", "S1")
 	r.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: "x"}}
