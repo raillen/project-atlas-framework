@@ -133,6 +133,15 @@ func (a *Anthropic) consumeSSE(ctx context.Context, req agent.ModelRequest, resp
 	sc.Buffer(make([]byte, 1024*1024), 1024*1024)
 	eventName := ""
 	tools := map[int]*anthropicToolBuf{}
+	emit := func(ev agent.ModelEvent) bool {
+		select {
+		case <-ctx.Done():
+			ch <- agent.ModelEvent{Kind: agent.EventCancelled, RequestID: req.RequestID}
+			return false
+		case ch <- ev:
+			return true
+		}
+	}
 	flush := func(index int) {
 		buf, ok := tools[index]
 		if !ok || buf.name == "" {
@@ -142,6 +151,11 @@ func (a *Anthropic) consumeSSE(ctx context.Context, req agent.ModelRequest, resp
 		if s := buf.json.String(); s != "" {
 			_ = json.Unmarshal([]byte(s), &args)
 		}
+		if err := ValidateArgs(req.Tools, buf.name, args); err != nil {
+			emit(agent.ModelEvent{Kind: agent.EventError, RequestID: req.RequestID, Error: "invalid tool call: " + err.Error(), Retryable: false})
+			delete(tools, index)
+			return
+		}
 		id := buf.id
 		if id == "" {
 			id = fmt.Sprintf("tool-%d", index)
@@ -149,15 +163,6 @@ func (a *Anthropic) consumeSSE(ctx context.Context, req agent.ModelRequest, resp
 		ch <- agent.ModelEvent{Kind: agent.EventToolCallReady, RequestID: req.RequestID,
 			ToolCall: &agent.ToolCall{ID: id, TurnID: req.TurnID, Name: buf.name, Arguments: args, IdempotencyKey: req.RequestID + ":" + id}}
 		delete(tools, index)
-	}
-	emit := func(ev agent.ModelEvent) bool {
-		select {
-		case <-ctx.Done():
-			ch <- agent.ModelEvent{Kind: agent.EventCancelled, RequestID: req.RequestID}
-			return false
-		case ch <- ev:
-			return true
-		}
 	}
 	for sc.Scan() {
 		select {

@@ -133,15 +133,18 @@ type PermissionResolution struct {
 
 // ModelRequest is what the NativeAgent asks a ModelProvider to do.
 type ModelRequest struct {
-	RequestID   string         `json:"request_id"`
-	RunID       string         `json:"run_id"`
-	TurnID      string         `json:"turn_id"`
-	Model       string         `json:"model"`
-	Messages    []Message      `json:"messages"`
-	Tools       []ToolSpec     `json:"tools,omitempty"`
-	MaxTokens   int            `json:"max_tokens,omitempty"`
-	Temperature float64        `json:"temperature,omitempty"`
-	Metadata    map[string]any `json:"metadata,omitempty"`
+	RequestID string     `json:"request_id"`
+	RunID     string     `json:"run_id"`
+	TurnID    string     `json:"turn_id"`
+	Model     string     `json:"model"`
+	Messages  []Message  `json:"messages"`
+	Tools     []ToolSpec `json:"tools,omitempty"`
+	// ResponseFormat, when set, requests JSON-schema-shaped output
+	// (OpenAI json_schema; other providers best-effort, documented).
+	ResponseFormat map[string]any `json:"response_format,omitempty"`
+	MaxTokens      int            `json:"max_tokens,omitempty"`
+	Temperature    float64        `json:"temperature,omitempty"`
+	Metadata       map[string]any `json:"metadata,omitempty"`
 }
 
 // ToolSpec advertises one callable tool to the model.

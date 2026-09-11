@@ -232,7 +232,23 @@ func (o *OpenAICompat) Stream(ctx context.Context, req agent.ModelRequest) (<-ch
 	for _, m := range req.Messages {
 		msgs = append(msgs, chatMessage{Role: string(m.Role), Content: m.Content})
 	}
-	body, _ := json.Marshal(map[string]any{"model": model, "messages": msgs, "stream": true})
+	payload := map[string]any{"model": model, "messages": msgs, "stream": true}
+	if len(req.Tools) > 0 {
+		tools := make([]any, 0, len(req.Tools))
+		for _, ts := range req.Tools {
+			tools = append(tools, map[string]any{
+				"type": "function",
+				"function": map[string]any{
+					"name": ts.Name, "description": ts.Description, "parameters": ts.Schema,
+				},
+			})
+		}
+		payload["tools"] = tools
+	}
+	if len(req.ResponseFormat) > 0 {
+		payload["response_format"] = map[string]any{"type": "json_schema", "json_schema": req.ResponseFormat}
+	}
+	body, _ := json.Marshal(payload)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, o.BaseURL+"/chat/completions", bytes.NewReader(body))
 	if err != nil {
 		return nil, err
@@ -314,6 +330,10 @@ func (o *OpenAICompat) Stream(ctx context.Context, req agent.ModelRequest) (<-ch
 					args := map[string]any{}
 					if tc.Function.Arguments != "" {
 						_ = json.Unmarshal([]byte(tc.Function.Arguments), &args)
+					}
+					if err := ValidateArgs(req.Tools, tc.Function.Name, args); err != nil {
+						ch <- agent.ModelEvent{Kind: agent.EventError, RequestID: req.RequestID, Error: "invalid tool call: " + err.Error(), Retryable: false}
+						continue
 					}
 					ch <- agent.ModelEvent{Kind: agent.EventToolCallReady, RequestID: req.RequestID, ToolCall: &agent.ToolCall{ID: tc.ID, TurnID: req.TurnID, Name: tc.Function.Name, Arguments: args, IdempotencyKey: req.RequestID + ":" + tc.ID}}
 				}
