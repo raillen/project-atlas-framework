@@ -16,9 +16,92 @@ import (
 
 // RouteTarget is one selectable provider+model.
 type RouteTarget struct {
-	Provider string `json:"provider"`
-	Model    string `json:"model"`
-	Weight   int    `json:"weight,omitempty"`
+	Provider   string  `json:"provider"`
+	Model      string  `json:"model"`
+	Weight     int     `json:"weight,omitempty"`
+	Tools      bool    `json:"tools,omitempty"`
+	Structured bool    `json:"structured_output,omitempty"`
+	Latency    string  `json:"latency,omitempty"`     // fast|standard|deep
+	Privacy    string  `json:"privacy,omitempty"`     // local|trusted|external
+	CostPer1k  float64 `json:"cost_per_1k,omitempty"` // blended USD, 0 = unknown
+}
+
+// Select picks primary+fallbacks: healthy first, deterministic order.
+func (g *Gateway) Select(targets []RouteTarget) ModelRoute {
+	return g.SelectWithPolicy(targets, Policy{})
+}
+
+// Policy tunes selection beyond healthy-first (GAP-005 first slice).
+type Policy struct {
+	// Prefer orders healthy targets: "cheap" (cost asc, unknown last),
+	// "fast" (latency rank), "" keeps deterministic provider order.
+	Prefer string
+	// RequireTools/RequireStructured filter incapable targets.
+	RequireTools      bool
+	RequireStructured bool
+	// LocalOnly keeps privacy=local targets (restricted data classes).
+	LocalOnly bool
+	// AllowedProviders restricts the pool; empty allows all.
+	AllowedProviders []string
+}
+
+// SelectWithPolicy filters by capability/privacy/pool, then orders healthy
+// targets by policy preference with deterministic tiebreaks.
+func (g *Gateway) SelectWithPolicy(targets []RouteTarget, p Policy) ModelRoute {
+	allowed := map[string]bool{}
+	for _, a := range p.AllowedProviders {
+		allowed[a] = true
+	}
+	kept := []RouteTarget{}
+	for _, t := range targets {
+		if len(allowed) > 0 && !allowed[t.Provider] {
+			continue
+		}
+		if p.RequireTools && !t.Tools {
+			continue
+		}
+		if p.RequireStructured && !t.Structured {
+			continue
+		}
+		if p.LocalOnly && t.Privacy != "" && t.Privacy != "local" {
+			continue
+		}
+		kept = append(kept, t)
+	}
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	healthy, degraded := []RouteTarget{}, []RouteTarget{}
+	for _, t := range kept {
+		h := g.health[t.Provider]
+		if h == nil || h.Status == "healthy" {
+			healthy = append(healthy, t)
+		} else if h.Status == "degraded" {
+			degraded = append(degraded, t)
+		}
+	}
+	order := func(ts []RouteTarget) {
+		sort.SliceStable(ts, func(i, j int) bool { return ts[i].Provider < ts[j].Provider })
+		switch p.Prefer {
+		case "cheap":
+			sort.SliceStable(ts, func(i, j int) bool {
+				a, b := ts[i].CostPer1k, ts[j].CostPer1k
+				if (a == 0) != (b == 0) {
+					return b == 0 // known costs first
+				}
+				return a < b
+			})
+		case "fast":
+			rank := map[string]int{"fast": 0, "standard": 1, "deep": 2, "": 3}
+			sort.SliceStable(ts, func(i, j int) bool { return rank[ts[i].Latency] < rank[ts[j].Latency] })
+		}
+	}
+	order(healthy)
+	order(degraded)
+	ordered := append(healthy, degraded...)
+	if len(ordered) == 0 {
+		return ModelRoute{}
+	}
+	return ModelRoute{Primary: ordered[0], Fallbacks: ordered[1:], Reason: "policy-ordered deterministic"}
 }
 
 // ModelRoute is the chosen route with fallbacks.
@@ -68,27 +151,6 @@ func (g *Gateway) Register(p model.Provider) {
 	defer g.mu.Unlock()
 	g.providers[p.Name()] = p
 	g.health[p.Name()] = &Health{Status: "healthy"}
-}
-
-// Select picks primary+fallbacks: healthy first, deterministic order.
-func (g *Gateway) Select(targets []RouteTarget) ModelRoute {
-	g.mu.Lock()
-	defer g.mu.Unlock()
-	healthy, degraded := []RouteTarget{}, []RouteTarget{}
-	for _, t := range targets {
-		h := g.health[t.Provider]
-		if h == nil || h.Status == "healthy" {
-			healthy = append(healthy, t)
-		} else if h.Status == "degraded" {
-			degraded = append(degraded, t)
-		}
-	}
-	sort.Slice(healthy, func(i, j int) bool { return healthy[i].Provider < healthy[j].Provider })
-	ordered := append(healthy, degraded...)
-	if len(ordered) == 0 {
-		return ModelRoute{}
-	}
-	return ModelRoute{Primary: ordered[0], Fallbacks: ordered[1:], Reason: "healthy-first deterministic"}
 }
 
 func (g *Gateway) recordFailure(provider string) {

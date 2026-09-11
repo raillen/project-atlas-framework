@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/raillen/prumo/internal/egress"
 	"github.com/raillen/prumo/internal/harness/agent"
 )
 
@@ -43,11 +44,16 @@ func Catalog() []Tool {
 type Executor struct {
 	Root      string
 	OutputMax int
+	// Redact scrubs tool outputs before they reach the model. Nil disables
+	// (tests); New() installs the default pattern set. Local command
+	// execution is network-unrestricted by posture — use the container
+	// executor when network denial is required.
+	Redact *egress.Redactor
 }
 
 func New(root string) *Executor {
 	abs, _ := filepath.Abs(root)
-	return &Executor{Root: abs, OutputMax: 32 * 1024}
+	return &Executor{Root: abs, OutputMax: 32 * 1024, Redact: egress.MustNewRedactor()}
 }
 
 func (e *Executor) KindOf(name string) string {
@@ -84,6 +90,15 @@ func bound(s string, max int) (string, bool) {
 
 // Execute runs one normalized ToolCall.
 func (e *Executor) Execute(ctx context.Context, call agent.ToolCall) (agent.ToolResult, error) {
+	res, err := e.execute(ctx, call)
+	if e.Redact != nil {
+		res.Output = e.Redact.Redact(res.Output)
+		res.Error = e.Redact.Redact(res.Error)
+	}
+	return res, err
+}
+
+func (e *Executor) execute(ctx context.Context, call agent.ToolCall) (agent.ToolResult, error) {
 	arg := func(k string) string {
 		if call.Arguments == nil {
 			return ""
