@@ -62,6 +62,8 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentPs(asJSON, args[1:])
 	case "logs":
 		return runAgentLogs(asJSON, args[1:])
+	case "steer":
+		return runAgentSteer(asJSON, args[1:])
 	case "providers":
 		return runAgentProviders(asJSON, args[1:])
 	default:
@@ -516,6 +518,30 @@ func runAgentLogs(asJSON bool, args []string) int {
 		data, _ := json.Marshal(e)
 		fmt.Println(string(data))
 	}
+	return exitOK
+}
+
+func runAgentSteer(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	runID := f["run"]
+	if runID == "" {
+		return serviceError(asJSON, fmt.Errorf("steer requires --run <id>"))
+	}
+	message := f["message"]
+	if message == "" {
+		return serviceError(asJSON, fmt.Errorf("steer requires --message <text>"))
+	}
+	res, err := daemonClient(f).Call(map[string]any{"op": "steer", "run_id": runID, "message": message})
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if ok, _ := res["ok"].(bool); !ok {
+		return serviceError(asJSON, fmt.Errorf("%v", res["error"]))
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+	fmt.Printf("Steered %s\n", runID)
 	return exitOK
 }
 

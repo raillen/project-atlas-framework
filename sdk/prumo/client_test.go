@@ -93,6 +93,9 @@ func TestSDKRoundtrip(t *testing.T) {
 	if err := c.Cancel(ctx, "R-sdk"); err == nil {
 		t.Fatal("cancel of a finished run must error")
 	}
+	if err := c.Steer(ctx, "R-sdk", "too late"); err == nil {
+		t.Fatal("steer of a finished run must error")
+	}
 	var _ sdk.RunStatus
 	var _ sdk.Event
 }

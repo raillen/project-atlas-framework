@@ -617,7 +617,7 @@ var commandRegistry = map[string]CommandInfo{
 		Name:        "agent",
 		Category:    "Harness",
 		Summary:     "Headless Prumo-native agent harness (run/serve/ps/logs/events/...)",
-		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs|providers> [flags]",
+		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs|steer|providers> [flags]",
 		Description: "Runs the NativeAgent state machine headlessly: context, model, tools, permissions, checkpoints. Provider-neutral (fake|openai-compat|anthropic); external agents via AgentProvider adapters.",
 		Flags: []string{
 			"--goal <text>        Goal for agent run (default: headless run)",
@@ -632,7 +632,8 @@ var commandRegistry = map[string]CommandInfo{
 			"--to <agent>         Handoff recipient",
 			"--client <ver>       Client protocol version to negotiate",
 			"--manifest            Print the full protocol IDL manifest",
-			"--socket <path>      Daemon socket (serve/ps/logs)",
+			"--socket <path>      Daemon socket (serve/ps/logs/steer)",
+			"--message <text>     Steering input for a live run",
 			"--opencode-url <u>   OpenCode server URL to probe",
 			"--sandbox <kind>     local|container (default: local)",
 			"--sandbox-image <i>  Container image (required with container)",

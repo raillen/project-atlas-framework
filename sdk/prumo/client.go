@@ -182,6 +182,12 @@ func (c Client) Cancel(ctx context.Context, runID string) error {
 	return err
 }
 
+// Steer injects follow-up input into an active run (refused when terminal).
+func (c Client) Steer(ctx context.Context, runID, message string) error {
+	_, err := c.call(ctx, map[string]any{"op": "steer", "run_id": runID, "message": message})
+	return err
+}
+
 // ProtocolInfo describes the daemon's IDL.
 type ProtocolInfo struct {
 	Version       string   `json:"version"`

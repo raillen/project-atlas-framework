@@ -245,6 +245,22 @@ func TestAgentRunBudgetEvidenceArtifacts(t *testing.T) {
 	}
 }
 
+func TestAgentSteerValidatesFlags(t *testing.T) {
+	dir := t.TempDir()
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "steer", "--path", dir})
+	})
+	if code == 0 {
+		t.Fatal("steer without run must fail")
+	}
+	code, _ = captureOutput(func() int {
+		return run([]string{"agent", "steer", "--run", "R-x", "--socket", filepath.Join(dir, "nope.sock"), "--message", "hi"})
+	})
+	if code == 0 {
+		t.Fatal("steer against missing daemon must fail")
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {
