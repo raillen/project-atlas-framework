@@ -126,6 +126,28 @@ func TestAgentPsLogsAgainstDaemon(t *testing.T) {
 		t.Fatalf("agent logs failed: code=%d out=%s", code, out)
 	}
 }
+func TestAgentProvidersListsMatrix(t *testing.T) {
+	// Hermetic PATH: no real binaries execute; wiring (not versions) is
+	// under test here — parsing is covered in the extagent package.
+	t.Setenv("PATH", t.TempDir())
+	code, out := captureOutput(func() int {
+		return run([]string{"agent", "providers"})
+	})
+	if code != 0 {
+		t.Fatalf("providers failed: code=%d", code)
+	}
+	for _, want := range []string{"fake", "openai-compat", "anthropic", "opencode-cli", "opencode-server", "codex-cli", "acp-generic"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("matrix missing %q:\n%s", want, out)
+		}
+	}
+	code, out = captureOutput(func() int {
+		return run([]string{"--json", "agent", "providers"})
+	})
+	if code != 0 || !strings.Contains(out, `"providers"`) {
+		t.Fatalf("providers json failed: code=%d out=%s", code, out)
+	}
+}
 func TestAgentRunPersistsContextManifest(t *testing.T) {
 	dir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(dir, "main.go"), []byte("package main"), 0o644); err != nil {

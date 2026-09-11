@@ -26,6 +26,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/checkpoint"
 	"github.com/raillen/prumo/internal/harness/contextv2"
 	"github.com/raillen/prumo/internal/harness/daemon"
+	"github.com/raillen/prumo/internal/harness/extagent"
 	"github.com/raillen/prumo/internal/harness/handoff"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
@@ -59,6 +60,8 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentPs(asJSON, args[1:])
 	case "logs":
 		return runAgentLogs(asJSON, args[1:])
+	case "providers":
+		return runAgentProviders(asJSON, args[1:])
 	default:
 		return exitUsage
 	}
@@ -454,6 +457,27 @@ func runAgentLogs(asJSON bool, args []string) int {
 	for _, e := range res["events"].([]any) {
 		data, _ := json.Marshal(e)
 		fmt.Println(string(data))
+	}
+	return exitOK
+}
+
+func runAgentProviders(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	prober := extagent.Prober{OpenCodeURL: f["opencode-url"]}
+	rows := prober.Matrix(context.Background())
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(map[string]any{"providers": rows}))
+	}
+	for _, r := range rows {
+		state := "unavailable"
+		if r.Available {
+			state = "available"
+		}
+		ver := r.Version
+		if ver == "" {
+			ver = "-"
+		}
+		fmt.Printf("%-16s %-6s %-11s %-12s %s\n", r.Name, r.Kind, state, ver, r.Detail)
 	}
 	return exitOK
 }
