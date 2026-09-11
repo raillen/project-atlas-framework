@@ -16,7 +16,9 @@ Catalog baseline: `fs.read/list/search`, `code.symbols/diagnostics`,
 `git.status/diff`. `edit.patch` applies unified diffs via `git apply`
 (atomic, context-validated) with an optional `base_rev` guard refusing
 stale trees; re-apply fails instead of duplicating. `fs.search` prefers
-`rg`, falling back to `grep` on hermetic hosts. Execution respects trust, fs scope (cleaned + contained,
+`rg`, falling back to `grep` on hermetic hosts. Outputs boundados passam por
+redação default (API keys, bearer, password=...) antes de alcançar o modelo.
+Execution respects trust, fs scope (cleaned + contained,
 symlink/`..` escapes rejected), network scope, credentials, budget,
 idempotency, side-effect journal, permissions. Output is bounded + truncatable.
 

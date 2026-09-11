@@ -16,37 +16,37 @@ item. Novos gaps entram no fim com o próximo número livre.
 
 | ID | Item | Fonte | Status | Evidência / limite | Próximo passo |
 |----|------|-------|--------|--------------------|---------------|
-| GAP-001 | Budget envelope no path real (flags, consumo, persistência) | DoD §35, HA4 | 🟡 partial | hook existe + testes; `agent run`/daemon não instanciam envelope | fiação CLI + persistência no checkpoint |
-| GAP-002 | Evidence/Gates do protocolo no loop | HA2/HA4, pág. 05 | ⬜ open | zero refs a `protocol/evidence` nos paths de run | registrar evidence + gate `--strict` |
-| GAP-003 | Team binding real (Runner aninhado por role) | HA10/HA14 | 🟡 partial | `team.Runner` com `Work` injetado; sem binding p/ Runner real | `Work` padrão com runs/checkpoints/Handoff |
-| GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | 🟡 partial | `internal/egress` (Allow/SecretProvider/Redactor) existe e não é consultado; container nega rede | consultar egress no exec local; secret refs + redação |
-| GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | 🟡 partial | Gateway healthy-first; sem score de pricing/latency/data-class | score via `modelregistry` + quota-awareness |
-| GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map, RRF multi-fonte) | HA9, págs. 08/31 | 🟡 partial | `CompileWorkspace` (lista+git+exact); `internal/indexing` desligado | FTS primeiro, LSP depois |
-| GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | 🟡 partial | whole-file + CAS prontos; AST-regions pendentes | regions + Pointer/Patch |
-| GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ⬜ open | review existe; merge op não existe | operação explícita com policy |
-| GAP-009 | Steering + compaction | HA2, pág. 05 | ⬜ open | `Yield` existe; follow-up e compactação não | enqueue p/ safe point; compact com refs |
-| GAP-010 | ACP Agent Server (expor Runtime a editores) | H11, págs. 06/22 | ⬜ open | só lado cliente/probe | mapear session/prompt/permission p/ Run |
-| GAP-011 | MCP client real (SDK + transporte) | H5, págs. 06/19 | 🟡 partial | governance por descriptors; sem SDK ligado | depende de GAP-031 (escolha do SDK) |
-| GAP-012 | Benchmarks (packing, compilação, Runner) | relatório | ⬜ open | zero medições registradas | `go test -bench` + tabela no relatório |
-| GAP-013 | Operação do daemon (PID lock, rotação, unit, stop) | daemon | 🟡 partial | serve/ps/logs ok; sem supervisão | lock + rotação + unit systemd + `stop` |
-| GAP-014 | Kill -9 real com side effect pendente | HA4/HA8 | ⬜ open | resume testado via reload, não via SIGKILL | teste de kill + resume sem duplicar |
-| GAP-015 | Approvals persistidas | HA3/pág. 07 | 🟡 partial | `perm.Engine.Log` só em memória | persistir resolutions no store do run |
-| GAP-016 | Bridge AgentEvent → observability.Event | HA4 | ⬜ open | JSONL próprio; `internal/observability` desligado | projetar/encaminhar eventos |
-| GAP-017 | Planning→Build (PlanningSession ⇒ Run) | pág. 25 | 🟡 partial | `PlanningSession` existe e não promove p/ Run | promoção com provenance, sem virar transcript |
-| GAP-018 | Memory Atlas cross-project | págs. 25/27-G12 | ⬜ open | zero ocorrências no repo | modelo serializável + gates + fonte do Context |
-| GAP-019 | Agent writes KnowledgeDelta-first (G15) | pág. 27-G15 | 🟡 partial | seeding usa `Put` direto; Delta existe p/ promoção global | rotear mutações de run por Validate→Commit |
+| GAP-001 | Budget envelope no path real | DoD §35, HA4 | ✅ done | runlayer Tracker + flags + persist budget-<run>.json, CLI e daemon | — |
+| GAP-002 | Evidence/Gates do protocolo no loop | HA2/HA4, pág. 05 | ✅ done | evidence-<run>.json + QualityGate + `--strict` no Runner/CLI/daemon | gate policies ricas futuras |
+| GAP-003 | Team binding real (Runner aninhado por role) | HA10/HA14 | ✅ done | team/bind.go: runs aninhados + budget do role + checkpoints | — |
+| GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | 🟡 partial | redação default de outputs (Redactor) + postura documentada; destinos ainda abertos no local | policy de destinos no exec local |
+| GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | 🟡 partial | Policy cheap/fast + filtros capability/privacidade; quota-awareness aberta | quota + pricing dinâmico |
+| GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map, RRF multi-fonte) | HA9, págs. 08/31 | 🟡 partial | BM25-lite fundido no packing; LSP/symbol graph abertos | LSP + repo map |
+| GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | 🟡 partial | regions + RFC6902 prontos; AST-aware Markdown aberto | AST-aware |
+| GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ✅ done | team/merge.go three-way (conflito nunca auto-resolve) | deleções fora do slice |
+| GAP-009 | Steering + compaction | HA2, pág. 05 | 🟡 partial | Inject + op steer + CompactKeep ligados; auto-policy aberta | política automática |
+| GAP-010 | ACP Agent Server (expor Runtime a editores) | H11, págs. 06/22 | 🟡 partial | pacote acp (new/prompt/cancel/events/wait); spec completa em GAP-032 | handshake ACP pleno |
+| GAP-011 | MCP client real (SDK + transporte) | H5, págs. 06/19 | 🟡 partial | cliente stdio JSON-RPC sem deps (decisão registrada); integração como tools pendente | expor MCP como ToolService |
+| GAP-012 | Benchmarks (packing, compilação, Runner) | relatório | ✅ done | compile ~6.8ms, BM25 ~0.78ms, run ~7µs (i7-3632QM) | — |
+| GAP-013 | Operação do daemon (PID lock, rotação, unit, stop) | daemon | ✅ done | lock/stale-takeover + stop + rotação + prune + unit doc | — |
+| GAP-014 | Kill -9 real com side effect pendente | HA4/HA8 | ✅ done | TestDaemonKillRecovery: SIGKILL + takeover + store íntegro | kill mid-side-effect em CI |
+| GAP-015 | Approvals persistidas | HA3/pág. 07 | ✅ done | permissions-<run>.jsonl em CLI+daemon | — |
+| GAP-016 | Bridge AgentEvent → observability.Event | HA4 | ✅ done | obs-<run>.jsonl dual-write CLI+daemon | — |
+| GAP-017 | Planning→Build (PlanningSession ⇒ Run) | pág. 25 | ✅ done | handoff/promote.go + `agent promote [--start]` | — |
+| GAP-018 | Memory Atlas cross-project | págs. 25/27-G12 | 🟡 partial | Atlas local + recall no Context; cross-project + privacy gates abertos | promoção cross-project |
+| GAP-019 | Agent writes KnowledgeDelta-first (G15) | pág. 27-G15 | ✅ done | seeding via Commit com Author | — |
 | GAP-020 | Retention/GC (checkpoints, eventos, knowledge) | pág. 27-G23 | ⬜ open | crescimento ilimitado por run | política + GC sem dangling provenance |
-| GAP-021 | Retry com backoff no Gateway | HA6 | 🟡 partial | fallback sim, retry/backoff não | backoff por classe de erro + jitter |
+| GAP-021 | Retry com backoff no Gateway | HA6 | ✅ done | RetryPolicy linear determinístico + testes | jitter/backoff por classe |
 | GAP-022 | Child runs/subagentes com ownership (H14) | H14 | 🟡 partial | team executa roles; runs aninhados com checkpoint não | aninhar Runner + Handoff pai↔filho |
-| GAP-023 | Scheduled/background agents (H16) | H16 | ⬜ open | daemon sem scheduler | cron-like mínimo atrás do daemon |
-| GAP-024 | Provedores sandbox adicionais (H13) | H13 | 🟡 partial | local/worktree/container-detect | gVisor/strong + remoto |
-| GAP-025 | Contratos Local Intel (KnowledgeTask, Router, ResourceManager, Supervisor) | págs. 29–30 | ⬜ open | deferred com workers | contratos primeiro, workers depois |
-| GAP-026 | Research Ledger first-class (G11) | pág. 27-G11 | 🟡 partial | ResearchRecord existe como tipo; ledger dedicado não | ledger + API como Decision Ledger |
-| GAP-027 | Token-estimate index (G18) | pág. 27-G18 | 🟡 partial | heurística len/4 inline; sem índice versionado | índice medido + pricing |
-| GAP-028 | Lint dos agent docs + doc-evals (G19/G21) | pág. 27 | 🟡 partial | testes HD existem; lint de docs de agentes não | lint + eval de docs |
-| GAP-029 | Schema evolution/migrations (G20) | pág. 27 | ⬜ open | schemas sem plano de migração | política + testes de migração |
+| GAP-023 | Scheduled/background agents (H16) | H16 | 🟡 partial | jobs persistentes + tick + ops/CLI/SDK; supervisão além do unit doc aberta | supervisão de jobs |
+| GAP-024 | Provedores sandbox adicionais (H13) | H13 | 🟡 partial | StrongProvider com detecção runsc; execução forte/remota aberta | execução gVisor/remota |
+| GAP-025 | Contratos Local Intel (KnowledgeTask, Router, ResourceManager, Supervisor) | págs. 29–30 | 🟡 partial | tipos + MinSufficientRouter; workers/supervisão abertos | workers + benchmarks |
+| GAP-026 | Research Ledger first-class (G11) | pág. 27-G11 | ✅ done | Add/Resolve/Open Delta-first | — |
+| GAP-027 | Token-estimate index (G18) | pág. 27-G18 | ✅ done | tabela tokens-v1 + uso no Context | calibração medida |
+| GAP-028 | Lint dos agent docs + doc-evals (G19/G21) | pág. 27 | ✅ done | humandocs.Lint (presença/fiação/higiene) | lint de agent-docs legados |
+| GAP-029 | Schema evolution/migrations (G20) | pág. 27 | ✅ done | schemareg (parse-all + Migrate por versão) | migrações quando houver v2 |
 | GAP-030 | Transporte remoto do daemon (+auth) | split gate | ⬜ open | socket local apenas | TLS + token (desenho antes) |
-| GAP-031 | Decisão: MCP Go SDK e transports | pág. 19 | 🛑 decision | — | benchmark + ADR |
+| GAP-031 | Decisão: MCP Go SDK e transports | pág. 19 | ✅ decided | stdlib JSON-RPC registrado em mcp.go (troca sem mudar superfície) | reavaliar com benchmark |
 | GAP-032 | Decisão: subset ACP + matriz oficial | pág. 19 | 🛑 decision | cliente OK; servidor em GAP-010 | definir ordem + registry |
 | GAP-033 | Decisão: Docker vs Podman padrão/rootless | pág. 19 | 🛑 decision | detecção honesta pronta | medir + ADR |
 | GAP-034 | Decisão: driver SQLite derived runtime | pág. 19 | 🛑 decision | — | medir + ADR |
@@ -56,9 +56,9 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-038 | Chaves live de models | HA6 | 🛑 env | adapters prontos + stub-testados | `PRUMO_MODEL_API_KEY`/BASE_URL |
 | GAP-039 | Sends live externos (opencode/codex) | HA7/HA8 | 🛑 approval | **gastam sua quota**; tudo ao redor live-verificado | sua aprovação explícita de spend |
 | GAP-040 | Modelos locais + thresholds (benchmark-driven) | pág. 19/29 | 🛑 env+decision | No-LLM first-class mantido | hardware + corpus + aprovação |
-| GAP-041 | Bindings não-Go (TS types do IDL) | HA11 | ⬜ open | IDL + SDK Go prontos | gerar types do manifesto |
+| GAP-041 | Bindings não-Go (TS types do IDL) | HA11 | 🟡 partial | protocol.d.ts gerado + teste de frescor; SDK pleno aberto | clientes TS |
 | GAP-042 | Checkpoint retention no daemon store | HA4 | ⬜ open | ver GAP-020 (caso particular) | incluir na política de retenção |
-| GAP-043 | Descoberta de modelos nos adapters reais | HA1 | 🟡 partial | `ModelDiscovery:false` nos dois adapters | listar via `/models` + Anthropic equivalente |
+| GAP-043 | Descoberta de modelos nos adapters reais | HA1 | 🟡 partial | OpenAI lista `/models` real; Anthropic sem API de lista (documentado) | — |
 | GAP-044 | Structured-output enforcement | HA1 | 🟡 partial | capability anunciada; sem validação | validar contra schema no adapter |
 | GAP-045 | Impact analysis lexical (G5, legado M5) | pág. 27-G5 | 🟡 partial | pré-Harness; fora do path do run | migrar p/ relações tipadas quando tocar M5 |
 
@@ -69,25 +69,25 @@ item. Novos gaps entram no fim com o próximo número livre.
 | 1 | docs reconciled/promoted | ✅ |
 | 2 | AgentRuntime contracts | ✅ |
 | 3 | FakeProvider conformance | ✅ |
-| 4 | ≥1 real ModelProvider works | ✅ código (live: GAP-038) |
+| 4 | ≥1 real ModelProvider works | ✅ código+discovery (live: GAP-038) |
 | 5 | NativeAgent end-to-end | ✅ |
 | 6 | tools via ToolGateway | ✅ |
-| 7 | permission lifecycle | ✅ (persistência: GAP-015) |
-| 8 | Environment/Sandbox baseline | ✅ (live: GAP-037) |
-| 9 | checkpoint/restart/resume | ✅ (kill real: GAP-014) |
+| 7 | permission lifecycle | ✅ persistida (GAP-015) |
+| 8 | Environment/Sandbox baseline | ✅ +redação+strong-detect (live: GAP-037) |
+| 9 | checkpoint/restart/resume | ✅ +kill+SIGHUP-safe lock (GAP-014) |
 | 10 | duplicate side effects prevented | ✅ |
-| 11 | budget enforcement | 🟡 runtime sim, fiação CLI não (GAP-001) |
-| 12 | observability/events | ✅ (bridge: GAP-016) |
-| 13 | gateway routing/fallback | ✅ (políticas ricas: GAP-005) |
+| 11 | budget enforcement | ✅ fiação CLI/daemon + persist (GAP-001) |
+| 12 | observability/events | ✅ bridge dual-write (GAP-016) |
+| 13 | gateway routing/fallback | ✅ retry + policy (quota: GAP-005) |
 | 14 | ≥1 external AgentProvider works | ✅ nos limites (send: GAP-039) |
 | 15 | typed Handoff | ✅ |
-| 16 | Context Compiler v2 baseline | ✅ (retrieval rico: GAP-006) |
+| 16 | Context Compiler v2 baseline | ✅ FTS+Atlas fundidos (GAP-006/018) |
 | 17 | Knowledge Runtime baseline | ✅ (Atlas: GAP-018) |
-| 18 | KnowledgeDelta validate/commit | ✅ (writes-first: GAP-019) |
+| 18 | KnowledgeDelta validate/commit | ✅ Delta-first + ledger (GAP-019/026) |
 | 19 | Coverage/Readiness baseline | ✅ |
-| 20 | Documentation Compiler baseline | ✅ (regions: GAP-007) |
-| 21 | multi-agent/worktree baseline | ✅ (binding/merges: GAP-003/008/022) |
-| 22 | compatibility/eval suite | ✅ (fuzz/bindings: GAP-041) |
+| 20 | Documentation Compiler baseline | ✅ regions+patch (GAP-007) |
+| 21 | multi-agent/worktree baseline | ✅ binding+merge aninhados |
+| 22 | compatibility/eval suite | ✅ +kill-test+benches+TS (GAP-012/014/041) |
 | 23 | `prumo agent` headless usable | ✅ |
 | 24 | docs describe reality | ✅ |
 | 25 | no P0 contradictions | ✅ (1 não-P0 registrada: regra de imports do `cmd`) |

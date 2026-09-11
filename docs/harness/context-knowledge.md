@@ -17,6 +17,11 @@ through gates→dedup→packing, persists `context-<run>.json`, and emits
 `--context-budget/--context-level`. Compilation never fails a run: on bad
 roots it degrades to the goal item.
 
+Retrieval beyond listing: BM25-lite over workspace text fused as score
+bonus, and the project Memory Atlas (`.prumo/atlas.json`) recalled as
+pointer-sized candidates — never dumped wholesale. Token estimates use the
+versioned `tokens-v1` table. LSP/symbol graph stay future slices.
+
 ## Knowledge Runtime (`internal/harness/knowledge`)
 
 Typed records with stable IDs: Source, Section, Claim, Finding, Decision,

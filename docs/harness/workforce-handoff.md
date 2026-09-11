@@ -27,6 +27,12 @@ diffs, and a review-only role judging diff+requirements+evidence
 (`complete` vs `changes_requested`). `suggested`/`bounded-auto` delegate via
 a `Suggester` that sees results only, capped by `MaxDelegations`.
 
+Binding (`team/bind.go`): `RunWork` nests a full NativeAgent run per role
+(ACI no workspace, budget do role, checkpoints sob o workspace) and
+`ChildHandoff` builds the parent↔child continuation. Merge
+(`team/merge.go`): explicit three-way workspace merge; conflicts are
+reported and never auto-resolved (deletions out of scope).
+
 ## External connectivity
 
 Priorities implemented: OpenCode server, Codex structured CLI, ACP-shaped
