@@ -590,6 +590,27 @@ var commandRegistry = map[string]CommandInfo{
 		},
 		Examples: []string{
 			"prumo package list",
+			"prumo package sync",
+		},
+	},
+	"workforce": {
+		Name:        "workforce",
+		Category:    "Workforce & Compilation",
+		Summary:     "Workforce package synchronization and catalog management",
+		Usage:       "prumo workforce <sync|list> [flags]",
+		Description: "Synchronizes skills, agents, and recipes from remote or cached catalog, ensuring core skills (clean-code, cognitive-clarity) and updating prumo.lock.",
+		Flags: []string{
+			"--path <dir>       Target project directory (default: .)",
+			"--offline          Use local cached skills only (no network requests)",
+			"--force-remote     Bypass cache and force re-download from upstream",
+			"--remote <url>     Custom upstream raw base URL",
+			"--skills <list>    Comma-separated list of specific skills to sync",
+			"--json             Output result as JSON envelope",
+		},
+		Examples: []string{
+			"prumo workforce sync",
+			"prumo workforce sync --offline",
+			"prumo workforce list",
 		},
 	},
 	"automation": {

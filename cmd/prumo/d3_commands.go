@@ -17,7 +17,14 @@ func runPlatform(asJSON bool, args []string) int {
 	}
 	switch args[0] {
 	case "package":
+		if len(args) > 1 && args[1] == "sync" {
+			return runWorkforce(asJSON, "", append([]string{"sync"}, args[2:]...))
+		}
 		lock, err := runtime.LoadJSON[packages.Lock](filepath.Join(".prumo", "lock.json"))
+		if err != nil {
+			// Fallback to prumo.lock if .prumo/lock.json does not exist
+			lock, err = runtime.LoadJSON[packages.Lock]("prumo.lock")
+		}
 		if err != nil {
 			return serviceError(asJSON, err)
 		}
