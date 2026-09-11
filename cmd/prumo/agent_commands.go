@@ -70,9 +70,14 @@ func runAgent(asJSON bool, args []string) int {
 func agentFlags(args []string) map[string]string {
 	out := map[string]string{}
 	for i := 0; i < len(args); i++ {
-		if len(args[i]) > 2 && args[i][:2] == "--" && i+1 < len(args) {
-			out[args[i][2:]] = args[i+1]
-			i++
+		if len(args[i]) > 2 && args[i][:2] == "--" {
+			key := args[i][2:]
+			if i+1 < len(args) && !(len(args[i+1]) > 2 && args[i+1][:2] == "--") {
+				out[key] = args[i+1]
+				i++
+			} else {
+				out[key] = ""
+			}
 		}
 	}
 	return out
@@ -333,10 +338,20 @@ func splitLines(s string) []string {
 
 func runAgentProtocol(asJSON bool, args []string) int {
 	f := agentFlags(args)
+	if _, ok := f["manifest"]; ok {
+		manifest := harnessprotocol.Manifest()
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(manifest))
+		}
+		data, _ := json.MarshalIndent(manifest, "", "  ")
+		fmt.Println(string(data))
+		return exitOK
+	}
 	result := map[string]any{
-		"version":        harnessprotocol.Version,
+		"version": harnessprotocol.Version,
 		"min_compatible": harnessprotocol.MinCompatible,
-		"schemas":        harnessprotocol.Schemas,
+		"schemas": harnessprotocol.Schemas,
+		"ops":     harnessprotocol.Ops,
 	}
 	if v, ok := f["client"]; ok && v != "" {
 		server, compatible, err := harnessprotocol.Negotiate(v)

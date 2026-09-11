@@ -38,6 +38,20 @@ func TestAgentRunResumeHandoff(t *testing.T) {
 	}
 }
 
+func TestAgentProtocolManifest(t *testing.T) {
+	code, out := captureOutput(func() int {
+		return run([]string{"--json", "agent", "protocol", "--manifest"})
+	})
+	if code != 0 {
+		t.Fatalf("protocol manifest failed: code=%d", code)
+	}
+	for _, want := range []string{`"start"`, `"cancel"`, `"protocol"`, `"0.1.0"`} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("manifest missing %s:\n%s", want, out)
+		}
+	}
+}
+
 func TestAgentEventsAndProtocol(t *testing.T) {
 	dir := t.TempDir()
 	code, out := captureOutput(func() int {

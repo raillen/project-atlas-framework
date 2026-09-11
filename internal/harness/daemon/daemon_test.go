@@ -8,6 +8,7 @@ import (
 
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/model"
+	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
 )
 
 type stubTools struct {
@@ -78,6 +79,23 @@ func waitStatus(t *testing.T, c Client, runID, want string) map[string]any {
 	}
 }
 
+// TestDispatchCoversManifestOps pins every IDL op to a handler: adding an
+// op to protocol.Ops without a dispatch branch fails here.
+func TestDispatchCoversManifestOps(t *testing.T) {
+	srv := New(t.TempDir()+"/s.sock", t.TempDir(), fakeDeps(false))
+	for _, op := range harnessprotocol.Ops {
+		res := srv.dispatch(map[string]any{"op": op})
+		if res["ok"] == false && res["error"] == "unknown op" {
+			t.Fatalf("op %q in manifest but unhandled", op)
+		}
+	}
+	if res := srv.dispatch(map[string]any{"op": "nope"}); res["error"] != "unknown op" {
+		t.Fatalf("unknown op must error: %v", res)
+	}
+	if res := srv.dispatch(map[string]any{"op": "protocol"}); res["ok"] != true || res["ops"] == nil {
+		t.Fatalf("protocol op must serve ops: %v", res)
+	}
+}
 func TestDaemonRunLifecycle(t *testing.T) {
 	dir := t.TempDir()
 	_, c, cancel := serveForTest(t, dir, false)

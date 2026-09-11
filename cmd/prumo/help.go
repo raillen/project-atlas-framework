@@ -631,6 +631,7 @@ var commandRegistry = map[string]CommandInfo{
 			"--from <agent>       Handoff sender (default: native)",
 			"--to <agent>         Handoff recipient",
 			"--client <ver>       Client protocol version to negotiate",
+			"--manifest            Print the full protocol IDL manifest",
 			"--socket <path>      Daemon socket (serve/ps/logs)",
 			"--opencode-url <u>   OpenCode server URL to probe",
 			"--sandbox <kind>     local|container (default: local)",

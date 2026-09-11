@@ -167,7 +167,7 @@ func str(m map[string]any, k string) string {
 func (s *Server) dispatch(msg map[string]any) map[string]any {
 	switch str(msg, "op") {
 	case "protocol":
-		return map[string]any{"ok": true, "version": harnessprotocol.Version, "min_compatible": harnessprotocol.MinCompatible, "schemas": harnessprotocol.Schemas}
+		return map[string]any{"ok": true, "version": harnessprotocol.Version, "min_compatible": harnessprotocol.MinCompatible, "schemas": harnessprotocol.Schemas, "ops": harnessprotocol.Ops}
 	case "start":
 		return s.opStart(msg)
 	case "status":
