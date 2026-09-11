@@ -171,6 +171,31 @@ func (o *OpenAICompat) Capabilities() Capabilities {
 }
 
 func (o *OpenAICompat) Models(ctx context.Context) ([]string, error) {
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, o.BaseURL+"/models", nil)
+	if o.APIKey != "" {
+		req.Header.Set("Authorization", "Bearer "+o.APIKey)
+	}
+	if resp, err := o.Client.Do(req); err == nil {
+		defer resp.Body.Close()
+		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+			var doc struct {
+				Data []struct {
+					ID string `json:"id"`
+				} `json:"data"`
+			}
+			if err := json.Unmarshal(readAll(resp), &doc); err == nil && len(doc.Data) > 0 {
+				ids := make([]string, 0, len(doc.Data))
+				for _, d := range doc.Data {
+					if d.ID != "" {
+						ids = append(ids, d.ID)
+					}
+				}
+				if len(ids) > 0 {
+					return ids, nil
+				}
+			}
+		}
+	}
 	if o.Model != "" {
 		return []string{o.Model}, nil
 	}

@@ -36,17 +36,31 @@ type Health struct {
 	CooldownUntil string `json:"cooldown_until,omitempty"`
 }
 
+// RetryPolicy bounds same-provider retries for retryable failures.
+// Attempts counts total tries (1 = no retry); Backoff scales linearly
+// with jitter omitted for determinism in tests (callers may wrap sleep).
+type RetryPolicy struct {
+	Attempts int
+	Backoff  time.Duration
+}
+
+// DefaultRetryPolicy retries twice with a 200ms base backoff.
+func DefaultRetryPolicy() RetryPolicy {
+	return RetryPolicy{Attempts: 3, Backoff: 200 * time.Millisecond}
+}
+
 // Gateway routes model requests across registered providers.
 type Gateway struct {
 	mu        sync.Mutex
 	providers map[string]model.Provider
 	health    map[string]*Health
+	Retry     RetryPolicy
 	// AfterSideEffects=false allows transparent fallback; once a Run has
 	// observable effects, callers must use explicit Handoff instead.
 }
 
 func New() *Gateway {
-	return &Gateway{providers: map[string]model.Provider{}, health: map[string]*Health{}}
+	return &Gateway{providers: map[string]model.Provider{}, health: map[string]*Health{}, Retry: DefaultRetryPolicy()}
 }
 
 func (g *Gateway) Register(p model.Provider) {
@@ -121,29 +135,54 @@ func (g *Gateway) StreamWithFallback(ctx context.Context, route ModelRoute, req 
 		if t.Model != "" {
 			r.Model = t.Model
 		}
-		ch, err := p.Stream(ctx, r)
+		ch, err := g.streamWithRetry(ctx, p, t.Provider, r)
 		if err != nil {
-			g.mu.Lock()
-			g.recordFailure(t.Provider)
-			g.mu.Unlock()
 			lastErr = err
 			continue
 		}
-		// Peek first event for immediate retryable error.
+		return ch, t.Provider, nil
+	}
+	if lastErr == nil {
+		lastErr = fmt.Errorf("no route targets")
+	}
+	return nil, "", lastErr
+}
+
+// streamWithRetry opens the provider stream and peeks the first event,
+// retrying retryable failures per policy with linear backoff. Successes
+// reset the circuit; terminal provider exhaustion records one failure.
+func (g *Gateway) streamWithRetry(ctx context.Context, p model.Provider, name string, req agent.ModelRequest) (<-chan agent.ModelEvent, error) {
+	attempts := g.Retry.Attempts
+	if attempts < 1 {
+		attempts = 1
+	}
+	var lastErr error
+	for a := 0; a < attempts; a++ {
+		if a > 0 {
+			backoff := time.Duration(a) * g.Retry.Backoff
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			case <-time.After(backoff):
+			}
+		}
+		ch, err := p.Stream(ctx, req)
+		if err != nil {
+			lastErr = err
+			continue
+		}
 		select {
 		case ev, ok := <-ch:
 			if !ok {
-				return nil, "", fmt.Errorf("provider %s closed stream", t.Provider)
+				lastErr = fmt.Errorf("provider %s closed stream", name)
+				continue
 			}
 			if ev.Kind == agent.EventError && ev.Retryable {
-				g.mu.Lock()
-				g.recordFailure(t.Provider)
-				g.mu.Unlock()
-				lastErr = fmt.Errorf("provider %s: %s", t.Provider, ev.Error)
+				lastErr = fmt.Errorf("provider %s: %s", name, ev.Error)
 				continue
 			}
 			g.mu.Lock()
-			g.recordSuccess(t.Provider)
+			g.recordSuccess(name)
 			g.mu.Unlock()
 			out := make(chan agent.ModelEvent, 64)
 			out <- ev
@@ -153,13 +192,16 @@ func (g *Gateway) StreamWithFallback(ctx context.Context, route ModelRoute, req 
 					out <- e
 				}
 			}()
-			return out, t.Provider, nil
+			return out, nil
 		case <-ctx.Done():
-			return nil, "", ctx.Err()
+			return nil, ctx.Err()
 		}
 	}
+	g.mu.Lock()
+	g.recordFailure(name)
+	g.mu.Unlock()
 	if lastErr == nil {
-		lastErr = fmt.Errorf("no route targets")
+		lastErr = fmt.Errorf("provider %s exhausted retries", name)
 	}
-	return nil, "", lastErr
+	return nil, lastErr
 }

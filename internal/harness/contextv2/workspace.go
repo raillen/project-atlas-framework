@@ -11,6 +11,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/raillen/prumo/internal/harness/model"
 )
 
 // CompileWorkspace builds candidates from the goal, entrypoints, git state
@@ -52,13 +54,7 @@ func CompileWorkspace(runID, goal, root string, budget int, level string) Manife
 	return Compile(runID, MMRDedup(eligible), budget, level)
 }
 
-func estimateTokens(s string) int {
-	n := len(s) / 4
-	if n < 1 {
-		n = 1
-	}
-	return n
-}
+func estimateTokens(s string) int { return model.EstimateTokens(s, "") }
 
 var entrypoints = []string{"ENTRYPOINT.md", "AGENTS.md", "README.md", "prumo.json", "go.mod"}
 
@@ -80,6 +76,7 @@ func entrypointItems(root string) []Item {
 }
 
 func cappedEstimate(size int) int {
+	// Size-proportional estimate through the versioned table (GAP-027).
 	n := size / 4
 	if n < 1 {
 		n = 1

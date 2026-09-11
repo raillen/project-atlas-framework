@@ -57,3 +57,59 @@ func (n named) Health(ctx context.Context) (string, error)   { return n.p.Health
 func (n named) Stream(ctx context.Context, r agent.ModelRequest) (<-chan agent.ModelEvent, error) {
 	return n.p.Stream(ctx, r)
 }
+
+// flakyProvider fails n times with a retryable error, then completes.
+type flakyProvider struct {
+	left int
+}
+
+func (f *flakyProvider) Name() string                     { return "flaky" }
+func (f *flakyProvider) Capabilities() model.Capabilities { return model.Capabilities{Streaming: true} }
+func (f *flakyProvider) Models(context.Context) ([]string, error) {
+	return []string{"m"}, nil
+}
+func (f *flakyProvider) Health(context.Context) (string, error) { return "healthy", nil }
+func (f *flakyProvider) Stream(_ context.Context, req agent.ModelRequest) (<-chan agent.ModelEvent, error) {
+	ch := make(chan agent.ModelEvent, 2)
+	if f.left > 0 {
+		f.left--
+		ch <- agent.ModelEvent{Kind: agent.EventError, RequestID: req.RequestID, Error: "overload", Retryable: true}
+	} else {
+		ch <- agent.ModelEvent{Kind: agent.EventCompleted, RequestID: req.RequestID, Finished: true}
+	}
+	close(ch)
+	return ch, nil
+}
+
+func TestRetryRecoversWithoutFallback(t *testing.T) {
+	g := New()
+	g.Retry = RetryPolicy{Attempts: 3}
+	g.Register(&flakyProvider{left: 2})
+	route := g.Select([]RouteTarget{{Provider: "flaky"}})
+	ch, used, err := g.StreamWithFallback(context.Background(), route, agent.ModelRequest{RequestID: "r"}, false)
+	if err != nil || used != "flaky" {
+		t.Fatalf("expected recovery on same provider: %v %s", err, used)
+	}
+	n := 0
+	for range ch {
+		n++
+	}
+	if n == 0 {
+		t.Fatal("expected events")
+	}
+}
+
+func TestRetryExhaustionFallsBack(t *testing.T) {
+	g := New()
+	g.Retry = RetryPolicy{Attempts: 2}
+	g.Register(&flakyProvider{left: 99})
+	good := model.NewFake(map[string][]model.ScriptStep{"*": {{Kind: "complete"}}})
+	g.Register(named{"good", good})
+	route := g.Select([]RouteTarget{{Provider: "flaky"}, {Provider: "good"}})
+	ch, used, err := g.StreamWithFallback(context.Background(), route, agent.ModelRequest{RequestID: "r"}, false)
+	if err != nil || used != "good" {
+		t.Fatalf("expected fallback after retry exhaustion: %v %s", err, used)
+	}
+	for range ch {
+	}
+}
