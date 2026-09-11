@@ -182,6 +182,11 @@ func TestEvalSandboxDenial(t *testing.T) {
 	if res.ExitCode == 0 {
 		t.Fatal("sandbox must deny escape")
 	}
+	ce := aci.NewContainer(t.TempDir(), "img", aci.UnavailableRunner{Runtime: "docker"})
+	res, _ = ce.Execute(context.Background(), agent.ToolCall{ID: "c", Name: "process.exec", Arguments: map[string]any{"command": "echo hi"}})
+	if res.ExitCode == 0 {
+		t.Fatal("container sandbox must refuse without runtime (no silent host fallback)")
+	}
 }
 
 func TestEvalExternalAgent(t *testing.T) {
