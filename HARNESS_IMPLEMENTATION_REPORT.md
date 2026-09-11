@@ -101,7 +101,8 @@ latency/throughput benchmarks for providers/sandbox are open (see 19).
 - Live vendor keys untested here (adapters code-complete with stub-server
   tests; `TestAgentRunAnthropicAgainstStub` proves CLI wiring).
 - External matrix is adapter-level; live Codex/OpenCode interop untested here.
-- No daemon yet: resume/replay are CLI-driven, not background-scheduled.
+- Daemon is local-socket only; no auth, no remote transport, no
+  background supervision (systemd/launchd units future).
 - Compaction/steering policies minimal; PTY lifecycle basic.
 - Protocol IDL/SDK generation pending (envelope + 3 schemas shipped).
 - Container/gVisor sandbox, fuzz/chaos, local-inference workers deferred.
@@ -116,10 +117,13 @@ docs website, visual polish — all explicitly out of this Goal.
 Versioned protocol kernel: JSON envelopes + `harness-checkpoint`,
 `harness-handoff`, `agent-event` schemas + `internal/harness/protocol`
 v0.1.0 negotiation (`prumo agent protocol [--client X]`). Timeline replay:
-JSONL event log per run via `prumo agent events`. Sandbox ladder is honest
+JSONL event log per run via `prumo agent events`. Local daemon
+(`internal/harness/daemon`, Unix socket, `serve/ps/logs`): persisted run
+records + restart-safe reconnect; cancellation at safe points; provider
+factory shared via `model.ForName`. Sandbox ladder is honest
 (local/worktree available; container availability detected, execution
 pending). Fuzz seeds: context packing budget invariant + fingerprint
-determinism. Full IDL + generated bindings + capability negotiation remain.
+determinism. Remote transport + full IDL + generated bindings remain.
 
 ## Prumo Code split readiness
 
