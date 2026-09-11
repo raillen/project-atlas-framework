@@ -24,8 +24,15 @@ func TestCompileWorkspacePacksGoalFirst(t *testing.T) {
 	if m.Version != 2 || m.Level != "L1" {
 		t.Fatalf("bad manifest: %+v", m)
 	}
-	if len(m.Included) == 0 || m.Included[0].Ref != "goal" {
-		t.Fatalf("goal must pack first: %+v", m.Included)
+	refs := map[string]bool{}
+	for _, it := range m.Included {
+		refs[it.Ref] = true
+	}
+	if !refs["goal"] {
+		t.Fatalf("goal must always pack (canonical): %+v", m.Included)
+	}
+	if !refs["repo-map"] {
+		t.Fatalf("repo-map must pack: %+v", m.Included)
 	}
 	if m.EstimatedTokens > 8000 {
 		t.Fatalf("budget exceeded: %d", m.EstimatedTokens)

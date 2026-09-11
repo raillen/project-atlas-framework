@@ -54,6 +54,8 @@ func CompileWorkspace(runID, goal, root string, budget int, level string) Manife
 	}
 	// Memory Atlas as a structured source (never dumped wholesale).
 	eligible = append(eligible, atlasItems(abs, goal)...)
+	// Repository map + symbol hits (LSP when available, repomap fallback).
+	eligible = append(eligible, codeIntelItems(abs, goal)...)
 	// Lexical fusion: BM25 bonus over file candidates, then dedup+pack.
 	refs := make([]string, 0, len(eligible))
 	for _, it := range eligible {
