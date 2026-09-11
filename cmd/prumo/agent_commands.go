@@ -1,11 +1,15 @@
 // Command: prumo agent — headless harness entrypoint (HA2..HA11).
 //
 // Subcommands:
-//   run      --goal <text> --path <dir> [--provider fake|openai-compat|anthropic] [--model ...] [--max-turns N]
-//   resume   --run <id> --path <dir>
-//   handoff  --run <id> --from native --to <agent> [--path <dir>]
-//   events   --run <id> --path <dir>
-//   protocol [--client <version>]
+//
+//	run      --goal <text> --path <dir> [--provider fake|openai-compat|anthropic] [--model ...] [--max-turns N]
+//	resume   --run <id> --path <dir>
+//	handoff  --run <id> --from native --to <agent> [--path <dir>]
+//	events   --run <id> --path <dir>
+//	protocol [--client <version>]
+//	serve    --path <dir> [--socket <path>]        (local daemon, blocks)
+//	ps       [--socket <path>] [--path <dir>]
+//	logs     --run <id> [--socket <path>] [--path <dir>]
 package main
 
 import (
@@ -13,11 +17,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	"github.com/raillen/prumo/internal/harness/aci"
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
+	"github.com/raillen/prumo/internal/harness/daemon"
 	"github.com/raillen/prumo/internal/harness/handoff"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
@@ -25,6 +32,10 @@ import (
 	harnessruntime "github.com/raillen/prumo/internal/harness/runtime"
 	"github.com/raillen/prumo/internal/protocol"
 )
+
+func defaultSocket(root string) string {
+	return filepath.Join(root, ".prumo", "runtime", "harness", "agentd.sock")
+}
 
 func runAgent(asJSON bool, args []string) int {
 	if len(args) == 0 {
@@ -41,6 +52,12 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentEvents(asJSON, args[1:])
 	case "protocol":
 		return runAgentProtocol(asJSON, args[1:])
+	case "serve":
+		return runAgentServe(asJSON, args[1:])
+	case "ps":
+		return runAgentPs(asJSON, args[1:])
+	case "logs":
+		return runAgentLogs(asJSON, args[1:])
 	default:
 		return exitUsage
 	}
@@ -165,7 +182,7 @@ func runAgentResume(asJSON bool, args []string) int {
 	provider := model.NewFake(map[string][]model.ScriptStep{"*": {{Kind: "text", Text: "resumed"}, {Kind: "complete"}}})
 	runner := harnessruntime.NewRunner(harnessruntime.Services{
 		Models: provider, Tools: aci.New(root),
-		Perms: perm.New(perm.Policy{DefaultAction: agent.PermissionAllow}),
+		Perms:       perm.New(perm.Policy{DefaultAction: agent.PermissionAllow}),
 		Checkpoints: store,
 	}, runID, cp.State.SessionID)
 	runner.State = cp.State
@@ -293,9 +310,9 @@ func splitLines(s string) []string {
 func runAgentProtocol(asJSON bool, args []string) int {
 	f := agentFlags(args)
 	result := map[string]any{
-		"version": harnessprotocol.Version,
+		"version":        harnessprotocol.Version,
 		"min_compatible": harnessprotocol.MinCompatible,
-		"schemas": harnessprotocol.Schemas,
+		"schemas":        harnessprotocol.Schemas,
 	}
 	if v, ok := f["client"]; ok && v != "" {
 		server, compatible, err := harnessprotocol.Negotiate(v)
@@ -310,5 +327,83 @@ func runAgentProtocol(asJSON bool, args []string) int {
 		return printEnvelope(protocol.OkEnvelope(result))
 	}
 	fmt.Printf("protocol %s (min %s)\n", harnessprotocol.Version, harnessprotocol.MinCompatible)
+	return exitOK
+}
+
+func runAgentServe(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	root := f["path"]
+	if root == "" {
+		root = "."
+	}
+	sock := f["socket"]
+	if sock == "" {
+		sock = defaultSocket(root)
+	}
+	store := filepath.Join(root, ".prumo", "runtime", "harness")
+	srv := daemon.New(sock, store, daemon.Deps{Tools: aci.New(root)})
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+	if !asJSON {
+		fmt.Printf("serving harness daemon on %s\n", sock)
+	}
+	if err := srv.Serve(ctx); err != nil {
+		return serviceError(asJSON, err)
+	}
+	return exitOK
+}
+
+func daemonClient(f map[string]string) daemon.Client {
+	sock := f["socket"]
+	if sock == "" {
+		root := f["path"]
+		if root == "" {
+			root = "."
+		}
+		sock = defaultSocket(root)
+	}
+	return daemon.Client{SocketPath: sock}
+}
+
+func runAgentPs(asJSON bool, args []string) int {
+	res, err := daemonClient(agentFlags(args)).List()
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+	runs, _ := res["runs"].([]any)
+	if len(runs) == 0 {
+		fmt.Println("no runs")
+		return exitOK
+	}
+	for _, r := range runs {
+		m, _ := r.(map[string]any)
+		fmt.Printf("%s %s %s\n", m["run_id"], m["status"], m["phase"])
+	}
+	return exitOK
+}
+
+func runAgentLogs(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	runID := f["run"]
+	if runID == "" {
+		return serviceError(asJSON, fmt.Errorf("logs requires --run <id>"))
+	}
+	res, err := daemonClient(f).Events(runID)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if ok, _ := res["ok"].(bool); !ok {
+		return serviceError(asJSON, fmt.Errorf("%v", res["error"]))
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(res))
+	}
+	for _, e := range res["events"].([]any) {
+		data, _ := json.Marshal(e)
+		fmt.Println(string(data))
+	}
 	return exitOK
 }

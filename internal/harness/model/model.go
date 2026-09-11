@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -40,12 +41,12 @@ type Provider interface {
 
 // ScriptStep is one scripted behavior unit.
 type ScriptStep struct {
-	Kind     string          // "text" | "tool_call" | "usage" | "error" | "complete" | "cancel"
-	Text     string          // for text
-	Tool     *agent.ToolCall // for tool_call
-	Error    string          // for error
-	Retryable bool           // for error
-	Usage    *agent.Usage    // for usage
+	Kind      string          // "text" | "tool_call" | "usage" | "error" | "complete" | "cancel"
+	Text      string          // for text
+	Tool      *agent.ToolCall // for tool_call
+	Error     string          // for error
+	Retryable bool            // for error
+	Usage     *agent.Usage    // for usage
 }
 
 // FakeProvider replays scripts deterministically for conformance tests.
@@ -112,7 +113,36 @@ func (f *FakeProvider) Stream(ctx context.Context, req agent.ModelRequest) (<-ch
 	return ch, nil
 }
 
-// ---- OpenAI-compatible adapter (first real ModelProvider) ----
+// ForName builds a provider by name. baseURL falls back to
+// PRUMO_MODEL_BASE_URL for openai-compat; apiKey falls back to
+// PRUMO_MODEL_API_KEY for network adapters.
+func ForName(name, baseURL, apiKey, mdl string) (Provider, error) {
+	switch name {
+	case "", "fake":
+		return NewFake(map[string][]ScriptStep{"*": {{Kind: "text", Text: "hello"}, {Kind: "complete"}}}), nil
+	case "openai-compat":
+		if baseURL == "" {
+			baseURL = envOr("PRUMO_MODEL_BASE_URL", "")
+		}
+		if baseURL == "" {
+			return nil, fmt.Errorf("openai-compat requires base-url or PRUMO_MODEL_BASE_URL")
+		}
+		if apiKey == "" {
+			apiKey = envOr("PRUMO_MODEL_API_KEY", "")
+		}
+		return NewOpenAICompat(baseURL, apiKey, mdl), nil
+	case "anthropic":
+		if baseURL == "" {
+			baseURL = envOr("PRUMO_MODEL_BASE_URL", "")
+		}
+		if apiKey == "" {
+			apiKey = envOr("PRUMO_MODEL_API_KEY", "")
+		}
+		return NewAnthropic(baseURL, apiKey, mdl), nil
+	default:
+		return nil, fmt.Errorf("unknown provider %s (fake|openai-compat|anthropic)", name)
+	}
+}
 
 // OpenAICompat calls any OpenAI-compatible /chat/completions endpoint with
 // stream=true (SSE) and normalizes deltas to agent.ModelEvent.
@@ -121,6 +151,13 @@ type OpenAICompat struct {
 	APIKey  string
 	Model   string
 	Client  *http.Client
+}
+
+func envOr(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return def
 }
 
 func NewOpenAICompat(baseURL, apiKey, model string) *OpenAICompat {

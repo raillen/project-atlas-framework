@@ -614,10 +614,10 @@ var commandRegistry = map[string]CommandInfo{
 		},
 	},
 	"agent": {
-		Name: "agent",
-		Category: "Harness",
-		Summary: "Headless Prumo-native agent harness (run/resume/handoff/events/protocol)",
-		Usage: "prumo agent <run|resume|handoff|events|protocol> [flags]",
+		Name:        "agent",
+		Category:    "Harness",
+		Summary:     "Headless Prumo-native agent harness (run/serve/ps/logs/events/...)",
+		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs> [flags]",
 		Description: "Runs the NativeAgent state machine headlessly: context, model, tools, permissions, checkpoints. Provider-neutral (fake|openai-compat|anthropic); external agents via AgentProvider adapters.",
 		Flags: []string{
 			"--goal <text>        Goal for agent run (default: headless run)",
@@ -631,6 +631,7 @@ var commandRegistry = map[string]CommandInfo{
 			"--from <agent>       Handoff sender (default: native)",
 			"--to <agent>         Handoff recipient",
 			"--client <ver>       Client protocol version to negotiate",
+			"--socket <path>      Daemon socket (serve/ps/logs)",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{
@@ -639,6 +640,9 @@ var commandRegistry = map[string]CommandInfo{
 			"prumo agent handoff --run R-agent-1 --to codex",
 			"prumo agent events --run R-agent-1 --path .",
 			"prumo agent protocol --client 0.1.0",
+			"prumo agent serve --path .",
+			"prumo agent ps",
+			"prumo agent logs --run R-agent-1",
 		},
 	},
 	"automation": {

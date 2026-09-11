@@ -1,10 +1,17 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/raillen/prumo/internal/harness/agent"
+	"github.com/raillen/prumo/internal/harness/daemon"
+	"github.com/raillen/prumo/internal/harness/model"
 )
 
 func TestAgentRunResumeHandoff(t *testing.T) {
@@ -57,6 +64,66 @@ func TestAgentEventsAndProtocol(t *testing.T) {
 	}
 }
 
+type cliStubTools struct{}
+
+func (cliStubTools) Execute(_ context.Context, call agent.ToolCall) (agent.ToolResult, error) {
+	return agent.ToolResult{ToolCallID: call.ID, Output: "ok"}, nil
+}
+func (cliStubTools) KindOf(string) string { return "read-only" }
+
+func TestAgentPsLogsAgainstDaemon(t *testing.T) {
+	dir := t.TempDir()
+	sock := filepath.Join(dir, "agentd.sock")
+	srv := daemon.New(sock, filepath.Join(dir, "store"), daemon.Deps{
+		NewProvider: func(name, baseURL, apiKey, mdl string) (model.Provider, error) {
+			return model.NewFake(map[string][]model.ScriptStep{"*": {{Kind: "text", Text: "hi"}, {Kind: "complete"}}}), nil
+		},
+		Tools: cliStubTools{},
+	})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go func() { _ = srv.Serve(ctx) }()
+	c := daemon.Client{SocketPath: sock}
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		if _, err := c.Protocol(); err == nil {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("daemon did not come up")
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if _, err := c.Start("daemon cli goal", "fake", "R-dcli", 1); err != nil {
+		t.Fatal(err)
+	}
+	deadline = time.Now().Add(10 * time.Second)
+	for {
+		st, err := c.Status("R-dcli")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if st["ok"] == true && st["status"] == "complete" {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("run did not complete: %v", st)
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+	code, out := captureOutput(func() int {
+		return run([]string{"agent", "ps", "--socket", sock})
+	})
+	if code != 0 || !strings.Contains(out, "R-dcli") {
+		t.Fatalf("agent ps failed: code=%d out=%s", code, out)
+	}
+	code, out = captureOutput(func() int {
+		return run([]string{"--json", "agent", "logs", "--run", "R-dcli", "--socket", sock})
+	})
+	if code != 0 || !strings.Contains(out, "R-dcli") {
+		t.Fatalf("agent logs failed: code=%d out=%s", code, out)
+	}
+}
 func TestAgentRunAnthropicAgainstStub(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
