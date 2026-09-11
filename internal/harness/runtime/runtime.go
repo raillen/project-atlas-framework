@@ -47,6 +47,9 @@ type Runner struct {
 	AfterSideEffects bool
 	MaxTurns         int
 	TurnsDone        int
+	// QualityGate, when set, vets completion inside EvaluateStop: a failing
+	// gate turns completion into PhaseFailed instead of Checkpoint.
+	QualityGate func() error
 }
 
 // NewRunner initializes a Run session.
@@ -194,6 +197,13 @@ func (r *Runner) Step(ctx context.Context) error {
 			}
 		}
 		if completed && len(r.ToolQ) == 0 {
+			if r.QualityGate != nil {
+				if err := r.QualityGate(); err != nil {
+					r.State.Phase = agent.PhaseFailed
+					r.State.StopReason = err.Error()
+					return err
+				}
+			}
 			r.State.Phase = agent.PhaseCheckpoint
 			r.State.StopReason = "completed"
 		} else if len(r.ToolQ) > 0 {
