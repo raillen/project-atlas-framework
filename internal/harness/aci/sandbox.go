@@ -75,11 +75,39 @@ func DetectContainerRuntime() string {
 	return ""
 }
 
+// StrongProvider is reserved for strong isolation (gVisor runsc and
+// successors). Today it reports availability honestly via runtime
+// detection; execution behind it is future work (GAP-024).
+type StrongProvider struct {
+	Runtime string // runsc | ""
+}
+
+func (s StrongProvider) Kind() SandboxKind { return SandboxStrong }
+func (s StrongProvider) Available() bool {
+	if s.Runtime == "" {
+		return false
+	}
+	_, err := exec.LookPath(s.Runtime)
+	return err == nil
+}
+func (s StrongProvider) Describe() string {
+	return "strong isolation runtime=" + s.Runtime + " (detection only)"
+}
+
+// DetectStrongRuntime finds a strong-isolation runtime, if any.
+func DetectStrongRuntime() string {
+	if _, err := exec.LookPath("runsc"); err == nil {
+		return "runsc"
+	}
+	return ""
+}
+
 // DefaultChain returns the honest ladder for this host.
 func DefaultChain(root string) []SandboxProvider {
 	return []SandboxProvider{
 		LocalProvider{Root: root},
 		WorktreeProvider{Path: root},
 		ContainerProvider{Runtime: DetectContainerRuntime(), Image: "prumo-harness:latest"},
+		StrongProvider{Runtime: DetectStrongRuntime()},
 	}
 }

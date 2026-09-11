@@ -4,8 +4,8 @@ import "testing"
 
 func TestSandboxChainHonest(t *testing.T) {
 	chain := DefaultChain(t.TempDir())
-	if len(chain) != 3 {
-		t.Fatalf("expected 3-rung ladder, got %d", len(chain))
+	if len(chain) != 4 {
+		t.Fatalf("expected 4-rung ladder, got %d", len(chain))
 	}
 	if !chain[0].Available() || !chain[1].Available() {
 		t.Fatal("local + worktree must be available")
@@ -17,5 +17,11 @@ func TestSandboxChainHonest(t *testing.T) {
 	rt := DetectContainerRuntime()
 	if rt != "" && rt != "podman" && rt != "docker" {
 		t.Fatalf("unexpected runtime %q", rt)
+	}
+	if strong := DetectStrongRuntime(); strong != "" && strong != "runsc" {
+		t.Fatalf("unexpected strong runtime %q", strong)
+	}
+	if (StrongProvider{Runtime: "prumo-no-such-runtime"}.Available()) {
+		t.Fatal("bogus strong runtime must be unavailable")
 	}
 }
