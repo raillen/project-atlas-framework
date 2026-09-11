@@ -51,6 +51,18 @@ func CompileWorkspace(runID, goal, root string, budget int, level string) Manife
 			eligible = append(eligible, it)
 		}
 	}
+	// Lexical fusion: BM25 bonus over file candidates, then dedup+pack.
+	refs := make([]string, 0, len(eligible))
+	for _, it := range eligible {
+		refs = append(refs, it.Ref)
+	}
+	for ref, bonus := range ftsBoost(abs, refs, Tokenize(goal)) {
+		for i := range eligible {
+			if eligible[i].Ref == ref {
+				eligible[i].Score += bonus
+			}
+		}
+	}
 	return Compile(runID, MMRDedup(eligible), budget, level)
 }
 
