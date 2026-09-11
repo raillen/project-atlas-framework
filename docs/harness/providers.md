@@ -12,6 +12,11 @@ Completed, Cancelled.
 - `OpenAICompat`: first real adapter (`/chat/completions` SSE, tool_calls
   normalization, usage, retryable 429/5xx, cancel via ctx). No vendor types
   escape; swap the library without changing domain contracts.
+- `Anthropic`: second real adapter (`/v1/messages` SSE: text deltas,
+  `tool_use` blocks with `partial_json` merge, usage, overloaded/rate-limit
+  retryability, cancel via ctx). httptest covers text, tool-use merge,
+  retryable errors and cancel. Live keys remain environmental
+  (`--api-key` / `PRUMO_MODEL_API_KEY`); wire mapping is code-complete.
 
 ## AgentProvider (external runtime owns the loop)
 

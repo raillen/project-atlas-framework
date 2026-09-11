@@ -65,7 +65,10 @@ v0.3/v0.4 conformance preserved.
 
 ## Providers implemented
 
-Model: fake (deterministic), openai-compat (real HTTP/SSE).
+Model: fake (deterministic), openai-compat (real HTTP/SSE), anthropic
+(real `/v1/messages` SSE: text, tool_use+partial_json merge, usage,
+overloaded/rate-limit retryability, ctx cancel; httptest-covered, live keys
+environmental via `--api-key`/`PRUMO_MODEL_API_KEY`).
 Agent: opencode-server, codex-cli, fake-agent.
 
 ## Security/sandbox state
@@ -95,9 +98,10 @@ latency/throughput benchmarks for providers/sandbox are open (see 19).
 
 ## Known limitations
 
-- 2nd real vendor adapter pending (gateway ready, live creds pending).
+- Live vendor keys untested here (adapters code-complete with stub-server
+  tests; `TestAgentRunAnthropicAgainstStub` proves CLI wiring).
 - External matrix is adapter-level; live Codex/OpenCode interop untested here.
-- No daemon yet: resume is CLI-driven, not background-scheduled.
+- No daemon yet: resume/replay are CLI-driven, not background-scheduled.
 - Compaction/steering policies minimal; PTY lifecycle basic.
 - Protocol IDL/SDK generation pending (envelope + 3 schemas shipped).
 - Container/gVisor sandbox, fuzz/chaos, local-inference workers deferred.
@@ -109,9 +113,13 @@ docs website, visual polish — all explicitly out of this Goal.
 
 ## Protocol status
 
-Versioned protocol started: JSON envelopes + `harness-checkpoint`,
-`harness-handoff`, `agent-event` schemas + `prumo agent` CLI. Full IDL +
-generated bindings + capability negotiation remain.
+Versioned protocol kernel: JSON envelopes + `harness-checkpoint`,
+`harness-handoff`, `agent-event` schemas + `internal/harness/protocol`
+v0.1.0 negotiation (`prumo agent protocol [--client X]`). Timeline replay:
+JSONL event log per run via `prumo agent events`. Sandbox ladder is honest
+(local/worktree available; container availability detected, execution
+pending). Fuzz seeds: context packing budget invariant + fingerprint
+determinism. Full IDL + generated bindings + capability negotiation remain.
 
 ## Prumo Code split readiness
 

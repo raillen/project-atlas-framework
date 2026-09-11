@@ -23,8 +23,11 @@ idempotency, side-effect journal, permissions. Output is bounded + truncatable.
 contracts, path safety, process execution with safe-mode denylist, workdir
 containment. `SandboxProvider` interface is gradual: LocalTrusted → Worktree
 → Container (Docker/Podman, rootless preferred) → Strong (gVisor) → Remote →
-microVM (future). Worktree isolates git, NOT processes/kernel/network.
-Container sandbox follows the roadmap; it does not block the headless Harness.
+microVM (future). `internal/harness/aci/sandbox.go` ships the honest ladder:
+`LocalProvider`/`WorktreeProvider` always available, `ContainerProvider`
+reports availability via runtime detection (`DetectContainerRuntime` prefers
+podman over docker; bogus runtimes report unavailable instead of pretending).
+Container execution lands after the headless baseline; it does not block it.
 
 ## Checkpoint / Resume / Side effects (`internal/harness/checkpoint`)
 

@@ -35,4 +35,8 @@ packages stay testable with stdlib/fakes.
 
 Implemented: contracts, runner, fake-driven tests, checkpoint integration,
 permission lifecycle, budget hook, ACI executor wiring, `prumo agent run`.
+`prumo agent run` persists a JSONL timeline (`run.started/finished` plus
+permission/model lifecycle events) replayable via `prumo agent events`;
+`prumo agent protocol` negotiates the versioned protocol kernel
+(`internal/harness/protocol`, v0.1.0).
 Partial: compaction/steering policies, daemon scheduling, PTY lifecycle.
