@@ -128,7 +128,9 @@ v0.1.0 negotiation (`prumo agent protocol [--client X]`). Timeline replay:
 JSONL event log per run via `prumo agent events`. Local daemon
 (`internal/harness/daemon`, Unix socket, `serve/ps/logs`): persisted run
 records + restart-safe reconnect; cancellation at safe points; provider
-factory shared via `model.ForName`. Sandbox ladder is honest
+factory shared via `model.ForName`. Public typed SDK `sdk/prumo` (stdlib
+only: Start/Status/List/Events/Cancel/Protocol/Wait) with boundary
+conformance (`TestBoundaryNoInternalImports`) + live roundtrip test. Sandbox ladder is honest
 (local/worktree available; container availability detected, execution
 pending). Fuzz seeds: context packing budget invariant + fingerprint
 determinism. Remote transport + full IDL + generated bindings remain.

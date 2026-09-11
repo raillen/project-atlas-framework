@@ -20,3 +20,7 @@ headless runs: `start/status/list/events/cancel/protocol` as JSON lines.
   --manifest`. `protocol.Manifest()` is the code truth; the checked-in file
   must match it (manifest_test.go) and every listed op must have a dispatch
   branch (daemon dispatch test).
+- Public SDK: `sdk/prumo` (stdlib only, typed Start/Status/List/Events/
+  Cancel/Protocol/Wait) is the client surface for prumo-code and third
+  parties. `TestBoundaryNoInternalImports` fails the build if the SDK ever
+  imports `prumo/internal`; `TestSDKRoundtrip` pins it against a live daemon.
