@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/raillen/prumo/internal/protocol"
 )
 
 func captureOutput(f func() int) (int, string) {
@@ -35,7 +37,7 @@ func TestRunVersion(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("expected 0, got %d", code)
 	}
-	if !strings.Contains(out, "0.5.0") {
+	if !strings.Contains(out, protocol.CLIVersion) {
 		t.Fatalf("expected version output, got %q", out)
 	}
 }

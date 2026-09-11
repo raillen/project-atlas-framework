@@ -163,3 +163,31 @@ func TestResolveDomainSkills(t *testing.T) {
 		})
 	}
 }
+
+func TestResolveCoreSkills(t *testing.T) {
+	catalog, err := LoadCatalog("../..")
+	if err != nil {
+		t.Fatalf("failed to load catalog: %v", err)
+	}
+
+	emptyProfile := Profile{Raw: map[string]any{}}
+	resolution := catalog.Resolve(emptyProfile)
+
+	expectedCore := []string{
+		"clean-code",
+		"cognitive-clarity",
+		"testing-quality",
+	}
+
+	resolvedSet := map[string]bool{}
+	for _, s := range resolution.Skills {
+		resolvedSet[s] = true
+	}
+
+	for _, exp := range expectedCore {
+		if !resolvedSet[exp] {
+			t.Fatalf("expected core skill %q to be resolved for empty profile, resolved skills: %v", exp, resolution.Skills)
+		}
+	}
+}
+

@@ -185,6 +185,8 @@ func run(args []string) int {
 		return runRuntime(asJSON, rest)
 	case "package", "automation":
 		return runPlatform(asJSON, rest)
+	case "workforce":
+		return runWorkforce(asJSON, home, rest[1:])
 	case "setup":
 		return runSetup(asJSON, home)
 	case "install":
