@@ -652,6 +652,7 @@ var commandRegistry = map[string]CommandInfo{
 			"--compact-budget <n> Tokens before auto-compact (default: context budget)",
 			"--egress-deny        Fail-closed network egress for local exec",
 			"--egress-allow <h>   Comma-separated allowed hosts",
+			"--mcp <cmd>          MCP server command (stdio, untrusted)",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{

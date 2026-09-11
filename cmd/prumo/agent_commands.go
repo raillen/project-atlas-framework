@@ -30,12 +30,14 @@ import (
 	"github.com/raillen/prumo/internal/harness/extagent"
 	"github.com/raillen/prumo/internal/harness/handoff"
 	"github.com/raillen/prumo/internal/harness/knowledge"
+	"github.com/raillen/prumo/internal/harness/mcp"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
 	"github.com/raillen/prumo/internal/harness/runlayer"
 	harnessruntime "github.com/raillen/prumo/internal/harness/runtime"
 	"github.com/raillen/prumo/internal/protocol"
+	"github.com/raillen/prumo/internal/toolgateway"
 )
 
 func defaultSocket(root string) string {
@@ -172,10 +174,11 @@ func runAgentRun(asJSON bool, args []string) int {
 			Payload: map[string]any{"included": len(m.Included), "tokens": m.EstimatedTokens, "pressure": m.Pressure, "level": m.Level}, CreatedAt: agent.Now()})
 		return "ctx-" + runID
 	}
-	tools, err := agentTools(root, f)
+	tools, cleanupTools, err := agentTools(root, f)
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
+	defer cleanupTools()
 	budgetTokens, budgetUSD, budgetTools := 0.0, 0.0, 0.0
 	if v, ok := f["budget-tokens"]; ok {
 		fmt.Sscanf(v, "%f", &budgetTokens)
@@ -210,6 +213,18 @@ func runAgentRun(asJSON bool, args []string) int {
 		},
 		ContextManifest: func(_ context.Context, _ agent.NativeAgentState) (string, error) {
 			return compileContext(), nil
+		},
+		ToolSpecs: func() []agent.ToolSpec {
+			type specer interface {
+				Specs(context.Context) ([]agent.ToolSpec, error)
+			}
+			if s, ok := tools.(specer); ok {
+				specs, err := s.Specs(context.Background())
+				if err == nil {
+					return specs
+				}
+			}
+			return nil
 		},
 	}, runID, "S-1")
 	runner.MaxTurns = maxTurns
@@ -447,10 +462,11 @@ func runAgentServe(asJSON bool, args []string) int {
 		sock = defaultSocket(root)
 	}
 	store := filepath.Join(root, ".prumo", "runtime", "harness")
-	tools, err := agentTools(root, f)
+	tools, cleanupTools, err := agentTools(root, f)
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
+	defer cleanupTools()
 	release, err := daemon.AcquireLock(store)
 	if err != nil {
 		return serviceError(asJSON, err)
@@ -470,7 +486,8 @@ func runAgentServe(asJSON bool, args []string) int {
 
 // agentTools selects the tool executor: local workspace (default) or
 // container-isolated command execution with host-side file tools.
-func agentTools(root string, f map[string]string) (harnessruntime.ToolExecutor, error) {
+func agentTools(root string, f map[string]string) (harnessruntime.ToolExecutor, func(), error) {
+	noop := func() {}
 	sandbox := f["sandbox"]
 	exec := aci.New(root)
 	if _, ok := f["egress-deny"]; ok {
@@ -480,25 +497,38 @@ func agentTools(root string, f map[string]string) (harnessruntime.ToolExecutor, 
 		}
 		exec.Egress = &aci.EgressPolicy{DefaultDeny: true, AllowHosts: allow}
 	}
-	if sandbox == "" || sandbox == "local" {
-		return exec, nil
+	var base harnessruntime.ToolExecutor = exec
+	if sandbox == "container" {
+		image := f["sandbox-image"]
+		if image == "" {
+			return nil, noop, fmt.Errorf("container sandbox requires --sandbox-image <image> (no implicit pulls)")
+		}
+		rt := aci.DetectContainerRuntime()
+		if rt == "" {
+			return nil, noop, fmt.Errorf("container sandbox requested but no docker/podman runtime detected")
+		}
+		runner := aci.CLIRunner{Runtime: rt}
+		if !runner.Available() {
+			return nil, noop, fmt.Errorf("container runtime %q unreachable: refusing to run unisolated", rt)
+		}
+		base = aci.NewContainer(root, image, runner)
+	} else if sandbox != "" && sandbox != "local" {
+		return nil, noop, fmt.Errorf("unknown sandbox %q (local|container)", sandbox)
 	}
-	if sandbox != "container" {
-		return nil, fmt.Errorf("unknown sandbox %q (local|container)", sandbox)
+	mcpCmd, ok := f["mcp"]
+	if !ok || mcpCmd == "" {
+		return base, noop, nil
 	}
-	image := f["sandbox-image"]
-	if image == "" {
-		return nil, fmt.Errorf("container sandbox requires --sandbox-image <image> (no implicit pulls)")
+	parts := strings.Fields(mcpCmd)
+	tr, err := mcp.StartStdio(context.Background(), parts[0], parts[1:]...)
+	if err != nil {
+		return nil, noop, fmt.Errorf("mcp server start: %w", err)
 	}
-	rt := aci.DetectContainerRuntime()
-	if rt == "" {
-		return nil, fmt.Errorf("container sandbox requested but no docker/podman runtime detected")
+	adapter := mcp.Adapter{
+		Client: &mcp.Client{Transport: tr},
+		Server: toolgateway.MCPServerDescriptor{ID: "cli-mcp", Transport: "stdio", Command: parts[0], Trust: "untrusted"},
 	}
-	runner := aci.CLIRunner{Runtime: rt}
-	if !runner.Available() {
-		return nil, fmt.Errorf("container runtime %q unreachable: refusing to run unisolated", rt)
-	}
-	return aci.NewContainer(root, image, runner), nil
+	return mcp.Fanout{Base: base, MCP: adapter}, func() { _ = tr.Close() }, nil
 }
 
 func daemonClient(f map[string]string) daemon.Client {
