@@ -35,7 +35,7 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-017 | Planning→Build (PlanningSession ⇒ Run) | pág. 25 | ✅ done | handoff/promote.go + `agent promote [--start]` | — |
 | GAP-018 | Memory Atlas | págs. 25/27-G12 | ✅ done nos limites | Atlas local + recall + Promote c/ gates (restricted/confidential nunca cruzam) | freshness/TTL automáticos |
 | GAP-019 | Agent writes KnowledgeDelta-first (G15) | pág. 27-G15 | ✅ done | seeding via Commit com Author | — |
-| GAP-020 | Retention/GC (checkpoints, eventos, knowledge) | pág. 27-G23 | ⬜ open | crescimento ilimitado por run | política + GC sem dangling provenance |
+| GAP-020 | Retention/GC (checkpoints, eventos, knowledge) | pág. 27-G23 | ✅ done | RetentionPolicy + GC (prune 5, órfãos 30d, provenance intacta) + `agent gc` | política por projeto futura |
 | GAP-021 | Retry com backoff no Gateway | HA6 | ✅ done | classes (rate 5x/servidor 2x) + jitter determinístico | — |
 | GAP-022 | Child runs/subagentes com ownership (H14) | H14 | 🟡 partial | team executa roles; runs aninhados com checkpoint não | aninhar Runner + Handoff pai↔filho |
 | GAP-023 | Scheduled runs (H16) | H16 | ✅ done | retry linear + dead-letter + last-status | supervisão externa (systemd doc) |
@@ -57,10 +57,10 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-039 | Sends live externos (opencode/codex) | HA7/HA8 | 🛑 approval | **gastam sua quota**; tudo ao redor live-verificado | sua aprovação explícita de spend |
 | GAP-040 | Modelos locais + thresholds (benchmark-driven) | pág. 19/29 | 🛑 env+decision | No-LLM first-class mantido | hardware + corpus + aprovação |
 | GAP-041 | Bindings não-Go (TS types do IDL) | HA11 | ✅ done nos limites | protocol.d.ts + client.ts c/ roundtrip live vs daemon Go | mais linguagens sob demanda |
-| GAP-042 | Checkpoint retention no daemon store | HA4 | ⬜ open | ver GAP-020 (caso particular) | incluir na política de retenção |
+| GAP-042 | Checkpoint retention no daemon store | HA4 | ✅ done | coberto por GAP-020 (mesmo store) | — |
 | GAP-043 | Descoberta de modelos nos adapters reais | HA1 | 🟡 partial | OpenAI lista `/models` real; Anthropic sem API de lista (documentado) | — |
 | GAP-044 | Structured-output enforcement | HA1 | ✅ done | validador subset + enforcement nos adapters + response_format | subset documentado |
-| GAP-045 | Impact analysis lexical (G5, legado M5) | pág. 27-G5 | 🟡 partial | pré-Harness; fora do path do run | migrar p/ relações tipadas quando tocar M5 |
+| GAP-045 | Impact analysis lexical (G5, legado M5) | pág. 27-G5 | ✅ done | matchers tipados path:/ext:/contract:/rel: + legado rotulado; entrada antiga preservada | — |
 
 ## 2. Definition of Done (§35) — estado por item
 

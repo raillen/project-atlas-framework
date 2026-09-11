@@ -7,7 +7,9 @@ pid is dead), refuses a second server, and stops via `prumo agent stop`
 
 Timelines rotate at 2000 JSONL lines (newest 1000 kept); checkpoints prune
 to the newest 5 per run. Records, knowledge and evidence are never pruned —
-provenance outlives trimming.
+provenance outlives trimming. `agent gc [--keep N] [--max-age-days N]`
+collects aged artifacts of runs that keep no checkpoints (orphaned partial
+runs) and reports counts; live runs are untouched.
 
 Example systemd unit (user scope):
 
