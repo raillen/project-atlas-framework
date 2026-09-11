@@ -33,6 +33,9 @@ Checkpoint → completion; kill → restart → resume verified by tests).
 - Handoff v2 (`internal/harness/handoff`): typed pointer-first bundle + CLI.
 - Context v2 (`internal/harness/contextv2`): gates→freshness→RRF→MMR→
   dependency closure→utility-per-token→L0–L4 manifest. No-LLM first-class.
+  Wired into `agent run` + daemon via `CompileWorkspace` (goal, entrypoints,
+  git-modified, bounded tree; persisted `context-<run>.json`;
+  `context.compiled` event; `--context-budget/--context-level`).
 - Knowledge (`internal/harness/knowledge`): typed records, Delta
   Validate→Commit, typed contradiction/coverage/readiness.
 - Doc compiler (`internal/harness/doccompile`): DAG order, render, CAS/no-op

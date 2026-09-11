@@ -13,7 +13,7 @@ Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table:
 | HA6 | 2nd ModelProvider + Gateway/fallback | ACCEPTED | code-complete (openai-compat + anthropic adapters, gateway routing/fallback/CB; live keys environmental) |
 | HA7 | 1st external AgentProvider | ACCEPTED | partial (OpenCode server + Codex CLI + FakeAgent; live matrix pending) |
 | HA8 | Handoff cross-provider dogfood | ACCEPTED | baseline (typed bundle + CLI; cross-provider e2e pending live creds) |
-| HA9 | Context v2 / Knowledge integration | ACCEPTED | baseline (contextv2, knowledge, delta, contradiction/coverage/readiness) |
+| HA9 | Context v2 / Knowledge integration | ACCEPTED | implemented (workspace v2 compilation wired into run+daemon with persisted manifests; knowledge delta/coverage/readiness engines baselined, run-seeding future) |
 | HA10 | multi-agent/worktrees | ACCEPTED | baseline (team roles, ownership guard, worktree alloc) |
 | HA11 | compatibility/eval matrix | ACCEPTED | partial (unit+conformance+CLI evals; provider-matrix + fuzz pending) |
 | HD0–HD4 | Human Docs Runtime baseline | ACCEPTED | partial (this tree + doccompile DAG/CAS; planner/site/i18n future) |
