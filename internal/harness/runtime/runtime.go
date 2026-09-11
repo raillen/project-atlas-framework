@@ -57,6 +57,9 @@ type Runner struct {
 	// CompactKeep at model-request time, oldest tool observations collapse
 	// into one deterministic summary. Zero disables.
 	CompactKeep int
+	// CompactBudget auto-triggers compaction when estimated conversation
+	// tokens exceed it (0 = off). Estimate uses the versioned table.
+	CompactBudget int
 	// mu guards Messages and State for cross-goroutine Inject/StateCopy.
 	mu sync.Mutex
 }
@@ -92,6 +95,16 @@ func (r *Runner) Inject(m agent.Message) error {
 	return nil
 }
 
+// conversationTokensLocked estimates current conversation size.
+// Caller must hold mu.
+func (r *Runner) conversationTokensLocked() int {
+	total := 0
+	for _, m := range r.Messages {
+		total += model.EstimateTokens(m.Content, "")
+	}
+	return total
+}
+
 // StateCopy snapshots canonical state for observers (status/replay)
 // without racing the loop.
 func (r *Runner) StateCopy() agent.NativeAgentState {
@@ -103,13 +116,24 @@ func (r *Runner) StateCopy() agent.NativeAgentState {
 // maybeCompactLocked collapses oldest tool observations into a summary.
 // Caller must hold mu.
 func (r *Runner) maybeCompactLocked() {
-	if r.CompactKeep <= 0 || len(r.Messages) <= r.CompactKeep*2 {
+	over := r.CompactKeep > 0 && len(r.Messages) > r.CompactKeep*2
+	if !over && r.CompactBudget > 0 {
+		over = r.conversationTokensLocked() > r.CompactBudget
+	}
+	if !over {
 		return
 	}
-	keep := r.Messages[len(r.Messages)-r.CompactKeep:]
-	dropped := len(r.Messages) - r.CompactKeep
+	keepN := r.CompactKeep
+	if keepN <= 0 {
+		keepN = 10
+	}
+	if keepN >= len(r.Messages) {
+		return
+	}
+	keep := r.Messages[len(r.Messages)-keepN:]
+	dropped := len(r.Messages) - keepN
 	obs, tools := 0, 0
-	for _, m := range r.Messages[:len(r.Messages)-r.CompactKeep] {
+	for _, m := range r.Messages[:len(r.Messages)-keepN] {
 		if m.Role == agent.RoleTool {
 			obs++
 		} else {

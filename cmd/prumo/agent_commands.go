@@ -19,6 +19,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 
 	"github.com/raillen/prumo/internal/harness/aci"
@@ -214,6 +215,11 @@ func runAgentRun(asJSON bool, args []string) int {
 	runner.MaxTurns = maxTurns
 	if v, ok := f["compact-keep"]; ok {
 		fmt.Sscanf(v, "%d", &runner.CompactKeep)
+	}
+	if v, ok := f["compact-budget"]; ok {
+		fmt.Sscanf(v, "%d", &runner.CompactBudget)
+	} else if runner.CompactKeep > 0 {
+		runner.CompactBudget = ctxBudget
 	}
 	if strict {
 		reports := counting
@@ -466,8 +472,16 @@ func runAgentServe(asJSON bool, args []string) int {
 // container-isolated command execution with host-side file tools.
 func agentTools(root string, f map[string]string) (harnessruntime.ToolExecutor, error) {
 	sandbox := f["sandbox"]
+	exec := aci.New(root)
+	if _, ok := f["egress-deny"]; ok {
+		var allow []string
+		if v, ok := f["egress-allow"]; ok && v != "" {
+			allow = strings.Split(v, ",")
+		}
+		exec.Egress = &aci.EgressPolicy{DefaultDeny: true, AllowHosts: allow}
+	}
 	if sandbox == "" || sandbox == "local" {
-		return aci.New(root), nil
+		return exec, nil
 	}
 	if sandbox != "container" {
 		return nil, fmt.Errorf("unknown sandbox %q (local|container)", sandbox)

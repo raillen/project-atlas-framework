@@ -617,7 +617,7 @@ var commandRegistry = map[string]CommandInfo{
 		Name:        "agent",
 		Category:    "Harness",
 		Summary:     "Headless Prumo-native agent harness (run/serve/ps/logs/events/...)",
-		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs|steer|stop|schedule|unschedule|jobs|providers> [flags]",
+		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs|steer|stop|schedule|unschedule|jobs|promote|providers> [flags]",
 		Description: "Runs the NativeAgent state machine headlessly: context, model, tools, permissions, checkpoints. Provider-neutral (fake|openai-compat|anthropic); external agents via AgentProvider adapters.",
 		Flags: []string{
 			"--goal <text>        Goal for agent run (default: headless run)",
@@ -636,6 +636,9 @@ var commandRegistry = map[string]CommandInfo{
 			"--message <text>     Steering input for a live run",
 			"--every <secs>       Schedule interval (min 5)",
 			"--job <id>           Job id (schedule/unschedule)",
+			"--session <id>       Planning session id (promote)",
+			"--session-file <p>   Planning session file (promote)",
+			"--start              Start the promoted run immediately",
 			"--opencode-url <u>   OpenCode server URL to probe",
 			"--sandbox <kind>     local|container (default: local)",
 			"--sandbox-image <i>  Container image (required with container)",
@@ -646,6 +649,9 @@ var commandRegistry = map[string]CommandInfo{
 			"--budget-tools <n>   Hard tool-call budget (0 = track only)",
 			"--strict             Require a passing test.run for completion",
 			"--compact-keep <n>   Cap conversation (0 = off)",
+			"--compact-budget <n> Tokens before auto-compact (default: context budget)",
+			"--egress-deny        Fail-closed network egress for local exec",
+			"--egress-allow <h>   Comma-separated allowed hosts",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{
