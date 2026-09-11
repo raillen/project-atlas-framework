@@ -17,16 +17,16 @@ item. Novos gaps entram no fim com o próximo número livre.
 | ID | Item | Fonte | Status | Evidência / limite | Próximo passo |
 |----|------|-------|--------|--------------------|---------------|
 | GAP-001 | Budget envelope no path real | DoD §35, HA4 | ✅ done | runlayer Tracker + flags + persist budget-<run>.json, CLI e daemon | — |
-| GAP-002 | Evidence/Gates do protocolo no loop | HA2/HA4, pág. 05 | ✅ done | evidence-<run>.json + QualityGate + `--strict` no Runner/CLI/daemon | gate policies ricas futuras |
+| GAP-002 | Evidence/Gates do protocolo no loop | HA2/HA4, pág. 05 | ✅ done | evidence-<run>.json + `--strict` + políticas declarativas (`--gates`) | motores externos futuros |
 | GAP-003 | Team binding real (Runner aninhado por role) | HA10/HA14 | ✅ done | team/bind.go: runs aninhados + budget do role + checkpoints | — |
 | GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | ✅ done | redação default + EgressPolicy fail-closed c/ allowlist (`--egress-deny/--allow`) | postura legacy quando nil (explícito) |
 | GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | ✅ done | Policy + QuotaState c/ cooldown 429 + exclusão; pricing via caller | billing vivo futuro |
 | GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map) | HA9, págs. 08/31 | ✅ done nos limites | BM25 + repo-map + LSP (symbols/hover/definition, fallback) | typed graph + embeddings |
 | GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | ✅ done nos limites | regions + RFC6902 + seções Markdown estruturais | AST pleno (listas/tabelas) |
-| GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ✅ done | team/merge.go three-way (conflito nunca auto-resolve) | deleções fora do slice |
+| GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ✅ done | three-way + deleções propagadas/conflitadas, base intacta | — |
 | GAP-009 | Steering + compaction | HA2, pág. 05 | ✅ done | Inject/op/CLI/SDK + CompactKeep/Budget auto + ACP bridge | — |
 | GAP-010 | ACP Agent Server (expor Runtime a editores) | H11, págs. 06/22 | ✅ done nos limites | servidor ACP v1 (spec oficial) + `agent acp` + bridge testada vs daemon | verificação c/ cliente real (Zed) |
-| GAP-011 | MCP client (transporte + integração tools) | H5 | ✅ done nos limites | cliente stdio + Adapter policy-gated + Fanout + specs no modelo (`--mcp`) | servidores built-in além do stdio |
+| GAP-011 | MCP client (transporte + integração tools) | H5 | ✅ done nos limites | stdio + HTTP c/ sessão + Adapter + Fanout + `--mcp` | SSE streams futuros |
 | GAP-012 | Benchmarks (packing, compilação, Runner) | relatório | ✅ done | compile ~6.8ms, BM25 ~0.78ms, run ~7µs (i7-3632QM) | — |
 | GAP-013 | Operação do daemon (PID lock, rotação, unit, stop) | daemon | ✅ done | lock/stale-takeover + stop + rotação + prune + unit doc | — |
 | GAP-014 | Kill -9 real com side effect pendente | HA4/HA8 | ✅ done | TestDaemonKillRecovery: SIGKILL + takeover + store íntegro | kill mid-side-effect em CI |
