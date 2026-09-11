@@ -78,6 +78,8 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentJobs(asJSON, args[1:])
 	case "promote":
 		return runAgentPromote(asJSON, args[1:])
+	case "gc":
+		return runAgentGC(asJSON, args[1:])
 	case "acp":
 		return runAgentACP(asJSON, args[1:])
 	case "providers":
@@ -828,6 +830,34 @@ func runAgentACP(asJSON bool, args []string) int {
 	if err := srv.Serve(context.Background()); err != nil {
 		return serviceError(asJSON, err)
 	}
+	return exitOK
+}
+
+// runAgentGC enforces retention: prune checkpoints, collect aged orphans.
+// Provenance never dangles: runs owning checkpoints keep everything.
+func runAgentGC(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	root := f["path"]
+	if root == "" {
+		root = "."
+	}
+	policy := checkpoint.DefaultRetention()
+	if v, ok := f["keep"]; ok {
+		fmt.Sscanf(v, "%d", &policy.KeepCheckpoints)
+	}
+	if v, ok := f["max-age-days"]; ok {
+		fmt.Sscanf(v, "%d", &policy.MaxAgeDays)
+	}
+	rep, err := checkpoint.New(filepath.Join(root, ".prumo", "runtime", "harness")).GC(policy)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(map[string]any{
+			"checkpoints_pruned": rep.CheckpointsPruned, "artifacts_removed": rep.ArtifactsRemoved,
+		}))
+	}
+	fmt.Printf("pruned %d checkpoints, removed %d orphan artifacts\n", rep.CheckpointsPruned, len(rep.ArtifactsRemoved))
 	return exitOK
 }
 

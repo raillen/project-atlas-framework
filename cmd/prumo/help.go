@@ -617,7 +617,7 @@ var commandRegistry = map[string]CommandInfo{
 		Name:        "agent",
 		Category:    "Harness",
 		Summary:     "Headless Prumo-native agent harness (run/serve/ps/logs/events/...)",
-		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs|steer|stop|schedule|unschedule|jobs|promote|acp|providers> [flags]",
+		Usage:       "prumo agent <run|resume|handoff|events|protocol|serve|ps|logs|steer|stop|schedule|unschedule|jobs|promote|acp|gc|providers> [flags]",
 		Description: "Runs the NativeAgent state machine headlessly: context, model, tools, permissions, checkpoints. Provider-neutral (fake|openai-compat|anthropic); external agents via AgentProvider adapters.",
 		Flags: []string{
 			"--goal <text>        Goal for agent run (default: headless run)",
@@ -645,6 +645,8 @@ var commandRegistry = map[string]CommandInfo{
 			"--job <id>           Job id (schedule/unschedule)",
 			"--session <id>       Planning session id (promote)",
 			"--session-file <p>   Planning session file (promote)",
+			"--keep <n>           Checkpoints kept per run by gc",
+			"--max-age-days <n>   Orphan age collected by gc",
 			"--start              Start the promoted run immediately",
 			"--opencode-url <u>   OpenCode server URL to probe",
 			"--sandbox <kind>     local|container (default: local)",

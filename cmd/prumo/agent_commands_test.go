@@ -329,6 +329,31 @@ func TestAgentGatesFile(t *testing.T) {
 	}
 }
 
+func TestAgentGCCollectsOrphans(t *testing.T) {
+	dir := t.TempDir()
+	hdir := filepath.Join(dir, ".prumo", "runtime", "harness")
+	if err := os.MkdirAll(hdir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	orph := filepath.Join(hdir, "events-R-old.jsonl")
+	if err := os.WriteFile(orph, []byte("{}\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	past := time.Now().AddDate(0, 0, -60)
+	if err := os.Chtimes(orph, past, past); err != nil {
+		t.Fatal(err)
+	}
+	code, out := captureOutput(func() int {
+		return run([]string{"agent", "gc", "--path", dir})
+	})
+	if code != 0 || !strings.Contains(out, "1 orphan") {
+		t.Fatalf("gc failed: code=%d out=%s", code, out)
+	}
+	if _, err := os.Stat(orph); !os.IsNotExist(err) {
+		t.Fatal("orphan must be collected")
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {
