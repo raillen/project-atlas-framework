@@ -123,9 +123,7 @@ func (e *Executor) Execute(ctx context.Context, call agent.ToolCall) (agent.Tool
 		if pattern == "" {
 			pattern = arg("query")
 		}
-		cmd := exec.CommandContext(ctx, "rg", "--no-heading", "--line-number", "--max-count", "50", pattern, e.Root)
-		data, _ := cmd.CombinedOutput()
-		out, trunc := bound(string(data), e.OutputMax)
+		out, trunc := e.searchText(pattern)
 		return agent.ToolResult{ToolCallID: call.ID, ExitCode: 0, Output: out, Truncated: trunc}, nil
 	case "git.status":
 		cmd := exec.CommandContext(ctx, "git", "status", "--short")
@@ -158,6 +156,12 @@ func (e *Executor) Execute(ctx context.Context, call agent.ToolCall) (agent.Tool
 		data, _ := cmd.CombinedOutput()
 		out, trunc := bound(string(data), e.OutputMax)
 		return agent.ToolResult{ToolCallID: call.ID, ExitCode: 0, Output: out, Truncated: trunc}, nil
+	case "edit.patch":
+		return e.editPatch(call, arg), nil
+	case "edit.delete":
+		return e.editDelete(call, arg), nil
+	case "edit.move":
+		return e.editMove(call, arg), nil
 	case "edit.create":
 		p, err := e.cleanPath(arg("path"))
 		if err != nil {
