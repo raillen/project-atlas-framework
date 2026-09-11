@@ -77,6 +77,12 @@ func Remember(s *Store, id, title, body, provenance string, tags []string) error
 // Recall returns up to n memory records overlapping query terms,
 // freshest most-overlapping first.
 func Recall(s *Store, query string, n int) []Record {
+	return RecallSince(s, query, n, time.Time{})
+}
+
+// RecallSince additionally drops records updated before since (zero = no
+// freshness floor). Stale memories stay stored; they just stop surfacing.
+func RecallSince(s *Store, query string, n int, since time.Time) []Record {
 	if n <= 0 {
 		n = 5
 	}
@@ -91,9 +97,15 @@ func Recall(s *Store, query string, n int) []Record {
 		score int
 	}
 	var hits []hit
+	floor := !since.IsZero()
 	for _, r := range s.Search("", []Kind{KindMemory}) {
 		if r.Status != "active" {
 			continue
+		}
+		if floor {
+			if ts, err := time.Parse(time.RFC3339Nano, r.UpdatedAt); err != nil || ts.Before(since) {
+				continue
+			}
 		}
 		hay := strings.ToLower(r.Title + " " + r.Body)
 		score := 0
