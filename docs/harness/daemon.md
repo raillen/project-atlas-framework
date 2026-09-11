@@ -17,7 +17,8 @@ resolve via `model.ForName` (fake default, real adapters need keys/URLs).
   injects follow-up input into live runs (refused when terminal).
 - Scheduling: `schedule/unschedule/jobs` ops (CLI + SDK) persist cron-like
   jobs; the serve loop fires due jobs once each (no catch-up storms).
-  `prumo agent schedule --goal ... --every 3600`.
+  `prumo agent schedule --goal ... --every 3600`. Start failures back off
+  linearly and dead-letter after MaxRetries (default 3), keeping last status.
 - Tests: lifecycle (start→complete→events→list→protocol), cancel of a
   blocking run, and reconnect (new server, same store).
 - IDL: `schemas/protocol-manifest.json` (version, ops, args, schemas,

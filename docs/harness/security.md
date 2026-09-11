@@ -18,6 +18,9 @@ Catalog baseline: `fs.read/list/search`, `code.symbols/diagnostics`,
 stale trees; re-apply fails instead of duplicating. `fs.search` prefers
 `rg`, falling back to `grep` on hermetic hosts. Outputs boundados passam por
 redação default (API keys, bearer, password=...) antes de alcançar o modelo.
+Egress fail-closed opt-in: `--egress-deny` nega destinos fora de
+`--egress-allow` (sufixos `.dominio` valem); `restricted` nunca sai mesmo
+em modo permissivo. Container nega rede estruturalmente.
 Execution respects trust, fs scope (cleaned + contained,
 symlink/`..` escapes rejected), network scope, credentials, budget,
 idempotency, side-effect journal, permissions. Output is bounded + truncatable.

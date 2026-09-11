@@ -19,13 +19,13 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-001 | Budget envelope no path real | DoD §35, HA4 | ✅ done | runlayer Tracker + flags + persist budget-<run>.json, CLI e daemon | — |
 | GAP-002 | Evidence/Gates do protocolo no loop | HA2/HA4, pág. 05 | ✅ done | evidence-<run>.json + QualityGate + `--strict` no Runner/CLI/daemon | gate policies ricas futuras |
 | GAP-003 | Team binding real (Runner aninhado por role) | HA10/HA14 | ✅ done | team/bind.go: runs aninhados + budget do role + checkpoints | — |
-| GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | 🟡 partial | redação default de outputs (Redactor) + postura documentada; destinos ainda abertos no local | policy de destinos no exec local |
-| GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | 🟡 partial | Policy cheap/fast + filtros capability/privacidade; quota-awareness aberta | quota + pricing dinâmico |
+| GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | ✅ done | redação default + EgressPolicy fail-closed c/ allowlist (`--egress-deny/--allow`) | postura legacy quando nil (explícito) |
+| GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | ✅ done | Policy + QuotaState c/ cooldown 429 + exclusão; pricing via caller | billing vivo futuro |
 | GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map, RRF multi-fonte) | HA9, págs. 08/31 | 🟡 partial | BM25-lite fundido no packing; LSP/symbol graph abertos | LSP + repo map |
 | GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | 🟡 partial | regions + RFC6902 prontos; AST-aware Markdown aberto | AST-aware |
 | GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ✅ done | team/merge.go three-way (conflito nunca auto-resolve) | deleções fora do slice |
-| GAP-009 | Steering + compaction | HA2, pág. 05 | 🟡 partial | Inject + op steer + CompactKeep ligados; auto-policy aberta | política automática |
-| GAP-010 | ACP Agent Server (expor Runtime a editores) | H11, págs. 06/22 | 🟡 partial | pacote acp (new/prompt/cancel/events/wait); spec completa em GAP-032 | handshake ACP pleno |
+| GAP-009 | Steering + compaction | HA2, pág. 05 | ✅ done | Inject/op/CLI/SDK + CompactKeep/Budget auto + ACP bridge | — |
+| GAP-010 | Ponte p/ editores (subset ACP-shaped) | H11, págs. 06/22 | ✅ done nos limites | pacote acp testado vs daemon; spec plena em GAP-032 | handshake ACP pleno |
 | GAP-011 | MCP client real (SDK + transporte) | H5, págs. 06/19 | 🟡 partial | cliente stdio JSON-RPC sem deps (decisão registrada); integração como tools pendente | expor MCP como ToolService |
 | GAP-012 | Benchmarks (packing, compilação, Runner) | relatório | ✅ done | compile ~6.8ms, BM25 ~0.78ms, run ~7µs (i7-3632QM) | — |
 | GAP-013 | Operação do daemon (PID lock, rotação, unit, stop) | daemon | ✅ done | lock/stale-takeover + stop + rotação + prune + unit doc | — |
@@ -36,9 +36,9 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-018 | Memory Atlas cross-project | págs. 25/27-G12 | 🟡 partial | Atlas local + recall no Context; cross-project + privacy gates abertos | promoção cross-project |
 | GAP-019 | Agent writes KnowledgeDelta-first (G15) | pág. 27-G15 | ✅ done | seeding via Commit com Author | — |
 | GAP-020 | Retention/GC (checkpoints, eventos, knowledge) | pág. 27-G23 | ⬜ open | crescimento ilimitado por run | política + GC sem dangling provenance |
-| GAP-021 | Retry com backoff no Gateway | HA6 | ✅ done | RetryPolicy linear determinístico + testes | jitter/backoff por classe |
+| GAP-021 | Retry com backoff no Gateway | HA6 | ✅ done | classes (rate 5x/servidor 2x) + jitter determinístico | — |
 | GAP-022 | Child runs/subagentes com ownership (H14) | H14 | 🟡 partial | team executa roles; runs aninhados com checkpoint não | aninhar Runner + Handoff pai↔filho |
-| GAP-023 | Scheduled/background agents (H16) | H16 | 🟡 partial | jobs persistentes + tick + ops/CLI/SDK; supervisão além do unit doc aberta | supervisão de jobs |
+| GAP-023 | Scheduled runs (H16) | H16 | ✅ done | retry linear + dead-letter + last-status | supervisão externa (systemd doc) |
 | GAP-024 | Provedores sandbox adicionais (H13) | H13 | 🟡 partial | StrongProvider com detecção runsc; execução forte/remota aberta | execução gVisor/remota |
 | GAP-025 | Contratos Local Intel (KnowledgeTask, Router, ResourceManager, Supervisor) | págs. 29–30 | 🟡 partial | tipos + MinSufficientRouter; workers/supervisão abertos | workers + benchmarks |
 | GAP-026 | Research Ledger first-class (G11) | pág. 27-G11 | ✅ done | Add/Resolve/Open Delta-first | — |
@@ -59,7 +59,7 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-041 | Bindings não-Go (TS types do IDL) | HA11 | 🟡 partial | protocol.d.ts gerado + teste de frescor; SDK pleno aberto | clientes TS |
 | GAP-042 | Checkpoint retention no daemon store | HA4 | ⬜ open | ver GAP-020 (caso particular) | incluir na política de retenção |
 | GAP-043 | Descoberta de modelos nos adapters reais | HA1 | 🟡 partial | OpenAI lista `/models` real; Anthropic sem API de lista (documentado) | — |
-| GAP-044 | Structured-output enforcement | HA1 | 🟡 partial | capability anunciada; sem validação | validar contra schema no adapter |
+| GAP-044 | Structured-output enforcement | HA1 | ✅ done | validador subset + enforcement nos adapters + response_format | subset documentado |
 | GAP-045 | Impact analysis lexical (G5, legado M5) | pág. 27-G5 | 🟡 partial | pré-Harness; fora do path do run | migrar p/ relações tipadas quando tocar M5 |
 
 ## 2. Definition of Done (§35) — estado por item

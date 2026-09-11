@@ -97,7 +97,10 @@ source (not prompt dump); planner/site/i18n deferred.
 
 - `go test ./internal/harness/...` — 15 packages green (incl. conformance).
 - `go test ./cmd/prumo/ -run TestAgent` — headless run/resume/handoff/
-  events/protocol/daemon-ps-logs/providers/context/knowledge/sandbox/anthropic-stub.
+  events/protocol/daemon-ps-logs/steer/schedule/stop/promote/budget/strict/
+  egress/providers/context/knowledge/sandbox/anthropic-stub + SIGKILL recovery.
+- Gateway: per-class backoff + jitter, quota cooldowns/exclusion, cost/privacy
+  policy routing, tool-schema enforcement + response_format.
 - Live opencode interop (`PRUMO_LIVE_OPENCODE_URL`): lifecycle, resume,
   usage, handoff-attach — all passing, zero model spend (no `Send` invoked).
 - Fuzz: `FuzzCompilePacking` 1.15M execs/40s + `FuzzFingerprintStable`
