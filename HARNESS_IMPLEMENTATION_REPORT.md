@@ -54,7 +54,7 @@ repository canonical docs > Notion snapshot.
 
 ## Packages/modules added
 
-`internal/harness/{agent,model,perm,checkpoint,runtime,gateway,extagent,handoff,contextv2,knowledge,doccompile,team,aci,eval,runlayer,protocol,daemon,acp,mcp,humandocs,localintel,schemareg,eval}`;
+`internal/harness/{agent,model,perm,checkpoint,runtime,gateway,extagent,handoff,contextv2,knowledge,doccompile,team,aci,eval,runlayer,protocol,daemon,acp,mcp,humandocs,localintel,schemareg,repomap,lsp}`;
 `cmd/prumo/agent_commands.go`; schemas harness-checkpoint/harness-handoff/
 agent-event; `docs/harness/*`.
 

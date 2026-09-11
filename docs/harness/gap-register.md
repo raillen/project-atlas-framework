@@ -21,19 +21,19 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-003 | Team binding real (Runner aninhado por role) | HA10/HA14 | ✅ done | team/bind.go: runs aninhados + budget do role + checkpoints | — |
 | GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | ✅ done | redação default + EgressPolicy fail-closed c/ allowlist (`--egress-deny/--allow`) | postura legacy quando nil (explícito) |
 | GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | ✅ done | Policy + QuotaState c/ cooldown 429 + exclusão; pricing via caller | billing vivo futuro |
-| GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map, RRF multi-fonte) | HA9, págs. 08/31 | 🟡 partial | BM25-lite fundido no packing; LSP/symbol graph abertos | LSP + repo map |
-| GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | 🟡 partial | regions + RFC6902 prontos; AST-aware Markdown aberto | AST-aware |
+| GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map) | HA9, págs. 08/31 | ✅ done nos limites | BM25 + repo-map + LSP c/ fallback repomap; graph embeddings futuros | typed graph + embeddings |
+| GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | ✅ done nos limites | regions + RFC6902 + seções Markdown estruturais | AST pleno (listas/tabelas) |
 | GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ✅ done | team/merge.go three-way (conflito nunca auto-resolve) | deleções fora do slice |
 | GAP-009 | Steering + compaction | HA2, pág. 05 | ✅ done | Inject/op/CLI/SDK + CompactKeep/Budget auto + ACP bridge | — |
 | GAP-010 | Ponte p/ editores (subset ACP-shaped) | H11, págs. 06/22 | ✅ done nos limites | pacote acp testado vs daemon; spec plena em GAP-032 | handshake ACP pleno |
-| GAP-011 | MCP client real (SDK + transporte) | H5, págs. 06/19 | 🟡 partial | cliente stdio JSON-RPC sem deps (decisão registrada); integração como tools pendente | expor MCP como ToolService |
+| GAP-011 | MCP client (transporte + integração tools) | H5 | ✅ done nos limites | cliente stdio + Adapter policy-gated + Fanout + specs no modelo (`--mcp`) | servidores built-in além do stdio |
 | GAP-012 | Benchmarks (packing, compilação, Runner) | relatório | ✅ done | compile ~6.8ms, BM25 ~0.78ms, run ~7µs (i7-3632QM) | — |
 | GAP-013 | Operação do daemon (PID lock, rotação, unit, stop) | daemon | ✅ done | lock/stale-takeover + stop + rotação + prune + unit doc | — |
 | GAP-014 | Kill -9 real com side effect pendente | HA4/HA8 | ✅ done | TestDaemonKillRecovery: SIGKILL + takeover + store íntegro | kill mid-side-effect em CI |
 | GAP-015 | Approvals persistidas | HA3/pág. 07 | ✅ done | permissions-<run>.jsonl em CLI+daemon | — |
 | GAP-016 | Bridge AgentEvent → observability.Event | HA4 | ✅ done | obs-<run>.jsonl dual-write CLI+daemon | — |
 | GAP-017 | Planning→Build (PlanningSession ⇒ Run) | pág. 25 | ✅ done | handoff/promote.go + `agent promote [--start]` | — |
-| GAP-018 | Memory Atlas cross-project | págs. 25/27-G12 | 🟡 partial | Atlas local + recall no Context; cross-project + privacy gates abertos | promoção cross-project |
+| GAP-018 | Memory Atlas | págs. 25/27-G12 | ✅ done nos limites | Atlas local + recall + Promote c/ gates (restricted/confidential nunca cruzam) | freshness/TTL automáticos |
 | GAP-019 | Agent writes KnowledgeDelta-first (G15) | pág. 27-G15 | ✅ done | seeding via Commit com Author | — |
 | GAP-020 | Retention/GC (checkpoints, eventos, knowledge) | pág. 27-G23 | ⬜ open | crescimento ilimitado por run | política + GC sem dangling provenance |
 | GAP-021 | Retry com backoff no Gateway | HA6 | ✅ done | classes (rate 5x/servidor 2x) + jitter determinístico | — |
@@ -81,7 +81,7 @@ item. Novos gaps entram no fim com o próximo número livre.
 | 13 | gateway routing/fallback | ✅ retry + policy (quota: GAP-005) |
 | 14 | ≥1 external AgentProvider works | ✅ nos limites (send: GAP-039) |
 | 15 | typed Handoff | ✅ |
-| 16 | Context Compiler v2 baseline | ✅ FTS+Atlas fundidos (GAP-006/018) |
+| 16 | Context Compiler v2 baseline | ✅ repo-map+LSP+FTS+Atlas (graph futuro) |
 | 17 | Knowledge Runtime baseline | ✅ (Atlas: GAP-018) |
 | 18 | KnowledgeDelta validate/commit | ✅ Delta-first + ledger (GAP-019/026) |
 | 19 | Coverage/Readiness baseline | ✅ |

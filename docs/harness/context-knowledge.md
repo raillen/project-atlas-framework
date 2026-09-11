@@ -19,8 +19,15 @@ roots it degrades to the goal item.
 
 Retrieval beyond listing: BM25-lite over workspace text fused as score
 bonus, and the project Memory Atlas (`.prumo/atlas.json`) recalled as
-pointer-sized candidates — never dumped wholesale. Token estimates use the
-versioned `tokens-v1` table. LSP/symbol graph stay future slices.
+pointer-sized candidates — never dumped wholesale. Code intelligence:
+`repomap` (bounded Go/md symbol index + compact render) always on; LSP
+(`gopls` et al.) when a server binary exists, repomap fallback otherwise;
+top symbol hits enter as `symbol:` pointers. Token estimates use the
+versioned `tokens-v1` table.
+
+Cross-project memory moves only through `Promote` (allowlisted targets,
+volume cap, `restricted`/`confidential` never cross, provenance stamped,
+copy-not-move).
 
 ## Knowledge Runtime (`internal/harness/knowledge`)
 

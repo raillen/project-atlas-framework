@@ -18,6 +18,9 @@ Catalog baseline: `fs.read/list/search`, `code.symbols/diagnostics`,
 stale trees; re-apply fails instead of duplicating. `fs.search` prefers
 `rg`, falling back to `grep` on hermetic hosts. Outputs boundados passam por
 redação default (API keys, bearer, password=...) antes de alcançar o modelo.
+MCP servers attach via `--mcp "<bin> [args]"` (stdio, untrusted-by-default):
+tools advertised as `mcp.*` with server schemas, execution policy-gated
+(allowlist, scope, safe-mode), specs sent to capable models.
 Egress fail-closed opt-in: `--egress-deny` nega destinos fora de
 `--egress-allow` (sufixos `.dominio` valem); `restricted` nunca sai mesmo
 em modo permissivo. Container nega rede estruturalmente.

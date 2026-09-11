@@ -307,7 +307,7 @@ func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	if code == 0 {
 		t.Fatal("container without image must fail fast")
 	}
-	if _, err := agentTools(dir, map[string]string{"sandbox": "container"}); err == nil || !strings.Contains(err.Error(), "sandbox-image") {
+	if _, _, err := agentTools(dir, map[string]string{"sandbox": "container"}); err == nil || !strings.Contains(err.Error(), "sandbox-image") {
 		t.Fatalf("expected sandbox-image error, got %v", err)
 	}
 }
