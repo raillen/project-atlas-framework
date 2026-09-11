@@ -140,14 +140,38 @@ func TestEvalCrashResumeAndNoDuplicateEffects(t *testing.T) {
 }
 
 func TestEvalCrossProviderHandoff(t *testing.T) {
-	b, err := handoff.Build("native", "codex", agent.NativeAgentState{RunID: "R-eval-6", ContextManifestID: "ctx"}, "rev", "move", nil)
+	ctx := context.Background()
+	// Native side: checkpoint state becomes a typed pointer-first bundle.
+	b, err := handoff.Build("native", "fake-agent", agent.NativeAgentState{RunID: "R-eval-6", ContextManifestID: "ctx"}, "rev", "move", nil)
 	if err != nil || b.Validate() != nil {
 		t.Fatal("handoff must validate")
 	}
+	// External side: session opens, receives the continuation summary
+	// (never a transcript), runs to its own completion, then closes.
 	f := &extagent.FakeAgent{}
-	s, err := f.CreateSession(context.Background(), "R-eval-6")
+	s, err := f.CreateSession(ctx, b.Handoff.ID)
 	if err != nil || s.ID == "" {
 		t.Fatal("external session must open")
+	}
+	summary := "handoff " + b.Handoff.ID + " checkpoint=" + b.Refs["checkpoint"] + " ctx=" + b.Refs["context_manifest"]
+	if err := f.Send(ctx, s.ID, summary); err != nil {
+		t.Fatalf("transfer failed: %v", err)
+	}
+	ch, err := f.Events(ctx, s.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	completed := false
+	for ev := range ch {
+		if ev.Kind == "external.session.completed" {
+			completed = true
+		}
+	}
+	if !completed {
+		t.Fatal("external session must complete the transferred handoff")
+	}
+	if err := f.Close(ctx, s.ID); err != nil {
+		t.Fatalf("close failed: %v", err)
 	}
 }
 
