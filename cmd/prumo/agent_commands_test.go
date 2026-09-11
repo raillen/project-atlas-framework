@@ -271,6 +271,28 @@ func TestAgentStopWithoutDaemon(t *testing.T) {
 	}
 }
 
+func TestAgentPromotePlan(t *testing.T) {
+	dir := t.TempDir()
+	sess := filepath.Join(dir, "ps.json")
+	cp := map[string]any{"version": 1, "id": "ps-9", "run_id": "R0", "scope": "s", "goal": "promoted goal"}
+	data, _ := json.Marshal(cp)
+	if err := os.WriteFile(sess, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	code, out := captureOutput(func() int {
+		return run([]string{"--json", "agent", "promote", "--session-file", sess, "--run", "R-promo"})
+	})
+	if code != 0 || !strings.Contains(out, "promoted goal") {
+		t.Fatalf("promote failed: code=%d out=%s", code, out)
+	}
+	code, out = captureOutput(func() int {
+		return run([]string{"agent", "promote", "--session-file", sess, "--run", "R-promo-run", "--path", dir, "--start", "--max-turns", "1"})
+	})
+	if code != 0 || !strings.Contains(out, "R-promo-run") {
+		t.Fatalf("promote --start failed: code=%d out=%s", code, out)
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {
