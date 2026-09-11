@@ -23,11 +23,29 @@ Completed, Cancelled.
 Package `internal/harness/extagent`. Contract: Discover/Status/Capabilities/
 Models, CreateSession/ResumeSession, Send/Cancel, Approve/Deny, Events, Close.
 
-- `OpenCodeServer`: `opencode serve` HTTP adapter (session/message/permissions/cancel).
-- `CodexCLI`: structured `codex exec --json` adapter.
+- `OpenCodeServer`: verified against the real `opencode serve` API
+  (measured 1.18.30): `POST /session {title?}`, `GET /session`,
+  `GET /session/:id/message`, `POST /session/:id/message {parts:[{type,
+  text}]}` (SSE turn stream), `POST /session/:id/abort`, `POST
+  /session/:id/permissions/:perID {response: once|always|reject}`,
+  `DELETE /session/:id`, `GET /event` SSE. Rich contract
+  (`ResumeSession` via list-verify, `Usage` from session tokens/cost).
+  Stub tests mirror these shapes; live lifecycle tests
+  (`PRUMO_LIVE_OPENCODE_URL`) passed 2026-09-11.
+- `CodexCLI`: structured `codex exec --json` adapter; invocation shape
+  validated read-only against codex-cli 0.153.4 (`exec [PROMPT]`, `--json`,
+  `resume`, `--output-schema` confirmed present).
 - `FakeAgent`: conformance double (session/events/permissions/usage/cancel/resume).
 
 External state is normalized, never canonical.
+
+## Bounds (explicit, not gaps-in-disguise)
+
+- Model-invoking `Send` on either external runtime spends user quota: live
+  send stays stub-tested until the user approves model spend. Everything up
+  to the model call is live-verified.
+- Codex credentials are present on the dev host (`~/.codex/auth.json`);
+  live `exec` is ready to run the moment spend is approved.
 
 ## Availability matrix (`prumo agent providers`)
 
@@ -40,8 +58,8 @@ fake             model  available   builtin      deterministic double
 openai-compat    model  unconfigured             needs PRUMO_MODEL_BASE_URL
 anthropic        model  unconfigured             needs PRUMO_MODEL_API_KEY
 opencode-cli     agent  available   1.18.30      binary present
-opencode-server  agent  unavailable              nothing on 127.0.0.1:4096
-codex-cli        agent  available   0.153.4      binary present
+opencode-server  agent  probed live              lifecycle verified 2026-09-11 vs 1.18.30 (send pending spend approval)
+codex-cli        agent  available   0.153.4      binary + credentials present; live exec pending spend approval
 acp-generic      agent  unconfigured             needs PRUMO_ACP_URL
 ```
 

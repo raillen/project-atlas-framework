@@ -72,9 +72,11 @@ Model: fake (deterministic), openai-compat (real HTTP/SSE), anthropic
 (real `/v1/messages` SSE: text, tool_use+partial_json merge, usage,
 overloaded/rate-limit retryability, ctx cancel; httptest-covered, live keys
 environmental via `--api-key`/`PRUMO_MODEL_API_KEY`).
-Agent: opencode-server, codex-cli, fake-agent adapters + availability probe
-(`prumo agent providers`; measured 2026-09-11: opencode-cli 1.18.30 and
-codex-cli 0.153.4 present, no server on 127.0.0.1:4096).
+Agent: opencode-server (adapter rewritten against the measured 1.18.30 API:
+abort/permissions-shape/SSE events/usage; live lifecycle+resume+usage+
+handoff-attach passed 2026-09-11), codex-cli (invocation shape validated
+read-only against 0.153.4; creds present), fake-agent adapters + availability
+probe (`prumo agent providers`; measured 2026-09-11).
 
 ## Security/sandbox state
 
@@ -93,8 +95,13 @@ source (not prompt dump); planner/site/i18n deferred.
 
 ## Tests/evals results
 
-- `go test ./internal/harness/...` — 14 packages green (incl. conformance).
-- `go test ./cmd/prumo/ -run TestAgentRunResumeHandoff` — pass.
+- `go test ./internal/harness/...` — 15 packages green (incl. conformance).
+- `go test ./cmd/prumo/ -run TestAgent` — headless run/resume/handoff/
+  events/protocol/daemon-ps-logs/providers/context/knowledge/sandbox/anthropic-stub.
+- Live opencode interop (`PRUMO_LIVE_OPENCODE_URL`): lifecycle, resume,
+  usage, handoff-attach — all passing, zero model spend (no `Send` invoked).
+- Fuzz: `FuzzCompilePacking` 1.15M execs/40s + `FuzzFingerprintStable`
+  374K execs/40s, zero failures.
 - Full `go test ./...` — see below (must be green before merge).
 - Headless acceptance: `prumo agent run --goal …` → complete; resume +
   handoff verified in test.
@@ -106,8 +113,11 @@ latency/throughput benchmarks for providers/sandbox are open (see 19).
 
 ## Known limitations
 
-- Live vendor keys untested here (adapters code-complete with stub-server
-  tests; `TestAgentRunAnthropicAgainstStub` proves CLI wiring).
+- Model-invoking external sends (opencode `Send`, codex `exec`) deliberately
+  untested live: they spend user quota and need explicit approval. All
+  lifecycle paths around them are live-verified.
+- Live vendor model keys untested here (adapters code-complete with
+  stub-server tests; `TestAgentRunAnthropicAgainstStub` proves CLI wiring).
 - External matrix is adapter-level; live Codex/OpenCode interop untested here.
 - Daemon is local-socket only; no auth, no remote transport, no
   background supervision (systemd/launchd units future).

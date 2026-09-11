@@ -11,11 +11,11 @@ Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table:
 | HA4 | checkpoint/restart/resume + budgets + observability | ACCEPTED | implemented (atomic store, idempotent journal, budget hook, AgentEvent) |
 | HA5 | Coding ACI + Sandbox baseline | ACCEPTED | implemented (ACI catalog + containment + local/worktree + container execution with limits; live-daemon run pending, gVisor future) |
 | HA6 | 2nd ModelProvider + Gateway/fallback | ACCEPTED | code-complete (openai-compat + anthropic adapters, gateway routing/fallback/CB; live keys environmental) |
-| HA7 | 1st external AgentProvider | ACCEPTED | partial (OpenCode server + Codex CLI + FakeAgent adapters; live availability matrix measured 2026-09-11; live session interop pending) |
-| HA8 | Handoff cross-provider dogfood | ACCEPTED | baseline (typed bundle + CLI; cross-provider e2e pending live creds) |
+| HA7 | 1st external AgentProvider | ACCEPTED | implemented (OpenCode adapter verified against real 1.18.30 API incl. live lifecycle/resume/usage; Codex invocation shape validated read-only; model-invoking send pending spend approval) |
+| HA8 | Handoff cross-provider dogfood | ACCEPTED | implemented (typed bundle + full fake transfer eval + live opencode attach/abort/delete; model-mediated continuation pending spend approval) |
 | HA9 | Context v2 / Knowledge integration | ACCEPTED | implemented (workspace v2 compilation wired into run+daemon with persisted manifests; per-run knowledge seeding with coverage/readiness; global promotion via delta review) |
 | HA10 | multi-agent/worktrees | ACCEPTED | implemented (concurrent roles, fail-fast cancel, hard budgets, snapshot diffs, least-context review gate, bounded-auto with cap) |
-| HA11 | compatibility/eval matrix | ACCEPTED | partial (unit+conformance+CLI evals + live availability matrix; live session matrix + fuzz-at-scale pending) |
+| HA11 | compatibility/eval matrix | ACCEPTED | implemented (unit+conformance+CLI evals + live availability/session matrix + 1.5M fuzz execs, zero failures; generated non-Go bindings pending) |
 | HD0–HD4 | Human Docs Runtime baseline | ACCEPTED | partial (this tree + doccompile DAG/CAS; planner/site/i18n future) |
 | Local inference | workers (llama.cpp/ONNX) | ACCEPTED | deferred (interfaces reserved; No-LLM first-class) |
 
