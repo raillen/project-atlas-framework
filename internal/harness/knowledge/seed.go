@@ -84,7 +84,8 @@ func RequirementID(runID string) string { return "req-" + runID }
 // EvidenceID is the stable per-run evidence id.
 func EvidenceID(runID string) string { return "ev-" + runID + "-final" }
 
-// SeedRequirement records the run goal. Idempotent per run id.
+// SeedRequirement records the run goal via KnowledgeDelta (GAP-019:
+// agent writes are Delta-first). Idempotent per run id.
 func SeedRequirement(s *Store, runID, goal string) Record {
 	title := goal
 	if len(title) > 120 {
@@ -96,8 +97,9 @@ func SeedRequirement(s *Store, runID, goal string) Record {
 		Provenance: "run:" + runID + ":goal",
 		UpdatedAt:  time.Now().UTC().Format(time.RFC3339Nano),
 	}
-	_ = s.Put(r)
-	return r
+	_ = s.Commit(Delta{ID: "seed-" + runID, Author: "harness-run", Upserts: []Record{r}})
+	out, _ := s.Get(r.ID)
+	return out
 }
 
 // SeedEvidence records the run outcome linked to its requirement.
@@ -115,7 +117,9 @@ func SeedEvidence(s *Store, runID, phase, stopReason, checkpointID string) Recor
 		Provenance: "run:" + runID + ":finish",
 		UpdatedAt:  time.Now().UTC().Format(time.RFC3339Nano),
 	}
-	_ = s.Put(r)
-	s.Link(Relation{From: r.ID, Type: "evidences", To: RequirementID(runID)})
-	return r
+	_ = s.Commit(Delta{ID: "seed-ev-" + runID, Author: "harness-run",
+		Upserts: []Record{r},
+		Links:   []Relation{{From: r.ID, Type: "evidences", To: RequirementID(runID)}}})
+	out, _ := s.Get(r.ID)
+	return out
 }
