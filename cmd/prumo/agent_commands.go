@@ -23,6 +23,7 @@ import (
 	"syscall"
 
 	"github.com/raillen/prumo/internal/harness/aci"
+	"github.com/raillen/prumo/internal/harness/acpserver"
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
 	"github.com/raillen/prumo/internal/harness/contextv2"
@@ -77,6 +78,8 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentJobs(asJSON, args[1:])
 	case "promote":
 		return runAgentPromote(asJSON, args[1:])
+	case "acp":
+		return runAgentACP(asJSON, args[1:])
 	case "providers":
 		return runAgentProviders(asJSON, args[1:])
 	default:
@@ -790,6 +793,28 @@ func runAgentPromote(asJSON bool, args []string) int {
 		}
 	}
 	return runAgentRun(asJSON, newArgs)
+}
+
+// runAgentACP exposes the harness as an ACP v1 agent over stdio, backed
+// by the local daemon (point --socket/--path at a running daemon).
+func runAgentACP(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	root := f["path"]
+	if root == "" {
+		root = "."
+	}
+	sock := f["socket"]
+	if sock == "" {
+		sock = defaultSocket(root)
+	}
+	srv := acpserver.NewServer(acpserver.DaemonBackend{Daemon: daemon.Client{SocketPath: sock}})
+	if !asJSON {
+		fmt.Fprintln(os.Stderr, "prumo acp agent on stdio (ACP v1 subset)")
+	}
+	if err := srv.Serve(context.Background()); err != nil {
+		return serviceError(asJSON, err)
+	}
+	return exitOK
 }
 
 func runAgentProviders(asJSON bool, args []string) int {
