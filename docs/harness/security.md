@@ -12,8 +12,11 @@ require approval unless explicitly listed. The LLM never enforces.
 ## ToolGateway + Coding ACI (`internal/harness/aci`)
 
 Catalog baseline: `fs.read/list/search`, `code.symbols/diagnostics`,
-`edit.patch/create` (+delete/move guarded), `process.exec`, `test.run`,
-`git.status/diff`. Execution respects trust, fs scope (cleaned + contained,
+`edit.patch/create/delete/move` (+guarded), `process.exec`, `test.run`,
+`git.status/diff`. `edit.patch` applies unified diffs via `git apply`
+(atomic, context-validated) with an optional `base_rev` guard refusing
+stale trees; re-apply fails instead of duplicating. `fs.search` prefers
+`rg`, falling back to `grep` on hermetic hosts. Execution respects trust, fs scope (cleaned + contained,
 symlink/`..` escapes rejected), network scope, credentials, budget,
 idempotency, side-effect journal, permissions. Output is bounded + truncatable.
 
