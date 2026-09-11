@@ -22,3 +22,6 @@ All Prumo JSON schemas reside in `schemas/`:
 - `run.schema.json`
 - `attempt.schema.json`
 - `event.schema.json`
+- `harness-checkpoint.schema.json`
+- `harness-handoff.schema.json`
+- `agent-event.schema.json`
