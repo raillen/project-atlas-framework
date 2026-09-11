@@ -1,13 +1,16 @@
 // Command: prumo agent — headless harness entrypoint (HA2..HA11).
 //
 // Subcommands:
-//   run      --goal <text> --path <dir> [--provider fake|openai-compat] [--model ...] [--max-turns N]
+//   run      --goal <text> --path <dir> [--provider fake|openai-compat|anthropic] [--model ...] [--max-turns N]
 //   resume   --run <id> --path <dir>
 //   handoff  --run <id> --from native --to <agent> [--path <dir>]
+//   events   --run <id> --path <dir>
+//   protocol [--client <version>]
 package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -18,6 +21,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/handoff"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
+	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
 	harnessruntime "github.com/raillen/prumo/internal/harness/runtime"
 	"github.com/raillen/prumo/internal/protocol"
 )
@@ -33,6 +37,10 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentResume(asJSON, args[1:])
 	case "handoff":
 		return runAgentHandoff(asJSON, args[1:])
+	case "events":
+		return runAgentEvents(asJSON, args[1:])
+	case "protocol":
+		return runAgentProtocol(asJSON, args[1:])
 	default:
 		return exitUsage
 	}
@@ -65,7 +73,10 @@ func runAgentRun(asJSON bool, args []string) int {
 	}
 	modelName := f["model"]
 	baseURL := f["base-url"]
-	apiKey := os.Getenv("PRUMO_MODEL_API_KEY")
+	apiKey := f["api-key"]
+	if apiKey == "" {
+		apiKey = os.Getenv("PRUMO_MODEL_API_KEY")
+	}
 	maxTurns := 5
 	if v, ok := f["max-turns"]; ok {
 		fmt.Sscanf(v, "%d", &maxTurns)
@@ -93,11 +104,18 @@ func runAgentRun(asJSON bool, args []string) int {
 			return serviceError(asJSON, fmt.Errorf("openai-compat requires --base-url or PRUMO_MODEL_BASE_URL"))
 		}
 		provider = model.NewOpenAICompat(baseURL, apiKey, modelName)
+	case "anthropic":
+		if baseURL == "" {
+			baseURL = os.Getenv("PRUMO_MODEL_BASE_URL")
+		}
+		provider = model.NewAnthropic(baseURL, apiKey, modelName)
 	default:
-		return serviceError(asJSON, fmt.Errorf("unknown provider %s (fake|openai-compat)", providerName))
+		return serviceError(asJSON, fmt.Errorf("unknown provider %s (fake|openai-compat|anthropic)", providerName))
 	}
 
 	dir := filepath.Join(root, ".prumo", "runtime", "harness")
+	eventLog := filepath.Join(dir, "events-"+runID+".jsonl")
+	appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-started", RunID: runID, Kind: "run.started", Payload: map[string]any{"goal": goal, "provider": providerName}, CreatedAt: agent.Now()})
 	runner := harnessruntime.NewRunner(harnessruntime.Services{
 		Models:      provider,
 		Tools:       aci.New(root),
@@ -107,6 +125,7 @@ func runAgentRun(asJSON bool, args []string) int {
 			if !asJSON {
 				fmt.Fprintf(os.Stderr, "[%s] %s\n", ev.Kind, ev.TurnID)
 			}
+			appendAgentEvent(eventLog, ev)
 		},
 		ContextManifest: func(_ context.Context, _ agent.NativeAgentState) (string, error) {
 			return "ctx-" + runID, nil
@@ -115,8 +134,10 @@ func runAgentRun(asJSON bool, args []string) int {
 	runner.MaxTurns = maxTurns
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
 	if err := runner.RunUntilDone(context.Background()); err != nil {
+		appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-failed", RunID: runID, Kind: "run.failed", Payload: map[string]any{"error": err.Error()}, CreatedAt: agent.Now()})
 		return serviceError(asJSON, err)
 	}
+	appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-finished", RunID: runID, Kind: "run.finished", Payload: map[string]any{"phase": string(runner.State.Phase), "stop_reason": runner.State.StopReason}, CreatedAt: agent.Now()})
 	result := map[string]any{"run_id": runID, "phase": string(runner.State.Phase), "stop_reason": runner.State.StopReason, "revision": runner.State.Revision, "turns": runner.TurnsDone}
 	if asJSON {
 		return printEnvelope(protocol.OkEnvelope(result))
@@ -199,5 +220,95 @@ func runAgentHandoff(asJSON bool, args []string) int {
 		return printEnvelope(protocol.OkEnvelope(b))
 	}
 	fmt.Printf("Handoff %s: %s -> %s (checkpoint %s)\n", b.Handoff.ID, from, to, b.Refs["checkpoint"])
+	return exitOK
+}
+
+// appendAgentEvent persists one timeline event as JSONL (best-effort;
+// event loss never fails the run — checkpoints carry resume state).
+func appendAgentEvent(path string, ev agent.AgentEvent) {
+	data, err := json.Marshal(ev)
+	if err != nil {
+		return
+	}
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	_, _ = f.Write(append(data, '\n'))
+}
+
+func runAgentEvents(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	root := f["path"]
+	if root == "" {
+		root = "."
+	}
+	runID := f["run"]
+	if runID == "" {
+		return serviceError(asJSON, fmt.Errorf("events requires --run <id>"))
+	}
+	path := filepath.Join(root, ".prumo", "runtime", "harness", "events-"+runID+".jsonl")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return serviceError(asJSON, fmt.Errorf("no event log for run %s: %w", runID, err))
+	}
+	lines := []string{}
+	for _, ln := range splitLines(string(data)) {
+		if ln != "" {
+			lines = append(lines, ln)
+		}
+	}
+	if asJSON {
+		evs := make([]map[string]any, 0, len(lines))
+		for _, ln := range lines {
+			var m map[string]any
+			if err := json.Unmarshal([]byte(ln), &m); err == nil {
+				evs = append(evs, m)
+			}
+		}
+		return printEnvelope(protocol.OkEnvelope(map[string]any{"run_id": runID, "events": evs}))
+	}
+	for _, ln := range lines {
+		fmt.Println(ln)
+	}
+	return exitOK
+}
+
+func splitLines(s string) []string {
+	var out []string
+	start := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == '\n' {
+			out = append(out, s[start:i])
+			start = i + 1
+		}
+	}
+	if start < len(s) {
+		out = append(out, s[start:])
+	}
+	return out
+}
+
+func runAgentProtocol(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	result := map[string]any{
+		"version": harnessprotocol.Version,
+		"min_compatible": harnessprotocol.MinCompatible,
+		"schemas": harnessprotocol.Schemas,
+	}
+	if v, ok := f["client"]; ok && v != "" {
+		server, compatible, err := harnessprotocol.Negotiate(v)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		result["server"] = server
+		result["compatible"] = compatible
+		result["client"] = v
+	}
+	if asJSON {
+		return printEnvelope(protocol.OkEnvelope(result))
+	}
+	fmt.Printf("protocol %s (min %s)\n", harnessprotocol.Version, harnessprotocol.MinCompatible)
 	return exitOK
 }
