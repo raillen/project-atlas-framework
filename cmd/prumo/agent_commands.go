@@ -478,6 +478,29 @@ func runAgentServe(asJSON bool, args []string) int {
 	if !asJSON {
 		fmt.Printf("serving harness daemon on %s\n", sock)
 	}
+	if listen, ok := f["listen"]; ok && listen != "" {
+		token := f["token"]
+		if token == "" {
+			if file, ok := f["token-file"]; ok && file != "" {
+				data, err := os.ReadFile(file)
+				if err != nil {
+					return serviceError(asJSON, fmt.Errorf("token file: %w", err))
+				}
+				token = strings.TrimSpace(string(data))
+			}
+		}
+		if token == "" {
+			token = os.Getenv("PRUMO_DAEMON_TOKEN")
+		}
+		cfg := daemon.RemoteConfig{ListenAddr: listen, CertFile: f["tls-cert"], KeyFile: f["tls-key"], Token: token}
+		if !asJSON {
+			fmt.Printf("remote endpoint on %s (token-authenticated)\n", listen)
+		}
+		if err := srv.ServeRemote(ctx, cfg); err != nil {
+			return serviceError(asJSON, err)
+		}
+		return exitOK
+	}
 	if err := srv.Serve(ctx); err != nil {
 		return serviceError(asJSON, err)
 	}
@@ -540,7 +563,23 @@ func daemonClient(f map[string]string) daemon.Client {
 		}
 		sock = defaultSocket(root)
 	}
-	return daemon.Client{SocketPath: sock}
+	c := daemon.Client{SocketPath: sock}
+	if addr, ok := f["remote"]; ok && addr != "" {
+		c.RemoteAddr = addr
+		c.Token = f["token"]
+		if c.Token == "" {
+			if file, ok := f["token-file"]; ok && file != "" {
+				if data, err := os.ReadFile(file); err == nil {
+					c.Token = strings.TrimSpace(string(data))
+				}
+			}
+		}
+		if c.Token == "" {
+			c.Token = os.Getenv("PRUMO_DAEMON_TOKEN")
+		}
+		c.CACertFile = f["remote-tls-cert"]
+	}
+	return c
 }
 
 func runAgentPs(asJSON bool, args []string) int {

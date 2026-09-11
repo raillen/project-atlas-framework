@@ -8,6 +8,8 @@ package daemon
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -67,6 +69,7 @@ type Server struct {
 	mu   sync.Mutex
 	runs map[string]*activeRun
 	ln   net.Listener
+	rln  net.Listener
 	seq  int
 }
 
@@ -450,13 +453,18 @@ func (s *Server) opSteer(runID, message string) map[string]any {
 
 // ---- Client ----
 
-// Client speaks to a daemon over its Unix socket.
+// Client speaks to a daemon over its Unix socket, or over TLS when
+// RemoteAddr is set (token-authenticated first line, fail-closed TLS:
+// system roots unless CACertFile pins the server cert).
 type Client struct {
 	SocketPath string
+	RemoteAddr string
+	Token      string
+	CACertFile string
 }
 
 func (c Client) call(msg map[string]any) (map[string]any, error) {
-	conn, err := net.Dial("unix", c.SocketPath)
+	conn, err := c.dial()
 	if err != nil {
 		return nil, err
 	}
@@ -480,6 +488,53 @@ func (c Client) call(msg map[string]any) (map[string]any, error) {
 // Call sends one raw op (used by thin CLI paths and tests).
 func (c Client) Call(msg map[string]any) (map[string]any, error) {
 	return c.call(msg)
+}
+
+// dial opens the socket, or a token-authenticated TLS connection.
+func (c Client) dial() (net.Conn, error) {
+	if c.RemoteAddr == "" {
+		return net.Dial("unix", c.SocketPath)
+	}
+	if c.Token == "" {
+		return nil, fmt.Errorf("remote %s requires a token (--token/--token-file/PRUMO_DAEMON_TOKEN)", c.RemoteAddr)
+	}
+	tlsConf := &tls.Config{MinVersion: tls.VersionTLS12}
+	if c.CACertFile != "" {
+		pem, err := os.ReadFile(c.CACertFile)
+		if err != nil {
+			return nil, fmt.Errorf("ca cert: %w", err)
+		}
+		pool := x509.NewCertPool()
+		if !pool.AppendCertsFromPEM(pem) {
+			return nil, fmt.Errorf("ca cert: no certificates parsed")
+		}
+		tlsConf.RootCAs = pool
+	}
+	conn, err := tls.Dial("tcp", c.RemoteAddr, tlsConf)
+	if err != nil {
+		return nil, err
+	}
+	auth, _ := json.Marshal(map[string]any{"auth": c.Token})
+	if _, err := conn.Write(append(auth, '\n')); err != nil {
+		conn.Close()
+		return nil, err
+	}
+	sc := bufio.NewScanner(conn)
+	sc.Buffer(make([]byte, 64*1024), 64*1024)
+	if !sc.Scan() {
+		conn.Close()
+		return nil, fmt.Errorf("no auth response from daemon")
+	}
+	var out map[string]any
+	if err := json.Unmarshal(sc.Bytes(), &out); err != nil {
+		conn.Close()
+		return nil, err
+	}
+	if ok, _ := out["ok"].(bool); !ok {
+		conn.Close()
+		return nil, fmt.Errorf("auth: %v", out["error"])
+	}
+	return conn, nil
 }
 
 // Start launches a run; MaxTurns<=0 defaults to 5.

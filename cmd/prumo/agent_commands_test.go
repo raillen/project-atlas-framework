@@ -140,6 +140,22 @@ func TestAgentPsLogsAgainstDaemon(t *testing.T) {
 		t.Fatalf("agent logs failed: code=%d out=%s", code, out)
 	}
 }
+func TestDaemonClientRemoteMapping(t *testing.T) {
+	dir := t.TempDir()
+	tok := filepath.Join(dir, "token")
+	if err := os.WriteFile(tok, []byte("  tok123\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	c := daemonClient(map[string]string{"remote": "127.0.0.1:1", "token-file": tok})
+	if c.RemoteAddr != "127.0.0.1:1" || c.Token != "tok123" {
+		t.Fatalf("bad remote mapping: %+v", c)
+	}
+	local := daemonClient(map[string]string{"path": dir})
+	if local.RemoteAddr != "" || !strings.HasSuffix(local.SocketPath, "agentd.sock") {
+		t.Fatalf("bad socket mapping: %+v", local)
+	}
+}
+
 func TestAgentProvidersListsMatrix(t *testing.T) {
 	// Hermetic PATH: no real binaries execute; wiring (not versions) is
 	// under test here — parsing is covered in the extagent package.

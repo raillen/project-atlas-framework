@@ -9,6 +9,7 @@ package prumo
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -22,6 +23,57 @@ const ProtocolVersion = "0.1.0"
 type Client struct {
 	SocketPath string
 	Timeout    time.Duration
+	// Remote addressing (empty = Unix socket). Token authenticates the
+	// first line of every connection; TLSConf secures it.
+	RemoteAddr  string
+	RemoteToken string
+	TLSConf     *tls.Config
+}
+
+// DialRemote builds a client for a TCP+TLS daemon endpoint.
+func DialRemote(addr, token string, tlsConf *tls.Config) *Client {
+	return &Client{RemoteAddr: addr, RemoteToken: token, TLSConf: tlsConf}
+}
+
+func (c Client) dial(ctx context.Context) (net.Conn, error) {
+	if c.RemoteAddr == "" {
+		dialer := net.Dialer{Timeout: 5 * time.Second}
+		conn, err := dialer.DialContext(ctx, "unix", c.SocketPath)
+		if err != nil {
+			return nil, fmt.Errorf("dial %s: %w", c.SocketPath, err)
+		}
+		return conn, nil
+	}
+	conf := c.TLSConf
+	if conf == nil {
+		conf = &tls.Config{MinVersion: tls.VersionTLS12}
+	}
+	dialer := &tls.Dialer{NetDialer: &net.Dialer{Timeout: 5 * time.Second}, Config: conf.Clone()}
+	conn, err := dialer.DialContext(ctx, "tcp", c.RemoteAddr)
+	if err != nil {
+		return nil, fmt.Errorf("dial %s: %w", c.RemoteAddr, err)
+	}
+	auth, _ := json.Marshal(map[string]any{"auth": c.RemoteToken})
+	if _, err := conn.Write(append(auth, '\n')); err != nil {
+		conn.Close()
+		return nil, err
+	}
+	sc := bufio.NewScanner(conn)
+	sc.Buffer(make([]byte, 64*1024), 64*1024)
+	if !sc.Scan() {
+		conn.Close()
+		return nil, fmt.Errorf("no auth response from daemon")
+	}
+	var out map[string]any
+	if err := json.Unmarshal(sc.Bytes(), &out); err != nil {
+		conn.Close()
+		return nil, err
+	}
+	if ok, _ := out["ok"].(bool); !ok {
+		conn.Close()
+		return nil, &Error{Op: "auth", Message: fmt.Sprint(out["error"])}
+	}
+	return conn, nil
 }
 
 func (c Client) timeout() time.Duration {
@@ -41,10 +93,9 @@ func (e *Error) Error() string { return fmt.Sprintf("daemon op %s: %s", e.Op, e.
 
 func (c Client) call(ctx context.Context, msg map[string]any) (map[string]any, error) {
 	op, _ := msg["op"].(string)
-	dialer := net.Dialer{Timeout: 5 * time.Second}
-	conn, err := dialer.DialContext(ctx, "unix", c.SocketPath)
+	conn, err := c.dial(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("dial %s: %w", c.SocketPath, err)
+		return nil, err
 	}
 	defer conn.Close()
 	if dl, ok := ctx.Deadline(); ok {
