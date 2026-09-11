@@ -23,16 +23,16 @@ var ErrorCodes = []string{
 
 // OpArgs documents required arguments per op.
 var OpArgs = map[string][]string{
-	"start":    {"goal"},
-	"status":   {"run_id"},
-	"list":     {},
-	"events":   {"run_id"},
-	"cancel":   {"run_id"},
+	"start":      {"goal"},
+	"status":     {"run_id"},
+	"list":       {},
+	"events":     {"run_id"},
+	"cancel":     {"run_id"},
 	"steer":      {"run_id", "message"},
 	"schedule":   {"goal"},
 	"unschedule": {"job_id"},
 	"jobs":       {},
-	"protocol": {},
+	"protocol":   {},
 }
 
 // Manifest returns the full IDL document.
