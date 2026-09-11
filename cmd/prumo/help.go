@@ -649,6 +649,7 @@ var commandRegistry = map[string]CommandInfo{
 			"--opencode-url <u>   OpenCode server URL to probe",
 			"--sandbox <kind>     local|container (default: local)",
 			"--sandbox-image <i>  Container image (required with container)",
+			"--sandbox-runtime <r> Docker runtime (e.g. runsc for gVisor)",
 			"--context-budget <n> Context token budget (default: 8000)",
 			"--context-level <l>  Disclosure level L0-L4 (default: L1)",
 			"--budget-tokens <n>  Hard token budget (0 = track only)",

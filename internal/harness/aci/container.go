@@ -24,6 +24,8 @@ type ContainerSpec struct {
 	PidsLimit string // e.g. "128", "" disables
 	Env       []string
 	Script    string // run via sh -c
+	// RuntimeArgs injects daemon-side runtime flags (e.g. --runtime=runsc).
+	RuntimeArgs []string
 }
 
 // Runner executes a ContainerSpec. Implementations: CLIRunner (real
@@ -37,6 +39,9 @@ type Runner interface {
 // CLIRunner shells out to a container runtime binary.
 type CLIRunner struct {
 	Runtime string // docker | podman
+	// ExtraArgs inject runtime flags after "run" (e.g. --runtime=runsc
+	// for gVisor-backed execution where the daemon offers it).
+	ExtraArgs []string
 }
 
 func (r CLIRunner) Available() bool {
@@ -63,7 +68,9 @@ func containerArgs(runtime, root string, spec ContainerSpec) []string {
 	if network == "" {
 		network = "none"
 	}
-	args := []string{"run", "--rm", "-i", "--network", network}
+	args := []string{"run"}
+	args = append(args, spec.RuntimeArgs...)
+	args = append(args, "--rm", "-i", "--network", network)
 	if spec.Memory != "" {
 		args = append(args, "--memory", spec.Memory)
 	}
@@ -85,6 +92,7 @@ func (r CLIRunner) Run(ctx context.Context, root string, spec ContainerSpec) ([]
 	if !r.Available() {
 		return nil, 1, fmt.Errorf("container runtime %q unavailable", r.Runtime)
 	}
+	spec.RuntimeArgs = append(append([]string{}, r.ExtraArgs...), spec.RuntimeArgs...)
 	args := containerArgs(r.Runtime, root, spec)
 	cmd := exec.CommandContext(ctx, r.Runtime, args...)
 	var buf bytes.Buffer
@@ -136,6 +144,9 @@ type ContainerExecutor struct {
 	CPUs      string
 	PidsLimit string
 	OutputMax int
+	// RuntimeArgs forwards daemon-side runtime flags (e.g. --runtime=runsc
+	// for gVisor where the daemon offers it).
+	RuntimeArgs []string
 }
 
 func NewContainer(root, image string, runner Runner) *ContainerExecutor {
@@ -190,6 +201,7 @@ func (e *ContainerExecutor) Execute(ctx context.Context, call agent.ToolCall) (a
 	out, exit, err := e.Runner.Run(ctx, e.Root, ContainerSpec{
 		Image: e.Image, Workdir: e.Root, Memory: e.Memory,
 		CPUs: e.CPUs, PidsLimit: e.PidsLimit, Script: script,
+		RuntimeArgs: e.RuntimeArgs,
 	})
 	if err != nil && ctx.Err() != nil {
 		return agent.ToolResult{}, err

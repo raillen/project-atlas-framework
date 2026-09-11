@@ -534,6 +534,9 @@ func agentTools(root string, f map[string]string) (harnessruntime.ToolExecutor, 
 			return nil, noop, fmt.Errorf("container sandbox requested but no docker/podman runtime detected")
 		}
 		runner := aci.CLIRunner{Runtime: rt}
+		if v, ok := f["sandbox-runtime"]; ok && v != "" {
+			runner.ExtraArgs = []string{"--runtime=" + v}
+		}
 		if !runner.Available() {
 			return nil, noop, fmt.Errorf("container runtime %q unreachable: refusing to run unisolated", rt)
 		}
