@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -64,6 +65,9 @@ func (g *Gateway) SelectWithPolicy(targets []RouteTarget, p Policy) ModelRoute {
 			continue
 		}
 		if p.LocalOnly && t.Privacy != "" && t.Privacy != "local" {
+			continue
+		}
+		if g.quotaExhausted(t.Provider) {
 			continue
 		}
 		kept = append(kept, t)
@@ -132,18 +136,53 @@ func DefaultRetryPolicy() RetryPolicy {
 	return RetryPolicy{Attempts: 3, Backoff: 200 * time.Millisecond}
 }
 
+// QuotaState tracks remaining quota per provider (GAP-005 remainder).
+// Unknown providers are treated as unlimited; callers feed this from
+// 429 headers and usage accounting.
+type QuotaState struct {
+	Remaining float64 `json:"remaining"`
+	ResetsAt  string  `json:"resets_at,omitempty"`
+}
+
 // Gateway routes model requests across registered providers.
 type Gateway struct {
 	mu        sync.Mutex
 	providers map[string]model.Provider
 	health    map[string]*Health
+	quotas    map[string]QuotaState
 	Retry     RetryPolicy
 	// AfterSideEffects=false allows transparent fallback; once a Run has
 	// observable effects, callers must use explicit Handoff instead.
 }
 
 func New() *Gateway {
-	return &Gateway{providers: map[string]model.Provider{}, health: map[string]*Health{}, Retry: DefaultRetryPolicy()}
+	return &Gateway{providers: map[string]model.Provider{}, health: map[string]*Health{}, quotas: map[string]QuotaState{}, Retry: DefaultRetryPolicy()}
+}
+
+// SetQuota records remaining quota (negative = unlimited).
+func (g *Gateway) SetQuota(provider string, remaining float64, resetsAt string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	g.quotas[provider] = QuotaState{Remaining: remaining, ResetsAt: resetsAt}
+}
+
+func (g *Gateway) quotaExhausted(provider string) bool {
+	q, ok := g.quotas[provider]
+	if !ok || q.Remaining != 0 {
+		return false
+	}
+	if q.ResetsAt == "" {
+		return true
+	}
+	t, err := time.Parse(time.RFC3339Nano, q.ResetsAt)
+	if err != nil {
+		if t2, err2 := time.Parse(time.RFC3339, q.ResetsAt); err2 == nil {
+			t = t2
+		} else {
+			return true
+		}
+	}
+	return time.Now().UTC().Before(t)
 }
 
 func (g *Gateway) Register(p model.Provider) {
@@ -261,9 +300,27 @@ func (g *Gateway) streamWithRetry(ctx context.Context, p model.Provider, name st
 	}
 	g.mu.Lock()
 	g.recordFailure(name)
+	if isRateLimit(lastErr) {
+		// Rate-limited providers cool down; selection skips them until reset.
+		g.quotas[name] = QuotaState{Remaining: 0, ResetsAt: time.Now().UTC().Add(30 * time.Second).Format(time.RFC3339Nano)}
+	}
 	g.mu.Unlock()
 	if lastErr == nil {
 		lastErr = fmt.Errorf("provider %s exhausted retries", name)
 	}
 	return nil, lastErr
+}
+
+// isRateLimit recognizes quota/rate signals across provider dialects.
+func isRateLimit(err error) bool {
+	if err == nil {
+		return false
+	}
+	s := strings.ToLower(err.Error())
+	for _, sig := range []string{"429", "rate_limit", "rate limit", "ratelimit", "overload", "quota"} {
+		if strings.Contains(s, sig) {
+			return true
+		}
+	}
+	return false
 }
