@@ -9,7 +9,7 @@ Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table:
 | HA2 | Native Agent state machine | ACCEPTED | implemented (reentrant Runner, safe points) |
 | HA3 | ToolGateway + Permission integration | ACCEPTED | implemented (ACI catalog + perm engine wired in Runner) |
 | HA4 | checkpoint/restart/resume + budgets + observability | ACCEPTED | implemented (atomic store, idempotent journal, budget hook, AgentEvent) |
-| HA5 | Coding ACI + Sandbox baseline | ACCEPTED | partial (ACI baseline + path containment + local/worktree env; container/gVisor future) |
+| HA5 | Coding ACI + Sandbox baseline | ACCEPTED | implemented (ACI catalog + containment + local/worktree + container execution with limits; live-daemon run pending, gVisor future) |
 | HA6 | 2nd ModelProvider + Gateway/fallback | ACCEPTED | code-complete (openai-compat + anthropic adapters, gateway routing/fallback/CB; live keys environmental) |
 | HA7 | 1st external AgentProvider | ACCEPTED | partial (OpenCode server + Codex CLI + FakeAgent; live matrix pending) |
 | HA8 | Handoff cross-provider dogfood | ACCEPTED | baseline (typed bundle + CLI; cross-provider e2e pending live creds) |

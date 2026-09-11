@@ -27,7 +27,15 @@ microVM (future). `internal/harness/aci/sandbox.go` ships the honest ladder:
 `LocalProvider`/`WorktreeProvider` always available, `ContainerProvider`
 reports availability via runtime detection (`DetectContainerRuntime` prefers
 podman over docker; bogus runtimes report unavailable instead of pretending).
-Container execution lands after the headless baseline; it does not block it.
+
+Container execution (`internal/harness/aci/container.go`, `--sandbox
+container --sandbox-image <img>` on `agent run`/`serve`): command tools
+(`process.exec`, `test.run`, `code.diagnostics`) run via `run --rm
+--network none` with memory/CPU/PID limits and the workspace mounted;
+file tools stay on the host against the same workspace. Missing/unreachable
+runtimes fail fast — never silent host fallback. Live-daemon verification is
+pending (CI has no reachable daemon; `TestContainerLive` runs with
+`PRUMO_LIVE_DOCKER=1`). gVisor/strong isolation remains future.
 
 ## Checkpoint / Resume / Side effects (`internal/harness/checkpoint`)
 

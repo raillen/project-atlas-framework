@@ -76,7 +76,10 @@ Agent: opencode-server, codex-cli, fake-agent.
 Deterministic allow/ask/deny with persisted resolutions; destructive always
 gated; ACI path containment + output bounds; safe-mode denylist; secrets stay
 at execution boundary (model never receives them by design). Container
-sandbox: interfaces + roadmap, not yet a provider.
+execution: `--sandbox container` routes command tools into `run --rm
+--network none` with memory/CPU/PID limits (workspace mounted, file tools on
+host); missing runtimes fail fast. Live-daemon proof pending
+(`TestContainerLive` behind `PRUMO_LIVE_DOCKER=1`).
 
 ## Context/Knowledge state
 
