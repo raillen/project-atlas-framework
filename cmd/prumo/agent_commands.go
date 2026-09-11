@@ -243,6 +243,17 @@ func runAgentRun(asJSON bool, args []string) int {
 		reports := counting
 		runner.QualityGate = func() error { return runlayer.StrictGate()(reports.ReportsCopy()) }
 	}
+	if path, ok := f["gates"]; ok && path != "" {
+		policies, err := runlayer.LoadGatePolicies(path)
+		if err != nil {
+			return serviceError(asJSON, err)
+		}
+		reports := counting
+		usage := tracker
+		runner.QualityGate = func() error {
+			return runlayer.GatesQualityGate(policies, reports.ReportsCopy, usage.Snapshot)()
+		}
+	}
 	runner.Svc.ConsumeBudget = tracker.ConsumeUsage
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
 	kstore := knowledge.New()
@@ -786,7 +797,7 @@ func runAgentPromote(asJSON bool, args []string) int {
 		return exitOK
 	}
 	newArgs := []string{"run", "--goal", promo.GoalText(), "--path", root, "--run", runID}
-	for _, k := range []string{"provider", "model", "base-url", "max-turns", "sandbox", "sandbox-image", "strict", "context-budget", "budget-tokens", "budget-usd", "budget-tools"} {
+	for _, k := range []string{"provider", "model", "base-url", "max-turns", "sandbox", "sandbox-image", "strict", "gates", "context-budget", "budget-tokens", "budget-usd", "budget-tools"} {
 		if v, ok := f[k]; ok {
 			if v == "" {
 				newArgs = append(newArgs, "--"+k)

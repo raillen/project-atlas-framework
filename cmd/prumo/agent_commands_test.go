@@ -309,6 +309,26 @@ func TestAgentPromotePlan(t *testing.T) {
 	}
 }
 
+func TestAgentGatesFile(t *testing.T) {
+	dir := t.TempDir()
+	gates := filepath.Join(dir, "gates.json")
+	if err := os.WriteFile(gates, []byte(`[{"name":"t","kind":"require-test-pass"}]`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "g", "--path", dir, "--run", "R-g", "--max-turns", "1", "--gates", gates})
+	})
+	if code == 0 {
+		t.Fatal("gate without passing tests must fail")
+	}
+	code, _ = captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "g", "--path", dir, "--run", "R-g2", "--gates", filepath.Join(dir, "missing.json")})
+	})
+	if code == 0 {
+		t.Fatal("missing gates file must fail")
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {
