@@ -33,7 +33,7 @@ Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table:
 - [~] HA5 Coding ACI + Sandbox baseline (baseline usable, hardening continues)
 - [x] headless coding Run end-to-end (`prumo agent run` → tool → checkpoint)
 - [~] versioned public protocol (envelope + 3 schemas + negotiation kernel v0.1.0 + `prumo agent protocol` + checked-in IDL manifest with code-conformance tests; typed public SDK `sdk/prumo` with boundary test; generated bindings for other languages pending)
-- [~] reconnect/replay (resume+handoff CLI done; JSONL event replay via `prumo agent events` done; local daemon `serve/ps/logs` with restart-safe reconnect done; remote transport pending)
+- [~] reconnect/replay (resume+handoff CLI done; JSONL event replay via `prumo agent events` done; local daemon `serve/ps/logs` with restart-safe reconnect done; remote TCP+TLS+token done nos limites — CA corporativa e hardening futuro)
 
 Verdict: NOT READY for split — see `HARNESS_IMPLEMENTATION_REPORT.md`.
 The first Prumo Code must build with zero `internal/` imports; that

@@ -21,11 +21,11 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-003 | Team binding real (Runner aninhado por role) | HA10/HA14 | ✅ done | team/bind.go: runs aninhados + budget do role + checkpoints | — |
 | GAP-004 | Egress + segredos no path local | HA-seg, págs. 07/19 | ✅ done | redação default + EgressPolicy fail-closed c/ allowlist (`--egress-deny/--allow`) | postura legacy quando nil (explícito) |
 | GAP-005 | Roteamento por custo/latência/privacidade/quota | HA6, pág. 24 | ✅ done | Policy + QuotaState c/ cooldown 429 + exclusão; pricing via caller | billing vivo futuro |
-| GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map) | HA9, págs. 08/31 | ✅ done nos limites | BM25 + repo-map + LSP c/ fallback repomap; graph embeddings futuros | typed graph + embeddings |
+| GAP-006 | Retrieval estrutural (FTS/BM25, símbolos/LSP, repo map) | HA9, págs. 08/31 | ✅ done nos limites | BM25 + repo-map + LSP (symbols/hover/definition, fallback) | typed graph + embeddings |
 | GAP-007 | Regiões gerenciadas + JSON Patch no doc compiler | HD-base, pág. 26 | ✅ done nos limites | regions + RFC6902 + seções Markdown estruturais | AST pleno (listas/tabelas) |
 | GAP-008 | Merge/conflict explícito entre worktrees | HA10 | ✅ done | team/merge.go three-way (conflito nunca auto-resolve) | deleções fora do slice |
 | GAP-009 | Steering + compaction | HA2, pág. 05 | ✅ done | Inject/op/CLI/SDK + CompactKeep/Budget auto + ACP bridge | — |
-| GAP-010 | Ponte p/ editores (subset ACP-shaped) | H11, págs. 06/22 | ✅ done nos limites | pacote acp testado vs daemon; spec plena em GAP-032 | handshake ACP pleno |
+| GAP-010 | ACP Agent Server (expor Runtime a editores) | H11, págs. 06/22 | ✅ done nos limites | servidor ACP v1 (spec oficial) + `agent acp` + bridge testada vs daemon | verificação c/ cliente real (Zed) |
 | GAP-011 | MCP client (transporte + integração tools) | H5 | ✅ done nos limites | cliente stdio + Adapter policy-gated + Fanout + specs no modelo (`--mcp`) | servidores built-in além do stdio |
 | GAP-012 | Benchmarks (packing, compilação, Runner) | relatório | ✅ done | compile ~6.8ms, BM25 ~0.78ms, run ~7µs (i7-3632QM) | — |
 | GAP-013 | Operação do daemon (PID lock, rotação, unit, stop) | daemon | ✅ done | lock/stale-takeover + stop + rotação + prune + unit doc | — |
@@ -39,15 +39,15 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-021 | Retry com backoff no Gateway | HA6 | ✅ done | classes (rate 5x/servidor 2x) + jitter determinístico | — |
 | GAP-022 | Child runs/subagentes com ownership (H14) | H14 | 🟡 partial | team executa roles; runs aninhados com checkpoint não | aninhar Runner + Handoff pai↔filho |
 | GAP-023 | Scheduled runs (H16) | H16 | ✅ done | retry linear + dead-letter + last-status | supervisão externa (systemd doc) |
-| GAP-024 | Provedores sandbox adicionais (H13) | H13 | 🟡 partial | StrongProvider com detecção runsc; execução forte/remota aberta | execução gVisor/remota |
-| GAP-025 | Contratos Local Intel (KnowledgeTask, Router, ResourceManager, Supervisor) | págs. 29–30 | 🟡 partial | tipos + MinSufficientRouter; workers/supervisão abertos | workers + benchmarks |
+| GAP-024 | Provedores sandbox adicionais (H13) | H13 | 🟡 partial | StrongProvider detect + `--sandbox-runtime` (ex. runsc) | execução verificada + remota |
+| GAP-025 | Contratos Local Intel (KnowledgeTask, Router, ResourceManager, Supervisor) | págs. 29–30 | 🟡 partial | tipos + router + supervisão c/ backoff + detecção llama-server | workers de inferência + benchmarks |
 | GAP-026 | Research Ledger first-class (G11) | pág. 27-G11 | ✅ done | Add/Resolve/Open Delta-first | — |
 | GAP-027 | Token-estimate index (G18) | pág. 27-G18 | ✅ done | tabela tokens-v1 + uso no Context | calibração medida |
 | GAP-028 | Lint dos agent docs + doc-evals (G19/G21) | pág. 27 | ✅ done | humandocs.Lint (presença/fiação/higiene) | lint de agent-docs legados |
 | GAP-029 | Schema evolution/migrations (G20) | pág. 27 | ✅ done | schemareg (parse-all + Migrate por versão) | migrações quando houver v2 |
-| GAP-030 | Transporte remoto do daemon (+auth) | split gate | ⬜ open | socket local apenas | TLS + token (desenho antes) |
+| GAP-030 | Transporte remoto do daemon (+auth) | split gate | ✅ done nos limites | TCP+TLS + token (subtle), SDK+CLI, teste live local | CA corporativa + hardening de exposição |
 | GAP-031 | Decisão: MCP Go SDK e transports | pág. 19 | ✅ decided | stdlib JSON-RPC registrado em mcp.go (troca sem mudar superfície) | reavaliar com benchmark |
-| GAP-032 | Decisão: subset ACP + matriz oficial | pág. 19 | 🛑 decision | cliente OK; servidor em GAP-010 | definir ordem + registry |
+| GAP-032 | Decisão: subset ACP + matriz oficial | pág. 19 | ✅ decided | subset v1 registrado no código (init/new/load/resume/list/delete/close/prompt/cancel) | registry/mCP-per-session futuros |
 | GAP-033 | Decisão: Docker vs Podman padrão/rootless | pág. 19 | 🛑 decision | detecção honesta pronta | medir + ADR |
 | GAP-034 | Decisão: driver SQLite derived runtime | pág. 19 | 🛑 decision | — | medir + ADR |
 | GAP-035 | Decisão: isolamento de plugins | pág. 19 | 🛑 decision | — | ADR quando houver plugins |
@@ -56,7 +56,7 @@ item. Novos gaps entram no fim com o próximo número livre.
 | GAP-038 | Chaves live de models | HA6 | 🛑 env | adapters prontos + stub-testados | `PRUMO_MODEL_API_KEY`/BASE_URL |
 | GAP-039 | Sends live externos (opencode/codex) | HA7/HA8 | 🛑 approval | **gastam sua quota**; tudo ao redor live-verificado | sua aprovação explícita de spend |
 | GAP-040 | Modelos locais + thresholds (benchmark-driven) | pág. 19/29 | 🛑 env+decision | No-LLM first-class mantido | hardware + corpus + aprovação |
-| GAP-041 | Bindings não-Go (TS types do IDL) | HA11 | 🟡 partial | protocol.d.ts gerado + teste de frescor; SDK pleno aberto | clientes TS |
+| GAP-041 | Bindings não-Go (TS types do IDL) | HA11 | ✅ done nos limites | protocol.d.ts + client.ts c/ roundtrip live vs daemon Go | mais linguagens sob demanda |
 | GAP-042 | Checkpoint retention no daemon store | HA4 | ⬜ open | ver GAP-020 (caso particular) | incluir na política de retenção |
 | GAP-043 | Descoberta de modelos nos adapters reais | HA1 | 🟡 partial | OpenAI lista `/models` real; Anthropic sem API de lista (documentado) | — |
 | GAP-044 | Structured-output enforcement | HA1 | ✅ done | validador subset + enforcement nos adapters + response_format | subset documentado |
@@ -104,7 +104,7 @@ item. Novos gaps entram no fim com o próximo número livre.
 | HA5 ACI + Sandbox baseline | ✅ c/ limites |
 | headless coding Run end-to-end | ✅ |
 | versioned public protocol | ✅ (IDL + SDK Go; TS: GAP-041) |
-| reconnect/replay | ✅ local (remoto: GAP-030) |
+| reconnect/replay | ✅ local + remoto TLS c/ token (GAP-030 nos limites) |
 | **Veredito** | **NOT READY** — GAP-030 + GAP-041 + provas live |
 
 ## 4. Fora deste Goal (não entra na conta)

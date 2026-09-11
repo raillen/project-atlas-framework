@@ -39,6 +39,17 @@ Models, CreateSession/ResumeSession, Send/Cancel, Approve/Deny, Events, Close.
 
 External state is normalized, never canonical.
 
+## ACP agent server (`internal/harness/acpserver`)
+
+The Harness itself speaks ACP v1 as an agent over stdio
+(`prumo agent acp`, backed by the local daemon): `initialize`,
+`session/new|load|resume|list|delete|close`, `session/prompt` with
+`session/update` streaming (`agent_message_chunk`, stop reasons
+`end_turn|cancelled`), `session/cancel` notification. Per-session
+`mcpServers` fail loudly (daemon-level `--mcp` instead); authenticate,
+elicitation and terminals are out of the v1 subset by decision (GAP-032).
+Prompts steer live runs or start fresh ones — editors never lose input.
+
 ## Bounds (explicit, not gaps-in-disguise)
 
 - Model-invoking `Send` on either external runtime spends user quota: live
