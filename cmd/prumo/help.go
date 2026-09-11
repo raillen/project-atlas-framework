@@ -634,6 +634,8 @@ var commandRegistry = map[string]CommandInfo{
 			"--socket <path>      Daemon socket (serve/ps/logs)",
 			"--sandbox <kind>     local|container (default: local)",
 			"--sandbox-image <i>  Container image (required with container)",
+			"--context-budget <n> Context token budget (default: 8000)",
+			"--context-level <l>  Disclosure level L0-L4 (default: L1)",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{

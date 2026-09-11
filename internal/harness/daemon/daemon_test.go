@@ -95,6 +95,15 @@ func TestDaemonRunLifecycle(t *testing.T) {
 	if len(list) < 2 {
 		t.Fatalf("expected lifecycle events, got %d", len(list))
 	}
+	foundCtx := false
+	for _, e := range list {
+		if m, ok := e.(map[string]any); ok && m["kind"] == "context.compiled" {
+			foundCtx = true
+		}
+	}
+	if !foundCtx {
+		t.Fatal("expected context.compiled event from real v2 compilation")
+	}
 	lst, err := c.List()
 	if err != nil || lst["ok"] != true {
 		t.Fatalf("list failed: %v", err)

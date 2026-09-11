@@ -24,6 +24,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/aci"
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
+	"github.com/raillen/prumo/internal/harness/contextv2"
 	"github.com/raillen/prumo/internal/harness/daemon"
 	"github.com/raillen/prumo/internal/harness/handoff"
 	"github.com/raillen/prumo/internal/harness/model"
@@ -132,6 +133,22 @@ func runAgentRun(asJSON bool, args []string) int {
 
 	dir := filepath.Join(root, ".prumo", "runtime", "harness")
 	eventLog := filepath.Join(dir, "events-"+runID+".jsonl")
+	ctxBudget := 8000
+	if v, ok := f["context-budget"]; ok {
+		fmt.Sscanf(v, "%d", &ctxBudget)
+	}
+	ctxLevel := f["context-level"]
+	compileContext := func() string {
+		m := contextv2.CompileWorkspace(runID, goal, root, ctxBudget, ctxLevel)
+		data, err := json.MarshalIndent(m, "", "  ")
+		if err == nil {
+			_ = os.MkdirAll(dir, 0o755)
+			_ = os.WriteFile(filepath.Join(dir, "context-"+runID+".json"), data, 0o644)
+		}
+		appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-ctx", RunID: runID, Kind: "context.compiled",
+			Payload: map[string]any{"included": len(m.Included), "tokens": m.EstimatedTokens, "pressure": m.Pressure, "level": m.Level}, CreatedAt: agent.Now()})
+		return "ctx-" + runID
+	}
 	tools, err := agentTools(root, f)
 	if err != nil {
 		return serviceError(asJSON, err)
@@ -149,7 +166,7 @@ func runAgentRun(asJSON bool, args []string) int {
 			appendAgentEvent(eventLog, ev)
 		},
 		ContextManifest: func(_ context.Context, _ agent.NativeAgentState) (string, error) {
-			return "ctx-" + runID, nil
+			return compileContext(), nil
 		},
 	}, runID, "S-1")
 	runner.MaxTurns = maxTurns
@@ -349,7 +366,7 @@ func runAgentServe(asJSON bool, args []string) int {
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
-	srv := daemon.New(sock, store, daemon.Deps{Tools: tools})
+	srv := daemon.New(sock, store, daemon.Deps{Tools: tools, Workspace: root})
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	if !asJSON {

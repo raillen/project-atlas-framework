@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -122,6 +124,37 @@ func TestAgentPsLogsAgainstDaemon(t *testing.T) {
 	})
 	if code != 0 || !strings.Contains(out, "R-dcli") {
 		t.Fatalf("agent logs failed: code=%d out=%s", code, out)
+	}
+}
+func TestAgentRunPersistsContextManifest(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "main.go"), []byte("package main"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "ship it", "--path", dir, "--run", "R-ctx", "--max-turns", "1", "--context-budget", "4000"})
+	})
+	if code != 0 {
+		t.Fatalf("agent run failed: code=%d", code)
+	}
+	data, err := os.ReadFile(filepath.Join(dir, ".prumo", "runtime", "harness", "context-R-ctx.json"))
+	if err != nil {
+		t.Fatalf("context manifest not persisted: %v", err)
+	}
+	var m map[string]any
+	if err := json.Unmarshal(data, &m); err != nil {
+		t.Fatal(err)
+	}
+	if m["version"] != float64(2) {
+		t.Fatalf("expected manifest v2: %v", m["version"])
+	}
+	included, _ := m["included"].([]any)
+	if len(included) == 0 {
+		t.Fatal("expected packed sources")
+	}
+	first, _ := included[0].(map[string]any)
+	if first["ref"] != "goal" {
+		t.Fatalf("goal must pack first: %v", first["ref"])
 	}
 }
 func TestAgentSandboxFlagsFailFast(t *testing.T) {

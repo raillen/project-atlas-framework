@@ -19,6 +19,7 @@ import (
 
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
+	"github.com/raillen/prumo/internal/harness/contextv2"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
@@ -50,6 +51,9 @@ type RunRecord struct {
 type Deps struct {
 	NewProvider func(name, baseURL, apiKey, mdl string) (model.Provider, error)
 	Tools       harnessruntime.ToolExecutor
+	// Workspace is the default context/tool root for runs that do not
+	// carry their own (CLI serve sets it to the project root).
+	Workspace string
 }
 
 // Server hosts runs on a Unix socket.
@@ -205,6 +209,9 @@ func (s *Server) opStart(msg map[string]any) map[string]any {
 	}
 	workspace := str(msg, "workspace")
 	if workspace == "" {
+		workspace = s.Deps.Workspace
+	}
+	if workspace == "" {
 		workspace = s.StoreDir
 	}
 	tools := s.Deps.Tools
@@ -244,6 +251,12 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 			s.appendEvent(runID, ev)
 		},
 		ContextManifest: func(_ context.Context, _ agent.NativeAgentState) (string, error) {
+			m := contextv2.CompileWorkspace(runID, goal, workspace, 8000, "L1")
+			if data, err := json.MarshalIndent(m, "", "  "); err == nil {
+				_ = os.WriteFile(filepath.Join(dir, "context-"+runID+".json"), data, 0o644)
+			}
+			s.appendEvent(runID, agent.AgentEvent{ID: runID + "-ctx", RunID: runID, Kind: "context.compiled",
+				Payload: map[string]any{"included": len(m.Included), "tokens": m.EstimatedTokens, "pressure": m.Pressure}, CreatedAt: agent.Now()})
 			return "ctx-" + runID, nil
 		},
 	}, runID, "S-daemon")
