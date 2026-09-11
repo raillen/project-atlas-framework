@@ -181,6 +181,12 @@ func (o *OpenAICompat) Stream(ctx context.Context, req agent.ModelRequest) (<-ch
 	}
 	resp, err := o.Client.Do(httpReq)
 	if err != nil {
+		if ctx.Err() != nil {
+			ch := make(chan agent.ModelEvent, 1)
+			ch <- agent.ModelEvent{Kind: agent.EventCancelled, RequestID: req.RequestID}
+			close(ch)
+			return ch, nil
+		}
 		return nil, err
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
