@@ -37,6 +37,7 @@ PRUMO is an intent router. Read only the document needed for the current task; d
 - [Context + Knowledge](../harness/context-knowledge.md)
 - [Workforce + Handoff](../harness/workforce-handoff.md)
 - [Daemon](../harness/daemon.md)
+- [Human docs](../harness/human-docs.md)
 - [Roadmap status](../harness/roadmap-status.md)
 - [Promotion report](../harness/promotion-report.md)
 

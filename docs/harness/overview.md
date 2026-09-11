@@ -38,7 +38,8 @@ Priority: HEADLESS HARNESS FIRST.
 - [security](security.md) — permissions, sandbox, egress.
 - [context-knowledge](context-knowledge.md) — Context v2, Knowledge, doc compiler.
 - [workforce-handoff](workforce-handoff.md) — Handoff v2, multi-agent.
-- [daemon](daemon.md) — local Unix-socket server, reconnect baseline.- [roadmap-status](roadmap-status.md) — HA0–HA11 + split gate + truth table.
+- [daemon](daemon.md) — local Unix-socket server, reconnect baseline.
+- [human-docs](human-docs.md) — HD0–HD4 generation runtime.- [roadmap-status](roadmap-status.md) — HA0–HA11 + split gate + truth table.
 - [promotion-report](promotion-report.md) — DocumentationMigrationReport.
 
 ## Invariants

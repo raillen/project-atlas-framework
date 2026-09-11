@@ -16,7 +16,7 @@ Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table:
 | HA9 | Context v2 / Knowledge integration | ACCEPTED | implemented (workspace v2 compilation wired into run+daemon with persisted manifests; per-run knowledge seeding with coverage/readiness; global promotion via delta review) |
 | HA10 | multi-agent/worktrees | ACCEPTED | implemented (concurrent roles, fail-fast cancel, hard budgets, snapshot diffs, least-context review gate, bounded-auto with cap) |
 | HA11 | compatibility/eval matrix | ACCEPTED | implemented (unit+conformance+CLI evals + live availability/session matrix + 1.5M fuzz execs, zero failures; generated non-Go bindings pending) |
-| HD0–HD4 | Human Docs Runtime baseline | ACCEPTED | partial (this tree + doccompile DAG/CAS; planner/site/i18n future) |
+| HD0–HD4 | Human Docs Runtime baseline | ACCEPTED | implemented (spec+composition, deterministic planner, README/reference/tree via CAS, assisted briefs, coverage/readiness gates; site/i18n HD5+ future) |
 | Local inference | workers (llama.cpp/ONNX) | ACCEPTED | deferred (interfaces reserved; No-LLM first-class) |
 
 ## Split gate (`raillen/prumo-code` NOT created)

@@ -4,8 +4,10 @@ package eval
 
 import (
 	"context"
+	"strings"
 	"testing"
 
+	docengine "github.com/raillen/prumo/internal/documentation"
 	"github.com/raillen/prumo/internal/harness/aci"
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
@@ -14,6 +16,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/extagent"
 	"github.com/raillen/prumo/internal/harness/gateway"
 	"github.com/raillen/prumo/internal/harness/handoff"
+	"github.com/raillen/prumo/internal/harness/humandocs"
 	"github.com/raillen/prumo/internal/harness/knowledge"
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
@@ -241,7 +244,9 @@ func TestEvalMultiAgentWorktree(t *testing.T) {
 			return []string{"evidence"}, map[string]float64{"tool_calls": 1}, nil
 		},
 		ReviewerRole: "rev",
-		Review:       func(context.Context, team.ReviewInput) (team.ReviewVerdict, error) { return team.ReviewVerdict{Approve: true}, nil },
+		Review: func(context.Context, team.ReviewInput) (team.ReviewVerdict, error) {
+			return team.ReviewVerdict{Approve: true}, nil
+		},
 	}.Run(ok)
 	if err != nil || sum.Status != "complete" {
 		t.Fatalf("team review failed: %+v %v", sum, err)
@@ -267,6 +272,36 @@ func TestEvalSeededRunIsCovered(t *testing.T) {
 	}
 	if ready, blockers := loaded.Readiness(); !ready {
 		t.Fatalf("reloaded run must be ready: %v", blockers)
+	}
+}
+
+func TestEvalHumanDocsFlow(t *testing.T) {
+	reg := docengine.Registry{
+		Contracts: map[string]docengine.Contract{
+			"c-op": {ID: "c-op", Role: "operator", Description: "operate the harness",
+				RequiredKnowledge: []string{"run lifecycle"}, BlockingQuestions: []string{"who approves?"},
+				EvidenceRequirements: []string{"green suite"}},
+		},
+		Profiles: map[string]docengine.Profile{
+			"p-ops": {ID: "p-ops", Contracts: []string{"c-op"}},
+		},
+	}
+	spec := humandocs.Spec{ID: "hd-eval", Title: "HD eval", Audience: "ops",
+		Profiles: []string{"p-ops"}, Sources: map[string][]string{"c-op": {"runbook.md"}}}
+	plan, err := humandocs.Planner(spec, reg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ready, blockers := humandocs.Readiness(plan); !ready {
+		t.Fatalf("seeded plan must be ready: %v", blockers)
+	}
+	arts, err := humandocs.GenerateTree(spec, plan, reg, t.TempDir())
+	if err != nil || len(arts) != 3 {
+		t.Fatalf("tree failed: %+v %v", arts, err)
+	}
+	brief := humandocs.Brief(plan.Units[2], reg.Contracts["c-op"])
+	if !strings.Contains(brief, "TODO(CURATED)") {
+		t.Fatal("brief must mark curated work")
 	}
 }
 
