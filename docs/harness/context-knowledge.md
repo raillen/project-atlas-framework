@@ -10,6 +10,13 @@ freshness/rev, provenance, token estimate, reason, method, compression,
 full-content pointer). No-LLM path is first-class; embeddings are
 derived/optional. Extends (not replaces) `internal/contextcompiler` baseline.
 
+Wired into runs (`contextv2.CompileWorkspace`): every `agent run` and daemon
+run compiles goal + entrypoints + git-modified files + bounded tree listing
+through gates→dedup→packing, persists `context-<run>.json`, and emits
+`context.compiled` (included/tokens/pressure/level). Budgets/levels via
+`--context-budget/--context-level`. Compilation never fails a run: on bad
+roots it degrades to the goal item.
+
 ## Knowledge Runtime (`internal/harness/knowledge`)
 
 Typed records with stable IDs: Source, Section, Claim, Finding, Decision,
