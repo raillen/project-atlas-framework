@@ -1,5 +1,9 @@
 # Harness roadmap status (HA0–HA11) + split gate
 
+Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table
+(HA-level). **Detalhe por gap: [gap-register](gap-register.md) — canônico,
+atualizado a cada incremento e impresso no relatório da rodada.**
+
 Snapshot: `2026-09-11-d41f18bb65f5`. ACCEPTED != implemented. Truth table:
 
 | ID | Scope | Design | Implementation |
