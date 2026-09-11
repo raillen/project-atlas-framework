@@ -132,10 +132,14 @@ func runAgentRun(asJSON bool, args []string) int {
 
 	dir := filepath.Join(root, ".prumo", "runtime", "harness")
 	eventLog := filepath.Join(dir, "events-"+runID+".jsonl")
+	tools, err := agentTools(root, f)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
 	appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-started", RunID: runID, Kind: "run.started", Payload: map[string]any{"goal": goal, "provider": providerName}, CreatedAt: agent.Now()})
 	runner := harnessruntime.NewRunner(harnessruntime.Services{
 		Models:      provider,
-		Tools:       aci.New(root),
+		Tools:       tools,
 		Perms:       perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}}),
 		Checkpoints: checkpoint.New(dir),
 		Events: func(ev agent.AgentEvent) {
@@ -341,7 +345,11 @@ func runAgentServe(asJSON bool, args []string) int {
 		sock = defaultSocket(root)
 	}
 	store := filepath.Join(root, ".prumo", "runtime", "harness")
-	srv := daemon.New(sock, store, daemon.Deps{Tools: aci.New(root)})
+	tools, err := agentTools(root, f)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	srv := daemon.New(sock, store, daemon.Deps{Tools: tools})
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	if !asJSON {
@@ -351,6 +359,31 @@ func runAgentServe(asJSON bool, args []string) int {
 		return serviceError(asJSON, err)
 	}
 	return exitOK
+}
+
+// agentTools selects the tool executor: local workspace (default) or
+// container-isolated command execution with host-side file tools.
+func agentTools(root string, f map[string]string) (harnessruntime.ToolExecutor, error) {
+	sandbox := f["sandbox"]
+	if sandbox == "" || sandbox == "local" {
+		return aci.New(root), nil
+	}
+	if sandbox != "container" {
+		return nil, fmt.Errorf("unknown sandbox %q (local|container)", sandbox)
+	}
+	image := f["sandbox-image"]
+	if image == "" {
+		return nil, fmt.Errorf("container sandbox requires --sandbox-image <image> (no implicit pulls)")
+	}
+	rt := aci.DetectContainerRuntime()
+	if rt == "" {
+		return nil, fmt.Errorf("container sandbox requested but no docker/podman runtime detected")
+	}
+	runner := aci.CLIRunner{Runtime: rt}
+	if !runner.Available() {
+		return nil, fmt.Errorf("container runtime %q unreachable: refusing to run unisolated", rt)
+	}
+	return aci.NewContainer(root, image, runner), nil
 }
 
 func daemonClient(f map[string]string) daemon.Client {

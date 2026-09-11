@@ -124,6 +124,24 @@ func TestAgentPsLogsAgainstDaemon(t *testing.T) {
 		t.Fatalf("agent logs failed: code=%d out=%s", code, out)
 	}
 }
+func TestAgentSandboxFlagsFailFast(t *testing.T) {
+	dir := t.TempDir()
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "x", "--path", dir, "--run", "R-sbx", "--sandbox", "bogus"})
+	})
+	if code == 0 {
+		t.Fatal("bogus sandbox must fail")
+	}
+	code, _ = captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "x", "--path", dir, "--run", "R-sbx", "--sandbox", "container"})
+	})
+	if code == 0 {
+		t.Fatal("container without image must fail fast")
+	}
+	if _, err := agentTools(dir, map[string]string{"sandbox": "container"}); err == nil || !strings.Contains(err.Error(), "sandbox-image") {
+		t.Fatalf("expected sandbox-image error, got %v", err)
+	}
+}
 func TestAgentRunAnthropicAgainstStub(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")

@@ -632,6 +632,8 @@ var commandRegistry = map[string]CommandInfo{
 			"--to <agent>         Handoff recipient",
 			"--client <ver>       Client protocol version to negotiate",
 			"--socket <path>      Daemon socket (serve/ps/logs)",
+			"--sandbox <kind>     local|container (default: local)",
+			"--sandbox-image <i>  Container image (required with container)",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{
