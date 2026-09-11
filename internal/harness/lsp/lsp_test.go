@@ -35,6 +35,10 @@ func fakeServer(t *testing.T, server *PipeTransport) {
 			switch msg.Method {
 			case "initialize":
 				result = map[string]any{"capabilities": map[string]any{}}
+			case "textDocument/hover":
+				result = map[string]any{"contents": map[string]any{"value": "func NewRunner() *Runner"}}
+			case "textDocument/definition":
+				result = map[string]any{"uri": "file:///work/runtime.go", "range": map[string]any{"start": map[string]any{"line": 55}}}
 			case "workspace/symbol":
 				result = []any{map[string]any{
 					"name": "NewRunner", "kind": 12,

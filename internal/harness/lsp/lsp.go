@@ -34,6 +34,8 @@ type Symbol struct {
 // Provider answers symbol queries.
 type Provider interface {
 	WorkspaceSymbols(ctx context.Context, query string) ([]Symbol, error)
+	Hover(ctx context.Context, file string, line, character int) (string, error)
+	Definition(ctx context.Context, file string, line, character int) (Symbol, error)
 	Available() bool
 	Describe() string
 }
@@ -343,6 +345,68 @@ func (f FallbackProvider) WorkspaceSymbols(_ context.Context, query string) ([]S
 	return out, nil
 }
 
+// Hover needs a live server; the fallback says so explicitly.
+func (f FallbackProvider) Hover(_ context.Context, _ string, _, _ int) (string, error) {
+	return "", fmt.Errorf("hover requires a language server (none configured)")
+}
+
+// Definition falls back to the index: exact name match at query position is
+// out of scope without a server, so this resolves by symbol name lookup.
+func (f FallbackProvider) Definition(_ context.Context, file string, line, _ int) (Symbol, error) {
+	return Symbol{}, fmt.Errorf("definition requires a language server (none configured)")
+}
+
+// Hover returns markdown hover text (1-based line/character).
+func (c *Client) Hover(ctx context.Context, file string, line, character int) (string, error) {
+	if err := c.Initialize(ctx); err != nil {
+		return "", err
+	}
+	raw, err := c.call(ctx, "textDocument/hover", map[string]any{
+		"textDocument": map[string]any{"uri": "file://" + file},
+		"position":     map[string]any{"line": line - 1, "character": character},
+	})
+	if err != nil {
+		return "", err
+	}
+	data, _ := json.Marshal(raw)
+	var doc struct {
+		Contents struct {
+			Value string `json:"value"`
+		} `json:"contents"`
+	}
+	if err := json.Unmarshal(data, &doc); err != nil {
+		return "", err
+	}
+	return doc.Contents.Value, nil
+}
+
+// Definition resolves a symbol location (1-based in, 1-based out).
+func (c *Client) Definition(ctx context.Context, file string, line, character int) (Symbol, error) {
+	if err := c.Initialize(ctx); err != nil {
+		return Symbol{}, err
+	}
+	raw, err := c.call(ctx, "textDocument/definition", map[string]any{
+		"textDocument": map[string]any{"uri": "file://" + file},
+		"position":     map[string]any{"line": line - 1, "character": character},
+	})
+	if err != nil {
+		return Symbol{}, err
+	}
+	data, _ := json.Marshal(raw)
+	var loc struct {
+		URI   string `json:"uri"`
+		Range struct {
+			Start struct {
+				Line int `json:"line"`
+			} `json:"start"`
+		} `json:"range"`
+	}
+	if err := json.Unmarshal(data, &loc); err != nil || loc.URI == "" {
+		return Symbol{}, fmt.Errorf("no definition found")
+	}
+	return Symbol{File: strings.TrimPrefix(loc.URI, "file://"), Line: loc.Range.Start.Line + 1, Provider: "lsp"}, nil
+}
+
 // ServerProvider adapts Client to Provider.
 type ServerProvider struct {
 	Client *Client
@@ -353,6 +417,12 @@ func (s ServerProvider) Available() bool  { return s.Bin != "" }
 func (s ServerProvider) Describe() string { return "lsp server " + s.Bin }
 func (s ServerProvider) WorkspaceSymbols(ctx context.Context, query string) ([]Symbol, error) {
 	return s.Client.WorkspaceSymbols(ctx, query)
+}
+func (s ServerProvider) Hover(ctx context.Context, file string, line, character int) (string, error) {
+	return s.Client.Hover(ctx, file, line, character)
+}
+func (s ServerProvider) Definition(ctx context.Context, file string, line, character int) (Symbol, error) {
+	return s.Client.Definition(ctx, file, line, character)
 }
 
 // Select returns the LSP provider when a server binary exists for lang,
