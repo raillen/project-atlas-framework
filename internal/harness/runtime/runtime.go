@@ -6,6 +6,7 @@ package runtime
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/checkpoint"
@@ -33,7 +34,9 @@ type ToolExecutor interface {
 }
 
 // Runner holds mutable conversation buffers; canonical state stays in
-// agent.NativeAgentState and is checkpointed at safe points.
+// agent.NativeAgentState and is checkpointed at safe points. Inbox and
+// State are mutex-guarded: daemons may Inject steering input and snapshot
+// state while the loop runs.
 type Runner struct {
 	Svc      Services
 	State    agent.NativeAgentState
@@ -50,6 +53,12 @@ type Runner struct {
 	// QualityGate, when set, vets completion inside EvaluateStop: a failing
 	// gate turns completion into PhaseFailed instead of Checkpoint.
 	QualityGate func() error
+	// CompactKeep bounds conversation growth: when Messages exceed twice
+	// CompactKeep at model-request time, oldest tool observations collapse
+	// into one deterministic summary. Zero disables.
+	CompactKeep int
+	// mu guards Messages and State for cross-goroutine Inject/StateCopy.
+	mu sync.Mutex
 }
 
 // NewRunner initializes a Run session.
@@ -61,11 +70,61 @@ func NewRunner(svc Services, runID, sessionID string) *Runner {
 		MaxTurns: 10,
 	}
 }
-
 func (r *Runner) emit(kind string, payload map[string]any) {
 	if r.Svc.Events == nil {
 		return
 	}
+	r.Svc.Events(agent.AgentEvent{ID: fmt.Sprintf("ev-%d", len(payload)+1), RunID: r.State.RunID, TurnID: r.State.TurnID, Kind: kind, Payload: payload, CreatedAt: agent.Now()})
+}
+
+// Inject enqueues steering input consumed at the next model request.
+func (r *Runner) Inject(m agent.Message) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	switch r.State.Phase {
+	case agent.PhaseComplete, agent.PhaseFailed:
+		return fmt.Errorf("run %s is %s: cannot steer", r.State.RunID, r.State.Phase)
+	}
+	if m.CreatedAt == "" {
+		m.CreatedAt = agent.Now()
+	}
+	r.Messages = append(r.Messages, m)
+	return nil
+}
+
+// StateCopy snapshots canonical state for observers (status/replay)
+// without racing the loop.
+func (r *Runner) StateCopy() agent.NativeAgentState {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.State
+}
+
+// maybeCompactLocked collapses oldest tool observations into a summary.
+// Caller must hold mu.
+func (r *Runner) maybeCompactLocked() {
+	if r.CompactKeep <= 0 || len(r.Messages) <= r.CompactKeep*2 {
+		return
+	}
+	keep := r.Messages[len(r.Messages)-r.CompactKeep:]
+	dropped := len(r.Messages) - r.CompactKeep
+	obs, tools := 0, 0
+	for _, m := range r.Messages[:len(r.Messages)-r.CompactKeep] {
+		if m.Role == agent.RoleTool {
+			obs++
+		} else {
+			tools++
+		}
+	}
+	summary := agent.Message{
+		ID: "compact-1", Role: agent.RoleSystem,
+		Content:   fmt.Sprintf("compacted %d messages (%d tool observations, %d other); see checkpoint for full history", dropped, obs, tools),
+		CreatedAt: agent.Now(),
+	}
+	r.Messages = append([]agent.Message{summary}, keep...)
+}
+
+func (r *Runner) emitLocked(kind string, payload map[string]any) {
 	r.Svc.Events(agent.AgentEvent{ID: fmt.Sprintf("ev-%d", len(payload)+1), RunID: r.State.RunID, TurnID: r.State.TurnID, Kind: kind, Payload: payload, CreatedAt: agent.Now()})
 }
 
@@ -87,11 +146,14 @@ func (r *Runner) Step(ctx context.Context) error {
 		r.State.ContextManifestID = id
 		r.State.Phase = agent.PhaseRequestModel
 	case agent.PhaseRequestModel:
+		r.mu.Lock()
+		r.maybeCompactLocked()
 		req := agent.ModelRequest{
 			RequestID: fmt.Sprintf("%s:%s:req", r.State.RunID, r.State.TurnID),
 			RunID:     r.State.RunID, TurnID: r.State.TurnID,
-			Messages: r.Messages,
+			Messages: append([]agent.Message{}, r.Messages...),
 		}
+		r.mu.Unlock()
 		ch, err := r.Svc.Models.Stream(ctx, req)
 		if err != nil {
 			r.State.Phase = agent.PhaseFailed

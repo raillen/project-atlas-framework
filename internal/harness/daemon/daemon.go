@@ -65,9 +65,15 @@ type Server struct {
 	Deps       Deps
 
 	mu   sync.Mutex
-	runs map[string]context.CancelFunc
+	runs map[string]*activeRun
 	ln   net.Listener
 	seq  int
+}
+
+// activeRun tracks a live run: cancel stops it, runner accepts steering.
+type activeRun struct {
+	cancel context.CancelFunc
+	runner *harnessruntime.Runner
 }
 
 // New creates a server; call Serve to block.
@@ -75,7 +81,7 @@ func New(socketPath, storeDir string, deps Deps) *Server {
 	if deps.NewProvider == nil {
 		deps.NewProvider = model.ForName
 	}
-	return &Server{SocketPath: socketPath, StoreDir: storeDir, Deps: deps, runs: map[string]context.CancelFunc{}}
+	return &Server{SocketPath: socketPath, StoreDir: storeDir, Deps: deps, runs: map[string]*activeRun{}}
 }
 
 func (s *Server) recordPath(runID string) string {
@@ -180,6 +186,8 @@ func (s *Server) dispatch(msg map[string]any) map[string]any {
 		return s.opEvents(str(msg, "run_id"))
 	case "cancel":
 		return s.opCancel(str(msg, "run_id"))
+	case "steer":
+		return s.opSteer(str(msg, "run_id"), str(msg, "message"))
 	default:
 		return map[string]any{"ok": false, "error": "unknown op"}
 	}
@@ -227,7 +235,7 @@ func (s *Server) opStart(msg map[string]any) map[string]any {
 		cancel()
 		return map[string]any{"ok": false, "error": "run already active: " + runID}
 	}
-	s.runs[runID] = cancel
+	s.runs[runID] = &activeRun{cancel: cancel}
 	s.mu.Unlock()
 
 	s.saveRecord(RunRecord{RunID: runID, Status: "running"})
@@ -267,6 +275,11 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 			return "ctx-" + runID, nil
 		},
 	}, runID, "S-daemon")
+	s.mu.Lock()
+	if ar, ok := s.runs[runID]; ok {
+		ar.runner = runner
+	}
+	s.mu.Unlock()
 	runner.MaxTurns = maxTurns
 	runner.Svc.ConsumeBudget = tracker.ConsumeUsage
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
@@ -299,7 +312,7 @@ func (s *Server) opStatus(runID string) map[string]any {
 		return map[string]any{"ok": false, "error": "run_id required"}
 	}
 	s.mu.Lock()
-	_, active := s.runs[runID]
+	ar, active := s.runs[runID]
 	s.mu.Unlock()
 	data, err := os.ReadFile(s.recordPath(runID))
 	if err != nil {
@@ -308,6 +321,10 @@ func (s *Server) opStatus(runID string) map[string]any {
 	var rec RunRecord
 	if err := json.Unmarshal(data, &rec); err != nil {
 		return map[string]any{"ok": false, "error": "corrupt record " + runID}
+	}
+	if active && ar.runner != nil {
+		live := ar.runner.StateCopy()
+		rec.Phase = string(live.Phase)
 	}
 	return map[string]any{"ok": true, "run_id": rec.RunID, "status": rec.Status, "phase": rec.Phase, "stop_reason": rec.StopReason, "active": active}
 }
@@ -381,13 +398,32 @@ func (s *Server) opCancel(runID string) map[string]any {
 		return map[string]any{"ok": false, "error": "run_id required"}
 	}
 	s.mu.Lock()
-	cancel, ok := s.runs[runID]
+	ar, ok := s.runs[runID]
 	s.mu.Unlock()
 	if !ok {
 		return map[string]any{"ok": false, "error": "run not active: " + runID}
 	}
-	cancel()
+	ar.cancel()
 	return map[string]any{"ok": true, "cancelled": true}
+}
+
+func (s *Server) opSteer(runID, message string) map[string]any {
+	if runID == "" {
+		return map[string]any{"ok": false, "error": "run_id required"}
+	}
+	if message == "" {
+		return map[string]any{"ok": false, "error": "message required"}
+	}
+	s.mu.Lock()
+	ar, ok := s.runs[runID]
+	s.mu.Unlock()
+	if !ok || ar.runner == nil {
+		return map[string]any{"ok": false, "error": "run not active: " + runID}
+	}
+	if err := ar.runner.Inject(agent.Message{ID: "steer-" + runID, Role: agent.RoleUser, Content: message, CreatedAt: agent.Now()}); err != nil {
+		return map[string]any{"ok": false, "error": err.Error()}
+	}
+	return map[string]any{"ok": true, "steered": true}
 }
 
 // ---- Client ----
@@ -417,6 +453,11 @@ func (c Client) call(msg map[string]any) (map[string]any, error) {
 		return nil, err
 	}
 	return out, nil
+}
+
+// Call sends one raw op (used by thin CLI paths and tests).
+func (c Client) Call(msg map[string]any) (map[string]any, error) {
+	return c.call(msg)
 }
 
 // Start launches a run; MaxTurns<=0 defaults to 5.

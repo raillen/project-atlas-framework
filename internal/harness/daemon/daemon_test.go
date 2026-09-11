@@ -9,6 +9,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/agent"
 	"github.com/raillen/prumo/internal/harness/model"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
+	harnessruntime "github.com/raillen/prumo/internal/harness/runtime"
 )
 
 type stubTools struct {
@@ -184,5 +185,21 @@ func TestDaemonReconnect(t *testing.T) {
 	evs, err := c2.Events("R-dre")
 	if err != nil || evs["ok"] != true {
 		t.Fatalf("reconnect events failed: %v %v", err, evs)
+	}
+}
+
+func TestDispatchSteer(t *testing.T) {
+	srv := New(t.TempDir()+"/s.sock", t.TempDir(), fakeDeps(false))
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	srv.runs["R-live"] = &activeRun{cancel: cancel, runner: harnessruntime.NewRunner(harnessruntime.Services{}, "R-live", "S")}
+	if res := srv.dispatch(map[string]any{"op": "steer", "run_id": "R-live", "message": "pivot"}); res["ok"] != true {
+		t.Fatalf("steer active run failed: %v", res)
+	}
+	if res := srv.dispatch(map[string]any{"op": "steer", "run_id": "R-gone", "message": "x"}); res["ok"] != false {
+		t.Fatalf("steer inactive run must fail: %v", res)
+	}
+	if res := srv.dispatch(map[string]any{"op": "steer", "run_id": "R-live"}); res["ok"] != false {
+		t.Fatalf("steer without message must fail: %v", res)
 	}
 }
