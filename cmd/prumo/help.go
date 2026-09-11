@@ -645,6 +645,7 @@ var commandRegistry = map[string]CommandInfo{
 			"--budget-usd <n>     Hard USD budget (0 = track only)",
 			"--budget-tools <n>   Hard tool-call budget (0 = track only)",
 			"--strict             Require a passing test.run for completion",
+			"--compact-keep <n>   Cap conversation (0 = off)",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{

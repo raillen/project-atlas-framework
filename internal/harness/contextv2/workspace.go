@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/raillen/prumo/internal/harness/knowledge"
 	"github.com/raillen/prumo/internal/harness/model"
 )
 
@@ -51,6 +52,8 @@ func CompileWorkspace(runID, goal, root string, budget int, level string) Manife
 			eligible = append(eligible, it)
 		}
 	}
+	// Memory Atlas as a structured source (never dumped wholesale).
+	eligible = append(eligible, atlasItems(abs, goal)...)
 	// Lexical fusion: BM25 bonus over file candidates, then dedup+pack.
 	refs := make([]string, 0, len(eligible))
 	for _, it := range eligible {
@@ -182,6 +185,28 @@ func fileItems(root string, modified map[string]bool) []Item {
 			continue
 		}
 		add(name, st)
+	}
+	return out
+}
+
+// atlasItems recalls top memories as candidates (pointer-sized, not dumps).
+func atlasItems(root, goal string) []Item {
+	a, err := knowledge.LoadAtlas(knowledge.AtlasPath(root))
+	if err != nil || len(a.Records) == 0 {
+		return nil
+	}
+	s := knowledge.New()
+	s.Restore(a.Records, nil)
+	recalled := knowledge.Recall(s, goal, 5)
+	out := make([]Item, 0, len(recalled))
+	for i, r := range recalled {
+		out = append(out, Item{
+			Ref: "memory:" + r.ID, Authority: "reference", Trust: "medium",
+			Privacy: "internal", Freshness: r.UpdatedAt,
+			Score: 0.6 - 0.05*float64(i), Method: "memory",
+			TokenCost: cappedEstimate(len(r.Title) + len(r.Body)),
+			Content:   r.Title,
+		})
 	}
 	return out
 }

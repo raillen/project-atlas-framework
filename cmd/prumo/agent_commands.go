@@ -72,6 +72,8 @@ func runAgent(asJSON bool, args []string) int {
 		return runAgentUnschedule(asJSON, args[1:])
 	case "jobs":
 		return runAgentJobs(asJSON, args[1:])
+	case "promote":
+		return runAgentPromote(asJSON, args[1:])
 	case "providers":
 		return runAgentProviders(asJSON, args[1:])
 	default:
@@ -210,6 +212,9 @@ func runAgentRun(asJSON bool, args []string) int {
 		},
 	}, runID, "S-1")
 	runner.MaxTurns = maxTurns
+	if v, ok := f["compact-keep"]; ok {
+		fmt.Sscanf(v, "%d", &runner.CompactKeep)
+	}
 	if strict {
 		reports := counting
 		runner.QualityGate = func() error { return runlayer.StrictGate()(reports.ReportsCopy()) }
@@ -642,6 +647,66 @@ func runAgentJobs(asJSON bool, args []string) int {
 		fmt.Printf("%s every=%vs goal=%s\n", m["job_id"], m["every_secs"], m["goal"])
 	}
 	return exitOK
+}
+
+// runAgentPromote turns a persisted planning session into a build run.
+// Without --start it prints the promotion (goal + refs); with --start it
+// launches the run immediately.
+func runAgentPromote(asJSON bool, args []string) int {
+	f := agentFlags(args)
+	root := f["path"]
+	if root == "" {
+		root = "."
+	}
+	var data []byte
+	var err error
+	if file := f["session-file"]; file != "" {
+		data, err = os.ReadFile(file)
+	} else if id := f["session"]; id != "" {
+		data, err = os.ReadFile(filepath.Join(root, ".ai", "plan", "sessions", id+".json"))
+	} else {
+		return serviceError(asJSON, fmt.Errorf("promote requires --session <id> or --session-file <path>"))
+	}
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	tmp, err := os.CreateTemp("", "prumo-promote-*.json")
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	tmpName := tmp.Name()
+	_, _ = tmp.Write(data)
+	_ = tmp.Close()
+	defer os.Remove(tmpName)
+	runID := f["run"]
+	if runID == "" {
+		runID = "R-promote-1"
+	}
+	promo, err := handoff.PromoteFile(tmpName, runID)
+	if err != nil {
+		return serviceError(asJSON, err)
+	}
+	if _, ok := f["start"]; !ok {
+		if asJSON {
+			return printEnvelope(protocol.OkEnvelope(map[string]any{
+				"session_id": promo.SessionID, "run_id": promo.RunID, "goal": promo.GoalText(),
+				"decisions": promo.DecisionIDs, "open": promo.OpenIDs, "sources": promo.Sources,
+			}))
+		}
+		fmt.Printf("Promotion %s → %s\n%s\n", promo.SessionID, promo.RunID, promo.Summary)
+		return exitOK
+	}
+	newArgs := []string{"run", "--goal", promo.GoalText(), "--path", root, "--run", runID}
+	for _, k := range []string{"provider", "model", "base-url", "max-turns", "sandbox", "sandbox-image", "strict", "context-budget", "budget-tokens", "budget-usd", "budget-tools"} {
+		if v, ok := f[k]; ok {
+			if v == "" {
+				newArgs = append(newArgs, "--"+k)
+			} else {
+				newArgs = append(newArgs, "--"+k, v)
+			}
+		}
+	}
+	return runAgentRun(asJSON, newArgs)
 }
 
 func runAgentProviders(asJSON bool, args []string) int {
