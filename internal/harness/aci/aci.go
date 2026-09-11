@@ -49,6 +49,9 @@ type Executor struct {
 	// execution is network-unrestricted by posture — use the container
 	// executor when network denial is required.
 	Redact *egress.Redactor
+	// Egress gates network-capable tools. Nil preserves the legacy
+	// unrestricted posture (documented); set for fail-closed operation.
+	Egress *EgressPolicy
 }
 
 func New(root string) *Executor {
@@ -159,6 +162,9 @@ func (e *Executor) execute(ctx context.Context, call agent.ToolCall) (agent.Tool
 		}
 		if bin == "" {
 			return agent.ToolResult{ToolCallID: call.ID, ExitCode: 1, Error: "missing command"}, nil
+		}
+		if err := CheckEgress(e.Egress, bin); err != nil {
+			return agent.ToolResult{ToolCallID: call.ID, ExitCode: 1, Error: err.Error()}, nil
 		}
 		cmd := exec.CommandContext(ctx, "sh", "-c", bin)
 		cmd.Dir = e.Root
