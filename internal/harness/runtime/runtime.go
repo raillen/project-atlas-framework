@@ -185,6 +185,13 @@ func (r *Runner) Step(ctx context.Context) error {
 	case agent.PhaseEvaluateStop:
 		r.TurnsDone++
 		if r.TurnsDone >= r.MaxTurns {
+			if r.QualityGate != nil {
+				if err := r.QualityGate(); err != nil {
+					r.State.Phase = agent.PhaseFailed
+					r.State.StopReason = err.Error()
+					return err
+				}
+			}
 			r.State.Phase = agent.PhaseCheckpoint
 			r.State.StopReason = "max turns reached"
 			break

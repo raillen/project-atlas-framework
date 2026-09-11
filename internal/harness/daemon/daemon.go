@@ -24,6 +24,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
+	"github.com/raillen/prumo/internal/harness/runlayer"
 	harnessruntime "github.com/raillen/prumo/internal/harness/runtime"
 )
 
@@ -243,13 +244,18 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 		s.mu.Unlock()
 	}()
 	dir := s.StoreDir
+	tracker := runlayer.NewTracker(0, 0, 0)
+	counting := &runlayer.CountingTools{Base: tools, Tracker: tracker}
+	engine := perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}})
+	var timeline []agent.AgentEvent
 	runner := harnessruntime.NewRunner(harnessruntime.Services{
 		Models:      provider,
-		Tools:       tools,
-		Perms:       perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}}),
+		Tools:       counting,
+		Perms:       engine,
 		Checkpoints: checkpoint.New(filepath.Join(dir, "checkpoints")),
 		Events: func(ev agent.AgentEvent) {
 			s.appendEvent(runID, ev)
+			timeline = append(timeline, ev)
 		},
 		ContextManifest: func(_ context.Context, _ agent.NativeAgentState) (string, error) {
 			m := contextv2.CompileWorkspace(runID, goal, workspace, 8000, "L1")
@@ -262,6 +268,7 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 		},
 	}, runID, "S-daemon")
 	runner.MaxTurns = maxTurns
+	runner.Svc.ConsumeBudget = tracker.ConsumeUsage
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
 	kstore := knowledge.New()
 	knowledge.SeedRequirement(kstore, runID, goal)
@@ -278,6 +285,11 @@ func (s *Server) execute(ctx context.Context, runID, goal string, provider model
 	s.saveRecord(RunRecord{RunID: runID, Status: status, Phase: string(runner.State.Phase), StopReason: runner.State.StopReason})
 	knowledge.SeedEvidence(kstore, runID, string(runner.State.Phase), runner.State.StopReason, runID+"-latest")
 	_ = kstore.Save(filepath.Join(dir, "knowledge-"+runID+".json"))
+	_ = tracker.Save(filepath.Join(dir, "budget-"+runID+".json"))
+	_ = runlayer.DumpPermissions(filepath.Join(dir, "permissions-"+runID+".jsonl"), engine)
+	_, _ = runlayer.WriteEvidence(filepath.Join(dir, "evidence-"+runID+".json"),
+		runID, string(runner.State.Phase), runner.State.StopReason, tracker.Snapshot(), counting.ReportsCopy())
+	_ = runlayer.BridgeToObservability(filepath.Join(dir, "obs-"+runID+".jsonl"), timeline)
 	s.appendEvent(runID, agent.AgentEvent{ID: runID + "-finished", RunID: runID, Kind: "run.finished",
 		Payload: map[string]any{"status": status, "phase": string(runner.State.Phase)}, CreatedAt: agent.Now()})
 }

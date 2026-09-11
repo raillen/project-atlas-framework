@@ -217,6 +217,34 @@ func TestAgentRunSeedsKnowledge(t *testing.T) {
 	}
 }
 
+func TestAgentRunBudgetEvidenceArtifacts(t *testing.T) {
+	dir := t.TempDir()
+	code, _ := captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "artifacts", "--path", dir, "--run", "R-art", "--max-turns", "2", "--budget-tokens", "1000000", "--budget-tools", "100"})
+	})
+	if code != 0 {
+		t.Fatalf("run failed: code=%d", code)
+	}
+	hdir := filepath.Join(dir, ".prumo", "runtime", "harness")
+	for _, f := range []string{"budget-R-art.json", "permissions-R-art.jsonl", "evidence-R-art.json", "obs-R-art.jsonl"} {
+		if _, err := os.Stat(filepath.Join(hdir, f)); err != nil {
+			t.Fatalf("missing artifact %s: %v", f, err)
+		}
+	}
+	code, _ = captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "tight", "--path", dir, "--run", "R-tight", "--max-turns", "5", "--budget-tools", "1"})
+	})
+	if code == 0 {
+		t.Fatal("exhausted tool budget must fail the run")
+	}
+	code, _ = captureOutput(func() int {
+		return run([]string{"agent", "run", "--goal", "strict", "--path", dir, "--run", "R-strict", "--max-turns", "1", "--strict"})
+	})
+	if code == 0 {
+		t.Fatal("strict gate without passing tests must fail")
+	}
+}
+
 func TestAgentSandboxFlagsFailFast(t *testing.T) {
 	dir := t.TempDir()
 	code, _ := captureOutput(func() int {

@@ -32,6 +32,7 @@ import (
 	"github.com/raillen/prumo/internal/harness/model"
 	"github.com/raillen/prumo/internal/harness/perm"
 	harnessprotocol "github.com/raillen/prumo/internal/harness/protocol"
+	"github.com/raillen/prumo/internal/harness/runlayer"
 	harnessruntime "github.com/raillen/prumo/internal/harness/runtime"
 	"github.com/raillen/prumo/internal/protocol"
 )
@@ -162,23 +163,47 @@ func runAgentRun(asJSON bool, args []string) int {
 	if err != nil {
 		return serviceError(asJSON, err)
 	}
+	budgetTokens, budgetUSD, budgetTools := 0.0, 0.0, 0.0
+	if v, ok := f["budget-tokens"]; ok {
+		fmt.Sscanf(v, "%f", &budgetTokens)
+	}
+	if v, ok := f["budget-usd"]; ok {
+		fmt.Sscanf(v, "%f", &budgetUSD)
+	}
+	if v, ok := f["budget-tools"]; ok {
+		fmt.Sscanf(v, "%f", &budgetTools)
+	}
+	tracker := runlayer.NewTracker(budgetTokens, budgetUSD, budgetTools)
+	counting := &runlayer.CountingTools{Base: tools, Tracker: tracker}
+	engine := perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}})
+	strict := false
+	if _, ok := f["strict"]; ok {
+		strict = true
+	}
+	var timeline []agent.AgentEvent
 	appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-started", RunID: runID, Kind: "run.started", Payload: map[string]any{"goal": goal, "provider": providerName}, CreatedAt: agent.Now()})
 	runner := harnessruntime.NewRunner(harnessruntime.Services{
 		Models:      provider,
-		Tools:       tools,
-		Perms:       perm.New(perm.Policy{DefaultAction: agent.PermissionAllow, DenyPrefixes: []string{"/etc", ".."}, AskKinds: []string{"destructive"}}),
+		Tools:       counting,
+		Perms:       engine,
 		Checkpoints: checkpoint.New(dir),
 		Events: func(ev agent.AgentEvent) {
 			if !asJSON {
 				fmt.Fprintf(os.Stderr, "[%s] %s\n", ev.Kind, ev.TurnID)
 			}
 			appendAgentEvent(eventLog, ev)
+			timeline = append(timeline, ev)
 		},
 		ContextManifest: func(_ context.Context, _ agent.NativeAgentState) (string, error) {
 			return compileContext(), nil
 		},
 	}, runID, "S-1")
 	runner.MaxTurns = maxTurns
+	if strict {
+		reports := counting
+		runner.QualityGate = func() error { return runlayer.StrictGate()(reports.ReportsCopy()) }
+	}
+	runner.Svc.ConsumeBudget = tracker.ConsumeUsage
 	runner.Messages = []agent.Message{{ID: "m1", Role: agent.RoleUser, Content: goal, CreatedAt: agent.Now()}}
 	kstore := knowledge.New()
 	knowledge.SeedRequirement(kstore, runID, goal)
@@ -187,13 +212,21 @@ func runAgentRun(asJSON bool, args []string) int {
 		knowledge.SeedEvidence(kstore, runID, string(runner.State.Phase), runner.State.StopReason, runner.State.RunID+"-latest")
 		_ = kstore.Save(knowledgePath)
 	}
-	if err := runner.RunUntilDone(context.Background()); err != nil {
+	finishRun := func() {
 		saveKnowledge()
+		_ = tracker.Save(filepath.Join(dir, "budget-"+runID+".json"))
+		_ = runlayer.DumpPermissions(filepath.Join(dir, "permissions-"+runID+".jsonl"), engine)
+		_, _ = runlayer.WriteEvidence(filepath.Join(dir, "evidence-"+runID+".json"),
+			runID, string(runner.State.Phase), runner.State.StopReason, tracker.Snapshot(), counting.ReportsCopy())
+		_ = runlayer.BridgeToObservability(filepath.Join(dir, "obs-"+runID+".jsonl"), timeline)
+	}
+	if err := runner.RunUntilDone(context.Background()); err != nil {
+		finishRun()
 		appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-failed", RunID: runID, Kind: "run.failed", Payload: map[string]any{"error": err.Error()}, CreatedAt: agent.Now()})
 		return serviceError(asJSON, err)
 	}
 	appendAgentEvent(eventLog, agent.AgentEvent{ID: runID + "-finished", RunID: runID, Kind: "run.finished", Payload: map[string]any{"phase": string(runner.State.Phase), "stop_reason": runner.State.StopReason}, CreatedAt: agent.Now()})
-	saveKnowledge()
+	finishRun()
 	result := map[string]any{"run_id": runID, "phase": string(runner.State.Phase), "stop_reason": runner.State.StopReason, "revision": runner.State.Revision, "turns": runner.TurnsDone}
 	if asJSON {
 		return printEnvelope(protocol.OkEnvelope(result))

@@ -638,6 +638,10 @@ var commandRegistry = map[string]CommandInfo{
 			"--sandbox-image <i>  Container image (required with container)",
 			"--context-budget <n> Context token budget (default: 8000)",
 			"--context-level <l>  Disclosure level L0-L4 (default: L1)",
+			"--budget-tokens <n>  Hard token budget (0 = track only)",
+			"--budget-usd <n>     Hard USD budget (0 = track only)",
+			"--budget-tools <n>   Hard tool-call budget (0 = track only)",
+			"--strict             Require a passing test.run for completion",
 			"--json               Output structured JSON envelope",
 		},
 		Examples: []string{
