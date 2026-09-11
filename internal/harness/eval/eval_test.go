@@ -209,6 +209,19 @@ func TestEvalMultiAgentWorktree(t *testing.T) {
 	if err := tm.Validate(); err == nil {
 		t.Fatal("expected ownership collision")
 	}
+	ok, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	sum, err := team.Runner{
+		Team: team.Team{ID: "t-eval", Delegation: team.DelegationManual, Roles: []team.Role{{Name: "dev", Workspace: t.TempDir()}, {Name: "rev"}}},
+		Work: func(context.Context, team.Role) ([]string, map[string]float64, error) {
+			return []string{"evidence"}, map[string]float64{"tool_calls": 1}, nil
+		},
+		ReviewerRole: "rev",
+		Review:       func(context.Context, team.ReviewInput) (team.ReviewVerdict, error) { return team.ReviewVerdict{Approve: true}, nil },
+	}.Run(ok)
+	if err != nil || sum.Status != "complete" {
+		t.Fatalf("team review failed: %+v %v", sum, err)
+	}
 }
 
 func TestEvalSeededRunIsCovered(t *testing.T) {

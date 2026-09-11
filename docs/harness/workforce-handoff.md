@@ -21,6 +21,12 @@ diff+requirements+evidence — never the full implementer trajectory.
 `AllocateWorktree` provisions isolated git worktrees; merge/review/conflict
 is an explicit operation. Cross-provider handoff is covered by the eval suite.
 
+Execution (`team.Runner`): concurrent roles with fail-fast cancel, hard
+per-role budget caps, before/after workspace snapshots rendered as bounded
+diffs, and a review-only role judging diff+requirements+evidence
+(`complete` vs `changes_requested`). `suggested`/`bounded-auto` delegate via
+a `Suggester` that sees results only, capped by `MaxDelegations`.
+
 ## External connectivity
 
 Priorities implemented: OpenCode server, Codex structured CLI, ACP-shaped
