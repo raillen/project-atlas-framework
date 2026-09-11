@@ -124,11 +124,14 @@ type Health struct {
 }
 
 // RetryPolicy bounds same-provider retries for retryable failures.
-// Attempts counts total tries (1 = no retry); Backoff scales linearly
-// with jitter omitted for determinism in tests (callers may wrap sleep).
+// Attempts counts total tries (1 = no retry); Backoff is the unit delay.
+// Class multipliers: rate-limit 5x, server-5xx 2x, other 1x, times attempt
+// (linear). Jitter adds a deterministic attempt-hashed offset (no RNG in
+// the hot path, stable under test).
 type RetryPolicy struct {
 	Attempts int
 	Backoff  time.Duration
+	Jitter   bool
 }
 
 // DefaultRetryPolicy retries twice with a 200ms base backoff.
@@ -260,11 +263,10 @@ func (g *Gateway) streamWithRetry(ctx context.Context, p model.Provider, name st
 	var lastErr error
 	for a := 0; a < attempts; a++ {
 		if a > 0 {
-			backoff := time.Duration(a) * g.Retry.Backoff
 			select {
 			case <-ctx.Done():
 				return nil, ctx.Err()
-			case <-time.After(backoff):
+			case <-time.After(backoffFor(g.Retry, a, lastErr)):
 			}
 		}
 		ch, err := p.Stream(ctx, req)
@@ -318,6 +320,34 @@ func isRateLimit(err error) bool {
 	}
 	s := strings.ToLower(err.Error())
 	for _, sig := range []string{"429", "rate_limit", "rate limit", "ratelimit", "overload", "quota"} {
+		if strings.Contains(s, sig) {
+			return true
+		}
+	}
+	return false
+}
+
+// backoffFor computes the pre-attempt delay (attempt starts at 1).
+func backoffFor(p RetryPolicy, attempt int, err error) time.Duration {
+	mult := 1
+	if isRateLimit(err) {
+		mult = 5
+	} else if isServerError(err) {
+		mult = 2
+	}
+	d := time.Duration(attempt*mult) * p.Backoff
+	if p.Jitter && d > 0 {
+		d += time.Duration((attempt*37)%100) * p.Backoff / 100
+	}
+	return d
+}
+
+func isServerError(err error) bool {
+	if err == nil {
+		return false
+	}
+	s := strings.ToLower(err.Error())
+	for _, sig := range []string{"500", "502", "503", "504", "5xx", "http 5", "timeout", "unavailable"} {
 		if strings.Contains(s, sig) {
 			return true
 		}

@@ -42,4 +42,18 @@ func TestScheduleTickFiresOnce(t *testing.T) {
 	if list, _ := jobs["jobs"].([]any); len(list) != 0 {
 		t.Fatalf("jobs must be empty: %v", list)
 	}
+	// Drain background runs before TempDir cleanup (no writer may race it).
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		srv.mu.Lock()
+		active := len(srv.runs)
+		srv.mu.Unlock()
+		if active == 0 {
+			return
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("background runs did not drain")
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
 }

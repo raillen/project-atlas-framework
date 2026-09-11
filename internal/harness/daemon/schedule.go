@@ -15,13 +15,17 @@ import (
 
 // Job is one scheduled run template.
 type Job struct {
-	ID        string `json:"id"`
-	Goal      string `json:"goal"`
-	Provider  string `json:"provider,omitempty"`
-	EverySecs int64  `json:"every_secs"`
-	MaxTurns  int    `json:"max_turns,omitempty"`
-	NextRun   int64  `json:"next_run"`
-	CreatedAt string `json:"created_at"`
+	ID         string `json:"id"`
+	Goal       string `json:"goal"`
+	Provider   string `json:"provider,omitempty"`
+	EverySecs  int64  `json:"every_secs"`
+	MaxTurns   int    `json:"max_turns,omitempty"`
+	MaxRetries int    `json:"max_retries,omitempty"` // default 3
+	Retries    int    `json:"retries,omitempty"`
+	LastStatus string `json:"last_status,omitempty"`
+	LastError  string `json:"last_error,omitempty"`
+	NextRun    int64  `json:"next_run"`
+	CreatedAt  string `json:"created_at"`
 }
 
 func (s *Server) jobsPath() string { return filepath.Join(s.StoreDir, "jobs.json") }
@@ -114,7 +118,9 @@ func (s *Server) opJobs() map[string]any {
 	return map[string]any{"ok": true, "jobs": out}
 }
 
-// tickJobs fires due jobs once each.
+// tickJobs fires due jobs once each. Start failures back off linearly and
+// drop the job after MaxRetries (dead-lettered in the jobs file removal;
+// the failed run record, if any, stays for audit).
 func (s *Server) tickJobs() {
 	jobs := s.loadJobs()
 	if len(jobs) == 0 {
@@ -122,9 +128,15 @@ func (s *Server) tickJobs() {
 	}
 	now := time.Now().UTC().Unix()
 	changed := false
+	kept := jobs[:0]
 	for i := range jobs {
 		if jobs[i].NextRun > now {
+			kept = append(kept, jobs[i])
 			continue
+		}
+		maxRetries := jobs[i].MaxRetries
+		if maxRetries <= 0 {
+			maxRetries = 3
 		}
 		runID := fmt.Sprintf("job-%s-%d", jobs[i].ID, now)
 		res := s.dispatch(map[string]any{
@@ -132,11 +144,27 @@ func (s *Server) tickJobs() {
 			"run_id": runID, "max_turns": jobs[i].MaxTurns,
 		})
 		if res["ok"] == true {
+			jobs[i].Retries = 0
+			jobs[i].LastStatus = "started"
+			jobs[i].LastError = ""
 			jobs[i].NextRun = now + jobs[i].EverySecs
+			kept = append(kept, jobs[i])
 			changed = true
+			continue
 		}
+		jobs[i].Retries++
+		jobs[i].LastStatus = "failed"
+		if msg, _ := res["error"].(string); msg != "" {
+			jobs[i].LastError = msg
+		}
+		if jobs[i].Retries > maxRetries {
+			continue // dead-letter: drop, record stays queryable via list
+		}
+		jobs[i].NextRun = now + jobs[i].EverySecs*int64(jobs[i].Retries)
+		kept = append(kept, jobs[i])
+		changed = true
 	}
-	if changed {
-		s.saveJobs(jobs)
+	if changed || len(kept) != len(jobs) {
+		s.saveJobs(kept)
 	}
 }
