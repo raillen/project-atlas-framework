@@ -25,6 +25,9 @@ type Services struct {
 	ContextManifest func(ctx context.Context, state agent.NativeAgentState) (string, error)
 	// Budgets enforcement hook; nil disables.
 	ConsumeBudget func(usage agent.Usage) error
+	// ToolSpecs advertises callable tools to the model (MCP servers, ACI
+	// catalogs). Nil sends no specs; execution still policy-gated.
+	ToolSpecs func() []agent.ToolSpec
 }
 
 // ToolExecutor executes one normalized ToolCall.
@@ -172,10 +175,15 @@ func (r *Runner) Step(ctx context.Context) error {
 	case agent.PhaseRequestModel:
 		r.mu.Lock()
 		r.maybeCompactLocked()
+		specs := []agent.ToolSpec{}
+		if r.Svc.ToolSpecs != nil {
+			specs = r.Svc.ToolSpecs()
+		}
 		req := agent.ModelRequest{
 			RequestID: fmt.Sprintf("%s:%s:req", r.State.RunID, r.State.TurnID),
 			RunID:     r.State.RunID, TurnID: r.State.TurnID,
 			Messages: append([]agent.Message{}, r.Messages...),
+			Tools:    specs,
 		}
 		r.mu.Unlock()
 		ch, err := r.Svc.Models.Stream(ctx, req)
